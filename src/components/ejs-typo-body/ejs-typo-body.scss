@@ -14,33 +14,33 @@
  */
 
 :host {
-  /** @prop --typo-weight: Description... */
-  --typo-weight: inherit;
+  /** @prop --body-height: Description... */
+  --body-height: initial;
 
-  /** @prop --typo-scale: Description... */
-  --typo-scale: initial;
+  /** @prop --body-offset: Description... */
+  --body-offset: 0;
 
-  /** @prop --typo-lead: Description... */
-  --typo-lead: initial;
+  /** @prop --body-size: Description... */
+  --body-size: initial;
 
-  /** @prop --typo-track: Description... */
-  --typo-track: initial;
+  /** @prop --body-spacing: Description... */
+  --body-spacing: initial;
 
-  /** @prop --offset: Description... */
-  --typo-offset: 0;
+  /** @prop --body-weight: Description... */
+  --body-weight: inherit;
 
   display: block;
 }
 
-@include global.typo-level-declaration(self.$levels);
-@include global.typo-weight-declaration();
+@include global.typo-level-declaration(self.$levels, 'body');
+@include global.typo-weight-declaration('body');
 
-div {
-  font-size: var(--typo-scale);
-  font-weight: var(--typo-weight);
-  letter-spacing: var(--typo-track);
-  line-height: var(--typo-lead);
+#body {
+  font-size: var(--body-size);
+  font-weight: var(--body-weight);
+  letter-spacing: var(--body-spacing);
+  line-height: var(--body-height);
   margin: 0;
 
-  @include global.typo-trim-offset();
+  @include global.typo-trim-offset('body');
 }

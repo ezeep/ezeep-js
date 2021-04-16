@@ -166,28 +166,28 @@ $spacings: (4px, 8px, 12px, 20px, 32px, 52px, 84px);
   }
 }
 
-@mixin typo-declaration($props, $lead: true, $offset: true) {
-  --typo-scale: #{list.nth($props, 1)};
-  --typo-track: #{get-typo-track(list.nth($props, 1))};
+@mixin typo-declaration($props, $name, $height: true, $offset: true) {
+  --#{$name}-size: #{list.nth($props, 1)};
+  --#{$name}-spacing: #{get-typo-track(list.nth($props, 1))};
 
-  @if ($lead) {
-    --typo-lead: #{list.nth($props, 2)};
+  @if ($height) {
+    --#{$name}-height: #{list.nth($props, 2)};
   }
 
   @if ($offset) {
-    --typo-offset: #{get-typo-offset(list.nth($props, 1), list.nth($props, 2))};
+    --#{$name}-offset: #{get-typo-offset(list.nth($props, 1), list.nth($props, 2))};
   }
 }
 
-@mixin typo-level-declaration($levels) {
+@mixin typo-level-declaration($levels, $name) {
   @each $level, $props in $levels {
     :host(.#{$level}) {
-      @include typo-declaration($props);
+      @include typo-declaration($props, $name);
     }
   }
 }
 
-@mixin typo-trim-offset() {
+@mixin typo-trim-offset($name) {
   & {
     padding-bottom: 1px;
     padding-top: 1px;
@@ -201,18 +201,18 @@ $spacings: (4px, 8px, 12px, 20px, 32px, 52px, 84px);
   }
 
   &:before {
-    margin-top: calc((var(--typo-offset) + 1px) * -1);
+    margin-top: calc((var(--#{$name}-offset) + 1px) * -1);
   }
 
   &:after {
-    margin-bottom: calc((var(--typo-offset) + 1px) * -1);
+    margin-bottom: calc((var(--#{$name}-offset) + 1px) * -1);
   }
 }
 
-@mixin typo-weight-declaration() {
+@mixin typo-weight-declaration($name) {
   @each $weight in $font-weights {
     :host(.#{list.nth($weight, 1)}) {
-      --typo-weight: #{list.nth($weight, 2)};
+      --#{$name}-weight: #{list.nth($weight, 2)};
     }
   }
 }

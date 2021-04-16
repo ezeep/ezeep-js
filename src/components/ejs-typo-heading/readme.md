@@ -12,12 +12,12 @@
 
 ## CSS Custom Properties
 
-| Name            | Description    |
-| --------------- | -------------- |
-| `--typo-lead`   | Description... |
-| `--typo-offset` | Description... |
-| `--typo-scale`  | Description... |
-| `--typo-track`  | Description... |
-| `--typo-weight` | Description... |
+| Name                | Description    |
+| ------------------- | -------------- |
+| `--heading-height`  | Description... |
+| `--heading-offset`  | Description... |
+| `--heading-size`    | Description... |
+| `--heading-spacing` | Description... |
+| `--heading-weight`  | Description... |
 
 ---

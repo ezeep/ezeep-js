@@ -21,7 +21,7 @@ export class EjsTypoHeading {
 
     return (
       <Host class={`${this.level} ${this.weight}`}>
-        <Tag>
+        <Tag id="heading">
           <slot></slot>
         </Tag>
       </Host>

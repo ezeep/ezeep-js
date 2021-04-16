@@ -11,12 +11,12 @@
 
 ## CSS Custom Properties
 
-| Name            | Description    |
-| --------------- | -------------- |
-| `--offset`      | Description... |
-| `--typo-lead`   | Description... |
-| `--typo-scale`  | Description... |
-| `--typo-track`  | Description... |
-| `--typo-weight` | Description... |
+| Name             | Description    |
+| ---------------- | -------------- |
+| `--body-height`  | Description... |
+| `--body-offset`  | Description... |
+| `--body-size`    | Description... |
+| `--body-spacing` | Description... |
+| `--body-weight`  | Description... |
 
 ---

@@ -14,38 +14,33 @@
  */
 
 :host {
-  /** @prop --typo-weight: Description... */
-  --typo-weight: inherit;
+  /** @prop --heading-height: Description... */
+  --heading-height: initial;
 
-  /** @prop --typo-scale: Description... */
-  --typo-scale: initial;
+  /** @prop --heading-offset: Description... */
+  --heading-offset: 0;
 
-  /** @prop --typo-lead: Description... */
-  --typo-lead: initial;
+  /** @prop --heading-size: Description... */
+  --heading-size: initial;
 
-  /** @prop --typo-track: Description... */
-  --typo-track: initial;
+  /** @prop --heading-spacing: Description... */
+  --heading-spacing: initial;
 
-  /** @prop --typo-offset: Description... */
-  --typo-offset: 0;
+  /** @prop --heading-weight: Description... */
+  --heading-weight: inherit;
 
   display: block;
 }
 
-@include global.typo-level-declaration(self.$levels);
-@include global.typo-weight-declaration();
+@include global.typo-level-declaration(self.$levels, 'heading');
+@include global.typo-weight-declaration('heading');
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-size: var(--typo-scale);
-  font-weight: var(--typo-weight);
-  letter-spacing: var(--typo-track);
-  line-height: var(--typo-lead);
+#heading {
+  font-size: var(--heading-size);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-spacing);
+  line-height: var(--heading-height);
   margin: 0;
 
-  @include global.typo-trim-offset();
+  @include global.typo-trim-offset('heading');
 }

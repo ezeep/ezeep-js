@@ -14,33 +14,33 @@
  */
 
 :host {
-  /** @prop --typo-weight: Description... */
-  --typo-weight: inherit;
+  /** @prop --paragraph-height: Description... */
+  --paragraph-height: initial;
 
-  /** @prop --typo-scale: Description... */
-  --typo-scale: initial;
+  /** @prop --paragraph-offset: Description... */
+  --paragraph-offset: 0;
 
-  /** @prop --typo-lead: Description... */
-  --typo-lead: initial;
+  /** @prop --paragraph-size: Description... */
+  --paragraph-size: initial;
 
-  /** @prop --typo-track: Description... */
-  --typo-track: initial;
+  /** @prop --paragraph-spacing: Description... */
+  --paragraph-spacing: initial;
 
-  /** @prop --typo-offset: Description... */
-  --typo-offset: 0;
+  /** @prop --paragraph-weight: Description... */
+  --paragraph-weight: inherit;
 
   display: block;
 }
 
-@include global.typo-level-declaration(self.$levels);
-@include global.typo-weight-declaration();
+@include global.typo-level-declaration(self.$levels, 'paragraph');
+@include global.typo-weight-declaration('paragraph');
 
-p {
-  font-size: var(--typo-scale);
-  font-weight: var(--typo-weight);
-  letter-spacing: var(--typo-track);
-  line-height: var(--typo-lead);
+#paragraph {
+  font-size: var(--paragraph-size);
+  font-weight: var(--paragraph-weight);
+  letter-spacing: var(--paragraph-spacing);
+  line-height: var(--paragraph-height);
   margin: 0;
 
-  @include global.typo-trim-offset();
+  @include global.typo-trim-offset('paragraph');
 }

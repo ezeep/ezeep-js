@@ -11,12 +11,12 @@
 
 ## CSS Custom Properties
 
-| Name            | Description    |
-| --------------- | -------------- |
-| `--typo-lead`   | Description... |
-| `--typo-offset` | Description... |
-| `--typo-scale`  | Description... |
-| `--typo-track`  | Description... |
-| `--typo-weight` | Description... |
+| Name                  | Description    |
+| --------------------- | -------------- |
+| `--paragraph-height`  | Description... |
+| `--paragraph-offset`  | Description... |
+| `--paragraph-size`    | Description... |
+| `--paragraph-spacing` | Description... |
+| `--paragraph-weight`  | Description... |
 
 ---

@@ -16,7 +16,7 @@ export class EjsTypoBody {
   render() {
     return (
       <Host class={`${this.level} ${this.weight}`}>
-        <div>
+        <div id="body">
           <slot></slot>
         </div>
       </Host>

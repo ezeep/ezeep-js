@@ -16,7 +16,7 @@ export class EjsTypoParagraph {
   render() {
     return (
       <Host class={`${this.level} ${this.weight}`}>
-        <p>
+        <p id="paragraph">
           <slot></slot>
         </p>
       </Host>
