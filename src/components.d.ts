@@ -5,8 +5,14 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
+import { IconNameTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
+    interface EjsIcon {
+        /**
+          * Description...
+         */
+        "name": IconNameTypes;
+    }
     interface EjsTypoBody {
         /**
           * Description...
@@ -43,6 +49,12 @@ export namespace Components {
     }
 }
 declare global {
+    interface HTMLEjsIconElement extends Components.EjsIcon, HTMLStencilElement {
+    }
+    var HTMLEjsIconElement: {
+        prototype: HTMLEjsIconElement;
+        new (): HTMLEjsIconElement;
+    };
     interface HTMLEjsTypoBodyElement extends Components.EjsTypoBody, HTMLStencilElement {
     }
     var HTMLEjsTypoBodyElement: {
@@ -62,12 +74,19 @@ declare global {
         new (): HTMLEjsTypoParagraphElement;
     };
     interface HTMLElementTagNameMap {
+        "ejs-icon": HTMLEjsIconElement;
         "ejs-typo-body": HTMLEjsTypoBodyElement;
         "ejs-typo-heading": HTMLEjsTypoHeadingElement;
         "ejs-typo-paragraph": HTMLEjsTypoParagraphElement;
     }
 }
 declare namespace LocalJSX {
+    interface EjsIcon {
+        /**
+          * Description...
+         */
+        "name": IconNameTypes;
+    }
     interface EjsTypoBody {
         /**
           * Description...
@@ -103,6 +122,7 @@ declare namespace LocalJSX {
         "weight"?: TypoWeightTypes;
     }
     interface IntrinsicElements {
+        "ejs-icon": EjsIcon;
         "ejs-typo-body": EjsTypoBody;
         "ejs-typo-heading": EjsTypoHeading;
         "ejs-typo-paragraph": EjsTypoParagraph;
@@ -112,6 +132,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "ejs-icon": LocalJSX.EjsIcon & JSXBase.HTMLAttributes<HTMLEjsIconElement>;
             "ejs-typo-body": LocalJSX.EjsTypoBody & JSXBase.HTMLAttributes<HTMLEjsTypoBodyElement>;
             "ejs-typo-heading": LocalJSX.EjsTypoHeading & JSXBase.HTMLAttributes<HTMLEjsTypoHeadingElement>;
             "ejs-typo-paragraph": LocalJSX.EjsTypoParagraph & JSXBase.HTMLAttributes<HTMLEjsTypoParagraphElement>;
