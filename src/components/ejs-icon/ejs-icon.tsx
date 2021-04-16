@@ -16,7 +16,7 @@ export class EjsIcon {
 
     return (
       <Host>
-        <svg class="glyph">
+        <svg id="glyph">
           <use href={`${glyphsPath}#glyph-${this.name}`}></use>
         </svg>
       </Host>
