@@ -1,0 +1,69 @@
+{
+  "name": "@ezeep/ezeep-js",
+  "version": "1.0.0-alpha.0",
+  "description": "Print with ezeep from the web.",
+  "author": "Cortado Holding AG",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ezeep/ezeep-js.git"
+  },
+  "main": "dist/index.cjs.js",
+  "module": "dist/custom-elements/index.js",
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "types": "dist/custom-elements/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/ezeep-js/ezeep-js.esm.js",
+  "files": [
+    "dist/",
+    "loader/",
+    "www/"
+  ],
+  "scripts": {
+    "build": "stencil build --docs",
+    "start": "stencil build --dev --watch --serve",
+    "generate": "stencil generate",
+    "stylelint": "stylelint \"**/*.scss\" --fix",
+    "prettier": "prettier \"**/*.{json,ts,tsx,md,html}\" --write",
+    "format": "npm run stylelint && npm run prettier"
+  },
+  "dependencies": {
+    "@stencil/core": "^2.5.2"
+  },
+  "devDependencies": {
+    "@stencil/sass": "^1.4.1",
+    "prettier": "^2.2.1",
+    "stylelint": "^13.12.0",
+    "stylelint-config-prettier": "^8.0.2",
+    "stylelint-order": "^4.1.0",
+    "stylelint-prettier": "^1.2.0"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true,
+    "htmlWhitespaceSensitivity": "strict"
+  },
+  "stylelint": {
+    "extends": [
+      "stylelint-config-prettier"
+    ],
+    "plugins": [
+      "stylelint-prettier",
+      "stylelint-order"
+    ],
+    "rules": {
+      "prettier/prettier": true,
+      "order/order": [
+        "dollar-variables",
+        "custom-properties",
+        "declarations",
+        "rules",
+        "at-rules"
+      ],
+      "order/properties-alphabetical-order": true
+    }
+  }
+}
