@@ -5,13 +5,52 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IconNameTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
+import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
     interface EjsIcon {
         /**
           * Description...
          */
         "name": IconNameTypes;
+    }
+    interface EjsIconButton {
+        /**
+          * Description...
+         */
+        "blank": boolean;
+        /**
+          * Description...
+         */
+        "disabled": boolean;
+        /**
+          * Description...
+         */
+        "href": string;
+        /**
+          * Description...
+         */
+        "icon": IconNameTypes;
+        /**
+          * Description...
+         */
+        "level": IconButtonLevelTypes;
+        /**
+          * Description...
+         */
+        "type": IconButtonTypeTypes;
+    }
+    interface EjsPrint {
+        "withBackdrop": boolean;
+    }
+    interface EjsRoot {
+        /**
+          * Description...
+         */
+        "closePrint": () => Promise<void>;
+        /**
+          * Description...
+         */
+        "openPrint": () => Promise<void>;
     }
     interface EjsTypoBody {
         /**
@@ -55,6 +94,24 @@ declare global {
         prototype: HTMLEjsIconElement;
         new (): HTMLEjsIconElement;
     };
+    interface HTMLEjsIconButtonElement extends Components.EjsIconButton, HTMLStencilElement {
+    }
+    var HTMLEjsIconButtonElement: {
+        prototype: HTMLEjsIconButtonElement;
+        new (): HTMLEjsIconButtonElement;
+    };
+    interface HTMLEjsPrintElement extends Components.EjsPrint, HTMLStencilElement {
+    }
+    var HTMLEjsPrintElement: {
+        prototype: HTMLEjsPrintElement;
+        new (): HTMLEjsPrintElement;
+    };
+    interface HTMLEjsRootElement extends Components.EjsRoot, HTMLStencilElement {
+    }
+    var HTMLEjsRootElement: {
+        prototype: HTMLEjsRootElement;
+        new (): HTMLEjsRootElement;
+    };
     interface HTMLEjsTypoBodyElement extends Components.EjsTypoBody, HTMLStencilElement {
     }
     var HTMLEjsTypoBodyElement: {
@@ -75,6 +132,9 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "ejs-icon": HTMLEjsIconElement;
+        "ejs-icon-button": HTMLEjsIconButtonElement;
+        "ejs-print": HTMLEjsPrintElement;
+        "ejs-root": HTMLEjsRootElement;
         "ejs-typo-body": HTMLEjsTypoBodyElement;
         "ejs-typo-heading": HTMLEjsTypoHeadingElement;
         "ejs-typo-paragraph": HTMLEjsTypoParagraphElement;
@@ -86,6 +146,45 @@ declare namespace LocalJSX {
           * Description...
          */
         "name": IconNameTypes;
+    }
+    interface EjsIconButton {
+        /**
+          * Description...
+         */
+        "blank"?: boolean;
+        /**
+          * Description...
+         */
+        "disabled"?: boolean;
+        /**
+          * Description...
+         */
+        "href"?: string;
+        /**
+          * Description...
+         */
+        "icon"?: IconNameTypes;
+        /**
+          * Description...
+         */
+        "level"?: IconButtonLevelTypes;
+        /**
+          * Description...
+         */
+        "type"?: IconButtonTypeTypes;
+    }
+    interface EjsPrint {
+        /**
+          * Description...
+         */
+        "onPrintCancel"?: (event: CustomEvent<any>) => void;
+        /**
+          * Description...
+         */
+        "onPrintSubmit"?: (event: CustomEvent<any>) => void;
+        "withBackdrop"?: boolean;
+    }
+    interface EjsRoot {
     }
     interface EjsTypoBody {
         /**
@@ -123,6 +222,9 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "ejs-icon": EjsIcon;
+        "ejs-icon-button": EjsIconButton;
+        "ejs-print": EjsPrint;
+        "ejs-root": EjsRoot;
         "ejs-typo-body": EjsTypoBody;
         "ejs-typo-heading": EjsTypoHeading;
         "ejs-typo-paragraph": EjsTypoParagraph;
@@ -133,6 +235,9 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "ejs-icon": LocalJSX.EjsIcon & JSXBase.HTMLAttributes<HTMLEjsIconElement>;
+            "ejs-icon-button": LocalJSX.EjsIconButton & JSXBase.HTMLAttributes<HTMLEjsIconButtonElement>;
+            "ejs-print": LocalJSX.EjsPrint & JSXBase.HTMLAttributes<HTMLEjsPrintElement>;
+            "ejs-root": LocalJSX.EjsRoot & JSXBase.HTMLAttributes<HTMLEjsRootElement>;
             "ejs-typo-body": LocalJSX.EjsTypoBody & JSXBase.HTMLAttributes<HTMLEjsTypoBodyElement>;
             "ejs-typo-heading": LocalJSX.EjsTypoHeading & JSXBase.HTMLAttributes<HTMLEjsTypoHeadingElement>;
             "ejs-typo-paragraph": LocalJSX.EjsTypoParagraph & JSXBase.HTMLAttributes<HTMLEjsTypoParagraphElement>;

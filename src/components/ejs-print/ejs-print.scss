@@ -1,0 +1,41 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './ejs-print.m' as self;
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  align-content: center;
+  display: grid;
+  grid-template: 360px / 320px;
+  height: 100vh;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+}
+
+#backdrop {
+  background: var(--color-overlay);
+  display: block;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+#dialog {
+  background: white;
+  position: relative;
+  z-index: 1;
+}

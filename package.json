@@ -41,7 +41,7 @@
     "stylelint-prettier": "^1.2.0"
   },
   "prettier": {
-    "printWidth": 120,
+    "printWidth": 100,
     "semi": false,
     "singleQuote": true,
     "htmlWhitespaceSensitivity": "strict"

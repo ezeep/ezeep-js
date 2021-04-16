@@ -19,4 +19,18 @@
 | `--body-spacing` | Description... |
 | `--body-weight`  | Description... |
 
+## Dependencies
+
+### Used by
+
+- [ejs-print](../ejs-print)
+
+### Graph
+
+```mermaid
+graph TD;
+  ejs-print --> ejs-typo-body
+  style ejs-typo-body fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ---
