@@ -1,0 +1,51 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './ejs-typo-heading.m' as self;
+@use './../../shared/global.m' as global;
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  /** @prop --typo-weight: Description... */
+  --typo-weight: inherit;
+
+  /** @prop --typo-scale: Description... */
+  --typo-scale: initial;
+
+  /** @prop --typo-lead: Description... */
+  --typo-lead: initial;
+
+  /** @prop --typo-track: Description... */
+  --typo-track: initial;
+
+  /** @prop --typo-offset: Description... */
+  --typo-offset: 0;
+
+  display: block;
+}
+
+@include global.typo-level-declaration(self.$levels);
+@include global.typo-weight-declaration();
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--typo-scale);
+  font-weight: var(--typo-weight);
+  letter-spacing: var(--typo-track);
+  line-height: var(--typo-lead);
+  margin: 0;
+
+  @include global.typo-trim-offset();
+}

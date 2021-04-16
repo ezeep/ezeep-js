@@ -5,21 +5,116 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
-
+    interface EjsTypoBody {
+        /**
+          * Description...
+         */
+        "level": TypoParagraphLevelTypes;
+        /**
+          * Description...
+         */
+        "weight": TypoWeightTypes;
+    }
+    interface EjsTypoHeading {
+        /**
+          * Description...
+         */
+        "level": TypoHeadingLevelTypes;
+        /**
+          * Description...
+         */
+        "tag": TypoHeadingTagTypes;
+        /**
+          * Description...
+         */
+        "weight": TypoWeightTypes;
+    }
+    interface EjsTypoParagraph {
+        /**
+          * Description...
+         */
+        "level": TypoParagraphLevelTypes;
+        /**
+          * Description...
+         */
+        "weight": TypoWeightTypes;
+    }
 }
 declare global {
+    interface HTMLEjsTypoBodyElement extends Components.EjsTypoBody, HTMLStencilElement {
+    }
+    var HTMLEjsTypoBodyElement: {
+        prototype: HTMLEjsTypoBodyElement;
+        new (): HTMLEjsTypoBodyElement;
+    };
+    interface HTMLEjsTypoHeadingElement extends Components.EjsTypoHeading, HTMLStencilElement {
+    }
+    var HTMLEjsTypoHeadingElement: {
+        prototype: HTMLEjsTypoHeadingElement;
+        new (): HTMLEjsTypoHeadingElement;
+    };
+    interface HTMLEjsTypoParagraphElement extends Components.EjsTypoParagraph, HTMLStencilElement {
+    }
+    var HTMLEjsTypoParagraphElement: {
+        prototype: HTMLEjsTypoParagraphElement;
+        new (): HTMLEjsTypoParagraphElement;
+    };
     interface HTMLElementTagNameMap {
+        "ejs-typo-body": HTMLEjsTypoBodyElement;
+        "ejs-typo-heading": HTMLEjsTypoHeadingElement;
+        "ejs-typo-paragraph": HTMLEjsTypoParagraphElement;
     }
 }
 declare namespace LocalJSX {
+    interface EjsTypoBody {
+        /**
+          * Description...
+         */
+        "level"?: TypoParagraphLevelTypes;
+        /**
+          * Description...
+         */
+        "weight"?: TypoWeightTypes;
+    }
+    interface EjsTypoHeading {
+        /**
+          * Description...
+         */
+        "level"?: TypoHeadingLevelTypes;
+        /**
+          * Description...
+         */
+        "tag"?: TypoHeadingTagTypes;
+        /**
+          * Description...
+         */
+        "weight"?: TypoWeightTypes;
+    }
+    interface EjsTypoParagraph {
+        /**
+          * Description...
+         */
+        "level"?: TypoParagraphLevelTypes;
+        /**
+          * Description...
+         */
+        "weight"?: TypoWeightTypes;
+    }
     interface IntrinsicElements {
+        "ejs-typo-body": EjsTypoBody;
+        "ejs-typo-heading": EjsTypoHeading;
+        "ejs-typo-paragraph": EjsTypoParagraph;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "ejs-typo-body": LocalJSX.EjsTypoBody & JSXBase.HTMLAttributes<HTMLEjsTypoBodyElement>;
+            "ejs-typo-heading": LocalJSX.EjsTypoHeading & JSXBase.HTMLAttributes<HTMLEjsTypoHeadingElement>;
+            "ejs-typo-paragraph": LocalJSX.EjsTypoParagraph & JSXBase.HTMLAttributes<HTMLEjsTypoParagraphElement>;
         }
     }
 }

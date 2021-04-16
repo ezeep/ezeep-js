@@ -5,3 +5,43 @@
  */
 
 @use './global.m' as self;
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:root {
+  @include self.color-declaration('light');
+  @include self.spacing-declaration();
+  @include self.media-appearance('dark') {
+    @include self.color-declaration('dark');
+  }
+}
+
+@each $name, $props in self.$font-styles {
+  @font-face {
+    font-family: 'Inter';
+    font-style: nth($props, 1);
+    font-weight: nth($props, 2);
+    src: url('#{self.$font-path}/Inter-#{$name}.woff2') format('woff2');
+  }
+}
+
+* {
+  font-feature-settings: self.$font-features;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: none;
+}
+
+body {
+  background: var(--color-surface-primary);
+  color: var(--color-foreground-primary);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+}
