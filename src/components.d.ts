@@ -40,6 +40,9 @@ export namespace Components {
         "type": IconButtonTypeTypes;
     }
     interface EjsPrint {
+        /**
+          * Description...
+         */
         "withBackdrop": boolean;
     }
     interface EjsRoot {
@@ -177,11 +180,14 @@ declare namespace LocalJSX {
         /**
           * Description...
          */
-        "onPrintCancel"?: (event: CustomEvent<any>) => void;
+        "onPrintCancel"?: (event: CustomEvent<MouseEvent>) => void;
         /**
           * Description...
          */
-        "onPrintSubmit"?: (event: CustomEvent<any>) => void;
+        "onPrintSubmit"?: (event: CustomEvent<MouseEvent>) => void;
+        /**
+          * Description...
+         */
         "withBackdrop"?: boolean;
     }
     interface EjsRoot {

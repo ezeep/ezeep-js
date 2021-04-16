@@ -4,16 +4,16 @@
 
 ## Properties
 
-| Property       | Attribute       | Description | Type      | Default |
-| -------------- | --------------- | ----------- | --------- | ------- |
-| `withBackdrop` | `with-backdrop` |             | `boolean` | `true`  |
+| Property       | Attribute       | Description    | Type      | Default |
+| -------------- | --------------- | -------------- | --------- | ------- |
+| `withBackdrop` | `with-backdrop` | Description... | `boolean` | `true`  |
 
 ## Events
 
-| Event         | Description    | Type               |
-| ------------- | -------------- | ------------------ |
-| `printCancel` | Description... | `CustomEvent<any>` |
-| `printSubmit` | Description... | `CustomEvent<any>` |
+| Event         | Description    | Type                      |
+| ------------- | -------------- | ------------------------- |
+| `printCancel` | Description... | `CustomEvent<MouseEvent>` |
+| `printSubmit` | Description... | `CustomEvent<MouseEvent>` |
 
 ## Dependencies
 

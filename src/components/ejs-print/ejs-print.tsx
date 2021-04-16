@@ -6,13 +6,14 @@ import { Component, Host, Event, EventEmitter, Prop, h } from '@stencil/core'
   shadow: true,
 })
 export class EjsPrint {
+  /** Description... */
   @Prop() withBackdrop: boolean = true
 
   /** Description... */
-  @Event() printCancel: EventEmitter
+  @Event() printCancel: EventEmitter<MouseEvent>
 
   /** Description... */
-  @Event() printSubmit: EventEmitter
+  @Event() printSubmit: EventEmitter<MouseEvent>
 
   private handleCancel = () => {
     this.printCancel.emit()
