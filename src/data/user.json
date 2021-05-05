@@ -1,0 +1,116 @@
+{
+  "id": 1,
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.deo@company.com",
+  "organizations": [
+    {
+      "id": 1,
+      "name": "Organization 1",
+      "printers": [
+        {
+          "id": 1,
+          "name": "Printer Name 1",
+          "location": "Printer Location 1"
+        },
+        {
+          "id": 2,
+          "name": "Printer Name 2",
+          "location": "Printer Location 2"
+        },
+        {
+          "id": 3,
+          "name": "Printer Name 3",
+          "location": "Printer Location 3"
+        },
+        {
+          "id": 4,
+          "name": "Printer Name 4",
+          "location": "Printer Location 4"
+        },
+        {
+          "id": 5,
+          "name": "Printer Name 5",
+          "location": "Printer Location 5"
+        },
+        {
+          "id": 6,
+          "name": "Printer Name 6",
+          "location": "Printer Location 6"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Organization 2",
+      "printers": [
+        {
+          "id": 1,
+          "name": "Printer Name 1",
+          "location": "Printer Location 1"
+        },
+        {
+          "id": 2,
+          "name": "Printer Name 2",
+          "location": "Printer Location 2"
+        },
+        {
+          "id": 3,
+          "name": "Printer Name 3",
+          "location": "Printer Location 3"
+        },
+        {
+          "id": 4,
+          "name": "Printer Name 4",
+          "location": "Printer Location 4"
+        },
+        {
+          "id": 5,
+          "name": "Printer Name 5",
+          "location": "Printer Location 5"
+        },
+        {
+          "id": 6,
+          "name": "Printer Name 6",
+          "location": "Printer Location 6"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Organization 3",
+      "printers": [
+        {
+          "id": 1,
+          "name": "Printer Name 1",
+          "location": "Printer Location 1"
+        },
+        {
+          "id": 2,
+          "name": "Printer Name 2",
+          "location": "Printer Location 2"
+        },
+        {
+          "id": 3,
+          "name": "Printer Name 3",
+          "location": "Printer Location 3"
+        },
+        {
+          "id": 4,
+          "name": "Printer Name 4",
+          "location": "Printer Location 4"
+        },
+        {
+          "id": 5,
+          "name": "Printer Name 5",
+          "location": "Printer Location 5"
+        },
+        {
+          "id": 6,
+          "name": "Printer Name 6",
+          "location": "Printer Location 6"
+        }
+      ]
+    }
+  ]
+}

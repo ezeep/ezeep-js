@@ -21,7 +21,7 @@ export const config: Config = {
     {
       type: 'www',
       serviceWorker: null,
-      copy: [{ src: 'assets' }],
+      copy: [{ src: 'assets' }, { src: 'data' }],
     },
   ],
 }

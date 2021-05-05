@@ -7,6 +7,12 @@ import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes } from './../.
   shadow: true,
 })
 export class EjsIconButton {
+  /**
+   *
+   * Properties
+   *
+   */
+
   /** Description... */
   @Prop() blank: boolean = false
 
@@ -24,6 +30,12 @@ export class EjsIconButton {
 
   /** Description... */
   @Prop() type: IconButtonTypeTypes
+
+  /**
+   *
+   * Render method
+   *
+   */
 
   render() {
     const TagType = this.type !== undefined ? 'button' : 'a'

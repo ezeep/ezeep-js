@@ -7,6 +7,12 @@ import { TypoWeightTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes } from './.
   shadow: true,
 })
 export class EjsTypoHeading {
+  /**
+   *
+   * Properties
+   *
+   */
+
   /** Description... */
   @Prop() level: TypoHeadingLevelTypes = 'primary'
 
@@ -15,6 +21,12 @@ export class EjsTypoHeading {
 
   /** Description... */
   @Prop() weight: TypoWeightTypes = 'heavy'
+
+  /**
+   *
+   * Render method
+   *
+   */
 
   render() {
     const Tag = `h${this.tag.toString()}`

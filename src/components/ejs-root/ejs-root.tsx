@@ -6,17 +6,38 @@ import { Component, Host, State, Listen, Method, h } from '@stencil/core'
   shadow: true,
 })
 export class EjsRoot {
+  /**
+   *
+   * States
+   *
+   */
+
+  /** Description... */
   @State() printOpen: boolean = false
 
+  /**
+   *
+   * Listeners
+   *
+   */
+
+  /** Description... */
   @Listen('printCancel')
-  listenCancel() {
+  listenPrintCancel() {
     this.printOpen = false
   }
 
+  /** Description... */
   @Listen('printSubmit')
-  listenPrint() {
+  listenPrintSubmit() {
     this.printOpen = false
   }
+
+  /**
+   *
+   * Public methods
+   *
+   */
 
   /** Description... */
   @Method()
@@ -29,6 +50,12 @@ export class EjsRoot {
   async closePrint() {
     this.printOpen = false
   }
+
+  /**
+   *
+   * Render method
+   *
+   */
 
   render() {
     return <Host>{this.printOpen ? <ejs-print /> : null}</Host>

@@ -8,8 +8,20 @@ import { IconNameTypes } from './../../shared/types'
   assetsDirs: ['assets'],
 })
 export class EjsIcon {
+  /**
+   *
+   * Properties
+   *
+   */
+
   /** Description... */
   @Prop() name!: IconNameTypes
+
+  /**
+   *
+   * Render method
+   *
+   */
 
   render() {
     const glyphsPath = getAssetPath('./assets/glyphs.svg')

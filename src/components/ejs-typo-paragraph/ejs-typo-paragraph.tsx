@@ -7,11 +7,23 @@ import { TypoWeightTypes, TypoParagraphLevelTypes } from './../../shared/types'
   shadow: true,
 })
 export class EjsTypoParagraph {
+  /**
+   *
+   * Properties
+   *
+   */
+
   /** Description... */
   @Prop() level: TypoParagraphLevelTypes = 'primary'
 
   /** Description... */
   @Prop() weight: TypoWeightTypes = 'soft'
+
+  /**
+   *
+   * Render method
+   *
+   */
 
   render() {
     return (
