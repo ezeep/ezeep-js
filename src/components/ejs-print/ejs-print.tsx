@@ -46,6 +46,7 @@ export class EjsPrint {
     this.printSubmit.emit()
   }
 
+
   /**
    *
    * Lifecycle methods
@@ -82,6 +83,7 @@ export class EjsPrint {
           </div>
           <button onClick={this.handleCancel}>Cancel</button>
           <button onClick={this.handlePrint}>Print</button>
+         <ejs-auth clientID="bGTh6s0o7amE1RekKMBipTygosV0BEJGkLuDJZs9" redirectURI="http://localhost:3333"></ejs-auth>
         </div>
       </Host>
     )

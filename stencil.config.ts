@@ -24,4 +24,8 @@ export const config: Config = {
       copy: [{ src: 'assets' }, { src: 'data' }],
     },
   ],
+  /* devServer: {
+    basePath: '/code',
+    port: 3000
+  } */
 }
