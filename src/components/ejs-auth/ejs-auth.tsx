@@ -31,7 +31,7 @@ export class EjsAuth {
     const arr = new Uint8Array(128);
     const randomValueArray = crypto.getRandomValues(arr);
     const codeVerifier = btoa(randomValueArray.toString()).substr(0, 128);
-    console.log(this.codeVerifier);
+    console.log(codeVerifier);
     return codeVerifier;
   }
 
@@ -51,33 +51,46 @@ export class EjsAuth {
     this.urlParams.append('response_type', 'code');
     this.urlParams.append('client_id', this.clientID);
     this.urlParams.append('redirect_uri', this.redirectURI);
+    this.urlParams.append('code_challenge', this.codeChallenge);
+    this.urlParams.append('code_challenge_method', 'S256');
     this.authURI.search = this.urlParams.toString();
   }
 
   getAccessToken() {
     fetch(this.accessTokenURl, {
       method: 'POST',
-      headers: {
-        'Authorization': 'Basic ' + btoa(this.clientID)
-      },
+      /*       headers: {
+              'Authorization': 'Basic ' + btoa(this.clientID)
+            }, */
       body: JSON.stringify({
         grant_type: 'authorization_code',
         scope: 'printing',
         code: this.code,
-        redirect_uri: this.redirectURI
+        redirect_uri: this.redirectURI,
+        code_verifier: this.codeVerifier
       })
-    }
-    )
-      .then(response => console.log(response.json()));
+    }).then(response => console.log(response.json()));
+  }
+
+  authorize(authUri: string) {
+    fetch(authUri)
+      .then(response => console.log(response));
   }
 
   componentWillLoad() {
     if (this.getCode()) {
       this.getAccessToken();
     } else {
-      this.buildAuthURI();
-    }
+      this.codeVerifier = this.generateCodeVerifier();
+      this.generateCodeChallenge(this.codeVerifier)
+        .then(challenge => {
+          this.codeChallenge = challenge;
+          this.buildAuthURI();
+          console.log(this.authURI.toString());
 
+          console.log(this.codeChallenge);
+        })
+    }
   }
 
   render() {
@@ -85,7 +98,6 @@ export class EjsAuth {
       return (
         <Host>
           <a class="button" href={this.authURI.toString()}>Login</a>
-          <button onClick={this.generateCodeVerifier}>generateCodeVerifier</button>
         </Host>
       );
     } else {
