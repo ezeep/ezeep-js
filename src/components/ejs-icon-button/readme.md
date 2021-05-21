@@ -4,14 +4,14 @@
 
 ## Properties
 
-| Property   | Attribute  | Description    | Type                                     | Default     |
-| ---------- | ---------- | -------------- | ---------------------------------------- | ----------- |
-| `blank`    | `blank`    | Description... | `boolean`                                | `false`     |
-| `disabled` | `disabled` | Description... | `boolean`                                | `false`     |
-| `href`     | `href`     | Description... | `string`                                 | `undefined` |
-| `icon`     | `icon`     | Description... | `"circle" \| "printer"`                  | `'circle'`  |
-| `level`    | `level`    | Description... | `"primary" \| "secondary" \| "tertiary"` | `'primary'` |
-| `type`     | `type`     | Description... | `"button"`                               | `undefined` |
+| Property   | Attribute  | Description    | Type                                               | Default     |
+| ---------- | ---------- | -------------- | -------------------------------------------------- | ----------- |
+| `blank`    | `blank`    | Description... | `boolean`                                          | `false`     |
+| `disabled` | `disabled` | Description... | `boolean`                                          | `false`     |
+| `href`     | `href`     | Description... | `string`                                           | `undefined` |
+| `icon`     | `icon`     | Description... | `"checkmark" \| "circle" \| "expand" \| "printer"` | `'circle'`  |
+| `level`    | `level`    | Description... | `"primary" \| "secondary" \| "tertiary"`           | `'primary'` |
+| `type`     | `type`     | Description... | `"button"`                                         | `undefined` |
 
 ## CSS Custom Properties
 

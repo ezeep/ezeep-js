@@ -1,6 +1,6 @@
 export type IconButtonLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type IconButtonTypeTypes = 'button'
-export type IconNameTypes = 'circle' | 'printer'
+export type IconNameTypes = 'circle' | 'printer' | 'expand' | 'checkmark'
 export type PrintOrganizationType = { id: number; name: string; printers: PrintPrinterType[] }
 export type PrintPrinterType = { id: number; name: string; location: string }
 export type PrintUserType = {
@@ -10,6 +10,7 @@ export type PrintUserType = {
   email: string
   organizations: PrintOrganizationType[]
 }
+export type SelectOptionType = { id: number; title: string; meta: string }
 export type TypoBodyLevelTypes = 'primary' | 'secondary'
 export type TypoHeadingLevelTypes =
   | 'primary'
