@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
+import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectOptionType, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
     interface EjsAuth {
         "clientID": string;
@@ -42,6 +42,20 @@ export namespace Components {
           * Description...
          */
         "type": IconButtonTypeTypes;
+    }
+    interface EjsInputSelect {
+        /**
+          * Description...
+         */
+        "label": string;
+        /**
+          * Description...
+         */
+        "options": SelectOptionType[];
+        /**
+          * Description...
+         */
+        "placeholder": string;
     }
     interface EjsPrint {
         /**
@@ -83,16 +97,6 @@ export namespace Components {
          */
         "weight": TypoWeightTypes;
     }
-    interface EjsTypoParagraph {
-        /**
-          * Description...
-         */
-        "level": TypoParagraphLevelTypes;
-        /**
-          * Description...
-         */
-        "weight": TypoWeightTypes;
-    }
 }
 declare global {
     interface HTMLEjsAuthElement extends Components.EjsAuth, HTMLStencilElement {
@@ -112,6 +116,12 @@ declare global {
     var HTMLEjsIconButtonElement: {
         prototype: HTMLEjsIconButtonElement;
         new (): HTMLEjsIconButtonElement;
+    };
+    interface HTMLEjsInputSelectElement extends Components.EjsInputSelect, HTMLStencilElement {
+    }
+    var HTMLEjsInputSelectElement: {
+        prototype: HTMLEjsInputSelectElement;
+        new (): HTMLEjsInputSelectElement;
     };
     interface HTMLEjsPrintElement extends Components.EjsPrint, HTMLStencilElement {
     }
@@ -137,21 +147,15 @@ declare global {
         prototype: HTMLEjsTypoHeadingElement;
         new (): HTMLEjsTypoHeadingElement;
     };
-    interface HTMLEjsTypoParagraphElement extends Components.EjsTypoParagraph, HTMLStencilElement {
-    }
-    var HTMLEjsTypoParagraphElement: {
-        prototype: HTMLEjsTypoParagraphElement;
-        new (): HTMLEjsTypoParagraphElement;
-    };
     interface HTMLElementTagNameMap {
         "ejs-auth": HTMLEjsAuthElement;
         "ejs-icon": HTMLEjsIconElement;
         "ejs-icon-button": HTMLEjsIconButtonElement;
+        "ejs-input-select": HTMLEjsInputSelectElement;
         "ejs-print": HTMLEjsPrintElement;
         "ejs-root": HTMLEjsRootElement;
         "ejs-typo-body": HTMLEjsTypoBodyElement;
         "ejs-typo-heading": HTMLEjsTypoHeadingElement;
-        "ejs-typo-paragraph": HTMLEjsTypoParagraphElement;
     }
 }
 declare namespace LocalJSX {
@@ -190,6 +194,20 @@ declare namespace LocalJSX {
           * Description...
          */
         "type"?: IconButtonTypeTypes;
+    }
+    interface EjsInputSelect {
+        /**
+          * Description...
+         */
+        "label"?: string;
+        /**
+          * Description...
+         */
+        "options"?: SelectOptionType[];
+        /**
+          * Description...
+         */
+        "placeholder"?: string;
     }
     interface EjsPrint {
         /**
@@ -231,25 +249,15 @@ declare namespace LocalJSX {
          */
         "weight"?: TypoWeightTypes;
     }
-    interface EjsTypoParagraph {
-        /**
-          * Description...
-         */
-        "level"?: TypoParagraphLevelTypes;
-        /**
-          * Description...
-         */
-        "weight"?: TypoWeightTypes;
-    }
     interface IntrinsicElements {
         "ejs-auth": EjsAuth;
         "ejs-icon": EjsIcon;
         "ejs-icon-button": EjsIconButton;
+        "ejs-input-select": EjsInputSelect;
         "ejs-print": EjsPrint;
         "ejs-root": EjsRoot;
         "ejs-typo-body": EjsTypoBody;
         "ejs-typo-heading": EjsTypoHeading;
-        "ejs-typo-paragraph": EjsTypoParagraph;
     }
 }
 export { LocalJSX as JSX };
@@ -259,11 +267,11 @@ declare module "@stencil/core" {
             "ejs-auth": LocalJSX.EjsAuth & JSXBase.HTMLAttributes<HTMLEjsAuthElement>;
             "ejs-icon": LocalJSX.EjsIcon & JSXBase.HTMLAttributes<HTMLEjsIconElement>;
             "ejs-icon-button": LocalJSX.EjsIconButton & JSXBase.HTMLAttributes<HTMLEjsIconButtonElement>;
+            "ejs-input-select": LocalJSX.EjsInputSelect & JSXBase.HTMLAttributes<HTMLEjsInputSelectElement>;
             "ejs-print": LocalJSX.EjsPrint & JSXBase.HTMLAttributes<HTMLEjsPrintElement>;
             "ejs-root": LocalJSX.EjsRoot & JSXBase.HTMLAttributes<HTMLEjsRootElement>;
             "ejs-typo-body": LocalJSX.EjsTypoBody & JSXBase.HTMLAttributes<HTMLEjsTypoBodyElement>;
             "ejs-typo-heading": LocalJSX.EjsTypoHeading & JSXBase.HTMLAttributes<HTMLEjsTypoHeadingElement>;
-            "ejs-typo-paragraph": LocalJSX.EjsTypoParagraph & JSXBase.HTMLAttributes<HTMLEjsTypoParagraphElement>;
         }
     }
 }

@@ -69,8 +69,6 @@ export class EjsPrint {
    */
 
   render() {
-    console.log(this.user)
-
     return (
       <Host>
         {this.withBackdrop ? <div id="backdrop" onClick={this.handleCancel} /> : null}
@@ -81,9 +79,22 @@ export class EjsPrint {
               <ejs-typo-body>My Document.docx</ejs-typo-body>
             </div>
           </div>
-          <button onClick={this.handleCancel}>Cancel</button>
-          <button onClick={this.handlePrint}>Print</button>
          <ejs-auth clientID="bGTh6s0o7amE1RekKMBipTygosV0BEJGkLuDJZs9" redirectURI="http://localhost:3333"></ejs-auth>
+          <div id="content">
+            <ejs-input-select
+              label="Printer"
+              placeholder="Select a printer"
+              options={this.user.organizations[0].printers.map((printer) => ({
+                id: printer.id,
+                title: printer.name,
+                meta: printer.location,
+              }))}
+            />
+          </div>
+          <div id="footer">
+            <button onClick={this.handleCancel}>Cancel</button>
+            <button onClick={this.handlePrint}>Print</button>
+          </div>
         </div>
       </Host>
     )

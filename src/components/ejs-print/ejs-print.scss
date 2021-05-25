@@ -35,7 +35,12 @@
 }
 
 #dialog {
-  background: white;
+  background: var(--color-surface-tertiary);
   position: relative;
   z-index: 1;
+}
+
+#content {
+  background: var(--color-surface-secondary);
+  padding: var(--spacing-2);
 }

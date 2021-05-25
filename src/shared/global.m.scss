@@ -43,6 +43,7 @@ $colors: (
     'outline-solid-secondary': rgb(209 209 209),
     'outline-translucent-primary': rgba(119 119 119 / 10%),
     'outline-translucent-secondary': rgba(119 119 119 / 16%),
+    'outline-translucent-tertiary': rgba(119 119 119 / 22%),
     'overlay': rgba(0 0 0 / 26%),
   ),
   'dark': (
@@ -67,6 +68,7 @@ $colors: (
     'outline-solid-secondary': rgb(62 62 62),
     'outline-translucent-primary': rgba(119 119 119 / 28%),
     'outline-translucent-secondary': rgba(119 119 119 / 34%),
+    'outline-translucent-tertiary': rgba(119 119 119 / 40%),
     'overlay': rgba(0 0 0 / 68%),
   ),
 );
@@ -87,7 +89,13 @@ $font-styles: (
   ),
 );
 $font-weights: (('soft', 400), ('strong', 500), ('heavy', 600));
-$spacings: (4px, 8px, 12px, 20px, 32px, 52px, 84px);
+$spacings: (4px, 6px, 10px, 16px, 26px, 42px, 68px);
+$easings: (
+  'in-quart': cubic-bezier(0.11, 0, 0.5, 0),
+  'in-expo': cubic-bezier(0.7, 0, 0.84, 0),
+  'out-quart': cubic-bezier(0.25, 1, 0.5, 1),
+  'out-expo': cubic-bezier(0.16, 1, 0.3, 1),
+);
 
 /**
  *
@@ -163,6 +171,12 @@ $spacings: (4px, 8px, 12px, 20px, 32px, 52px, 84px);
 @mixin spacing-declaration() {
   @each $spacing in $spacings {
     --spacing-#{list.index($spacings, $spacing)}: #{$spacing};
+  }
+}
+
+@mixin easing-declaration() {
+  @each $easing in $easings {
+    --easing-#{list.nth($easing, 1)}: #{list.nth($easing, 2)};
   }
 }
 
