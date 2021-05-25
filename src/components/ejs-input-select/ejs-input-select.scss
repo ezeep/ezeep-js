@@ -24,16 +24,17 @@
   --host-shadow: 0 0 0 0.5px;
 
   /** @prop --indicator-duration: Description... */
-  --indicator-duration: 0.2s;
+  --indicator-duration: 0.25s;
 
   /** @prop --indicator-opacity: Description... */
   --indicator-opacity: 0;
 
   /** @prop --indicator-transform: Description... */
-  --indicator-transform: scale(0.7, 0.7);
+  --indicator-transform: translateX(var(--spacing-3));
 
   /** @prop --indicator-transition: Description... */
-  --indicator-transition: opacity var(--indicator-duration), transform var(--indicator-duration),
+  --indicator-transition: opacity var(--indicator-duration) var(--easing-out-quart),
+    transform var(--indicator-duration) var(--easing-out-quart),
     visibility var(--indicator-duration) var(--indicator-duration);
 
   /** @prop --indicator-visibility: Description... */
@@ -117,8 +118,9 @@
 
   &.is-selected {
     --indicator-opacity: 1;
-    --indicator-transform: scale(1, 1);
-    --indicator-transition: opacity var(--indicator-duration), transform var(--indicator-duration),
+    --indicator-transform: translateX(0);
+    --indicator-transition: opacity var(--indicator-duration) var(--easing-out-quart),
+      transform var(--indicator-duration) var(--easing-out-quart),
       visibility var(--indicator-duration) 0s;
     --indicator-visibility: visible;
   }
