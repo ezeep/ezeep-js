@@ -24,6 +24,7 @@
 #ejs {
   @include self.color-declaration('light');
   @include self.spacing-declaration();
+  @include self.easing-declaration();
   @include self.media-appearance('dark') {
     @include self.color-declaration('dark');
   }
