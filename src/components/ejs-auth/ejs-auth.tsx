@@ -9,13 +9,13 @@ export class EjsAuth {
 
   @Prop() clientID: string;
   @Prop() redirectURI: string;
-  code: string;
-  authURI = new URL('https://account.ezeep.com/oauth/authorize');
-  urlParams = new URLSearchParams();
-  isAuthorized = false;
-  accessTokenURl = 'https://account.ezeep.com/oauth/access_token';
-  codeVerifier: string;
-  codeChallenge: string;
+  @Prop({ mutable: true }) code: string;
+  @Prop() authURI = new URL('https://account.ezeep.com/oauth/authorize');
+  @Prop() urlParams = new URLSearchParams();
+  @Prop() isAuthorized = false;
+  @Prop() accessTokenURl = 'https://account.ezeep.com/oauth/access_token';
+  @Prop({ mutable: true }) codeVerifier: string;
+  @Prop({ mutable: true }) codeChallenge: string;
 
   getCode(): boolean {
     const urlParams = new URLSearchParams(window.location.search);
@@ -31,7 +31,7 @@ export class EjsAuth {
     const arr = new Uint8Array(128);
     const randomValueArray = crypto.getRandomValues(arr);
     const codeVerifier = btoa(randomValueArray.toString()).substr(0, 128);
-    console.log(codeVerifier);
+    sessionStorage.setItem('codeVerifier', codeVerifier);
     return codeVerifier;
   }
 
@@ -78,6 +78,7 @@ export class EjsAuth {
   }
 
   componentWillLoad() {
+    console.log(this.clientID, this.redirectURI);
     if (this.getCode()) {
       this.getAccessToken();
     } else {
@@ -86,9 +87,6 @@ export class EjsAuth {
         .then(challenge => {
           this.codeChallenge = challenge;
           this.buildAuthURI();
-          console.log(this.authURI.toString());
-
-          console.log(this.codeChallenge);
         })
     }
   }

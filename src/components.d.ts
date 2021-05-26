@@ -8,8 +8,15 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectOptionType, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
     interface EjsAuth {
+        "accessTokenURl": string;
+        "authURI": URL;
         "clientID": string;
+        "code": string;
+        "codeChallenge": string;
+        "codeVerifier": string;
+        "isAuthorized": boolean;
         "redirectURI": string;
+        "urlParams": URLSearchParams;
     }
     interface EjsIcon {
         /**
@@ -160,8 +167,15 @@ declare global {
 }
 declare namespace LocalJSX {
     interface EjsAuth {
+        "accessTokenURl"?: string;
+        "authURI"?: URL;
         "clientID"?: string;
+        "code"?: string;
+        "codeChallenge"?: string;
+        "codeVerifier"?: string;
+        "isAuthorized"?: boolean;
         "redirectURI"?: string;
+        "urlParams"?: URLSearchParams;
     }
     interface EjsIcon {
         /**

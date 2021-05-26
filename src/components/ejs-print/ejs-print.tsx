@@ -79,7 +79,6 @@ export class EjsPrint {
               <ejs-typo-body>My Document.docx</ejs-typo-body>
             </div>
           </div>
-         <ejs-auth clientID="bGTh6s0o7amE1RekKMBipTygosV0BEJGkLuDJZs9" redirectURI="http://localhost:3333"></ejs-auth>
           <div id="content">
             <ejs-input-select
               label="Printer"
