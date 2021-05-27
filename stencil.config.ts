@@ -1,5 +1,6 @@
 import { Config } from '@stencil/core'
 import { sass } from '@stencil/sass'
+import fs from 'fs';
 
 export const config: Config = {
   namespace: 'ezeep-js',
@@ -24,8 +25,10 @@ export const config: Config = {
       copy: [{ src: 'assets' }, { src: 'data' }],
     },
   ],
-  /* devServer: {
-    basePath: '/code',
-    port: 3000
-  } */
+  devServer: {
+    https: {
+      cert: fs.readFileSync('certificate.pem', 'utf-8'),
+      key: fs.readFileSync('key.pem', 'utf-8')
+    }
+  }
 }

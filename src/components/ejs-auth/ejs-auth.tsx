@@ -59,9 +59,6 @@ export class EjsAuth {
   getAccessToken() {
     fetch(this.accessTokenURl, {
       method: 'POST',
-      /*       headers: {
-              'Authorization': 'Basic ' + btoa(this.clientID)
-            }, */
       body: JSON.stringify({
         grant_type: 'authorization_code',
         scope: 'printing',
@@ -72,14 +69,9 @@ export class EjsAuth {
     }).then(response => console.log(response.json()));
   }
 
-  authorize(authUri: string) {
-    fetch(authUri)
-      .then(response => console.log(response));
-  }
-
   componentWillLoad() {
-    console.log(this.clientID, this.redirectURI);
     if (this.getCode()) {
+      this.codeVerifier = sessionStorage.getItem('codeVerifier');
       this.getAccessToken();
     } else {
       this.codeVerifier = this.generateCodeVerifier();
