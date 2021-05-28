@@ -17,6 +17,7 @@ export namespace Components {
         "codeVerifier": string;
         "isAuthorized": boolean;
         "redirectURI": string;
+        "refreshToken": string;
         "urlParams": URLSearchParams;
     }
     interface EjsIcon {
@@ -177,6 +178,7 @@ declare namespace LocalJSX {
         "codeVerifier"?: string;
         "isAuthorized"?: boolean;
         "redirectURI"?: string;
+        "refreshToken"?: string;
         "urlParams"?: URLSearchParams;
     }
     interface EjsIcon {

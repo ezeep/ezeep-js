@@ -12,11 +12,12 @@ export class EjsAuth {
   @Prop({ mutable: true }) code: string;
   @Prop() authURI = new URL('https://account.dev.azdev.ezeep.com/oauth/authorize/');
   @Prop() urlParams = new URLSearchParams();
-  @Prop() isAuthorized = false;
+  @Prop({ mutable: true }) isAuthorized = false;
   @Prop() accessTokenURl = 'https://account.dev.azdev.ezeep.com/oauth/access_token/';
   @Prop({ mutable: true }) codeVerifier: string;
   @Prop({ mutable: true }) codeChallenge: string;
   @Prop() accessToken: string;
+  @Prop() refreshToken: string;
 
   getCode(): boolean {
     const urlParams = new URLSearchParams(window.location.search);
@@ -79,25 +80,42 @@ export class EjsAuth {
       })
     }).then(response => {
       return response.json(); // parse response
-    }).then(data => console.log(data)); // actual object
+    }).then(data => { // actual object
+      if (data.access_token) {
+        this.isAuthorized = true;
+        sessionStorage.setItem('isAuthorized', this.isAuthorized.toString());
+
+        this.accessToken = data.access_token;
+        sessionStorage.setItem('access_token', this.accessToken)
+
+        this.refreshToken = data.refresh_token;
+        sessionStorage.setItem('refreshToken', this.refreshToken);
+      }
+    }); 
   }
 
   componentWillLoad() {
-    if (this.getCode()) {
-      this.codeVerifier = sessionStorage.getItem('codeVerifier');
-      this.getAccessToken();
-    } else {
-      this.codeVerifier = this.generateCodeVerifier();
-      this.generateCodeChallenge(this.codeVerifier)
-        .then(challenge => {
-          this.codeChallenge = challenge;
-          this.buildAuthURI();
-        })
+    if (sessionStorage.getItem('isAuthorized')) {
+      this.isAuthorized = !!sessionStorage.getItem('isAuthorized');
+    }
+
+    if (this.isAuthorized === false) {
+      if (this.getCode()) {
+        this.codeVerifier = sessionStorage.getItem('codeVerifier');
+        this.getAccessToken();
+      } else {
+        this.codeVerifier = this.generateCodeVerifier();
+        this.generateCodeChallenge(this.codeVerifier)
+          .then(challenge => {
+            this.codeChallenge = challenge;
+            this.buildAuthURI();
+          })
+      }
     }
   }
 
   render() {
-    if (!this.isAuthorized) {
+    if (this.isAuthorized === false) {
       return (
         <Host>
           <a class="button" href={this.authURI.toString()}>Login</a>
