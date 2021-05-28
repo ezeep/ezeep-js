@@ -94,7 +94,7 @@ export class EjsPrint {
           <div id="footer">
             <button onClick={this.handleCancel}>Cancel</button>
             <button onClick={this.handlePrint}>Print</button>
-            <ejs-auth clientID="bGTh6s0o7amE1RekKMBipTygosV0BEJGkLuDJZs9" redirectURI="https://develop.dev.azdev.ezeep.com:3333/"></ejs-auth>
+            <ejs-auth clientID="9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW" redirectURI="https://develop.dev.azdev.ezeep.com:3333/"></ejs-auth>
           </div>
         </div>
       </Host>

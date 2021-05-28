@@ -10,12 +10,13 @@ export class EjsAuth {
   @Prop() clientID: string;
   @Prop() redirectURI: string;
   @Prop({ mutable: true }) code: string;
-  @Prop() authURI = new URL('https://account.ezeep.com/oauth/authorize');
+  @Prop() authURI = new URL('https://account.dev.azdev.ezeep.com/oauth/authorize/');
   @Prop() urlParams = new URLSearchParams();
   @Prop() isAuthorized = false;
-  @Prop() accessTokenURl = 'https://account.ezeep.com/oauth/access_token';
+  @Prop() accessTokenURl = 'https://account.dev.azdev.ezeep.com/oauth/access_token/';
   @Prop({ mutable: true }) codeVerifier: string;
   @Prop({ mutable: true }) codeChallenge: string;
+  @Prop() accessToken: string;
 
   getCode(): boolean {
     const urlParams = new URLSearchParams(window.location.search);
@@ -27,7 +28,7 @@ export class EjsAuth {
     }
   }
 
-  generateCodeVerifier() {
+  generateCodeVerifier(): string {
     const arr = new Uint8Array(128);
     const randomValueArray = crypto.getRandomValues(arr);
     const codeVerifier = btoa(randomValueArray.toString()).substr(0, 128);
@@ -35,7 +36,7 @@ export class EjsAuth {
     return codeVerifier;
   }
 
-  async generateCodeChallenge(codeVerifier: string) {
+  async generateCodeChallenge(codeVerifier: string): Promise<string> {
     const encoder = new TextEncoder;
     const codeData = encoder.encode(codeVerifier);
     const digest = await crypto.subtle.digest('SHA-256', codeData);
@@ -56,17 +57,29 @@ export class EjsAuth {
     this.authURI.search = this.urlParams.toString();
   }
 
+  encodeFormData(data: { [x: string]: string | number | boolean; }): string {
+    return Object.keys(data)
+      .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+      .join('&');
+  }
+
   getAccessToken() {
     fetch(this.accessTokenURl, {
+      headers: {
+        'Authorization': 'Basic ' + btoa(this.clientID + ':'),
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
       method: 'POST',
-      body: JSON.stringify({
+      body: this.encodeFormData({
         grant_type: 'authorization_code',
         scope: 'printing',
         code: this.code,
         redirect_uri: this.redirectURI,
         code_verifier: this.codeVerifier
       })
-    }).then(response => console.log(response.json()));
+    }).then(response => {
+      return response.json(); // parse response
+    }).then(data => console.log(data)); // actual object
   }
 
   componentWillLoad() {
@@ -97,7 +110,5 @@ export class EjsAuth {
         </Host>
       )
     }
-
   }
-
 }

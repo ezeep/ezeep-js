@@ -8,6 +8,7 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectOptionType, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
     interface EjsAuth {
+        "accessToken": string;
         "accessTokenURl": string;
         "authURI": URL;
         "clientID": string;
@@ -167,6 +168,7 @@ declare global {
 }
 declare namespace LocalJSX {
     interface EjsAuth {
+        "accessToken"?: string;
         "accessTokenURl"?: string;
         "authURI"?: URL;
         "clientID"?: string;
