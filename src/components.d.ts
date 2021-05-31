@@ -5,20 +5,14 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { EjsAuthorization } from "./shared/auth";
 import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectOptionType, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
     interface EjsAuth {
-        "accessToken": string;
-        "accessTokenURl": string;
-        "authURI": URL;
+        "auth": EjsAuthorization;
+        "authURI": string;
         "clientID": string;
-        "code": string;
-        "codeChallenge": string;
-        "codeVerifier": string;
-        "isAuthorized": boolean;
         "redirectURI": string;
-        "refreshToken": string;
-        "urlParams": URLSearchParams;
     }
     interface EjsIcon {
         /**
@@ -169,17 +163,10 @@ declare global {
 }
 declare namespace LocalJSX {
     interface EjsAuth {
-        "accessToken"?: string;
-        "accessTokenURl"?: string;
-        "authURI"?: URL;
+        "auth"?: EjsAuthorization;
+        "authURI"?: string;
         "clientID"?: string;
-        "code"?: string;
-        "codeChallenge"?: string;
-        "codeVerifier"?: string;
-        "isAuthorized"?: boolean;
         "redirectURI"?: string;
-        "refreshToken"?: string;
-        "urlParams"?: URLSearchParams;
     }
     interface EjsIcon {
         /**
