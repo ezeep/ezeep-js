@@ -1,3 +1,5 @@
+import { createStore } from "@stencil/store";
+
 export class EjsAuthorization {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI;
@@ -15,6 +17,7 @@ export class EjsAuthorization {
   codeChallenge: string;
   accessToken: string;
   refreshToken: string;
+
 
   setCodeFromURL(): boolean {
     const urlParams = new URLSearchParams(window.location.search);
@@ -36,7 +39,6 @@ export class EjsAuthorization {
       sessionStorage.setItem('codeVerifier', codeVerifier);
       this.codeVerifier = codeVerifier;
     }
-
   }
 
   async generateCodeChallenge(codeVerifier: string) {
@@ -88,6 +90,7 @@ export class EjsAuthorization {
 
         this.accessToken = data.access_token;
         sessionStorage.setItem('access_token', this.accessToken)
+        authStore.state.accessToken = this.accessToken;
 
         this.refreshToken = data.refresh_token;
         sessionStorage.setItem('refreshToken', this.refreshToken);
@@ -99,3 +102,9 @@ export class EjsAuthorization {
 
   }
 }
+
+const authStore = createStore({
+  accessToken:  ''
+});
+
+export default authStore;

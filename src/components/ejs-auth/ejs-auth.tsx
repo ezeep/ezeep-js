@@ -1,5 +1,5 @@
 import { Component, Host, h, Prop } from '@stencil/core';
-import { EjsAuthorization } from '../../shared/auth';
+import { EjsAuthorization } from '../../services/auth';
 
 @Component({
   tag: 'ejs-auth',
@@ -35,6 +35,15 @@ export class EjsAuth {
     }
   }
 
+  getConfiguration() {
+    fetch('https://printapi.dev.azdev.ezeep.com/sfapi/GetConfiguration/', {
+      method: 'GET',
+      headers: {
+        'Authorization' : 'Bearer ' + sessionStorage.getItem('access_token')
+      }
+    }).then( response => response.json()).then(data => console.log(data));
+  }
+
   render() {
     if (this.auth.isAuthorized === false) {
       return (
@@ -46,6 +55,7 @@ export class EjsAuth {
       return (
         <Host>
           <p>Logged in!</p>
+          <button onClick={this.getConfiguration}>get config</button>
         </Host>
       )
     }
