@@ -31,6 +31,7 @@
   justify-content: center;
   margin: 0;
   min-height: 100vh;
+
   @include self.color-declaration('light');
   @include self.spacing-declaration();
   @include self.easing-declaration();

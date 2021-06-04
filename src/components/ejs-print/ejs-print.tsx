@@ -145,8 +145,12 @@ export class EjsPrint {
             </div>
           </div>
           <div id="footer">
-            <button onClick={this.handleCancel}>Cancel</button>
-            <button onClick={this.handlePrint}>Print</button>
+            <ejs-text-button type="button" level="secondary" onClick={this.handleCancel}>
+              Cancel
+            </ejs-text-button>
+            <ejs-text-button type="button" onClick={this.handlePrint}>
+              Print
+            </ejs-text-button>
             <ejs-auth clientID={this.clientID} redirectURI={this.redirectURI}></ejs-auth>
           </div>
         </div>
