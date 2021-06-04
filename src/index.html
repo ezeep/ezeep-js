@@ -9,15 +9,19 @@
     <link rel="stylesheet" type="text/css" href="/build/ezeep-js.css" />
   </head>
   <body>
-   <div style="height: 500px; width: 500px;" id=ejs>
+    <div style="height: 500px; width: 500px" id="ejs">
       <ejs-icon-button
         id="print-trigger"
         icon="printer"
         slot="trigger"
         type="button"
       ></ejs-icon-button>
-      <ejs-root id="print-root" clientid="9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW" redirecturi="https://develop.dev.azdev.ezeep.com:3333/"></ejs-root>
-   </div>
+      <ejs-root
+        id="print-root"
+        clientid="9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW"
+        redirecturi="https://develop.dev.azdev.ezeep.com:3333/"
+      ></ejs-root>
+    </div>
     <script>
       const root = document.querySelector('#print-root')
       const trigger = document.querySelector('#print-trigger')

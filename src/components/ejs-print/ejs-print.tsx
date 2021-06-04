@@ -1,4 +1,4 @@
-import { Component, Host, Listen, Event, EventEmitter, State, h } from '@stencil/core'
+import { Component, Host, Listen, Event, EventEmitter, State, Prop, h } from '@stencil/core'
 import { PrintUserType } from './../../shared/types'
 
 @Component({
@@ -12,14 +12,25 @@ export class EjsPrint {
 
   /**
    *
-   * Events
+   * Properties
    *
    */
 
+  /** Description... */
+  @Prop() clientID: string
+
+  /** Description... */
+  @Prop() redirectURI: string
+
+  /**
+   *
+   * States
+   *
+   */
+
+  /** Description... */
   @State() showBackdrop: boolean = false
 
-  @Prop() clientID: string;
-  @Prop() redirectURI: string;
   /**
    *
    * Events
@@ -58,7 +69,6 @@ export class EjsPrint {
   private handlePrint = () => {
     this.printSubmit.emit()
   }
-
 
   /**
    *

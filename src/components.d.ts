@@ -44,8 +44,17 @@ export namespace Components {
         "type": IconButtonTypeTypes;
     }
     interface EjsPrint {
+        /**
+          * Description...
+         */
+        "clientID": string;
+        /**
+          * Description...
+         */
+        "redirectURI": string;
     }
     interface EjsRoot {
+        "clientid": string;
         /**
           * Description...
          */
@@ -54,6 +63,7 @@ export namespace Components {
           * Description...
          */
         "openPrint": () => Promise<void>;
+        "redirecturi": string;
     }
     interface EjsSelect {
         /**
@@ -236,13 +246,23 @@ declare namespace LocalJSX {
         /**
           * Description...
          */
+        "clientID"?: string;
+        /**
+          * Description...
+         */
         "onPrintCancel"?: (event: CustomEvent<MouseEvent>) => void;
         /**
           * Description...
          */
         "onPrintSubmit"?: (event: CustomEvent<MouseEvent>) => void;
+        /**
+          * Description...
+         */
+        "redirectURI"?: string;
     }
     interface EjsRoot {
+        "clientid"?: string;
+        "redirecturi"?: string;
     }
     interface EjsSelect {
         /**

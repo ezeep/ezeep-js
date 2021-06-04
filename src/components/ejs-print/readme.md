@@ -2,6 +2,13 @@
 
 <!-- Auto Generated Below -->
 
+## Properties
+
+| Property      | Attribute        | Description    | Type     | Default     |
+| ------------- | ---------------- | -------------- | -------- | ----------- |
+| `clientID`    | `client-i-d`     | Description... | `string` | `undefined` |
+| `redirectURI` | `redirect-u-r-i` | Description... | `string` | `undefined` |
+
 ## Events
 
 | Event         | Description    | Type                      |
@@ -29,7 +36,7 @@
 
 ### Used by
 
- - [ejs-root](../ejs-root)
+- [ejs-root](../ejs-root)
 
 ### Depends on
 
@@ -37,14 +44,17 @@
 - [ejs-icon-button](../ejs-icon-button)
 - [ejs-select](../ejs-select)
 - [ejs-text-button](../ejs-text-button)
+- [ejs-auth](../ejs-auth)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ejs-print --> ejs-typo-body
   ejs-print --> ejs-icon-button
   ejs-print --> ejs-select
   ejs-print --> ejs-text-button
+  ejs-print --> ejs-auth
   ejs-icon-button --> ejs-icon
   ejs-select --> ejs-icon
   ejs-select --> ejs-typo-body
@@ -53,6 +63,4 @@ graph TD;
   style ejs-print fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

@@ -1,5 +1,3 @@
 export class EjsPrintService {
-    getPrinterList() {
-        
-    }
+  getPrinterList() {}
 }

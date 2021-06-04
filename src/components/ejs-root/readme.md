@@ -2,14 +2,12 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property      | Attribute     | Description | Type     | Default     |
 | ------------- | ------------- | ----------- | -------- | ----------- |
 | `clientid`    | `clientid`    |             | `string` | `undefined` |
 | `redirecturi` | `redirecturi` |             | `string` | `undefined` |
-
 
 ## Methods
 
@@ -21,8 +19,6 @@ Description...
 
 Type: `Promise<void>`
 
-
-
 ### `openPrint() => Promise<void>`
 
 Description...
@@ -31,9 +27,6 @@ Description...
 
 Type: `Promise<void>`
 
-
-
-
 ## Dependencies
 
 ### Depends on
@@ -41,6 +34,7 @@ Type: `Promise<void>`
 - [ejs-print](../ejs-print)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ejs-root --> ejs-print
@@ -48,6 +42,7 @@ graph TD;
   ejs-print --> ejs-icon-button
   ejs-print --> ejs-select
   ejs-print --> ejs-text-button
+  ejs-print --> ejs-auth
   ejs-icon-button --> ejs-icon
   ejs-select --> ejs-icon
   ejs-select --> ejs-typo-body
@@ -55,6 +50,4 @@ graph TD;
   style ejs-root fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---
