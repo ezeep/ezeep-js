@@ -1,4 +1,4 @@
-import { Component, Host, State, Listen, Method, h } from '@stencil/core'
+import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
 
 @Component({
   tag: 'ejs-root',
@@ -6,6 +6,8 @@ import { Component, Host, State, Listen, Method, h } from '@stencil/core'
   shadow: true,
 })
 export class EjsRoot {
+  @Prop() clientid: string;
+  @Prop() redirecturi: string;
   /**
    *
    * States
@@ -51,6 +53,7 @@ export class EjsRoot {
     this.printOpen = false
   }
 
+  
   /**
    *
    * Render method
@@ -58,6 +61,6 @@ export class EjsRoot {
    */
 
   render() {
-    return <Host>{this.printOpen ? <ejs-print /> : null}</Host>
+    return <Host>{this.printOpen ? <ejs-print clientID={this.clientid} redirectURI={this.redirecturi} /> : null}</Host>
   }
 }

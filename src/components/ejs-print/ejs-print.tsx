@@ -18,6 +18,8 @@ export class EjsPrint {
   /** Description... */
   @Prop() withBackdrop: boolean = true
 
+  @Prop() clientID: string;
+  @Prop() redirectURI: string;
   /**
    *
    * Events
@@ -94,7 +96,7 @@ export class EjsPrint {
           <div id="footer">
             <button onClick={this.handleCancel}>Cancel</button>
             <button onClick={this.handlePrint}>Print</button>
-            <ejs-auth clientID="9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW" redirectURI="https://develop.dev.azdev.ezeep.com:3333/"></ejs-auth>
+            <ejs-auth clientID={this.clientID} redirectURI={this.redirectURI}></ejs-auth>
           </div>
         </div>
       </Host>

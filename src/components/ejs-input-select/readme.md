@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute     | Description    | Type                 | Default         |
@@ -9,6 +10,7 @@
 | `label`       | `label`       | Description... | `string`             | `'Label'`       |
 | `options`     | --            | Description... | `SelectOptionType[]` | `undefined`     |
 | `placeholder` | `placeholder` | Description... | `string`             | `'Placeholder'` |
+
 
 ## CSS Custom Properties
 
@@ -25,11 +27,12 @@
 | `--list-shadow`          | Description... |
 | `--option-background`    | Description... |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ejs-print](../ejs-print)
+ - [ejs-print](../ejs-print)
 
 ### Depends on
 
@@ -37,7 +40,6 @@
 - [ejs-icon](../ejs-icon)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ejs-input-select --> ejs-typo-body
@@ -46,4 +48,6 @@ graph TD;
   style ejs-input-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

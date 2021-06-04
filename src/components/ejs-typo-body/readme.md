@@ -2,12 +2,14 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property | Attribute | Description    | Type                                     | Default     |
 | -------- | --------- | -------------- | ---------------------------------------- | ----------- |
 | `level`  | `level`   | Description... | `"primary" \| "secondary" \| "tertiary"` | `'primary'` |
 | `weight` | `weight`  | Description... | `"heavy" \| "soft" \| "strong"`          | `'soft'`    |
+
 
 ## CSS Custom Properties
 
@@ -19,15 +21,15 @@
 | `--body-spacing` | Description... |
 | `--body-weight`  | Description... |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ejs-input-select](../ejs-input-select)
-- [ejs-print](../ejs-print)
+ - [ejs-input-select](../ejs-input-select)
+ - [ejs-print](../ejs-print)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ejs-input-select --> ejs-typo-body
@@ -35,4 +37,6 @@ graph TD;
   style ejs-typo-body fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

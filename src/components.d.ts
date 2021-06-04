@@ -5,12 +5,9 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { EjsAuthorization } from "./services/auth";
 import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectOptionType, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
     interface EjsAuth {
-        "auth": EjsAuthorization;
-        "authURI": string;
         "clientID": string;
         "redirectURI": string;
     }
@@ -61,12 +58,15 @@ export namespace Components {
         "placeholder": string;
     }
     interface EjsPrint {
+        "clientID": string;
+        "redirectURI": string;
         /**
           * Description...
          */
         "withBackdrop": boolean;
     }
     interface EjsRoot {
+        "clientid": string;
         /**
           * Description...
          */
@@ -75,6 +75,7 @@ export namespace Components {
           * Description...
          */
         "openPrint": () => Promise<void>;
+        "redirecturi": string;
     }
     interface EjsTypoBody {
         /**
@@ -163,8 +164,6 @@ declare global {
 }
 declare namespace LocalJSX {
     interface EjsAuth {
-        "auth"?: EjsAuthorization;
-        "authURI"?: string;
         "clientID"?: string;
         "redirectURI"?: string;
     }
@@ -215,6 +214,7 @@ declare namespace LocalJSX {
         "placeholder"?: string;
     }
     interface EjsPrint {
+        "clientID"?: string;
         /**
           * Description...
          */
@@ -223,12 +223,15 @@ declare namespace LocalJSX {
           * Description...
          */
         "onPrintSubmit"?: (event: CustomEvent<MouseEvent>) => void;
+        "redirectURI"?: string;
         /**
           * Description...
          */
         "withBackdrop"?: boolean;
     }
     interface EjsRoot {
+        "clientid"?: string;
+        "redirecturi"?: string;
     }
     interface EjsTypoBody {
         /**

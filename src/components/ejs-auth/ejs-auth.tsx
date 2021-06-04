@@ -1,6 +1,6 @@
-import { Component, Host, h, Prop } from '@stencil/core';
-import { EjsAuthorization } from '../../services/auth';
-
+import { Component, Host, h, Prop, State } from '@stencil/core';
+import { EjsAuthorizationService } from '../../services/auth';
+// import authStore from '../../services/auth'
 @Component({
   tag: 'ejs-auth',
   styleUrl: 'ejs-auth.css',
@@ -9,16 +9,18 @@ import { EjsAuthorization } from '../../services/auth';
 export class EjsAuth {
   @Prop({mutable: true}) clientID: string;
   @Prop({mutable: true}) redirectURI: string;
-  @Prop({mutable: true}) auth: EjsAuthorization;
-  @Prop({mutable: true}) authURI: string;
-
+  @State() auth: EjsAuthorizationService;
+  @State() authURI: string;
+  @State() accessToken: string;
   
 
   async componentWillLoad() {
-    this.auth = new EjsAuthorization(this.redirectURI, this.clientID);
+    this.auth = new EjsAuthorizationService(this.redirectURI, this.clientID);
 
     if (sessionStorage.getItem('isAuthorized')) {
       this.auth.isAuthorized = !!sessionStorage.getItem('isAuthorized');
+     /*  this.accessToken = authStore.state.accessToken;
+      console.log(this.accessToken); */
     }
 
     if (this.auth.isAuthorized === false) {
@@ -41,7 +43,16 @@ export class EjsAuth {
       headers: {
         'Authorization' : 'Bearer ' + sessionStorage.getItem('access_token')
       }
-    }).then( response => response.json()).then(data => console.log(data));
+    }).then(response => response.json()).then(data => console.log(data));
+  }
+
+  getPrinterList() {
+    fetch('https://printapi.dev.azdev.ezeep.com/sfapi/GetPrinter/', {
+      method: 'GET',
+      headers: {
+        'Authorization' : 'Bearer ' + sessionStorage.getItem('access_token')
+      }
+    }).then(response => response.json()).then(data => console.log(data));
   }
 
   render() {
@@ -56,6 +67,7 @@ export class EjsAuth {
         <Host>
           <p>Logged in!</p>
           <button onClick={this.getConfiguration}>get config</button>
+          <button onClick={this.getPrinterList}>get printers</button>
         </Host>
       )
     }
