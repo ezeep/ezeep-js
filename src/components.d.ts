@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectOptionType, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoParagraphLevelTypes, TypoWeightTypes } from "./shared/types";
+import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, TypoBodyLevelTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
     interface EjsIcon {
         /**
@@ -39,25 +39,7 @@ export namespace Components {
          */
         "type": IconButtonTypeTypes;
     }
-    interface EjsInputSelect {
-        /**
-          * Description...
-         */
-        "label": string;
-        /**
-          * Description...
-         */
-        "options": SelectOptionType[];
-        /**
-          * Description...
-         */
-        "placeholder": string;
-    }
     interface EjsPrint {
-        /**
-          * Description...
-         */
-        "withBackdrop": boolean;
     }
     interface EjsRoot {
         /**
@@ -69,11 +51,59 @@ export namespace Components {
          */
         "openPrint": () => Promise<void>;
     }
+    interface EjsSelect {
+        /**
+          * Description...
+         */
+        "icon": IconNameTypes;
+        /**
+          * Description...
+         */
+        "label": string;
+        /**
+          * Description...
+         */
+        "optionFlow": SelectFlowTypes;
+        /**
+          * Description...
+         */
+        "options": SelectOptionType[];
+        /**
+          * Description...
+         */
+        "placeholder": string;
+        /**
+          * Description...
+         */
+        "toggleFlow": SelectFlowTypes;
+    }
+    interface EjsTextButton {
+        /**
+          * Description...
+         */
+        "blank": boolean;
+        /**
+          * Description...
+         */
+        "disabled": boolean;
+        /**
+          * Description...
+         */
+        "href": string;
+        /**
+          * Description...
+         */
+        "level": TextButtonLevelTypes;
+        /**
+          * Description...
+         */
+        "type": TextButtonTypeTypes;
+    }
     interface EjsTypoBody {
         /**
           * Description...
          */
-        "level": TypoParagraphLevelTypes;
+        "level": TypoBodyLevelTypes;
         /**
           * Description...
          */
@@ -107,12 +137,6 @@ declare global {
         prototype: HTMLEjsIconButtonElement;
         new (): HTMLEjsIconButtonElement;
     };
-    interface HTMLEjsInputSelectElement extends Components.EjsInputSelect, HTMLStencilElement {
-    }
-    var HTMLEjsInputSelectElement: {
-        prototype: HTMLEjsInputSelectElement;
-        new (): HTMLEjsInputSelectElement;
-    };
     interface HTMLEjsPrintElement extends Components.EjsPrint, HTMLStencilElement {
     }
     var HTMLEjsPrintElement: {
@@ -124,6 +148,18 @@ declare global {
     var HTMLEjsRootElement: {
         prototype: HTMLEjsRootElement;
         new (): HTMLEjsRootElement;
+    };
+    interface HTMLEjsSelectElement extends Components.EjsSelect, HTMLStencilElement {
+    }
+    var HTMLEjsSelectElement: {
+        prototype: HTMLEjsSelectElement;
+        new (): HTMLEjsSelectElement;
+    };
+    interface HTMLEjsTextButtonElement extends Components.EjsTextButton, HTMLStencilElement {
+    }
+    var HTMLEjsTextButtonElement: {
+        prototype: HTMLEjsTextButtonElement;
+        new (): HTMLEjsTextButtonElement;
     };
     interface HTMLEjsTypoBodyElement extends Components.EjsTypoBody, HTMLStencilElement {
     }
@@ -140,9 +176,10 @@ declare global {
     interface HTMLElementTagNameMap {
         "ejs-icon": HTMLEjsIconElement;
         "ejs-icon-button": HTMLEjsIconButtonElement;
-        "ejs-input-select": HTMLEjsInputSelectElement;
         "ejs-print": HTMLEjsPrintElement;
         "ejs-root": HTMLEjsRootElement;
+        "ejs-select": HTMLEjsSelectElement;
+        "ejs-text-button": HTMLEjsTextButtonElement;
         "ejs-typo-body": HTMLEjsTypoBodyElement;
         "ejs-typo-heading": HTMLEjsTypoHeadingElement;
     }
@@ -170,7 +207,7 @@ declare namespace LocalJSX {
         /**
           * Description...
          */
-        "icon"?: IconNameTypes;
+        "icon": IconNameTypes;
         /**
           * Description...
          */
@@ -179,20 +216,6 @@ declare namespace LocalJSX {
           * Description...
          */
         "type"?: IconButtonTypeTypes;
-    }
-    interface EjsInputSelect {
-        /**
-          * Description...
-         */
-        "label"?: string;
-        /**
-          * Description...
-         */
-        "options"?: SelectOptionType[];
-        /**
-          * Description...
-         */
-        "placeholder"?: string;
     }
     interface EjsPrint {
         /**
@@ -203,18 +226,66 @@ declare namespace LocalJSX {
           * Description...
          */
         "onPrintSubmit"?: (event: CustomEvent<MouseEvent>) => void;
+    }
+    interface EjsRoot {
+    }
+    interface EjsSelect {
         /**
           * Description...
          */
-        "withBackdrop"?: boolean;
+        "icon"?: IconNameTypes;
+        /**
+          * Description...
+         */
+        "label"?: string;
+        /**
+          * Events
+         */
+        "onSelectToggle"?: (event: CustomEvent<any>) => void;
+        /**
+          * Description...
+         */
+        "optionFlow"?: SelectFlowTypes;
+        /**
+          * Description...
+         */
+        "options"?: SelectOptionType[];
+        /**
+          * Description...
+         */
+        "placeholder"?: string;
+        /**
+          * Description...
+         */
+        "toggleFlow"?: SelectFlowTypes;
     }
-    interface EjsRoot {
+    interface EjsTextButton {
+        /**
+          * Description...
+         */
+        "blank"?: boolean;
+        /**
+          * Description...
+         */
+        "disabled"?: boolean;
+        /**
+          * Description...
+         */
+        "href"?: string;
+        /**
+          * Description...
+         */
+        "level"?: TextButtonLevelTypes;
+        /**
+          * Description...
+         */
+        "type"?: TextButtonTypeTypes;
     }
     interface EjsTypoBody {
         /**
           * Description...
          */
-        "level"?: TypoParagraphLevelTypes;
+        "level"?: TypoBodyLevelTypes;
         /**
           * Description...
          */
@@ -237,9 +308,10 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "ejs-icon": EjsIcon;
         "ejs-icon-button": EjsIconButton;
-        "ejs-input-select": EjsInputSelect;
         "ejs-print": EjsPrint;
         "ejs-root": EjsRoot;
+        "ejs-select": EjsSelect;
+        "ejs-text-button": EjsTextButton;
         "ejs-typo-body": EjsTypoBody;
         "ejs-typo-heading": EjsTypoHeading;
     }
@@ -250,9 +322,10 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "ejs-icon": LocalJSX.EjsIcon & JSXBase.HTMLAttributes<HTMLEjsIconElement>;
             "ejs-icon-button": LocalJSX.EjsIconButton & JSXBase.HTMLAttributes<HTMLEjsIconButtonElement>;
-            "ejs-input-select": LocalJSX.EjsInputSelect & JSXBase.HTMLAttributes<HTMLEjsInputSelectElement>;
             "ejs-print": LocalJSX.EjsPrint & JSXBase.HTMLAttributes<HTMLEjsPrintElement>;
             "ejs-root": LocalJSX.EjsRoot & JSXBase.HTMLAttributes<HTMLEjsRootElement>;
+            "ejs-select": LocalJSX.EjsSelect & JSXBase.HTMLAttributes<HTMLEjsSelectElement>;
+            "ejs-text-button": LocalJSX.EjsTextButton & JSXBase.HTMLAttributes<HTMLEjsTextButtonElement>;
             "ejs-typo-body": LocalJSX.EjsTypoBody & JSXBase.HTMLAttributes<HTMLEjsTypoBodyElement>;
             "ejs-typo-heading": LocalJSX.EjsTypoHeading & JSXBase.HTMLAttributes<HTMLEjsTypoHeadingElement>;
         }

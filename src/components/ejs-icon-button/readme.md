@@ -4,14 +4,14 @@
 
 ## Properties
 
-| Property   | Attribute  | Description    | Type                                               | Default     |
-| ---------- | ---------- | -------------- | -------------------------------------------------- | ----------- |
-| `blank`    | `blank`    | Description... | `boolean`                                          | `false`     |
-| `disabled` | `disabled` | Description... | `boolean`                                          | `false`     |
-| `href`     | `href`     | Description... | `string`                                           | `undefined` |
-| `icon`     | `icon`     | Description... | `"checkmark" \| "circle" \| "expand" \| "printer"` | `'circle'`  |
-| `level`    | `level`    | Description... | `"primary" \| "secondary" \| "tertiary"`           | `'primary'` |
-| `type`     | `type`     | Description... | `"button"`                                         | `undefined` |
+| Property            | Attribute  | Description    | Type                                             | Default     |
+| ------------------- | ---------- | -------------- | ------------------------------------------------ | ----------- |
+| `blank`             | `blank`    | Description... | `boolean`                                        | `false`     |
+| `disabled`          | `disabled` | Description... | `boolean`                                        | `false`     |
+| `href`              | `href`     | Description... | `string`                                         | `undefined` |
+| `icon` _(required)_ | `icon`     | Description... | `"checkmark" \| "expand" \| "menu" \| "printer"` | `undefined` |
+| `level`             | `level`    | Description... | `"primary" \| "secondary" \| "tertiary"`         | `'primary'` |
+| `type`              | `type`     | Description... | `"button"`                                       | `undefined` |
 
 ## CSS Custom Properties
 
@@ -26,9 +26,12 @@
 | `--button-color-disabled`      | Description... |
 | `--button-color-init`          | Description... |
 | `--button-cursor`              | Description... |
-| `--button-size`                | Description... |
 
 ## Dependencies
+
+### Used by
+
+- [ejs-print](../ejs-print)
 
 ### Depends on
 
@@ -39,6 +42,7 @@
 ```mermaid
 graph TD;
   ejs-icon-button --> ejs-icon
+  ejs-print --> ejs-icon-button
   style ejs-icon-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

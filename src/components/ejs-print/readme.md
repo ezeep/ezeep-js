@@ -2,18 +2,28 @@
 
 <!-- Auto Generated Below -->
 
-## Properties
-
-| Property       | Attribute       | Description    | Type      | Default |
-| -------------- | --------------- | -------------- | --------- | ------- |
-| `withBackdrop` | `with-backdrop` | Description... | `boolean` | `true`  |
-
 ## Events
 
 | Event         | Description    | Type                      |
 | ------------- | -------------- | ------------------------- |
 | `printCancel` | Description... | `CustomEvent<MouseEvent>` |
 | `printSubmit` | Description... | `CustomEvent<MouseEvent>` |
+
+## CSS Custom Properties
+
+| Name                          | Description    |
+| ----------------------------- | -------------- |
+| `--backdrop-opacity`          | Description... |
+| `--backdrop-radius`           | Description... |
+| `--backdrop-transition`       | Description... |
+| `--backdrop-visibility`       | Description... |
+| `--content-separator`         | Description... |
+| `--dialog-border`             | Description... |
+| `--dialog-radius`             | Description... |
+| `--dialog-separator-position` | Description... |
+| `--duration`                  | Description... |
+| `--footer-separator-position` | Description... |
+| `--header-separator-position` | Description... |
 
 ## Dependencies
 
@@ -24,16 +34,22 @@
 ### Depends on
 
 - [ejs-typo-body](../ejs-typo-body)
-- [ejs-input-select](../ejs-input-select)
+- [ejs-icon-button](../ejs-icon-button)
+- [ejs-select](../ejs-select)
+- [ejs-text-button](../ejs-text-button)
 
 ### Graph
 
 ```mermaid
 graph TD;
   ejs-print --> ejs-typo-body
-  ejs-print --> ejs-input-select
-  ejs-input-select --> ejs-typo-body
-  ejs-input-select --> ejs-icon
+  ejs-print --> ejs-icon-button
+  ejs-print --> ejs-select
+  ejs-print --> ejs-text-button
+  ejs-icon-button --> ejs-icon
+  ejs-select --> ejs-icon
+  ejs-select --> ejs-typo-body
+  ejs-text-button --> ejs-typo-body
   ejs-root --> ejs-print
   style ejs-print fill:#f9f,stroke:#333,stroke-width:4px
 ```

@@ -32,9 +32,13 @@ Type: `Promise<void>`
 graph TD;
   ejs-root --> ejs-print
   ejs-print --> ejs-typo-body
-  ejs-print --> ejs-input-select
-  ejs-input-select --> ejs-typo-body
-  ejs-input-select --> ejs-icon
+  ejs-print --> ejs-icon-button
+  ejs-print --> ejs-select
+  ejs-print --> ejs-text-button
+  ejs-icon-button --> ejs-icon
+  ejs-select --> ejs-icon
+  ejs-select --> ejs-typo-body
+  ejs-text-button --> ejs-typo-body
   style ejs-root fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

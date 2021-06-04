@@ -45,6 +45,7 @@ $colors: (
     'outline-translucent-secondary': rgba(119 119 119 / 16%),
     'outline-translucent-tertiary': rgba(119 119 119 / 22%),
     'overlay': rgba(0 0 0 / 26%),
+    'shadow': rgba(0 0 0 / 10%),
   ),
   'dark': (
     'main-primary': rgb(48 154 189),
@@ -70,6 +71,7 @@ $colors: (
     'outline-translucent-secondary': rgba(119 119 119 / 34%),
     'outline-translucent-tertiary': rgba(119 119 119 / 40%),
     'overlay': rgba(0 0 0 / 68%),
+    'shadow': rgba(0 0 0 / 26%),
   ),
 );
 $font-features: 'calt', 'liga', 'case', 'ss03', 'zero', 'cv05', 'cv10';
@@ -92,10 +94,13 @@ $font-weights: (('soft', 400), ('strong', 500), ('heavy', 600));
 $spacings: (4px, 6px, 10px, 16px, 26px, 42px, 68px);
 $easings: (
   'in-quart': cubic-bezier(0.11, 0, 0.5, 0),
+  'in-out-quart': cubic-bezier(0.76, 0, 0.24, 1),
+  'in-out-cubic': cubic-bezier(0.65, 0, 0.35, 1),
   'in-expo': cubic-bezier(0.7, 0, 0.84, 0),
   'out-quart': cubic-bezier(0.25, 1, 0.5, 1),
   'out-expo': cubic-bezier(0.16, 1, 0.3, 1),
 );
+$ratios: (1, 2, 3);
 
 /**
  *
@@ -156,6 +161,12 @@ $easings: (
   }
 }
 
+@mixin media-density($ratio) {
+  @media (-webkit-min-device-pixel-ratio: #{$ratio}), (min-device-pixel-ratio: #{$ratio}) {
+    @content;
+  }
+}
+
 @mixin color-declaration($appearance) {
   @each $name, $value in map.get($colors, $appearance) {
     --color-#{$name}: #{$value};
@@ -164,6 +175,15 @@ $easings: (
   @supports (color: color(display-p3 1 1 1)) {
     @each $name, $value in map.get($colors, $appearance) {
       --color-#{$name}: #{get-color-display-p3($value)};
+    }
+  }
+}
+
+@mixin hairline-declaration() {
+  @each $ratio in $ratios {
+    @include media-density($ratio) {
+      --hairline-positive: calc(1px / #{$ratio});
+      --hairline-negative: calc(-1px / #{$ratio});
     }
   }
 }

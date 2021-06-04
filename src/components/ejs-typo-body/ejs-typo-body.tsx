@@ -1,5 +1,5 @@
 import { Component, Host, Prop, h } from '@stencil/core'
-import { TypoWeightTypes, TypoParagraphLevelTypes } from './../../shared/types'
+import { TypoWeightTypes, TypoBodyLevelTypes } from './../../shared/types'
 
 @Component({
   tag: 'ejs-typo-body',
@@ -14,7 +14,7 @@ export class EjsTypoBody {
    */
 
   /** Description... */
-  @Prop() level: TypoParagraphLevelTypes = 'primary'
+  @Prop() level: TypoBodyLevelTypes = 'primary'
 
   /** Description... */
   @Prop() weight: TypoWeightTypes = 'soft'

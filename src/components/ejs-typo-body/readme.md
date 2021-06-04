@@ -4,10 +4,10 @@
 
 ## Properties
 
-| Property | Attribute | Description    | Type                                     | Default     |
-| -------- | --------- | -------------- | ---------------------------------------- | ----------- |
-| `level`  | `level`   | Description... | `"primary" \| "secondary" \| "tertiary"` | `'primary'` |
-| `weight` | `weight`  | Description... | `"heavy" \| "soft" \| "strong"`          | `'soft'`    |
+| Property | Attribute | Description    | Type                            | Default     |
+| -------- | --------- | -------------- | ------------------------------- | ----------- |
+| `level`  | `level`   | Description... | `"primary" \| "secondary"`      | `'primary'` |
+| `weight` | `weight`  | Description... | `"heavy" \| "soft" \| "strong"` | `'soft'`    |
 
 ## CSS Custom Properties
 
@@ -23,15 +23,17 @@
 
 ### Used by
 
-- [ejs-input-select](../ejs-input-select)
 - [ejs-print](../ejs-print)
+- [ejs-select](../ejs-select)
+- [ejs-text-button](../ejs-text-button)
 
 ### Graph
 
 ```mermaid
 graph TD;
-  ejs-input-select --> ejs-typo-body
   ejs-print --> ejs-typo-body
+  ejs-select --> ejs-typo-body
+  ejs-text-button --> ejs-typo-body
   style ejs-typo-body fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

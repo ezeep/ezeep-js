@@ -34,9 +34,39 @@
           "location": "Printer Location 5"
         },
         {
-          "id": 6,
-          "name": "Printer Name 6",
-          "location": "Printer Location 6"
+          "id": 7,
+          "name": "Printer Name 7",
+          "location": "Printer Location 7"
+        },
+        {
+          "id": 8,
+          "name": "Printer Name 8",
+          "location": "Printer Location 8"
+        },
+        {
+          "id": 9,
+          "name": "Printer Name 9",
+          "location": "Printer Location 9"
+        },
+        {
+          "id": 10,
+          "name": "Printer Name 10",
+          "location": "Printer Location 10"
+        },
+        {
+          "id": 11,
+          "name": "Printer Name 11",
+          "location": "Printer Location 11"
+        },
+        {
+          "id": 12,
+          "name": "Printer Name 12",
+          "location": "Printer Location 12"
+        },
+        {
+          "id": 13,
+          "name": "Printer Name 13",
+          "location": "Printer Location 13"
         }
       ]
     },

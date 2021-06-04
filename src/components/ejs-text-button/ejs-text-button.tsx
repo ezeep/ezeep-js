@@ -1,12 +1,12 @@
 import { Component, Host, Prop, h } from '@stencil/core'
-import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes } from './../../shared/types'
+import { TextButtonLevelTypes, TextButtonTypeTypes } from './../../shared/types'
 
 @Component({
-  tag: 'ejs-icon-button',
-  styleUrl: 'ejs-icon-button.scss',
+  tag: 'ejs-text-button',
+  styleUrl: 'ejs-text-button.scss',
   shadow: true,
 })
-export class EjsIconButton {
+export class EjsTextButton {
   /**
    *
    * Properties
@@ -23,13 +23,10 @@ export class EjsIconButton {
   @Prop() href: string
 
   /** Description... */
-  @Prop() icon!: IconNameTypes
+  @Prop() level: TextButtonLevelTypes = 'primary'
 
   /** Description... */
-  @Prop() level: IconButtonLevelTypes = 'primary'
-
-  /** Description... */
-  @Prop() type: IconButtonTypeTypes
+  @Prop() type: TextButtonTypeTypes
 
   /**
    *
@@ -52,8 +49,10 @@ export class EjsIconButton {
 
     return (
       <Host class={`${this.level}`}>
-        <TagType id="button" {...attributes}>
-          <ejs-icon name={this.icon}></ejs-icon>
+        <TagType class="button" {...attributes}>
+          <ejs-typo-body level="primary" weight="heavy">
+            <slot />
+          </ejs-typo-body>
         </TagType>
       </Host>
     )

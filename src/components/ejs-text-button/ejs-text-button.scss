@@ -4,7 +4,7 @@
  *
  */
 
-@use './ejs-icon-button.m' as self;
+@use './ejs-text-button.m' as self;
 
 /**
  *
@@ -40,7 +40,7 @@
   /** @prop --button-cursor: Description... */
   --button-cursor: pointer;
 
-  display: block;
+  display: flex;
 
   @at-root {
     #{&}(.primary) {
@@ -70,7 +70,7 @@
   }
 }
 
-#button {
+.button {
   align-items: center;
   appearance: none;
   background: var(--button-background);
@@ -80,11 +80,13 @@
   color: var(--button-color);
   cursor: var(--button-cursor);
   display: flex;
+  font-family: inherit;
   justify-content: center;
   margin: 0;
   outline: none;
-  padding: var(--spacing-1);
-  width: var(--button-size);
+  padding: var(--spacing-3);
+  white-space: nowrap;
+  width: 100%;
 
   &:not(:disabled) {
     @media (hover: hover) {

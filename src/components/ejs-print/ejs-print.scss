@@ -5,6 +5,7 @@
  */
 
 @use './ejs-print.m' as self;
+@use './../../shared/global.m' as global;
 
 /**
  *
@@ -13,34 +14,124 @@
  */
 
 :host {
+  /** @prop --backdrop-opacity: Description... */
+  --backdrop-opacity: 0;
+
+  /** @prop --backdrop-radius: Description... */
+  --backdrop-radius: var(--dialog-radius);
+
+  /** @prop --backdrop-transition: Description... */
+  --backdrop-transition: opacity var(--duration) var(--easing-out-quart),
+    visibility 0s var(--duration);
+
+  /** @prop --backdrop-visibility: Description... */
+  --backdrop-visibility: hidden;
+
+  /** @prop --content-separator: Description... */
+  --content-separator: none;
+
+  /** @prop --dialog-border: Description... */
+  --dialog-border: 0.5px solid var(--color-outline-translucent-tertiary);
+
+  /** @prop --dialog-radius: Description... */
+  --dialog-radius: 8px;
+
+  /** @prop --dialog-separator-position: Description... */
+  --dialog-separator-position: 0 0 0 var(--hairline-positive);
+
+  /** @prop --duration: Description... */
+  --duration: 0.3s;
+
+  /** @prop --footer-separator-position: Description... */
+  --footer-separator-position: 0 var(--hairline-negative) 0 0;
+
+  /** @prop --header-separator-position: Description... */
+  --header-separator-position: 0 var(--hairline-positive) 0 0;
+
   align-content: center;
+  background: var(--color-overlay);
   display: grid;
-  grid-template: 360px / 320px;
+  grid-template: auto / 280px;
   height: 100vh;
   justify-content: center;
   left: 0;
   position: fixed;
   top: 0;
   width: 100vw;
-}
 
-#backdrop {
-  background: var(--color-overlay);
-  display: block;
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
+  @at-root {
+    #{&}(.show-backdrop) {
+      --backdrop-opacity: 1;
+      --backdrop-transition: opacity var(--duration) var(--easing-out-quart), visibility 0s 0s,
+        z-index 0s 0s;
+      --backdrop-visibility: visible;
+    }
+  }
+
+  @include global.media-appearance('dark') {
+    --content-separator: inset var(--hairline-positive) 0 0 0
+        var(--color-outline-translucent-tertiary),
+      inset var(--hairline-negative) 0 0 0 var(--color-outline-translucent-tertiary);
+    --dialog-separator-position: inset 0 0 0 var(--hairline-positive);
+    --footer-separator-position: inset 0 var(--hairline-positive) 0 0;
+    --header-separator-position: inset 0 var(--hairline-negative) 0 0;
+  }
 }
 
 #dialog {
   background: var(--color-surface-tertiary);
+  border-radius: var(--dialog-radius);
+  box-shadow: var(--dialog-separator-position) var(--color-outline-translucent-tertiary);
   position: relative;
-  z-index: 1;
+}
+
+#backdrop {
+  background: var(--color-overlay);
+  border-radius: var(--backdrop-radius);
+  display: block;
+  height: 100%;
+  left: 0;
+  opacity: var(--backdrop-opacity);
+  position: absolute;
+  top: 0;
+  transition: var(--backdrop-transition);
+  visibility: var(--backdrop-visibility);
+  width: 100%;
+  z-index: 4;
+}
+
+#header {
+  box-shadow: var(--header-separator-position) var(--color-outline-translucent-tertiary);
+  color: var(--color-foreground-primary);
+  display: grid;
+  grid-column-gap: var(--spacing-2);
+  grid-template-columns: auto 1fr auto;
+  padding: var(--spacing-4);
+  position: relative;
+  z-index: 3;
+}
+
+#toggle-menu {
+  margin: calc(var(--spacing-3) * -1) calc(var(--spacing-1) * -1) calc(var(--spacing-3) * -1) 0;
+  position: relative;
+  z-index: 2;
 }
 
 #content {
   background: var(--color-surface-secondary);
+  box-shadow: var(--content-separator);
+  display: grid;
+  grid-row-gap: var(--spacing-2);
+  grid-template-rows: repeat(2, auto);
   padding: var(--spacing-2);
+}
+
+#footer {
+  box-shadow: var(--footer-separator-position) var(--color-outline-translucent-tertiary);
+  display: grid;
+  grid-column-gap: var(--spacing-2);
+  grid-template-columns: repeat(2, 1fr);
+  padding: var(--spacing-2);
+  position: relative;
+  z-index: 3;
 }

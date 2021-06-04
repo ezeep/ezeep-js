@@ -1,4 +1,4 @@
-import { Component, Host, Event, EventEmitter, Prop, h } from '@stencil/core'
+import { Component, Host, Listen, Event, EventEmitter, State, h } from '@stencil/core'
 import { PrintUserType } from './../../shared/types'
 
 @Component({
@@ -8,15 +8,15 @@ import { PrintUserType } from './../../shared/types'
 })
 export class EjsPrint {
   private user: PrintUserType
+  private options
 
   /**
    *
-   * Properties
+   * Events
    *
    */
 
-  /** Description... */
-  @Prop() withBackdrop: boolean = true
+  @State() showBackdrop: boolean = false
 
   /**
    *
@@ -29,6 +29,17 @@ export class EjsPrint {
 
   /** Description... */
   @Event() printSubmit: EventEmitter<MouseEvent>
+
+  /**
+   *
+   * Listeners
+   *
+   */
+
+  @Listen('selectToggle')
+  listenSelectExpand(event: CustomEvent) {
+    this.showBackdrop = event.detail
+  }
 
   /**
    *
@@ -54,10 +65,11 @@ export class EjsPrint {
 
   /** Description... */
   async componentWillLoad() {
-    return fetch('/data/user.json')
-      .then((response) => response.json())
+    return Promise.all([fetch('/data/user.json'), fetch('/data/options.json')])
+      .then((responses) => Promise.all(responses.map((response) => response.json())))
       .then((data) => {
-        this.user = data
+        this.user = data[0]
+        this.options = data[1]
       })
   }
 
@@ -69,29 +81,72 @@ export class EjsPrint {
 
   render() {
     return (
-      <Host>
-        {this.withBackdrop ? <div id="backdrop" onClick={this.handleCancel} /> : null}
+      <Host class={{ 'show-backdrop': this.showBackdrop }}>
         <div id="dialog">
+          <div id="backdrop" />
           <div id="header">
-            <div id="title">
-              <ejs-typo-body weight="heavy">Print</ejs-typo-body>
-              <ejs-typo-body>My Document.docx</ejs-typo-body>
-            </div>
+            <ejs-typo-body weight="heavy">Print:</ejs-typo-body>
+            <ejs-typo-body>My Document.docx</ejs-typo-body>
+            <ejs-icon-button level="tertiary" icon="menu" id="toggle-menu" />
           </div>
           <div id="content">
-            <ejs-input-select
-              label="Printer"
-              placeholder="Select a printer"
-              options={this.user.organizations[0].printers.map((printer) => ({
-                id: printer.id,
-                title: printer.name,
-                meta: printer.location,
-              }))}
-            />
+            <div id="printer">
+              <ejs-select
+                label="Printer"
+                icon="printer"
+                placeholder="Select a printer"
+                toggleFlow="vertical"
+                optionFlow="vertical"
+                options={this.user.organizations[0].printers.map((printer) => ({
+                  id: printer.id,
+                  title: printer.name,
+                  meta: printer.location,
+                }))}
+              />
+            </div>
+            <div id="options">
+              <ejs-select
+                label="Color"
+                placeholder="Select a color"
+                toggleFlow="horizontal"
+                optionFlow="horizontal"
+                options={this.options.colors.map((color) => ({
+                  id: color.id,
+                  title: color.name,
+                  meta: '',
+                }))}
+              />
+              <ejs-select
+                label="Orientation"
+                placeholder="Select a orientation"
+                toggleFlow="horizontal"
+                optionFlow="horizontal"
+                options={this.options.orientations.map((orientation) => ({
+                  id: orientation.id,
+                  title: orientation.name,
+                  meta: '',
+                }))}
+              />
+              <ejs-select
+                label="Size"
+                placeholder="Select a size"
+                toggleFlow="horizontal"
+                optionFlow="horizontal"
+                options={this.options.sizes.map((size) => ({
+                  id: size.id,
+                  title: size.name,
+                  meta: size.description,
+                }))}
+              />
+            </div>
           </div>
           <div id="footer">
-            <button onClick={this.handleCancel}>Cancel</button>
-            <button onClick={this.handlePrint}>Print</button>
+            <ejs-text-button type="button" level="secondary" onClick={this.handleCancel}>
+              Cancel
+            </ejs-text-button>
+            <ejs-text-button type="button" onClick={this.handlePrint}>
+              Print
+            </ejs-text-button>
           </div>
         </div>
       </Host>
