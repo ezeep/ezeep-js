@@ -29,7 +29,7 @@
 
 ### Used by
 
-- [ejs-root](../ejs-root)
+ - [ejs-root](../ejs-root)
 
 ### Depends on
 
@@ -39,7 +39,6 @@
 - [ejs-text-button](../ejs-text-button)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ejs-print --> ejs-typo-body
@@ -54,4 +53,6 @@ graph TD;
   style ejs-print fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property            | Attribute  | Description    | Type                                             | Default     |
@@ -12,6 +13,7 @@
 | `icon` _(required)_ | `icon`     | Description... | `"checkmark" \| "expand" \| "menu" \| "printer"` | `undefined` |
 | `level`             | `level`    | Description... | `"primary" \| "secondary" \| "tertiary"`         | `'primary'` |
 | `type`              | `type`     | Description... | `"button"`                                       | `undefined` |
+
 
 ## CSS Custom Properties
 
@@ -27,6 +29,7 @@
 | `--button-color-init`          | Description... |
 | `--button-cursor`              | Description... |
 
+
 ## Dependencies
 
 ### Used by
@@ -38,7 +41,6 @@
 - [ejs-icon](../ejs-icon)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ejs-icon-button --> ejs-icon
@@ -46,4 +48,6 @@ graph TD;
   style ejs-icon-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

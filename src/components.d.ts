@@ -7,6 +7,10 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, TypoBodyLevelTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
+    interface EjsAuth {
+        "clientID": string;
+        "redirectURI": string;
+    }
     interface EjsIcon {
         /**
           * Description...
@@ -125,6 +129,12 @@ export namespace Components {
     }
 }
 declare global {
+    interface HTMLEjsAuthElement extends Components.EjsAuth, HTMLStencilElement {
+    }
+    var HTMLEjsAuthElement: {
+        prototype: HTMLEjsAuthElement;
+        new (): HTMLEjsAuthElement;
+    };
     interface HTMLEjsIconElement extends Components.EjsIcon, HTMLStencilElement {
     }
     var HTMLEjsIconElement: {
@@ -174,6 +184,7 @@ declare global {
         new (): HTMLEjsTypoHeadingElement;
     };
     interface HTMLElementTagNameMap {
+        "ejs-auth": HTMLEjsAuthElement;
         "ejs-icon": HTMLEjsIconElement;
         "ejs-icon-button": HTMLEjsIconButtonElement;
         "ejs-print": HTMLEjsPrintElement;
@@ -185,6 +196,10 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    interface EjsAuth {
+        "clientID"?: string;
+        "redirectURI"?: string;
+    }
     interface EjsIcon {
         /**
           * Description...
@@ -306,6 +321,7 @@ declare namespace LocalJSX {
         "weight"?: TypoWeightTypes;
     }
     interface IntrinsicElements {
+        "ejs-auth": EjsAuth;
         "ejs-icon": EjsIcon;
         "ejs-icon-button": EjsIconButton;
         "ejs-print": EjsPrint;
@@ -320,6 +336,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "ejs-auth": LocalJSX.EjsAuth & JSXBase.HTMLAttributes<HTMLEjsAuthElement>;
             "ejs-icon": LocalJSX.EjsIcon & JSXBase.HTMLAttributes<HTMLEjsIconElement>;
             "ejs-icon-button": LocalJSX.EjsIconButton & JSXBase.HTMLAttributes<HTMLEjsIconButtonElement>;
             "ejs-print": LocalJSX.EjsPrint & JSXBase.HTMLAttributes<HTMLEjsPrintElement>;

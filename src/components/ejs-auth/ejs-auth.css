@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  margin-top: 5px;
+}
+
+.button {
+  text-decoration: none;
+  background-color: #EEEEEE;
+  color: #333333;
+  padding: 2px 6px 2px 6px;
+  border: 1px solid black;
+  border-radius: 3px;
+  margin: 5px;
+}

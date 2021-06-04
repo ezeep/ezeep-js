@@ -18,6 +18,8 @@ export class EjsPrint {
 
   @State() showBackdrop: boolean = false
 
+  @Prop() clientID: string;
+  @Prop() redirectURI: string;
   /**
    *
    * Events
@@ -57,6 +59,7 @@ export class EjsPrint {
     this.printSubmit.emit()
   }
 
+
   /**
    *
    * Lifecycle methods
@@ -89,6 +92,7 @@ export class EjsPrint {
             <ejs-typo-body>My Document.docx</ejs-typo-body>
             <ejs-icon-button level="tertiary" icon="menu" id="toggle-menu" />
           </div>
+
           <div id="content">
             <div id="printer">
               <ejs-select
@@ -141,12 +145,9 @@ export class EjsPrint {
             </div>
           </div>
           <div id="footer">
-            <ejs-text-button type="button" level="secondary" onClick={this.handleCancel}>
-              Cancel
-            </ejs-text-button>
-            <ejs-text-button type="button" onClick={this.handlePrint}>
-              Print
-            </ejs-text-button>
+            <button onClick={this.handleCancel}>Cancel</button>
+            <button onClick={this.handlePrint}>Print</button>
+            <ejs-auth clientID={this.clientID} redirectURI={this.redirectURI}></ejs-auth>
           </div>
         </div>
       </Host>
