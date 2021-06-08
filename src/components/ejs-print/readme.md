@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute        | Description    | Type     | Default     |
@@ -9,12 +10,14 @@
 | `clientID`    | `client-i-d`     | Description... | `string` | `undefined` |
 | `redirectURI` | `redirect-u-r-i` | Description... | `string` | `undefined` |
 
+
 ## Events
 
 | Event         | Description    | Type                      |
 | ------------- | -------------- | ------------------------- |
 | `printCancel` | Description... | `CustomEvent<MouseEvent>` |
 | `printSubmit` | Description... | `CustomEvent<MouseEvent>` |
+
 
 ## CSS Custom Properties
 
@@ -32,11 +35,12 @@
 | `--footer-separator-position` | Description... |
 | `--header-separator-position` | Description... |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ejs-root](../ejs-root)
+ - [ejs-root](../ejs-root)
 
 ### Depends on
 
@@ -47,7 +51,6 @@
 - [ejs-auth](../ejs-auth)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ejs-print --> ejs-typo-body
@@ -63,4 +66,6 @@ graph TD;
   style ejs-print fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

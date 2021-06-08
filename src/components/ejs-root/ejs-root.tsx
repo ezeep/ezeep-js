@@ -1,4 +1,5 @@
 import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
+import { sendCodeToParentWindow } from '../../services/auth'
 
 @Component({
   tag: 'ejs-root',
@@ -51,6 +52,10 @@ export class EjsRoot {
   @Method()
   async closePrint() {
     this.printOpen = false
+  }
+
+  componentWillLoad() {
+    sendCodeToParentWindow();
   }
 
   /**

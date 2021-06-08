@@ -104,4 +104,14 @@ const authStore = createStore({
   accessToken: '',
 })
 
-export default authStore
+export default authStore;
+
+export function sendCodeToParentWindow() {
+  // get the URL parameters which will include the auth code
+  const params = window.location.search;
+  if (window.opener) {
+    // send them to the opening window
+    window.opener.postMessage(params);
+    window.close();
+  }
+};

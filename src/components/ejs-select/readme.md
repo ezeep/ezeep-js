@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute     | Description    | Type                                             | Default         |
@@ -13,11 +14,13 @@
 | `placeholder` | `placeholder` | Description... | `string`                                         | `'Placeholder'` |
 | `toggleFlow`  | `toggle-flow` | Description... | `"horizontal" \| "vertical"`                     | `'horizontal'`  |
 
+
 ## Events
 
 | Event          | Description | Type               |
 | -------------- | ----------- | ------------------ |
-| `selectToggle` | Events      | `CustomEvent<any>` |
+| `selectToggle` |  Events     | `CustomEvent<any>` |
+
 
 ## CSS Custom Properties
 
@@ -53,11 +56,12 @@
 | `--wrap-separator-position-top`    | Description... |
 | `--wrap-translate-y`               | Description... |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ejs-print](../ejs-print)
+ - [ejs-print](../ejs-print)
 
 ### Depends on
 
@@ -65,7 +69,6 @@
 - [ejs-typo-body](../ejs-typo-body)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ejs-select --> ejs-icon
@@ -74,4 +77,6 @@ graph TD;
   style ejs-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+
