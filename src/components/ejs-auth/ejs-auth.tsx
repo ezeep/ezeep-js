@@ -1,17 +1,17 @@
 import { Component, Host, h, Prop, State } from '@stencil/core'
 import { EjsAuthorizationService } from '../../services/auth'
-// import authStore from '../../services/auth'
+import authStore from '../../services/auth'
 @Component({
   tag: 'ejs-auth',
   styleUrl: 'ejs-auth.css',
   shadow: true,
 })
 export class EjsAuth {
-  @Prop({ mutable: true }) clientID: string
-  @Prop({ mutable: true }) redirectURI: string
-  @State() auth: EjsAuthorizationService
-  @State() authURI: string
-  @State() accessToken: string
+  @Prop({ mutable: true }) clientID: string;
+  @Prop({ mutable: true }) redirectURI: string;
+  @State() auth: EjsAuthorizationService;
+  @State() authURI: string;
+  @State() accessToken: string;
   windowObjectReference = null;
   previousUrl = null;
 
@@ -51,23 +51,11 @@ export class EjsAuth {
   }
 
   async componentWillLoad() {
-    this.auth = new EjsAuthorizationService(this.redirectURI, this.clientID)
-
-    if (sessionStorage.getItem('isAuthorized')) {
-      this.auth.isAuthorized = !!sessionStorage.getItem('isAuthorized')
-      /*  this.accessToken = authStore.state.accessToken;
-      console.log(this.accessToken); */
-    }
-
-    if (this.auth.isAuthorized === false) {
-      if (this.auth.setCodeFromURL()) {
-        this.auth.codeVerifier = sessionStorage.getItem('codeVerifier')
-        this.auth.getAccessToken()
-      } else {
-        this.auth.generateCodeVerifier()
-        await this.auth.generateCodeChallenge(this.auth.codeVerifier)
-        this.auth.buildAuthURI()
-      }
+    this.auth = new EjsAuthorizationService(this.redirectURI, this.clientID);
+    if (authStore.state.isAuthorized === false) {
+      this.auth.generateCodeVerifier();
+      await this.auth.generateCodeChallenge(authStore.state.codeVerifier);
+      this.auth.buildAuthURI();
     }
   }
 
@@ -75,7 +63,7 @@ export class EjsAuth {
     fetch('https://printapi.dev.azdev.ezeep.com/sfapi/GetConfiguration/', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
+        Authorization: 'Bearer ' + authStore.state.accessToken,
       },
     })
       .then((response) => response.json())
@@ -86,7 +74,7 @@ export class EjsAuth {
     fetch('https://printapi.dev.azdev.ezeep.com/sfapi/GetPrinter/', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
+        Authorization: 'Bearer ' + authStore.state.accessToken,
       },
     })
       .then((response) => response.json())
@@ -94,10 +82,10 @@ export class EjsAuth {
   }
 
   render() {
-    if (this.auth.isAuthorized === false) {
+    if (authStore.state.isAuthorized === false) {
       return (
         <Host>
-          <button onClick={() => {this.openSignInWindow(this.auth.authURI.toString(),'ezeep Login')}} >Login</button>
+          <button onClick={() => { this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login') }} >Login</button>
         </Host>
       )
     } else {

@@ -78,12 +78,12 @@ export class EjsPrint {
 
   /** Description... */
   async componentWillLoad() {
-    return Promise.all([fetch('/data/user.json'), fetch('/data/options.json')])
+    await Promise.all([fetch('/data/user.json'), fetch('/data/options.json')])
       .then((responses) => Promise.all(responses.map((response) => response.json())))
       .then((data) => {
         this.user = data[0]
         this.options = data[1]
-      })
+      });
   }
 
   /**
