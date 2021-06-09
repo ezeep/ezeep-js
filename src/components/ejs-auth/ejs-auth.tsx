@@ -47,7 +47,6 @@ export class EjsAuth {
 
   receiveMessage(event) {
     this.auth.code = event.data;
-    console.log(this.auth.code);
     this.auth.getAccessToken();
   }
 
@@ -66,10 +65,8 @@ export class EjsAuth {
         this.auth.getAccessToken()
       } else {
         this.auth.generateCodeVerifier()
-        console.log(this.auth.codeVerifier)
         await this.auth.generateCodeChallenge(this.auth.codeVerifier)
         this.auth.buildAuthURI()
-        console.log(this.auth.authURI.toString())
       }
     }
   }
@@ -100,10 +97,7 @@ export class EjsAuth {
     if (this.auth.isAuthorized === false) {
       return (
         <Host>
-          <a class="button" href={this.auth.authURI.toString()}>
-            Login
-          </a>
-          <button onClick={() => {this.openSignInWindow(this.auth.authURI.toString(),'ezeep Login')}} >Login in popup</button>
+          <button onClick={() => {this.openSignInWindow(this.auth.authURI.toString(),'ezeep Login')}} >Login</button>
         </Host>
       )
     } else {

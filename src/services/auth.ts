@@ -108,10 +108,11 @@ export default authStore;
 
 export function sendCodeToParentWindow() {
   // get the URL parameters which will include the auth code
-  const params = window.location.search;
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
   if (window.opener) {
     // send them to the opening window
-    window.opener.postMessage(params);
+    window.opener.postMessage(code);
     window.close();
   }
 };
