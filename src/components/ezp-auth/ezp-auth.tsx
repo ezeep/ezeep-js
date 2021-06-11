@@ -59,28 +59,6 @@ export class EzpAuth {
     }
   }
 
-  getConfiguration() {
-    fetch('https://printapi.dev.azdev.ezeep.com/sfapi/GetConfiguration/', {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + authStore.state.accessToken,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-  }
-
-  getPrinterList() {
-    fetch('https://printapi.dev.azdev.ezeep.com/sfapi/GetPrinter/', {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + authStore.state.accessToken,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-  }
-
   render() {
     if (authStore.state.isAuthorized === false) {
       return (
@@ -92,8 +70,6 @@ export class EzpAuth {
       return (
         <Host>
           <p>Logged in!</p>
-          <button onClick={this.getConfiguration}>get config</button>
-          <button onClick={this.getPrinterList}>get printers</button>
         </Host>
       )
     }
