@@ -1,0 +1,46 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './ezp-typo-heading.m' as self;
+@use './../../shared/global.m' as global;
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  /** @prop --heading-height: Description... */
+  --heading-height: initial;
+
+  /** @prop --heading-offset: Description... */
+  --heading-offset: 0;
+
+  /** @prop --heading-size: Description... */
+  --heading-size: initial;
+
+  /** @prop --heading-spacing: Description... */
+  --heading-spacing: initial;
+
+  /** @prop --heading-weight: Description... */
+  --heading-weight: inherit;
+
+  display: block;
+}
+
+@include global.typo-level-declaration(self.$levels, 'heading');
+@include global.typo-weight-declaration('heading');
+
+#heading {
+  font-size: var(--heading-size);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-spacing);
+  line-height: var(--heading-height);
+  margin: 0;
+
+  @include global.typo-trim-offset('heading');
+}

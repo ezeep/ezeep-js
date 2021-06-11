@@ -1,0 +1,29 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './ezp-icon.m' as self;
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  /** @prop --host-size: Description... */
+  --host-size: 22px;
+
+  display: block;
+  height: var(--host-size);
+  width: var(--host-size);
+}
+
+#glyph {
+  display: block;
+  fill: currentColor;
+  height: 100%;
+  width: 100%;
+}

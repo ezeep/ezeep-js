@@ -1,6 +1,6 @@
 import { createStore } from '@stencil/store'
 
-export class EjsAuthorizationService {
+export class EzpAuthorizationService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
     this.clientID = clientID
