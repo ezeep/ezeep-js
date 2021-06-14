@@ -1,3 +1,4 @@
+import { createStore } from '@stencil/store';
 import printingApiDev from './../utils/config.json'
 export class EzpPrintService {
   getPrinterList(accessToken: string) {
@@ -13,3 +14,9 @@ export class EzpPrintService {
       })
   }
 }
+
+const printStore = createStore({
+  printers: []
+})
+
+export default printStore;
