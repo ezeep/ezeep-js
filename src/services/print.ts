@@ -1,6 +1,7 @@
+import printingApiDev from './../utils/config.json'
 export class EzpPrintService {
   getPrinterList(accessToken: string) {
-    return fetch('https://printapi.dev.azdev.ezeep.com/sfapi/GetPrinter/', {
+    return fetch(`${printingApiDev}/GetPrinter/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
