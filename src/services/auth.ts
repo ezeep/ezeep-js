@@ -1,22 +1,18 @@
 import { createStore } from '@stencil/store'
-import oauthUrlDev from './../utils/config.json'
+import config from './../utils/config.json'
 export class EzpAuthorizationService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI;
-    this.clientID = clientID;
-    console.log(oauthUrlDev);
-    
+    this.clientID = clientID;  
   }
 
   clientID: string;
   redirectURI: string;
   code: string;
-  //authURI = new URL(`${oauthUrlDev}/authorize/`);
-  authURI = new URL('https://account.dev.azdev.ezeep.com/oauth/authorize/');
+  authURI = new URL(`${config.oauthUrlDev}/authorize/`);
   urlParams = new URLSearchParams();
   isAuthorized = false;
-  //accessTokenURl = `${oauthUrlDev}/access_token/`;
-  accessTokenURL = 'https://account.dev.azdev.ezeep.com/oauth/access_token/';
+  accessTokenURL = `${config.oauthUrlDev}/access_token/`;
   codeVerifier: string;
   codeChallenge: string;
   accessToken: string;

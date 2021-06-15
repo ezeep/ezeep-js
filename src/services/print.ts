@@ -1,8 +1,8 @@
 import { createStore } from '@stencil/store';
-import printingApiDev from './../utils/config.json'
+import config from './../utils/config.json'
 export class EzpPrintService {
   getPrinterList(accessToken: string) {
-    return fetch(`${printingApiDev}/GetPrinter/`, {
+    return fetch(`${config.printingApiDev}/GetPrinter/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,

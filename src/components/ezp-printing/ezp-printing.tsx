@@ -81,16 +81,17 @@ export class EzpPrinting {
   render() {
     return (
       <Host>
-        <ezp-icon-button
-          id="print-trigger"
-          icon="printer"
-          slot="trigger"
-          type="button"
-          onClick={() => this.openAuth()}
-        ></ezp-icon-button>
+
         {this.authOpen ? (
-          <ezp-auth clientID={this.clientid} redirectURI={this.redirecturi}></ezp-auth>
-        ) : null}
+          <ezp-auth clientID={this.clientid} redirectURI={this.redirecturi}></ezp-auth>)
+          :
+          (<ezp-icon-button
+            id="print-trigger"
+            icon="printer"
+            slot="trigger"
+            type="button"
+            onClick={() => this.openAuth()}
+          ></ezp-icon-button>)}
       </Host>
     )
   }
