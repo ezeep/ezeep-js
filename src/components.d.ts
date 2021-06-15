@@ -44,17 +44,10 @@ export namespace Components {
         "type": IconButtonTypeTypes;
     }
     interface EzpPrinterSelection {
-        /**
-          * Description...
-         */
-        "clientID": string;
-        /**
-          * Description...
-         */
-        "redirectURI": string;
     }
     interface EzpPrinting {
         "clientid": string;
+        "closeAuth": () => Promise<void>;
         /**
           * Description...
          */
@@ -62,6 +55,7 @@ export namespace Components {
         "custom": boolean;
         "filename": string;
         "fileurl": string;
+        "openAuth": () => Promise<void>;
         /**
           * Description...
          */
@@ -249,19 +243,11 @@ declare namespace LocalJSX {
         /**
           * Description...
          */
-        "clientID"?: string;
-        /**
-          * Description...
-         */
         "onPrintCancel"?: (event: CustomEvent<MouseEvent>) => void;
         /**
           * Description...
          */
         "onPrintSubmit"?: (event: CustomEvent<MouseEvent>) => void;
-        /**
-          * Description...
-         */
-        "redirectURI"?: string;
     }
     interface EzpPrinting {
         "clientid"?: string;

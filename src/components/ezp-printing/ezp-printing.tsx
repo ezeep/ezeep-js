@@ -19,7 +19,8 @@ export class EzpPrinting {
    */
 
   /** Description... */
-  @State() printOpen: boolean = false
+  @State() printOpen: boolean = false;
+  @State() authOpen: boolean = false;
 
   /**
    *
@@ -48,13 +49,23 @@ export class EzpPrinting {
   /** Description... */
   @Method()
   async openPrint() {
-    this.printOpen = true
+    this.printOpen = true;
   }
 
   /** Description... */
   @Method()
   async closePrint() {
-    this.printOpen = false
+    this.printOpen = false;
+  }
+
+  @Method()
+  async openAuth() {
+    this.authOpen = true;
+  }
+
+  @Method()
+  async closeAuth() {
+    this.authOpen = false;
   }
 
   componentWillLoad() {
@@ -75,10 +86,10 @@ export class EzpPrinting {
           icon="printer"
           slot="trigger"
           type="button"
-          onClick={() => this.openPrint()}
+          onClick={() => this.openAuth()}
         ></ezp-icon-button>
-        {this.printOpen ? (
-          <ezp-printer-selection clientID={this.clientid} redirectURI={this.redirecturi} />
+        {this.authOpen ? (
+          <ezp-auth clientID={this.clientid} redirectURI={this.redirecturi}></ezp-auth>
         ) : null}
       </Host>
     )

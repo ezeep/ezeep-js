@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, State } from '@stencil/core'
+import { Component, Host, h, Prop, State, Watch } from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
 @Component({
@@ -69,7 +69,7 @@ export class EzpAuth {
     } else {
       return (
         <Host>
-          <p>Logged in!</p>
+          <ezp-printer-selection/>
         </Host>
       )
     }

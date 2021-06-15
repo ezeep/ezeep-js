@@ -10,7 +10,8 @@ export class EzpPrintService {
     })
       .then((response) => response.json())
       .then((data) => {
-        return data;
+        printStore.state.printers = data;
+        console.log(printStore.state.printers);
       })
   }
 }

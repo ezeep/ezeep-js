@@ -16,12 +16,6 @@ export class EzpPrinterSelection {
    *
    */
 
-  /** Description... */
-  @Prop() clientID: string
-
-  /** Description... */
-  @Prop() redirectURI: string
-
   /**
    *
    * States
@@ -161,7 +155,6 @@ export class EzpPrinterSelection {
             <ezp-text-button type="button" onClick={this.handlePrint}>
               Print
             </ezp-text-button>
-            <ezp-auth clientID={this.clientID} redirectURI={this.redirectURI}></ezp-auth>
           </div>
         </div>
       </Host>
