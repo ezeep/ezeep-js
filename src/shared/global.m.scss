@@ -45,7 +45,7 @@ $colors: (
     'outline-translucent-secondary': rgba(119 119 119 / 16%),
     'outline-translucent-tertiary': rgba(119 119 119 / 22%),
     'overlay': rgba(0 0 0 / 26%),
-    'shadow': rgba(0 0 0 / 10%),
+    'shadow': rgba(0 0 0 / 4%),
   ),
   'dark': (
     'main-primary': rgb(48 154 189),
@@ -71,7 +71,7 @@ $colors: (
     'outline-translucent-secondary': rgba(119 119 119 / 34%),
     'outline-translucent-tertiary': rgba(119 119 119 / 40%),
     'overlay': rgba(0 0 0 / 68%),
-    'shadow': rgba(0 0 0 / 26%),
+    'shadow': rgba(0 0 0 / 10%),
   ),
 );
 $font-features: 'calt', 'liga', 'case', 'ss03', 'zero', 'cv05', 'cv10';
