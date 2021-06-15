@@ -30,9 +30,6 @@
   /** @prop --content-separator: Description... */
   --content-separator: none;
 
-  /** @prop --dialog-border: Description... */
-  --dialog-border: 0.5px solid var(--color-outline-translucent-tertiary);
-
   /** @prop --dialog-radius: Description... */
   --dialog-radius: 8px;
 
@@ -81,7 +78,12 @@
 #dialog {
   background: var(--color-surface-tertiary);
   border-radius: var(--dialog-radius);
-  box-shadow: var(--dialog-separator-position) var(--color-outline-translucent-tertiary);
+  box-shadow: var(--dialog-separator-position) var(--color-outline-translucent-tertiary),
+    0 var(--spacing-1) var(--spacing-2) 0 var(--color-shadow),
+    0 var(--spacing-2) var(--spacing-3) 0 var(--color-shadow),
+    0 var(--spacing-3) var(--spacing-4) 0 var(--color-shadow),
+    0 var(--spacing-4) var(--spacing-5) 0 var(--color-shadow),
+    0 var(--spacing-5) var(--spacing-6) 0 var(--color-shadow);
   position: relative;
 }
 

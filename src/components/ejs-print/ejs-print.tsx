@@ -102,7 +102,6 @@ export class EjsPrint {
             <ejs-typo-body>My Document.docx</ejs-typo-body>
             <ejs-icon-button level="tertiary" icon="menu" id="toggle-menu" />
           </div>
-
           <div id="content">
             <div id="printer">
               <ejs-select
@@ -163,6 +162,7 @@ export class EjsPrint {
             </ejs-text-button>
             <ejs-auth clientID={this.clientID} redirectURI={this.redirectURI}></ejs-auth>
           </div>
+          {/*<ejs-progress status="Printjob in progress" />*/}
         </div>
       </Host>
     )

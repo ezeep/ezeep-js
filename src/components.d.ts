@@ -53,6 +53,12 @@ export namespace Components {
          */
         "redirectURI": string;
     }
+    interface EjsProgress {
+        /**
+          * Status...
+         */
+        "status": string;
+    }
     interface EjsRoot {
         "clientid": string;
         /**
@@ -163,6 +169,12 @@ declare global {
         prototype: HTMLEjsPrintElement;
         new (): HTMLEjsPrintElement;
     };
+    interface HTMLEjsProgressElement extends Components.EjsProgress, HTMLStencilElement {
+    }
+    var HTMLEjsProgressElement: {
+        prototype: HTMLEjsProgressElement;
+        new (): HTMLEjsProgressElement;
+    };
     interface HTMLEjsRootElement extends Components.EjsRoot, HTMLStencilElement {
     }
     var HTMLEjsRootElement: {
@@ -198,6 +210,7 @@ declare global {
         "ejs-icon": HTMLEjsIconElement;
         "ejs-icon-button": HTMLEjsIconButtonElement;
         "ejs-print": HTMLEjsPrintElement;
+        "ejs-progress": HTMLEjsProgressElement;
         "ejs-root": HTMLEjsRootElement;
         "ejs-select": HTMLEjsSelectElement;
         "ejs-text-button": HTMLEjsTextButtonElement;
@@ -259,6 +272,12 @@ declare namespace LocalJSX {
           * Description...
          */
         "redirectURI"?: string;
+    }
+    interface EjsProgress {
+        /**
+          * Status...
+         */
+        "status"?: string;
     }
     interface EjsRoot {
         "clientid"?: string;
@@ -345,6 +364,7 @@ declare namespace LocalJSX {
         "ejs-icon": EjsIcon;
         "ejs-icon-button": EjsIconButton;
         "ejs-print": EjsPrint;
+        "ejs-progress": EjsProgress;
         "ejs-root": EjsRoot;
         "ejs-select": EjsSelect;
         "ejs-text-button": EjsTextButton;
@@ -360,6 +380,7 @@ declare module "@stencil/core" {
             "ejs-icon": LocalJSX.EjsIcon & JSXBase.HTMLAttributes<HTMLEjsIconElement>;
             "ejs-icon-button": LocalJSX.EjsIconButton & JSXBase.HTMLAttributes<HTMLEjsIconButtonElement>;
             "ejs-print": LocalJSX.EjsPrint & JSXBase.HTMLAttributes<HTMLEjsPrintElement>;
+            "ejs-progress": LocalJSX.EjsProgress & JSXBase.HTMLAttributes<HTMLEjsProgressElement>;
             "ejs-root": LocalJSX.EjsRoot & JSXBase.HTMLAttributes<HTMLEjsRootElement>;
             "ejs-select": LocalJSX.EjsSelect & JSXBase.HTMLAttributes<HTMLEjsSelectElement>;
             "ejs-text-button": LocalJSX.EjsTextButton & JSXBase.HTMLAttributes<HTMLEjsTextButtonElement>;
