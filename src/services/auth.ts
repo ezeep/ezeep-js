@@ -2,55 +2,55 @@ import { createStore } from '@stencil/store'
 import config from './../utils/config.json'
 export class EzpAuthorizationService {
   constructor(redirectURI: string, clientID: string) {
-    this.redirectURI = redirectURI;
-    this.clientID = clientID;  
+    this.redirectURI = redirectURI
+    this.clientID = clientID
   }
 
-  clientID: string;
-  redirectURI: string;
-  code: string;
-  authURI = new URL(`${config.oauthUrlDev}/authorize/`);
-  urlParams = new URLSearchParams();
-  isAuthorized = false;
-  accessTokenURL = `${config.oauthUrlDev}/access_token/`;
-  codeVerifier: string;
-  codeChallenge: string;
-  accessToken: string;
-  refreshToken: string;
+  clientID: string
+  redirectURI: string
+  code: string
+  authURI = new URL(`${config.oauthUrlDev}/authorize/`)
+  urlParams = new URLSearchParams()
+  isAuthorized = false
+  accessTokenURL = `${config.oauthUrlDev}/access_token/`
+  codeVerifier: string
+  codeChallenge: string
+  accessToken: string
+  refreshToken: string
 
   generateCodeVerifier() {
     if (authStore.state.codeVerifier !== '') {
-      this.codeVerifier = authStore.state.codeVerifier;
+      this.codeVerifier = authStore.state.codeVerifier
     } else {
-      const arr = new Uint8Array(128);
-      const randomValueArray = crypto.getRandomValues(arr);
-      const codeVerifier = btoa(randomValueArray.toString()).substr(0, 128);
-      this.codeVerifier = codeVerifier;
-      authStore.state.codeVerifier = this.codeVerifier;
+      const arr = new Uint8Array(128)
+      const randomValueArray = crypto.getRandomValues(arr)
+      const codeVerifier = btoa(randomValueArray.toString()).substr(0, 128)
+      this.codeVerifier = codeVerifier
+      authStore.state.codeVerifier = this.codeVerifier
     }
   }
 
   async generateCodeChallenge(codeVerifier: string) {
-    const encoder = new TextEncoder();
-    const codeData = encoder.encode(codeVerifier);
-    const digest = await crypto.subtle.digest('SHA-256', codeData);
-    const base64Digest = btoa(String.fromCharCode.apply(null, new Uint8Array(digest)));
-    this.codeChallenge = base64Digest.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    const encoder = new TextEncoder()
+    const codeData = encoder.encode(codeVerifier)
+    const digest = await crypto.subtle.digest('SHA-256', codeData)
+    const base64Digest = btoa(String.fromCharCode.apply(null, new Uint8Array(digest)))
+    this.codeChallenge = base64Digest.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
   }
 
   buildAuthURI() {
-    this.urlParams.append('response_type', 'code');
-    this.urlParams.append('client_id', this.clientID);
-    this.urlParams.append('redirect_uri', this.redirectURI);
-    this.urlParams.append('code_challenge', this.codeChallenge);
-    this.urlParams.append('code_challenge_method', 'S256');
-    this.authURI.search = this.urlParams.toString();
+    this.urlParams.append('response_type', 'code')
+    this.urlParams.append('client_id', this.clientID)
+    this.urlParams.append('redirect_uri', this.redirectURI)
+    this.urlParams.append('code_challenge', this.codeChallenge)
+    this.urlParams.append('code_challenge_method', 'S256')
+    this.authURI.search = this.urlParams.toString()
   }
 
   encodeFormData(data: { [x: string]: string | number | boolean }): string {
     return Object.keys(data)
       .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
-      .join('&');
+      .join('&')
   }
 
   getAccessToken() {
@@ -69,21 +69,21 @@ export class EzpAuthorizationService {
       }),
     })
       .then((response) => {
-        return response.json(); // parse response
+        return response.json() // parse response
       })
       .then((data) => {
         // actual object
         if (data.access_token) {
-          authStore.state.isAuthorized = true;
+          authStore.state.isAuthorized = true
           // sessionStorage.setItem('isAuthorized', this.isAuthorized.toString())
 
-          this.accessToken = data.access_token;
+          this.accessToken = data.access_token
           // sessionStorage.setItem('access_token', this.accessToken)
-          authStore.state.accessToken = this.accessToken;
+          authStore.state.accessToken = this.accessToken
 
-          this.refreshToken = data.refresh_token;
+          this.refreshToken = data.refresh_token
           // sessionStorage.setItem('refreshToken', this.refreshToken)
-          authStore.state.refreshToken = this.refreshToken;
+          authStore.state.refreshToken = this.refreshToken
         }
       })
   }
@@ -95,18 +95,18 @@ const authStore = createStore({
   codeVerifier: '',
   accessToken: '',
   refreshToken: '',
-  isAuthorized: false
+  isAuthorized: false,
 })
 
-export default authStore;
+export default authStore
 
 export function sendCodeToParentWindow() {
   // get the URL parameters which will include the auth code
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
+  const params = new URLSearchParams(window.location.search)
+  const code = params.get('code')
   if (window.opener) {
     // send them to the opening window
-    window.opener.postMessage(code);
-    window.close();
+    window.opener.postMessage(code)
+    window.close()
   }
-};
+}

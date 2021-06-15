@@ -25,4 +25,3 @@ export type TypoHeadingLevelTypes =
 export type TypoHeadingTagTypes = 1 | 2 | 3 | 4 | 5 | 6
 export type TypoParagraphLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type TypoWeightTypes = 'soft' | 'strong' | 'heavy'
-export type ProgressSizeTypes = 'normal' | 'large'

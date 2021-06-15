@@ -1,7 +1,7 @@
-import { Component, Host, Listen, Event, EventEmitter, State, Prop, h } from '@stencil/core'
+import { Component, Host, Listen, Event, EventEmitter, State, h } from '@stencil/core'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
-import { PrintUserType } from '../../shared/types'
+// import { PrintUserType } from '../../shared/types'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -9,7 +9,7 @@ import { PrintUserType } from '../../shared/types'
   shadow: true,
 })
 export class EzpPrinterSelection {
-  private user: PrintUserType
+  // private user: PrintUserType
   private options
 
   /**
@@ -77,11 +77,11 @@ export class EzpPrinterSelection {
     await Promise.all([fetch('/data/user.json'), fetch('/data/options.json')])
       .then((responses) => Promise.all(responses.map((response) => response.json())))
       .then((data) => {
-        this.user = data[0]
+        // this.user = data[0]
         this.options = data[1]
-      });
-      const printService = new EzpPrintService();
-      await printService.getPrinterList(authStore.state.accessToken);
+      })
+    const printService = new EzpPrintService()
+    await printService.getPrinterList(authStore.state.accessToken)
   }
 
   /**

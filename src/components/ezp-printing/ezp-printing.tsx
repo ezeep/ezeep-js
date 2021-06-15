@@ -7,11 +7,11 @@ import { sendCodeToParentWindow } from '../../services/auth'
   shadow: true,
 })
 export class EzpPrinting {
-  @Prop() clientid: string;
-  @Prop() redirecturi: string;
-  @Prop() filename: string;
-  @Prop() fileurl: string;
-  @Prop() custom: boolean;
+  @Prop() clientid: string
+  @Prop() redirecturi: string
+  @Prop() filename: string
+  @Prop() fileurl: string
+  @Prop() custom: boolean
   /**
    *
    * States
@@ -19,8 +19,8 @@ export class EzpPrinting {
    */
 
   /** Description... */
-  @State() printOpen: boolean = false;
-  @State() authOpen: boolean = false;
+  @State() printOpen: boolean = false
+  @State() authOpen: boolean = false
 
   /**
    *
@@ -49,27 +49,27 @@ export class EzpPrinting {
   /** Description... */
   @Method()
   async openPrint() {
-    this.printOpen = true;
+    this.printOpen = true
   }
 
   /** Description... */
   @Method()
   async closePrint() {
-    this.printOpen = false;
+    this.printOpen = false
   }
 
   @Method()
   async openAuth() {
-    this.authOpen = true;
+    this.authOpen = true
   }
 
   @Method()
   async closeAuth() {
-    this.authOpen = false;
+    this.authOpen = false
   }
 
   componentWillLoad() {
-    sendCodeToParentWindow();
+    sendCodeToParentWindow()
   }
 
   /**
@@ -81,17 +81,17 @@ export class EzpPrinting {
   render() {
     return (
       <Host>
-
         {this.authOpen ? (
-          <ezp-auth clientID={this.clientid} redirectURI={this.redirecturi}></ezp-auth>)
-          :
-          (<ezp-icon-button
+          <ezp-auth clientID={this.clientid} redirectURI={this.redirecturi}></ezp-auth>
+        ) : (
+          <ezp-icon-button
             id="print-trigger"
             icon="printer"
             slot="trigger"
             type="button"
             onClick={() => this.openAuth()}
-          ></ezp-icon-button>)}
+          ></ezp-icon-button>
+        )}
       </Host>
     )
   }

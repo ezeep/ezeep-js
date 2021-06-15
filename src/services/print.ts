@@ -1,4 +1,4 @@
-import { createStore } from '@stencil/store';
+import { createStore } from '@stencil/store'
 import config from './../utils/config.json'
 export class EzpPrintService {
   getPrinterList(accessToken: string) {
@@ -10,14 +10,14 @@ export class EzpPrintService {
     })
       .then((response) => response.json())
       .then((data) => {
-        printStore.state.printers = data;
-        console.log(printStore.state.printers);
+        printStore.state.printers = data
+        console.log(printStore.state.printers)
       })
   }
 }
 
 const printStore = createStore({
-  printers: []
+  printers: [],
 })
 
-export default printStore;
+export default printStore

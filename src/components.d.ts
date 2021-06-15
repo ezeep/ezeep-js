@@ -62,6 +62,12 @@ export namespace Components {
         "openPrint": () => Promise<void>;
         "redirecturi": string;
     }
+    interface EzpProgress {
+        /**
+          * Status...
+         */
+        "status": string;
+    }
     interface EzpSelect {
         /**
           * Description...
@@ -166,6 +172,12 @@ declare global {
         prototype: HTMLEzpPrintingElement;
         new (): HTMLEzpPrintingElement;
     };
+    interface HTMLEzpProgressElement extends Components.EzpProgress, HTMLStencilElement {
+    }
+    var HTMLEzpProgressElement: {
+        prototype: HTMLEzpProgressElement;
+        new (): HTMLEzpProgressElement;
+    };
     interface HTMLEzpSelectElement extends Components.EzpSelect, HTMLStencilElement {
     }
     var HTMLEzpSelectElement: {
@@ -196,6 +208,7 @@ declare global {
         "ezp-icon-button": HTMLEzpIconButtonElement;
         "ezp-printer-selection": HTMLEzpPrinterSelectionElement;
         "ezp-printing": HTMLEzpPrintingElement;
+        "ezp-progress": HTMLEzpProgressElement;
         "ezp-select": HTMLEzpSelectElement;
         "ezp-text-button": HTMLEzpTextButtonElement;
         "ezp-typo-body": HTMLEzpTypoBodyElement;
@@ -255,6 +268,12 @@ declare namespace LocalJSX {
         "filename"?: string;
         "fileurl"?: string;
         "redirecturi"?: string;
+    }
+    interface EzpProgress {
+        /**
+          * Status...
+         */
+        "status"?: string;
     }
     interface EzpSelect {
         /**
@@ -338,6 +357,7 @@ declare namespace LocalJSX {
         "ezp-icon-button": EzpIconButton;
         "ezp-printer-selection": EzpPrinterSelection;
         "ezp-printing": EzpPrinting;
+        "ezp-progress": EzpProgress;
         "ezp-select": EzpSelect;
         "ezp-text-button": EzpTextButton;
         "ezp-typo-body": EzpTypoBody;
@@ -353,6 +373,7 @@ declare module "@stencil/core" {
             "ezp-icon-button": LocalJSX.EzpIconButton & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
             "ezp-printer-selection": LocalJSX.EzpPrinterSelection & JSXBase.HTMLAttributes<HTMLEzpPrinterSelectionElement>;
             "ezp-printing": LocalJSX.EzpPrinting & JSXBase.HTMLAttributes<HTMLEzpPrintingElement>;
+            "ezp-progress": LocalJSX.EzpProgress & JSXBase.HTMLAttributes<HTMLEzpProgressElement>;
             "ezp-select": LocalJSX.EzpSelect & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
             "ezp-text-button": LocalJSX.EzpTextButton & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
             "ezp-typo-body": LocalJSX.EzpTypoBody & JSXBase.HTMLAttributes<HTMLEzpTypoBodyElement>;
