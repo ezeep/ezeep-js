@@ -1,0 +1,315 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './ezp-select.m' as self;
+@use './../../shared/global.m' as global;
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  /** @prop --accessory-color: Description... */
+  --accessory-color: var(--color-foreground-secondary);
+
+  /** @prop --details-columns: Description... */
+  --details-columns: auto;
+
+  /** @prop --details-rows: Description... */
+  --details-rows: auto;
+
+  /** @prop --duration: Description... */
+  --duration: 0.3s;
+
+  /** @prop --host-height: Description... */
+  --host-height: var(--toggle-height);
+
+  /** @prop --host-transition: Description... */
+  --host-transition: z-index 0s var(--duration);
+
+  /** @prop --host-z-index: Description... */
+  --host-z-index: 3;
+
+  /** @prop --icon-color: Description... */
+  --icon-color: var(--color-foreground-secondary);
+
+  /** @prop --indicator-opacity: Description... */
+  --indicator-opacity: 0;
+
+  /** @prop --indicator-transform: Description... */
+  --indicator-transform: translateX(var(--spacing-3));
+
+  /** @prop --indicator-transition: Description... */
+  --indicator-transition: opacity var(--indicator-duration) var(--easing-out-quart),
+    transform var(--indicator-duration) var(--easing-out-quart),
+    visibility 0s var(--indicator-duration);
+
+  /** @prop --indicator-visibility: Description... */
+  --indicator-visibility: hidden;
+
+  /** @prop --label-align: Description... */
+  --label-align: auto;
+
+  /** @prop --label-color: Description... */
+  --label-color: var(--color-foreground-secondary);
+
+  /** @prop --list-height: Description... */
+  --list-height: 0;
+
+  /** @prop --list-separator-position: Description... */
+  --list-separator-position: inset 0 var(--hairline-positive);
+
+  /** @prop --option-height: Description... */
+  --option-height: auto;
+
+  /** @prop --toggle-areas: Description... */
+  --toggle-areas: none;
+
+  /** @prop --toggle-columns: Description... */
+  --toggle-columns: none;
+
+  /** @prop --toggle-height: Description... */
+  --toggle-height: auto;
+
+  /** @prop --toggle-rows: Description... */
+  --toggle-rows: auto;
+
+  /** @prop --value-align: Description... */
+  --value-align: auto;
+
+  /** @prop --wrap-radius: Description... */
+  --wrap-radius: 0;
+
+  /** @prop --wrap-separator-color: Description... */
+  --wrap-separator-color: var(--color-outline-translucent-tertiary);
+
+  /** @prop --wrap-separator-position-bottom: Description... */
+  --wrap-separator-position-bottom: 0 var(--hairline-positive) 0 0;
+
+  /** @prop --wrap-separator-position-left: Description... */
+  --wrap-separator-position-left: var(--hairline-negative) 0 0 0;
+
+  /** @prop --wrap-separator-position-right: Description... */
+  --wrap-separator-position-right: var(--hairline-positive) 0 0 0;
+
+  /** @prop --wrap-separator-position-top: Description... */
+  --wrap-separator-position-top: 0 var(--hairline-negative) 0 0;
+
+  /** @prop --wrap-translate-y: Description... */
+  --wrap-translate-y: 0;
+
+  display: block;
+  height: var(--host-height);
+  position: relative;
+  transition: var(--host-transition);
+  z-index: var(--host-z-index);
+
+  @at-root {
+    #{&}(:first-child) {
+      --wrap-radius: 3px 3px 0 0;
+    }
+
+    #{&}(:last-child) {
+      --wrap-radius: 0 0 3px 3px;
+    }
+
+    #{&}(:first-child:last-child) {
+      --wrap-radius: 3px;
+    }
+
+    #{&}(:not(:last-child):not(.is-expanded)) {
+      --wrap-separator-position-bottom: 0 0 0 0;
+    }
+
+    #{&}(.toggle-horizontal) {
+      --label-align: start;
+      --toggle-areas: 'label value accessory';
+      --toggle-columns: 1fr repeat(2, auto);
+      --toggle-height: 30px;
+      --toggle-rows: auto;
+      --value-align: end;
+    }
+
+    #{&}(.toggle-horizontal.has-icon) {
+      --toggle-areas: 'icon label value accessory';
+      --toggle-columns: auto 1fr repeat(2, auto);
+    }
+
+    #{&}(.toggle-vertical) {
+      --label-align: center;
+      --toggle-areas: 'label accessory' 'value accessory';
+      --toggle-columns: 1fr auto;
+      --toggle-height: 48px;
+      --toggle-rows: repeat(2, auto);
+      --value-align: center;
+    }
+
+    #{&}(.toggle-vertical.has-icon) {
+      --toggle-areas: 'icon label accessory' 'icon value accessory';
+      --toggle-columns: auto 1fr auto;
+    }
+
+    #{&}(.option-horizontal) {
+      --details-columns: repeat(2, 1fr);
+      --details-rows: auto;
+      --option-height: 30px;
+    }
+
+    #{&}(.option-vertical) {
+      --details-columns: 1fr;
+      --details-rows: repeat(2, auto);
+      --option-height: 48px;
+    }
+
+    #{&}(.is-expanded) {
+      --accessory-color: var(--color-main-primary);
+      --host-transition: z-index 0s 0s;
+      --host-z-index: 9999;
+      --icon-color: var(--color-main-primary);
+      --label-color: var(--color-main-primary);
+      --wrap-radius: 3px;
+    }
+  }
+
+  @include global.media-appearance('dark') {
+    --list-separator-position: 0 var(--hairline-negative) 0 0;
+    --wrap-separator-position-bottom: inset 0 var(--hairline-negative) 0 0;
+    --wrap-separator-position-left: inset var(--hairline-positive) 0 0 0;
+    --wrap-separator-position-right: inset var(--hairline-negative) 0 0 0;
+    --wrap-separator-position-top: inset 0 var(--hairline-positive) 0 0;
+  }
+}
+
+#wrap {
+  background: var(--color-surface-tertiary);
+  border-radius: var(--wrap-radius);
+  box-shadow: var(--wrap-separator-position-top) var(--wrap-separator-color),
+    var(--wrap-separator-position-right) var(--wrap-separator-color),
+    var(--wrap-separator-position-bottom) var(--wrap-separator-color),
+    var(--wrap-separator-position-left) var(--wrap-separator-color);
+  transform: translateY(var(--wrap-translate-y));
+  transition: transform var(--duration) var(--easing-out-quart),
+    border-radius var(--duration) var(--easing-out-quart),
+    box-shadow var(--duration) var(--easing-out-quart);
+}
+
+#toggle {
+  box-sizing: border-box;
+  cursor: pointer;
+  display: grid;
+  grid-gap: var(--spacing-2);
+  grid-template-areas: var(--toggle-areas);
+  grid-template-columns: var(--toggle-columns);
+  grid-template-rows: var(--toggle-rows);
+  height: var(--toggle-height);
+  padding: var(--spacing-3);
+
+  &:hover {
+    background: var(--color-shade-primary);
+  }
+}
+
+#icon {
+  align-self: center;
+  color: var(--icon-color);
+  grid-area: icon;
+  margin: calc(var(--spacing-3) * -1) 0;
+}
+
+#label {
+  align-self: var(--label-align);
+  color: var(--label-color);
+  grid-area: label;
+}
+
+#value {
+  align-self: var(--value-align);
+  color: var(--color-foreground-primary);
+  grid-area: value;
+}
+
+#accessory {
+  align-self: center;
+  color: var(--accessory-color);
+  grid-area: accessory;
+  margin: calc(var(--spacing-3) * -1) 0;
+}
+
+#list {
+  box-shadow: var(--list-separator-position) var(--color-outline-translucent-tertiary);
+  height: var(--list-height);
+  overflow: auto;
+  transition: height var(--duration) var(--easing-out-quart);
+}
+
+.option {
+  background: var(--option-background);
+  box-sizing: border-box;
+  cursor: pointer;
+  display: grid;
+  grid-column-gap: var(--spacing-3);
+  grid-row-gap: var(--spacing-2);
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto;
+  height: var(--option-height);
+  padding: 0 0 0 var(--spacing-3);
+
+  &:not(:first-child) {
+    --details-separator: 0 var(--hairline-negative) 0 0 var(--color-outline-translucent-tertiary);
+  }
+
+  &:hover {
+    --option-background: var(--color-shade-primary);
+
+    &,
+    + .option {
+      --details-separator: none;
+    }
+  }
+
+  &:active {
+    --option-background: var(--color-shade-secondary);
+  }
+
+  &.is-selected {
+    --indicator-opacity: 1;
+    --indicator-transform: translateX(0);
+    --indicator-transition: opacity var(--duration) var(--easing-out-quart),
+      transform var(--duration) var(--easing-out-quart), visibility 0s 0s;
+    --indicator-visibility: visible;
+  }
+}
+
+.indicator {
+  align-self: center;
+  color: var(--color-main-primary);
+  margin: calc(var(--spacing-3) * -1) 0;
+  opacity: var(--indicator-opacity);
+  transform: var(--indicator-transform);
+  transition: var(--indicator-transition);
+  visibility: var(--indicator-visibility);
+}
+
+.details {
+  box-shadow: var(--details-separator);
+  display: grid;
+  grid-gap: var(--spacing-2);
+  grid-template-columns: var(--details-columns);
+  grid-template-rows: var(--details-rows);
+  padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) 0;
+}
+
+.title {
+  align-self: start;
+  color: var(--color-foreground-primary);
+}
+
+.meta {
+  align-self: end;
+  color: var(--color-foreground-secondary);
+}

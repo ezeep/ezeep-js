@@ -1,0 +1,6 @@
+{
+    "oauthUrlDev": "https://account.dev.azdev.ezeep.com/oauth",
+    "oauthUrlLive": "https://account.ezeep.com/oauth",
+    "printingApiDev": "https://printapi.dev.azdev.ezeep.com/sfapi",
+    "printingApiLive": "https://printapi.ezeep.com/sfapi"
+}

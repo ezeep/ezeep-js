@@ -7,17 +7,17 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, TypoBodyLevelTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
-    interface EjsAuth {
+    interface EzpAuth {
         "clientID": string;
         "redirectURI": string;
     }
-    interface EjsIcon {
+    interface EzpIcon {
         /**
           * Description...
          */
         "name": IconNameTypes;
     }
-    interface EjsIconButton {
+    interface EzpIconButton {
         /**
           * Description...
          */
@@ -43,35 +43,26 @@ export namespace Components {
          */
         "type": IconButtonTypeTypes;
     }
-    interface EjsPrint {
-        /**
-          * Description...
-         */
-        "clientID": string;
-        /**
-          * Description...
-         */
-        "redirectURI": string;
+    interface EzpPrinterSelection {
     }
-    interface EjsProgress {
-        /**
-          * Status...
-         */
-        "status": string;
-    }
-    interface EjsRoot {
+    interface EzpPrinting {
         "clientid": string;
+        "closeAuth": () => Promise<void>;
         /**
           * Description...
          */
         "closePrint": () => Promise<void>;
+        "custom": boolean;
+        "filename": string;
+        "fileurl": string;
+        "openAuth": () => Promise<void>;
         /**
           * Description...
          */
         "openPrint": () => Promise<void>;
         "redirecturi": string;
     }
-    interface EjsSelect {
+    interface EzpSelect {
         /**
           * Description...
          */
@@ -97,7 +88,7 @@ export namespace Components {
          */
         "toggleFlow": SelectFlowTypes;
     }
-    interface EjsTextButton {
+    interface EzpTextButton {
         /**
           * Description...
          */
@@ -119,7 +110,7 @@ export namespace Components {
          */
         "type": TextButtonTypeTypes;
     }
-    interface EjsTypoBody {
+    interface EzpTypoBody {
         /**
           * Description...
          */
@@ -129,7 +120,7 @@ export namespace Components {
          */
         "weight": TypoWeightTypes;
     }
-    interface EjsTypoHeading {
+    interface EzpTypoHeading {
         /**
           * Description...
          */
@@ -145,91 +136,84 @@ export namespace Components {
     }
 }
 declare global {
-    interface HTMLEjsAuthElement extends Components.EjsAuth, HTMLStencilElement {
+    interface HTMLEzpAuthElement extends Components.EzpAuth, HTMLStencilElement {
     }
-    var HTMLEjsAuthElement: {
-        prototype: HTMLEjsAuthElement;
-        new (): HTMLEjsAuthElement;
+    var HTMLEzpAuthElement: {
+        prototype: HTMLEzpAuthElement;
+        new (): HTMLEzpAuthElement;
     };
-    interface HTMLEjsIconElement extends Components.EjsIcon, HTMLStencilElement {
+    interface HTMLEzpIconElement extends Components.EzpIcon, HTMLStencilElement {
     }
-    var HTMLEjsIconElement: {
-        prototype: HTMLEjsIconElement;
-        new (): HTMLEjsIconElement;
+    var HTMLEzpIconElement: {
+        prototype: HTMLEzpIconElement;
+        new (): HTMLEzpIconElement;
     };
-    interface HTMLEjsIconButtonElement extends Components.EjsIconButton, HTMLStencilElement {
+    interface HTMLEzpIconButtonElement extends Components.EzpIconButton, HTMLStencilElement {
     }
-    var HTMLEjsIconButtonElement: {
-        prototype: HTMLEjsIconButtonElement;
-        new (): HTMLEjsIconButtonElement;
+    var HTMLEzpIconButtonElement: {
+        prototype: HTMLEzpIconButtonElement;
+        new (): HTMLEzpIconButtonElement;
     };
-    interface HTMLEjsPrintElement extends Components.EjsPrint, HTMLStencilElement {
+    interface HTMLEzpPrinterSelectionElement extends Components.EzpPrinterSelection, HTMLStencilElement {
     }
-    var HTMLEjsPrintElement: {
-        prototype: HTMLEjsPrintElement;
-        new (): HTMLEjsPrintElement;
+    var HTMLEzpPrinterSelectionElement: {
+        prototype: HTMLEzpPrinterSelectionElement;
+        new (): HTMLEzpPrinterSelectionElement;
     };
-    interface HTMLEjsProgressElement extends Components.EjsProgress, HTMLStencilElement {
+    interface HTMLEzpPrintingElement extends Components.EzpPrinting, HTMLStencilElement {
     }
-    var HTMLEjsProgressElement: {
-        prototype: HTMLEjsProgressElement;
-        new (): HTMLEjsProgressElement;
+    var HTMLEzpPrintingElement: {
+        prototype: HTMLEzpPrintingElement;
+        new (): HTMLEzpPrintingElement;
     };
-    interface HTMLEjsRootElement extends Components.EjsRoot, HTMLStencilElement {
+    interface HTMLEzpSelectElement extends Components.EzpSelect, HTMLStencilElement {
     }
-    var HTMLEjsRootElement: {
-        prototype: HTMLEjsRootElement;
-        new (): HTMLEjsRootElement;
+    var HTMLEzpSelectElement: {
+        prototype: HTMLEzpSelectElement;
+        new (): HTMLEzpSelectElement;
     };
-    interface HTMLEjsSelectElement extends Components.EjsSelect, HTMLStencilElement {
+    interface HTMLEzpTextButtonElement extends Components.EzpTextButton, HTMLStencilElement {
     }
-    var HTMLEjsSelectElement: {
-        prototype: HTMLEjsSelectElement;
-        new (): HTMLEjsSelectElement;
+    var HTMLEzpTextButtonElement: {
+        prototype: HTMLEzpTextButtonElement;
+        new (): HTMLEzpTextButtonElement;
     };
-    interface HTMLEjsTextButtonElement extends Components.EjsTextButton, HTMLStencilElement {
+    interface HTMLEzpTypoBodyElement extends Components.EzpTypoBody, HTMLStencilElement {
     }
-    var HTMLEjsTextButtonElement: {
-        prototype: HTMLEjsTextButtonElement;
-        new (): HTMLEjsTextButtonElement;
+    var HTMLEzpTypoBodyElement: {
+        prototype: HTMLEzpTypoBodyElement;
+        new (): HTMLEzpTypoBodyElement;
     };
-    interface HTMLEjsTypoBodyElement extends Components.EjsTypoBody, HTMLStencilElement {
+    interface HTMLEzpTypoHeadingElement extends Components.EzpTypoHeading, HTMLStencilElement {
     }
-    var HTMLEjsTypoBodyElement: {
-        prototype: HTMLEjsTypoBodyElement;
-        new (): HTMLEjsTypoBodyElement;
-    };
-    interface HTMLEjsTypoHeadingElement extends Components.EjsTypoHeading, HTMLStencilElement {
-    }
-    var HTMLEjsTypoHeadingElement: {
-        prototype: HTMLEjsTypoHeadingElement;
-        new (): HTMLEjsTypoHeadingElement;
+    var HTMLEzpTypoHeadingElement: {
+        prototype: HTMLEzpTypoHeadingElement;
+        new (): HTMLEzpTypoHeadingElement;
     };
     interface HTMLElementTagNameMap {
-        "ejs-auth": HTMLEjsAuthElement;
-        "ejs-icon": HTMLEjsIconElement;
-        "ejs-icon-button": HTMLEjsIconButtonElement;
-        "ejs-print": HTMLEjsPrintElement;
-        "ejs-progress": HTMLEjsProgressElement;
-        "ejs-root": HTMLEjsRootElement;
-        "ejs-select": HTMLEjsSelectElement;
-        "ejs-text-button": HTMLEjsTextButtonElement;
-        "ejs-typo-body": HTMLEjsTypoBodyElement;
-        "ejs-typo-heading": HTMLEjsTypoHeadingElement;
+        "ezp-auth": HTMLEzpAuthElement;
+        "ezp-icon": HTMLEzpIconElement;
+        "ezp-icon-button": HTMLEzpIconButtonElement;
+        "ezp-printer-selection": HTMLEzpPrinterSelectionElement;
+        "ezp-printing": HTMLEzpPrintingElement;
+        "ezp-select": HTMLEzpSelectElement;
+        "ezp-text-button": HTMLEzpTextButtonElement;
+        "ezp-typo-body": HTMLEzpTypoBodyElement;
+        "ezp-typo-heading": HTMLEzpTypoHeadingElement;
     }
 }
 declare namespace LocalJSX {
-    interface EjsAuth {
+    interface EzpAuth {
         "clientID"?: string;
         "redirectURI"?: string;
     }
-    interface EjsIcon {
+    interface EzpIcon {
         /**
           * Description...
          */
         "name": IconNameTypes;
     }
-    interface EjsIconButton {
+    interface EzpIconButton {
         /**
           * Description...
          */
@@ -255,11 +239,7 @@ declare namespace LocalJSX {
          */
         "type"?: IconButtonTypeTypes;
     }
-    interface EjsPrint {
-        /**
-          * Description...
-         */
-        "clientID"?: string;
+    interface EzpPrinterSelection {
         /**
           * Description...
          */
@@ -268,22 +248,15 @@ declare namespace LocalJSX {
           * Description...
          */
         "onPrintSubmit"?: (event: CustomEvent<MouseEvent>) => void;
-        /**
-          * Description...
-         */
-        "redirectURI"?: string;
     }
-    interface EjsProgress {
-        /**
-          * Status...
-         */
-        "status"?: string;
-    }
-    interface EjsRoot {
+    interface EzpPrinting {
         "clientid"?: string;
+        "custom"?: boolean;
+        "filename"?: string;
+        "fileurl"?: string;
         "redirecturi"?: string;
     }
-    interface EjsSelect {
+    interface EzpSelect {
         /**
           * Description...
          */
@@ -313,7 +286,7 @@ declare namespace LocalJSX {
          */
         "toggleFlow"?: SelectFlowTypes;
     }
-    interface EjsTextButton {
+    interface EzpTextButton {
         /**
           * Description...
          */
@@ -335,7 +308,7 @@ declare namespace LocalJSX {
          */
         "type"?: TextButtonTypeTypes;
     }
-    interface EjsTypoBody {
+    interface EzpTypoBody {
         /**
           * Description...
          */
@@ -345,7 +318,7 @@ declare namespace LocalJSX {
          */
         "weight"?: TypoWeightTypes;
     }
-    interface EjsTypoHeading {
+    interface EzpTypoHeading {
         /**
           * Description...
          */
@@ -360,32 +333,30 @@ declare namespace LocalJSX {
         "weight"?: TypoWeightTypes;
     }
     interface IntrinsicElements {
-        "ejs-auth": EjsAuth;
-        "ejs-icon": EjsIcon;
-        "ejs-icon-button": EjsIconButton;
-        "ejs-print": EjsPrint;
-        "ejs-progress": EjsProgress;
-        "ejs-root": EjsRoot;
-        "ejs-select": EjsSelect;
-        "ejs-text-button": EjsTextButton;
-        "ejs-typo-body": EjsTypoBody;
-        "ejs-typo-heading": EjsTypoHeading;
+        "ezp-auth": EzpAuth;
+        "ezp-icon": EzpIcon;
+        "ezp-icon-button": EzpIconButton;
+        "ezp-printer-selection": EzpPrinterSelection;
+        "ezp-printing": EzpPrinting;
+        "ezp-select": EzpSelect;
+        "ezp-text-button": EzpTextButton;
+        "ezp-typo-body": EzpTypoBody;
+        "ezp-typo-heading": EzpTypoHeading;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "ejs-auth": LocalJSX.EjsAuth & JSXBase.HTMLAttributes<HTMLEjsAuthElement>;
-            "ejs-icon": LocalJSX.EjsIcon & JSXBase.HTMLAttributes<HTMLEjsIconElement>;
-            "ejs-icon-button": LocalJSX.EjsIconButton & JSXBase.HTMLAttributes<HTMLEjsIconButtonElement>;
-            "ejs-print": LocalJSX.EjsPrint & JSXBase.HTMLAttributes<HTMLEjsPrintElement>;
-            "ejs-progress": LocalJSX.EjsProgress & JSXBase.HTMLAttributes<HTMLEjsProgressElement>;
-            "ejs-root": LocalJSX.EjsRoot & JSXBase.HTMLAttributes<HTMLEjsRootElement>;
-            "ejs-select": LocalJSX.EjsSelect & JSXBase.HTMLAttributes<HTMLEjsSelectElement>;
-            "ejs-text-button": LocalJSX.EjsTextButton & JSXBase.HTMLAttributes<HTMLEjsTextButtonElement>;
-            "ejs-typo-body": LocalJSX.EjsTypoBody & JSXBase.HTMLAttributes<HTMLEjsTypoBodyElement>;
-            "ejs-typo-heading": LocalJSX.EjsTypoHeading & JSXBase.HTMLAttributes<HTMLEjsTypoHeadingElement>;
+            "ezp-auth": LocalJSX.EzpAuth & JSXBase.HTMLAttributes<HTMLEzpAuthElement>;
+            "ezp-icon": LocalJSX.EzpIcon & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
+            "ezp-icon-button": LocalJSX.EzpIconButton & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
+            "ezp-printer-selection": LocalJSX.EzpPrinterSelection & JSXBase.HTMLAttributes<HTMLEzpPrinterSelectionElement>;
+            "ezp-printing": LocalJSX.EzpPrinting & JSXBase.HTMLAttributes<HTMLEzpPrintingElement>;
+            "ezp-select": LocalJSX.EzpSelect & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
+            "ezp-text-button": LocalJSX.EzpTextButton & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
+            "ezp-typo-body": LocalJSX.EzpTypoBody & JSXBase.HTMLAttributes<HTMLEzpTypoBodyElement>;
+            "ezp-typo-heading": LocalJSX.EzpTypoHeading & JSXBase.HTMLAttributes<HTMLEzpTypoHeadingElement>;
         }
     }
 }

@@ -1,0 +1,106 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './ezp-icon-button.m' as self;
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  /** @prop --button-background: Description... */
+  --button-background: var(--button-background-init);
+
+  /** @prop --button-background-active: Description... */
+  --button-background-active: transparent;
+
+  /** @prop --button-background-disabled: Description... */
+  --button-background-disabled: transparent;
+
+  /** @prop --button-background-hover: Description... */
+  --button-background-hover: transparent;
+
+  /** @prop --button-background-init: Description... */
+  --button-background-init: transparent;
+
+  /** @prop --button-color: Description... */
+  --button-color: var(--button-color-init);
+
+  /** @prop --button-color-disabled: Description... */
+  --button-color-disabled: inherit;
+
+  /** @prop --button-color-init: Description... */
+  --button-color-init: inherit;
+
+  /** @prop --button-cursor: Description... */
+  --button-cursor: pointer;
+
+  display: block;
+
+  @at-root {
+    #{&}(.primary) {
+      --button-background-active: var(--color-main-tertiary);
+      --button-background-disabled: var(--color-shade-primary);
+      --button-background-hover: var(--color-main-secondary);
+      --button-background-init: var(--color-main-primary);
+      --button-color-disabled: var(--color-foreground-tertiary);
+      --button-color-init: var(--color-on-main-primary);
+    }
+
+    #{&}(.secondary) {
+      --button-background-active: var(--color-shade-tertiary);
+      --button-background-disabled: var(--color-shade-primary);
+      --button-background-hover: var(--color-shade-secondary);
+      --button-background-init: var(--color-shade-primary);
+      --button-color-disabled: var(--color-foreground-tertiary);
+      --button-color-init: var(--color-main-primary);
+    }
+
+    #{&}(.tertiary) {
+      --button-background-active: var(--color-shade-secondary);
+      --button-background-hover: var(--color-shade-primary);
+      --button-color-disabled: var(--color-foreground-tertiary);
+      --button-color-init: var(--color-main-primary);
+    }
+  }
+}
+
+#button {
+  align-items: center;
+  appearance: none;
+  background: var(--button-background);
+  border: 0;
+  border-radius: 3px;
+  box-shadow: none;
+  color: var(--button-color);
+  cursor: var(--button-cursor);
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  outline: none;
+  padding: var(--spacing-1);
+  width: var(--button-size);
+
+  &:not(:disabled) {
+    @media (hover: hover) {
+      &:hover {
+        --button-background: var(--button-background-hover);
+      }
+
+      &:active {
+        --button-background: var(--button-background-active);
+      }
+    }
+  }
+
+  &:disabled {
+    --button-background: var(--button-background-disabled);
+    --button-color: var(--button-color-disabled);
+    --button-cursor: not-allowed;
+  }
+}
