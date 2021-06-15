@@ -1,6 +1,7 @@
 export type IconButtonLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type IconButtonTypeTypes = 'button'
-export type IconNameTypes = 'expand' | 'checkmark' | 'menu' | 'printer'
+export type IconNameTypes = 'expand' | 'checkmark' | 'menu' | 'printer' | 'rocket' | 'cross'
+export type IconSizeTypes = 'normal' | 'large'
 export type PrintOrganizationType = { id: number; name: string; printers: PrintPrinterType[] }
 export type PrintPrinterType = { id: number; name: string; location: string }
 export type PrintUserType = {

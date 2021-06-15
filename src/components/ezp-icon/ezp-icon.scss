@@ -14,11 +14,21 @@
 
 :host {
   /** @prop --host-size: Description... */
-  --host-size: 22px;
+  --host-size: auto;
 
   display: block;
   height: var(--host-size);
   width: var(--host-size);
+
+  @at-root {
+    #{&}(.normal) {
+      --host-size: 22px;
+    }
+
+    #{&}(.large) {
+      --host-size: 44px;
+    }
+  }
 }
 
 #glyph {

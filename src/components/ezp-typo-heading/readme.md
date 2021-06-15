@@ -20,4 +20,18 @@
 | `--heading-spacing` | Description... |
 | `--heading-weight`  | Description... |
 
+## Dependencies
+
+### Used by
+
+- [ezp-auth](../ezp-auth)
+
+### Graph
+
+```mermaid
+graph TD;
+  ezp-auth --> ezp-typo-heading
+  style ezp-typo-heading fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ---

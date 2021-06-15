@@ -30,6 +30,7 @@
 
 ### Used by
 
+- [ezp-auth](../ezp-auth)
 - [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
@@ -41,6 +42,7 @@
 ```mermaid
 graph TD;
   ezp-text-button --> ezp-typo-body
+  ezp-auth --> ezp-text-button
   ezp-printer-selection --> ezp-text-button
   style ezp-text-button fill:#f9f,stroke:#333,stroke-width:4px
 ```

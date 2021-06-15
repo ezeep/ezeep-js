@@ -23,6 +23,7 @@
 
 ### Used by
 
+- [ezp-auth](../ezp-auth)
 - [ezp-printer-selection](../ezp-printer-selection)
 - [ezp-progress](../ezp-progress)
 - [ezp-select](../ezp-select)
@@ -32,6 +33,7 @@
 
 ```mermaid
 graph TD;
+  ezp-auth --> ezp-typo-body
   ezp-printer-selection --> ezp-typo-body
   ezp-progress --> ezp-typo-body
   ezp-select --> ezp-typo-body

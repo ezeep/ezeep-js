@@ -1,5 +1,5 @@
 import { Component, Host, Prop, getAssetPath, h } from '@stencil/core'
-import { IconNameTypes } from '../../shared/types'
+import { IconNameTypes, IconSizeTypes } from '../../shared/types'
 
 @Component({
   tag: 'ezp-icon',
@@ -17,6 +17,9 @@ export class EzpIcon {
   /** Description... */
   @Prop() name!: IconNameTypes
 
+  /** Description... */
+  @Prop() size: IconSizeTypes = 'normal'
+
   /**
    *
    * Render method
@@ -27,7 +30,7 @@ export class EzpIcon {
     const glyphsPath = getAssetPath('./assets/glyphs.svg')
 
     return (
-      <Host>
+      <Host class={this.size}>
         <svg id="glyph">
           <use href={`${glyphsPath}#glyph-${this.name}`}></use>
         </svg>

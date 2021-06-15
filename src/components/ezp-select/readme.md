@@ -4,14 +4,14 @@
 
 ## Properties
 
-| Property      | Attribute     | Description    | Type                                             | Default         |
-| ------------- | ------------- | -------------- | ------------------------------------------------ | --------------- |
-| `icon`        | `icon`        | Description... | `"checkmark" \| "expand" \| "menu" \| "printer"` | `undefined`     |
-| `label`       | `label`       | Description... | `string`                                         | `'Label'`       |
-| `optionFlow`  | `option-flow` | Description... | `"horizontal" \| "vertical"`                     | `'vertical'`    |
-| `options`     | --            | Description... | `SelectOptionType[]`                             | `undefined`     |
-| `placeholder` | `placeholder` | Description... | `string`                                         | `'Placeholder'` |
-| `toggleFlow`  | `toggle-flow` | Description... | `"horizontal" \| "vertical"`                     | `'horizontal'`  |
+| Property      | Attribute     | Description    | Type                                                                    | Default         |
+| ------------- | ------------- | -------------- | ----------------------------------------------------------------------- | --------------- |
+| `icon`        | `icon`        | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "printer" \| "rocket"` | `undefined`     |
+| `label`       | `label`       | Description... | `string`                                                                | `'Label'`       |
+| `optionFlow`  | `option-flow` | Description... | `"horizontal" \| "vertical"`                                            | `'vertical'`    |
+| `options`     | --            | Description... | `SelectOptionType[]`                                                    | `undefined`     |
+| `placeholder` | `placeholder` | Description... | `string`                                                                | `'Placeholder'` |
+| `toggleFlow`  | `toggle-flow` | Description... | `"horizontal" \| "vertical"`                                            | `'horizontal'`  |
 
 ## Events
 

@@ -1,0 +1,74 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './ezp-auth.m' as self;
+@use './../../shared/global.m' as global;
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  /** @prop --dialog-radius: Description... */
+  --dialog-radius: 8px;
+
+  /** @prop --dialog-separator-position: Description... */
+  --dialog-separator-position: 0 0 0 var(--hairline-positive);
+
+  align-content: center;
+  background: var(--color-overlay);
+  display: grid;
+  grid-template: auto / 280px;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+
+  @include global.media-appearance('dark') {
+    --dialog-separator-position: inset 0 0 0 var(--hairline-positive);
+  }
+}
+
+#dialog {
+  background: var(--color-surface-tertiary);
+  border-radius: var(--dialog-radius);
+  box-shadow: var(--dialog-separator-position) var(--color-outline-translucent-tertiary),
+    0 var(--spacing-1) var(--spacing-2) 0 var(--color-shadow),
+    0 var(--spacing-2) var(--spacing-3) 0 var(--color-shadow),
+    0 var(--spacing-3) var(--spacing-4) 0 var(--color-shadow),
+    0 var(--spacing-4) var(--spacing-5) 0 var(--color-shadow),
+    0 var(--spacing-5) var(--spacing-6) 0 var(--color-shadow);
+}
+
+#header {
+  display: grid;
+  grid-template-columns: auto;
+  justify-content: end;
+  padding: var(--spacing-2);
+}
+
+#content {
+  color: var(--color-foreground-primary);
+  display: grid;
+  grid-row-gap: var(--spacing-4);
+  grid-template-rows: repeat(4, auto);
+  justify-content: center;
+  justify-items: center;
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  text-align: center;
+}
+
+#icon {
+  color: var(--color-main-primary);
+}
+
+#button {
+  min-width: 144px;
+}

@@ -3,7 +3,7 @@ import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
 @Component({
   tag: 'ezp-auth',
-  styleUrl: 'ezp-auth.css',
+  styleUrl: 'ezp-auth.scss',
   shadow: true,
 })
 export class EzpAuth {
@@ -12,23 +12,27 @@ export class EzpAuth {
   @State() auth: EzpAuthorizationService
   @State() authURI: string
   @State() accessToken: string
+
   windowObjectReference = null
   previousUrl = null
 
   openSignInWindow(url: string, name: string) {
     // remove any existing event listeners
     window.removeEventListener('message', this.receiveMessage)
+
     // window features
     const strWindowFeatures = 'toolbar=no, menubar=no, width=600, height=7000, top=100, left=100'
 
     if (this.windowObjectReference === null || this.windowObjectReference.closed) {
       /* if the pointer to the window object in memory does not exist
       or if such pointer exists but the window was closed */
+
       this.windowObjectReference = window.open(url, name, strWindowFeatures)
     } else if (this.previousUrl !== this.auth.authURI.toString()) {
       /* if the resource to load is different,
       then we load it in the already opened secondary window and then
       we bring such window back on top/in front of its parent window. */
+
       this.windowObjectReference = window.open(url, name, strWindowFeatures)
       this.windowObjectReference.focus()
     } else {
@@ -36,6 +40,7 @@ export class EzpAuth {
      is not closed; therefore, we can bring it back on top of any other
      window with the focus() method. There would be no need to re-create
      the window or to reload the referenced resource. */
+
       this.windowObjectReference.focus()
     }
 
@@ -60,24 +65,31 @@ export class EzpAuth {
   }
 
   render() {
-    if (authStore.state.isAuthorized === false) {
-      return (
-        <Host>
-          <button
-            onClick={() => {
-              this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
-            }}
-          >
-            Login
-          </button>
-        </Host>
-      )
-    } else {
-      return (
-        <Host>
-          <ezp-printer-selection />
-        </Host>
-      )
-    }
+    return authStore.state.isAuthorized === false ? (
+      <Host>
+        <div id="dialog">
+          <div id="header">
+            <ezp-icon-button icon="cross" level="tertiary" />
+          </div>
+          <div id="content">
+            <ezp-icon id="icon" name="rocket" size="large" />
+            <ezp-typo-heading level="quaternary">Get started</ezp-typo-heading>
+            <ezp-typo-body>
+              Quis et minima quae exercitationem cumque. Mollitia maiores sint.
+            </ezp-typo-body>
+            <ezp-text-button
+              id="button"
+              onClick={() => {
+                this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
+              }}
+            >
+              Login
+            </ezp-text-button>
+          </div>
+        </div>
+      </Host>
+    ) : (
+      <ezp-printer-selection />
+    )
   }
 }

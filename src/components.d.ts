@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, TypoBodyLevelTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoWeightTypes } from "./shared/types";
+import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, TypoBodyLevelTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoWeightTypes } from "./shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -16,6 +16,10 @@ export namespace Components {
           * Description...
          */
         "name": IconNameTypes;
+        /**
+          * Description...
+         */
+        "size": IconSizeTypes;
     }
     interface EzpIconButton {
         /**
@@ -225,6 +229,10 @@ declare namespace LocalJSX {
           * Description...
          */
         "name": IconNameTypes;
+        /**
+          * Description...
+         */
+        "size"?: IconSizeTypes;
     }
     interface EzpIconButton {
         /**

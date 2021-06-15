@@ -55,15 +55,20 @@ Type: `Promise<void>`
 graph TD;
   ezp-printing --> ezp-auth
   ezp-printing --> ezp-icon-button
+  ezp-auth --> ezp-icon-button
+  ezp-auth --> ezp-icon
+  ezp-auth --> ezp-typo-heading
+  ezp-auth --> ezp-typo-body
+  ezp-auth --> ezp-text-button
   ezp-auth --> ezp-printer-selection
+  ezp-icon-button --> ezp-icon
+  ezp-text-button --> ezp-typo-body
   ezp-printer-selection --> ezp-typo-body
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-text-button
-  ezp-icon-button --> ezp-icon
   ezp-select --> ezp-icon
   ezp-select --> ezp-typo-body
-  ezp-text-button --> ezp-typo-body
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
