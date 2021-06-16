@@ -10,14 +10,33 @@ export class EzpPrintService {
     })
       .then((response) => response.json())
       .then((data) => {
-        printStore.state.printers = data
-        console.log(printStore.state.printers)
+        printStore.state.printers = data;
+      })
+  }
+
+  getConfig(accessToken: string) {
+    return fetch(`${config.printingApiDev}/GetConfiguration/`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('http status ' + response.status);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        printStore.state.config = data;
+        console.log(printStore.state.config);
       })
   }
 }
 
 const printStore = createStore({
   printers: [],
+  config: []
 })
 
 export default printStore

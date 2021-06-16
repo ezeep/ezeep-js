@@ -1,5 +1,6 @@
-import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
-import { sendCodeToParentWindow } from '../../services/auth'
+import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core';
+import authStore, { sendCodeToParentWindow } from '../../services/auth';
+import printStore, { EzpPrintService } from '../../services/print';
 
 @Component({
   tag: 'ezp-printing',
@@ -68,8 +69,20 @@ export class EzpPrinting {
     this.authOpen = false
   }
 
+  checkAuth() {
+    const printService = new EzpPrintService();
+    let accessToken = authStore.state.accessToken;
+    if (accessToken === '') {
+      accessToken = sessionStorage.getItem('access_token');
+      authStore.state.accessToken = accessToken;
+    }
+    printService.getConfig(authStore.state.accessToken).catch(() => authStore.state.isAuthorized = false);
+
+  }
+
   componentWillLoad() {
-    sendCodeToParentWindow()
+    sendCodeToParentWindow();
+    this.checkAuth();
   }
 
   /**
