@@ -222,6 +222,7 @@ declare global {
 declare namespace LocalJSX {
     interface EzpAuth {
         "clientID"?: string;
+        "onAuthCancel"?: (event: CustomEvent<MouseEvent>) => void;
         "redirectURI"?: string;
     }
     interface EzpIcon {

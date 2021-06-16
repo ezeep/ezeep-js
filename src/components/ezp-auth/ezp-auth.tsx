@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, State } from '@stencil/core'
+import { Component, Host, h, Prop, State, Event, EventEmitter } from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
 @Component({
@@ -12,6 +12,8 @@ export class EzpAuth {
   @State() auth: EzpAuthorizationService
   @State() authURI: string
   @State() accessToken: string
+
+  @Event() authCancel: EventEmitter<MouseEvent>
 
   windowObjectReference = null
   previousUrl = null
@@ -55,6 +57,10 @@ export class EzpAuth {
     this.auth.getAccessToken()
   }
 
+  handleCancel = () => {
+    this.authCancel.emit()
+  }
+
   async componentWillLoad() {
     this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
     if (authStore.state.isAuthorized === false) {
@@ -69,7 +75,7 @@ export class EzpAuth {
       <Host>
         <div id="dialog">
           <div id="header">
-            <ezp-icon-button icon="cross" level="tertiary" />
+            <ezp-icon-button onClick={this.handleCancel} icon="cross" level="tertiary" />
           </div>
           <div id="content">
             <ezp-icon id="icon" name="rocket" size="large" />

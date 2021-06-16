@@ -9,6 +9,12 @@
 | `clientID`    | `client-i-d`     |             | `string` | `undefined` |
 | `redirectURI` | `redirect-u-r-i` |             | `string` | `undefined` |
 
+## Events
+
+| Event        | Description | Type                      |
+| ------------ | ----------- | ------------------------- |
+| `authCancel` |             | `CustomEvent<MouseEvent>` |
+
 ## CSS Custom Properties
 
 | Name                          | Description    |
