@@ -41,6 +41,12 @@ export class EzpPrinting {
     this.printOpen = false
   }
 
+  /** Description... */
+  @Listen('authCancel')
+  listenAuthCancel() {
+    this.authOpen = false
+  }
+
   /**
    *
    * Public methods
