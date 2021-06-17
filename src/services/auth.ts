@@ -98,11 +98,11 @@ export class EzpAuthorizationService {
       body: this.encodeFormData({
         grant_type: 'refresh_token',
         scope: 'printing',
-        refresh_token: authStore.state.refreshToken
-      })
+        refresh_token: authStore.state.refreshToken,
+      }),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.access_token) {
           this.accessToken = data.access_token
           sessionStorage.setItem('access_token', this.accessToken)
@@ -116,8 +116,8 @@ export class EzpAuthorizationService {
   }
 
   logOut() {
-    sessionStorage.clear();
-    authStore.state.isAuthorized = false;
+    sessionStorage.clear()
+    authStore.state.isAuthorized = false
   }
 }
 
@@ -132,11 +132,11 @@ export default authStore
 
 export function sendCodeToParentWindow() {
   // get the URL parameters which will include the auth code
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
+  const params = new URLSearchParams(window.location.search)
+  const code = params.get('code')
   if (window.opener) {
     // send them to the opening window
-    window.opener.postMessage(code, 'https://develop.dev.azdev.ezeep.com:3333/');
-    window.close();
+    window.opener.postMessage(code, 'https://develop.dev.azdev.ezeep.com:3333/')
+    window.close()
   }
 }

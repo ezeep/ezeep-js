@@ -93,7 +93,7 @@ export class EzpPrinterSelection {
 
   render() {
     return this.loading ? (
-      <ezp-progress status="loading..."></ezp-progress>
+      <ezp-progress status="Loading printers"></ezp-progress>
     ) : (
       <Host class={{ 'show-backdrop': this.showBackdrop }}>
         <div id="dialog">

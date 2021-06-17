@@ -25,6 +25,7 @@
 
   /** @prop --stroke-width: Description... */
   --stroke-width: 4;
+
   align-content: center;
   align-items: center;
   background: var(--color-overlay);
@@ -33,9 +34,10 @@
   display: grid;
   grid-template: auto / auto;
   height: 100%;
+  justify-content: center;
+  justify-items: center;
   left: 0;
   padding: var(--spacing-6);
-
   position: absolute;
   top: 0;
   width: 100%;
