@@ -1,6 +1,6 @@
 import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core';
 import authStore, { sendCodeToParentWindow } from '../../services/auth';
-import printStore, { EzpPrintService } from '../../services/print';
+import { EzpPrintService } from '../../services/print';
 
 @Component({
   tag: 'ezp-printing',
