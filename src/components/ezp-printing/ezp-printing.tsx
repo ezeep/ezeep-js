@@ -1,6 +1,6 @@
-import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core';
-import authStore, { sendCodeToParentWindow } from '../../services/auth';
-import printStore, { EzpPrintService } from '../../services/print';
+import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
+import authStore, { sendCodeToParentWindow } from '../../services/auth'
+import { EzpPrintService } from '../../services/print'
 
 @Component({
   tag: 'ezp-printing',
@@ -53,42 +53,31 @@ export class EzpPrinting {
    *
    */
 
-  /** Description... */
   @Method()
-  async openPrint() {
-    this.printOpen = true
-  }
-
-  /** Description... */
-  @Method()
-  async closePrint() {
-    this.printOpen = false
-  }
-
-  @Method()
-  async openAuth() {
-    this.authOpen = true
-  }
-
-  @Method()
-  async closeAuth() {
-    this.authOpen = false
+  async open() {
+    if (authStore.state.isAuthorized) {
+      this.printOpen = true
+    } else {
+      this.authOpen = true
+    }
   }
 
   checkAuth() {
-    const printService = new EzpPrintService();
-    let accessToken = authStore.state.accessToken;
-    if (accessToken === '') {
-      accessToken = sessionStorage.getItem('access_token');
-      authStore.state.accessToken = accessToken;
-    }
-    printService.getConfig(authStore.state.accessToken).catch(() => authStore.state.isAuthorized = false);
+    const printService = new EzpPrintService()
+    let accessToken = authStore.state.accessToken
 
+    if (accessToken === '') {
+      accessToken = sessionStorage.getItem('access_token')
+      authStore.state.accessToken = accessToken
+    }
+    printService
+      .getConfig(authStore.state.accessToken)
+      .catch(() => (authStore.state.isAuthorized = false))
   }
 
   componentWillLoad() {
-    sendCodeToParentWindow();
-    this.checkAuth();
+    sendCodeToParentWindow()
+    this.checkAuth()
   }
 
   /**
@@ -102,13 +91,15 @@ export class EzpPrinting {
       <Host>
         {this.authOpen ? (
           <ezp-auth clientID={this.clientid} redirectURI={this.redirecturi}></ezp-auth>
+        ) : this.printOpen ? (
+          <ezp-printer-selection />
         ) : (
           <ezp-icon-button
             id="print-trigger"
             icon="printer"
             slot="trigger"
             type="button"
-            onClick={() => this.openAuth()}
+            onClick={() => this.open()}
           ></ezp-icon-button>
         )}
       </Host>

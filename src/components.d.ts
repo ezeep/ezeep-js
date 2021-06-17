@@ -51,19 +51,13 @@ export namespace Components {
     }
     interface EzpPrinting {
         "clientid": string;
-        "closeAuth": () => Promise<void>;
-        /**
-          * Description...
-         */
-        "closePrint": () => Promise<void>;
         "custom": boolean;
         "filename": string;
         "fileurl": string;
-        "openAuth": () => Promise<void>;
         /**
-          * Description...
+          * Public methods
          */
-        "openPrint": () => Promise<void>;
+        "open": () => Promise<void>;
         "redirecturi": string;
     }
     interface EzpProgress {

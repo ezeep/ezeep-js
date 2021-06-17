@@ -71,7 +71,7 @@ export class EzpAuth {
   }
 
   render() {
-    return authStore.state.isAuthorized === false ? (
+    return (
       <Host>
         <div id="dialog">
           <div id="header">
@@ -94,8 +94,6 @@ export class EzpAuth {
           </div>
         </div>
       </Host>
-    ) : (
-      <ezp-printer-selection />
     )
   }
 }

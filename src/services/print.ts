@@ -10,7 +10,7 @@ export class EzpPrintService {
     })
       .then((response) => response.json())
       .then((data) => {
-        printStore.state.printers = data;
+        printStore.state.printers = data
       })
   }
 
@@ -23,20 +23,20 @@ export class EzpPrintService {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('http status ' + response.status);
+          throw new Error('http status ' + response.status)
         }
-        return response.json();
+        return response.json()
       })
       .then((data) => {
-        printStore.state.config = data;
-        console.log(printStore.state.config);
+        printStore.state.config = data
+        console.log(printStore.state.config)
       })
   }
 }
 
 const printStore = createStore({
   printers: [],
-  config: []
+  config: [],
 })
 
 export default printStore
