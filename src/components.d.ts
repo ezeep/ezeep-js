@@ -217,6 +217,7 @@ declare namespace LocalJSX {
     interface EzpAuth {
         "clientID"?: string;
         "onAuthCancel"?: (event: CustomEvent<MouseEvent>) => void;
+        "onPrintShow"?: (event: CustomEvent<any>) => void;
         "redirectURI"?: string;
     }
     interface EzpIcon {

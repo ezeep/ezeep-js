@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute     | Description | Type      | Default     |
@@ -12,15 +13,20 @@
 | `fileurl`     | `fileurl`     |             | `string`  | `undefined` |
 | `redirecturi` | `redirecturi` |             | `string`  | `undefined` |
 
+
 ## Methods
 
 ### `open() => Promise<void>`
+
 
 Public methods
 
 #### Returns
 
 Type: `Promise<void>`
+
+
+
 
 ## Dependencies
 
@@ -31,7 +37,6 @@ Type: `Promise<void>`
 - [ezp-icon-button](../ezp-icon-button)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-printing --> ezp-auth
@@ -55,4 +60,6 @@ graph TD;
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

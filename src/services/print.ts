@@ -1,5 +1,6 @@
 import { createStore } from '@stencil/store'
 import config from './../utils/config.json'
+import authStore from './auth'
 export class EzpPrintService {
   getPrinterList(accessToken: string) {
     return fetch(`${config.printingApiDev}/GetPrinter/`, {
@@ -22,6 +23,9 @@ export class EzpPrintService {
       },
     })
       .then((response) => {
+        if (response.ok) {
+          authStore.state.isAuthorized = true;
+        }
         if (!response.ok) {
           throw new Error('http status ' + response.status)
         }

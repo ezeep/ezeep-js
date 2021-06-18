@@ -14,6 +14,7 @@ export class EzpAuth {
   @State() accessToken: string
 
   @Event() authCancel: EventEmitter<MouseEvent>
+  @Event() printShow: EventEmitter
 
   windowObjectReference = null
   previousUrl = null
@@ -54,7 +55,9 @@ export class EzpAuth {
 
   receiveMessage(event) {
     this.auth.code = event.data
-    this.auth.getAccessToken()
+    this.auth.getAccessToken();
+    this.authCancel.emit();
+    this.printShow.emit();
   }
 
   handleCancel = () => {

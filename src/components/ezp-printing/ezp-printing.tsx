@@ -47,6 +47,11 @@ export class EzpPrinting {
     this.authOpen = false
   }
 
+  @Listen('printShow')
+  listenPrintShow() {
+    this.printOpen = true;
+  }
+
   /**
    *
    * Public methods
@@ -70,6 +75,11 @@ export class EzpPrinting {
       accessToken = sessionStorage.getItem('access_token')
       authStore.state.accessToken = accessToken
     }
+
+    if (sessionStorage.getItem('isAuthorized')) {
+      authStore.state.isAuthorized = !!sessionStorage.getItem('isAuthorized');
+      this.authOpen = !authStore.state.isAuthorized;
+    }
     printService
       .getConfig(authStore.state.accessToken)
       .catch(() => (authStore.state.isAuthorized = false))
@@ -78,6 +88,7 @@ export class EzpPrinting {
   componentWillLoad() {
     sendCodeToParentWindow()
     this.checkAuth()
+    console.log(authStore.state.isAuthorized);
   }
 
   /**
