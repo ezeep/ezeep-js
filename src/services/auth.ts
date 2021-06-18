@@ -54,7 +54,7 @@ export class EzpAuthorizationService {
   }
 
   getAccessToken() {
-    fetch(this.accessTokenURL, {
+    return fetch(this.accessTokenURL, {
       headers: {
         Authorization: 'Basic ' + btoa(this.clientID + ':'),
         'Content-Type': 'application/x-www-form-urlencoded',

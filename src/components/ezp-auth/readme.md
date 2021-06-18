@@ -16,6 +16,7 @@
 | Event        | Description | Type                      |
 | ------------ | ----------- | ------------------------- |
 | `authCancel` |             | `CustomEvent<MouseEvent>` |
+| `printShow`  |             | `CustomEvent<any>`        |
 
 
 ## CSS Custom Properties
