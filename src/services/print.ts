@@ -33,7 +33,6 @@ export class EzpPrintService {
       })
       .then((data) => {
         printStore.state.config = data
-        console.log(printStore.state.config)
       })
   }
 }

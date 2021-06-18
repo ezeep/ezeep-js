@@ -88,7 +88,6 @@ export class EzpPrinting {
   componentWillLoad() {
     sendCodeToParentWindow()
     this.checkAuth()
-    console.log(authStore.state.isAuthorized);
   }
 
   /**

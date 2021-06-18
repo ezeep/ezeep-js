@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-    <title>ezeep-js</title>
-    <script type="module" src="/build/ezeep-js.esm.js"></script>
-    <script nomodule src="/build/ezeep-js.js"></script>
-    <link rel="stylesheet" type="text/css" href="/build/ezeep-js.css" />
-  </head>
-  <body>
-    <div id="ezp">
-      <ezp-printing
-        id="print-root"
-        clientid="9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW"
-        redirecturi="https://develop.dev.azdev.ezeep.com:3333/"
-        filename=""
-        fileurl=""
-      ></ezp-printing>
-    </div>
-    <script>
-      /* const root = document.querySelector('#print-root')
-      const trigger = document.querySelector('#print-trigger')
 
-      trigger.onclick = async () => await root.openPrint() */
-    </script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+  <title>ezeep-js</title>
+  <script type="module" src="/build/ezeep-js.esm.js"></script>
+  <script nomodule src="/build/ezeep-js.js"></script>
+  <link rel="stylesheet" type="text/css" href="/build/ezeep-js.css" />
+</head>
+
+<body>
+  <ezp-printing 
+    id="ezp" 
+    clientid="9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW"
+    redirecturi="https://develop.dev.azdev.ezeep.com:3333/" 
+    filename="" 
+    fileurl="">
+  </ezp-printing>
+  <script>
+    /* const root = document.querySelector('#print-root')
+    const trigger = document.querySelector('#print-trigger')
+
+    trigger.onclick = async () => await root.openPrint() */
+  </script>
+</body>
+
 </html>
