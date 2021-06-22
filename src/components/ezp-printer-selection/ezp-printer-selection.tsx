@@ -1,4 +1,4 @@
-import { Component, Host, Listen, Event, EventEmitter, State, h } from '@stencil/core'
+import { Component, Host, Listen, Event, EventEmitter, State, h, Prop } from '@stencil/core'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 // import { PrintUserType } from '../../shared/types'
@@ -17,7 +17,8 @@ export class EzpPrinterSelection {
    * Properties
    *
    */
-
+   @Prop() clientID: string
+   @Prop() redirectURI: string
   /**
    *
    * States
@@ -81,7 +82,7 @@ export class EzpPrinterSelection {
         // this.user = data[0]
         this.options = data[1]
       })
-    const printService = new EzpPrintService()
+    const printService = new EzpPrintService(this.redirectURI, this.clientID);
     printService.getPrinterList(authStore.state.accessToken).finally(() => (this.loading = false))
   }
 

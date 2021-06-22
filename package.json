@@ -30,7 +30,9 @@
     "format": "npm run stylelint && npm run prettier"
   },
   "dependencies": {
-    "@stencil/core": "^2.5.2"
+    "@stencil/core": "^2.5.2",
+    "fetch-intercept": "^2.4.0",
+    "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
     "@stencil/sass": "^1.4.1",

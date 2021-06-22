@@ -2,6 +2,7 @@ import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
 import authStore, { sendCodeToParentWindow } from '../../services/auth'
 import { EzpPrintService } from '../../services/print'
 
+
 @Component({
   tag: 'ezp-printing',
   styleUrl: 'ezp-printing.scss',
@@ -68,7 +69,7 @@ export class EzpPrinting {
   }
 
   checkAuth() {
-    const printService = new EzpPrintService()
+    const printService = new EzpPrintService(this.redirecturi, this.clientid);
     let accessToken = authStore.state.accessToken
 
     if (accessToken === '') {
@@ -82,7 +83,9 @@ export class EzpPrinting {
     }
     printService
       .getConfig(authStore.state.accessToken)
-      .catch(() => (authStore.state.isAuthorized = false))
+      .catch(() => {
+        authStore.state.isAuthorized = false;
+      })
   }
 
   componentWillLoad() {
@@ -102,7 +105,7 @@ export class EzpPrinting {
         {this.authOpen ? (
           <ezp-auth clientID={this.clientid} redirectURI={this.redirecturi}></ezp-auth>
         ) : this.printOpen ? (
-          <ezp-printer-selection />
+          <ezp-printer-selection clientID={this.clientid} redirectURI={this.redirecturi} />
         ) : (
           <ezp-icon-button
             id="print-trigger"

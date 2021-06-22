@@ -1,7 +1,58 @@
 import { createStore } from '@stencil/store'
 import config from './../utils/config.json'
-import authStore from './auth'
+import authStore, { EzpAuthorizationService } from './auth'
+import fetchIntercept from 'fetch-intercept';
 export class EzpPrintService {
+  constructor(redirectURI: string, clientID: string) {
+    this.redirectURI = redirectURI;
+    this.clientID = clientID;
+    this.checkRefreshToken();
+    this.registerFetchInterceptor();
+  }
+
+  clientID: string
+  redirectURI: string
+
+  private checkRefreshToken() {
+    if (authStore.state.refreshToken !== '') {
+      return;
+    }
+    if (sessionStorage.getItem('refreshToken') === null) {
+      authStore.state.refreshToken = '';
+    } else {
+      authStore.state.refreshToken = sessionStorage.getItem('refreshToken');
+    }
+  }
+
+  private registerFetchInterceptor() {
+    fetchIntercept.register({
+      request: (url, config) => {
+        // Modify the url or config here
+        return [url, config];
+      },
+      requestError: (error) => {
+        // Called when an error occured during another 'request' interceptor call
+        return Promise.reject(error);
+      },
+      response: (response) => {
+
+        if (response.status === 401) {
+          if (authStore.state.refreshToken === '') {
+            return response;
+          }
+          const authService = new EzpAuthorizationService(this.redirectURI, this.clientID);
+          authService.refreshTokens();
+        }
+        // Modify the reponse object
+        return response;
+      },
+      responseError: (error) => {
+        // Handle an fetch error
+        return Promise.reject(error);
+      }
+    });
+  }
+
   getPrinterList(accessToken: string) {
     return fetch(`${config.printingApiDev}/GetPrinter/`, {
       method: 'GET',

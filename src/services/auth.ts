@@ -1,5 +1,6 @@
 import { createStore } from '@stencil/store'
 import config from './../utils/config.json'
+
 export class EzpAuthorizationService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
@@ -88,7 +89,7 @@ export class EzpAuthorizationService {
       })
   }
 
-  getRefreshToken() {
+  refreshTokens() {
     fetch(this.accessTokenURL, {
       headers: {
         Authorization: 'Basic ' + btoa(this.clientID + ':'),
@@ -111,6 +112,8 @@ export class EzpAuthorizationService {
           this.refreshToken = data.refresh_token
           sessionStorage.setItem('refreshToken', this.refreshToken)
           authStore.state.refreshToken = this.refreshToken
+
+          authStore.state.isAuthorized = true;
         }
       })
   }
