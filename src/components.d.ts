@@ -58,6 +58,7 @@ export namespace Components {
         "clientid": string;
         "custom": boolean;
         "filename": string;
+        "filetype": string;
         "fileurl": string;
         /**
           * Public methods
@@ -280,6 +281,7 @@ declare namespace LocalJSX {
         "clientid"?: string;
         "custom"?: boolean;
         "filename"?: string;
+        "filetype"?: string;
         "fileurl"?: string;
         "redirecturi"?: string;
     }

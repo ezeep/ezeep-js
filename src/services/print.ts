@@ -86,6 +86,46 @@ export class EzpPrintService {
         printStore.state.config = data
       })
   }
+
+  printFileByUrl(
+    accessToken: string,
+    fileUrl: string,
+    fileType: string,
+    printerID: string,
+    filename?: string,
+    printAndDelete?: boolean,
+    paperSize?: string,
+    paperID?: number,
+    color?: boolean,
+    duplex?: boolean,
+    duplexmode?: number,
+    orientation?: number,
+    copies?: number,
+    resolution?: string
+  ) {
+    return fetch(``, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fileurl: fileUrl,
+        type: fileType,
+        printerid: printerID,
+        ...filename && { alias: filename },
+        ...printAndDelete && { printanddelete: printAndDelete },
+        ...paperSize && { papersize: paperSize },
+        ...paperID && { paperid: paperID },
+        ...color && { color: color },
+        ...duplex && { duplex: duplex },
+        ...duplexmode && { duplexmode: duplexmode },
+        ...orientation && { orientation: orientation },
+        ...copies && { copies: copies },
+        ...resolution && { resolution: resolution },
+      })
+    })
+  }
 }
 
 const printStore = createStore({

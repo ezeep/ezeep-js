@@ -12,6 +12,7 @@ export class EzpPrinting {
   @Prop() redirecturi: string
   @Prop() filename: string
   @Prop() fileurl: string
+  @Prop() filetype: string
   @Prop() custom: boolean
   /**
    *

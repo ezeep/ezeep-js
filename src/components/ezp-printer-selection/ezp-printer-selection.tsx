@@ -64,7 +64,9 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = () => {
-    this.printSubmit.emit()
+/*     const printService = new EzpPrintService(this.redirectURI, this.clientID)
+    printService.printFileByUrl(authStore.state.accessToken, 'fileurl', 'filetype', 'printerid', 'filename');
+ */    this.printSubmit.emit()
   }
 
   /**
