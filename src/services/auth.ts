@@ -113,7 +113,7 @@ export class EzpAuthorizationService {
           sessionStorage.setItem('refreshToken', this.refreshToken)
           authStore.state.refreshToken = this.refreshToken
 
-          authStore.state.isAuthorized = true;
+          authStore.state.isAuthorized = true
         }
       })
   }

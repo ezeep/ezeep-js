@@ -1,13 +1,13 @@
 import { createStore } from '@stencil/store'
 import config from './../utils/config.json'
 import authStore, { EzpAuthorizationService } from './auth'
-import fetchIntercept from 'fetch-intercept';
+import fetchIntercept from 'fetch-intercept'
 export class EzpPrintService {
   constructor(redirectURI: string, clientID: string) {
-    this.redirectURI = redirectURI;
-    this.clientID = clientID;
-    this.checkRefreshToken();
-    this.registerFetchInterceptor();
+    this.redirectURI = redirectURI
+    this.clientID = clientID
+    this.checkRefreshToken()
+    this.registerFetchInterceptor()
   }
 
   clientID: string
@@ -15,12 +15,12 @@ export class EzpPrintService {
 
   private checkRefreshToken() {
     if (authStore.state.refreshToken !== '') {
-      return;
+      return
     }
     if (sessionStorage.getItem('refreshToken') === null) {
-      authStore.state.refreshToken = '';
+      authStore.state.refreshToken = ''
     } else {
-      authStore.state.refreshToken = sessionStorage.getItem('refreshToken');
+      authStore.state.refreshToken = sessionStorage.getItem('refreshToken')
     }
   }
 
@@ -28,29 +28,29 @@ export class EzpPrintService {
     fetchIntercept.register({
       request: (url, config) => {
         // Modify the url or config here
-        return [url, config];
+        return [url, config]
       },
       requestError: (error) => {
         // Called when an error occured during another 'request' interceptor call
-        return Promise.reject(error);
+        return Promise.reject(error)
       },
+      // check for response status here
       response: (response) => {
-
         if (response.status === 401) {
           if (authStore.state.refreshToken === '') {
-            return response;
+            return response
           }
-          const authService = new EzpAuthorizationService(this.redirectURI, this.clientID);
-          authService.refreshTokens();
+          const authService = new EzpAuthorizationService(this.redirectURI, this.clientID)
+          authService.refreshTokens()
         }
         // Modify the reponse object
-        return response;
+        return response
       },
       responseError: (error) => {
-        // Handle an fetch error
-        return Promise.reject(error);
-      }
-    });
+        // Handle a fetch error
+        return Promise.reject(error)
+      },
+    })
   }
 
   getPrinterList(accessToken: string) {
@@ -75,7 +75,7 @@ export class EzpPrintService {
     })
       .then((response) => {
         if (response.ok) {
-          authStore.state.isAuthorized = true;
+          authStore.state.isAuthorized = true
         }
         if (!response.ok) {
           throw new Error('http status ' + response.status)

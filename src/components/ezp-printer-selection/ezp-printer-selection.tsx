@@ -17,8 +17,8 @@ export class EzpPrinterSelection {
    * Properties
    *
    */
-   @Prop() clientID: string
-   @Prop() redirectURI: string
+  @Prop() clientID: string
+  @Prop() redirectURI: string
   /**
    *
    * States
@@ -82,7 +82,7 @@ export class EzpPrinterSelection {
         // this.user = data[0]
         this.options = data[1]
       })
-    const printService = new EzpPrintService(this.redirectURI, this.clientID);
+    const printService = new EzpPrintService(this.redirectURI, this.clientID)
     printService.getPrinterList(authStore.state.accessToken).finally(() => (this.loading = false))
   }
 

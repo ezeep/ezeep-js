@@ -55,12 +55,10 @@ export class EzpAuth {
 
   receiveMessage(event) {
     this.auth.code = event.data
-    this.auth.getAccessToken()
-      .finally(() => {
-        this.authCancel.emit();
-        this.printShow.emit();
-      });
-
+    this.auth.getAccessToken().finally(() => {
+      this.authCancel.emit()
+      this.printShow.emit()
+    })
   }
 
   handleCancel = () => {
