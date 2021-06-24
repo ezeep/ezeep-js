@@ -84,6 +84,22 @@ export class EzpPrintService {
       })
       .then((data) => {
         printStore.state.config = data
+        console.log(data)
+      })
+  }
+
+  getAllPrinterProperties(accessToken: string) {
+    return fetch(`${config.printingApiDev}/GetPrinterProperties/`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+      },
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        console.log(data)
       })
   }
 

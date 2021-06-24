@@ -65,19 +65,15 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = () => {
-/*     const printService = new EzpPrintService(this.redirectURI, this.clientID)
+    const printService = new EzpPrintService(this.redirectURI, this.clientID)
     printService.printFileByUrl(authStore.state.accessToken, 'fileurl', 'filetype', 'printerid', 'filename');
- */    this.printSubmit.emit()
+    this.printSubmit.emit()
   }
 
   logOut = () => {
     sessionStorage.clear()
     authStore.state.isAuthorized = false
     this.printCancel.emit()
-  }
-
-  handleSelect(event) {
-    console.log(event.target.value)
   }
 
   /**
@@ -97,6 +93,7 @@ export class EzpPrinterSelection {
       })
     const printService = new EzpPrintService(this.redirectURI, this.clientID)
     printService.getPrinterList(authStore.state.accessToken).finally(() => (this.loading = false))
+    printService.getAllPrinterProperties(authStore.state.accessToken);
   }
 
   /**
@@ -120,7 +117,6 @@ export class EzpPrinterSelection {
           <div id="content">
             <div id="printer">
               <ezp-select
-                onInput={(event) => this.handleSelect(event)}
                 label="Printer"
                 icon="printer"
                 placeholder="Select a printer"
