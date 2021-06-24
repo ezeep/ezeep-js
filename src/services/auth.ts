@@ -118,10 +118,7 @@ export class EzpAuthorizationService {
       })
   }
 
-  logOut() {
-    sessionStorage.clear()
-    authStore.state.isAuthorized = false
-  }
+  
 }
 
 const authStore = createStore({

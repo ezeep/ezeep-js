@@ -69,6 +69,12 @@ export class EzpPrinterSelection {
  */    this.printSubmit.emit()
   }
 
+  logOut = () => {
+    sessionStorage.clear()
+    authStore.state.isAuthorized = false
+    this.printCancel.emit()
+  }
+
   /**
    *
    * Lifecycle methods
@@ -104,7 +110,7 @@ export class EzpPrinterSelection {
           <div id="header">
             <ezp-typo-body weight="heavy">Print:</ezp-typo-body>
             <ezp-typo-body>My Document.docx</ezp-typo-body>
-            <ezp-icon-button level="tertiary" icon="menu" id="toggle-menu" />
+            <ezp-icon-button level="tertiary" icon="menu" id="toggle-menu" onClick={this.logOut} />
           </div>
           <div id="content">
             <div id="printer">

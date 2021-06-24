@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute     | Description | Type      | Default     |
@@ -9,8 +10,10 @@
 | `clientid`    | `clientid`    |             | `string`  | `undefined` |
 | `custom`      | `custom`      |             | `boolean` | `undefined` |
 | `filename`    | `filename`    |             | `string`  | `undefined` |
+| `filetype`    | `filetype`    |             | `string`  | `undefined` |
 | `fileurl`     | `fileurl`     |             | `string`  | `undefined` |
 | `redirecturi` | `redirecturi` |             | `string`  | `undefined` |
+
 
 ## Methods
 
@@ -22,6 +25,9 @@ Public methods
 
 Type: `Promise<void>`
 
+
+
+
 ## Dependencies
 
 ### Depends on
@@ -31,7 +37,6 @@ Type: `Promise<void>`
 - [ezp-icon-button](../ezp-icon-button)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-printing --> ezp-auth
@@ -55,4 +60,6 @@ graph TD;
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+
