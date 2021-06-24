@@ -8,6 +8,7 @@
 | Property      | Attribute        | Description | Type     | Default     |
 | ------------- | ---------------- | ----------- | -------- | ----------- |
 | `clientID`    | `client-i-d`     | Properties  | `string` | `undefined` |
+| `filename`    | `filename`       |             | `string` | `undefined` |
 | `redirectURI` | `redirect-u-r-i` |             | `string` | `undefined` |
 
 

@@ -119,7 +119,7 @@ export class EzpPrintService {
     copies?: number,
     resolution?: string
   ) {
-    return fetch(``, {
+    return fetch(`${config.printingApiDev}/Print/`, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -142,7 +142,7 @@ export class EzpPrintService {
           ...resolution && { resolution: resolution }
         },
       })
-    })
+    }).then(response => response.json()).then(data => console.log(data))
   }
 }
 

@@ -107,6 +107,8 @@ export class EzpPrinting {
             clientID={this.clientid}
             redirectURI={this.redirecturi}
             filename={this.filename}
+            fileurl={this.fileurl}
+            filetype={this.filetype}
           />
         ) : (
           <ezp-icon-button
