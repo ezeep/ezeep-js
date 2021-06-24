@@ -115,14 +115,16 @@ export class EzpPrintService {
         printerid: printerID,
         ...filename && { alias: filename },
         ...printAndDelete && { printanddelete: printAndDelete },
-        ...paperSize && { papersize: paperSize },
-        ...paperID && { paperid: paperID },
-        ...color && { color: color },
-        ...duplex && { duplex: duplex },
-        ...duplexmode && { duplexmode: duplexmode },
-        ...orientation && { orientation: orientation },
-        ...copies && { copies: copies },
-        ...resolution && { resolution: resolution },
+        properties: {
+          ...paperSize && { paper: paperSize },
+          ...paperID && { paperid: paperID },
+          ...color && { color: color },
+          ...duplex && { duplex: duplex },
+          ...duplexmode && { duplexmode: duplexmode },
+          ...orientation && { orientation: orientation },
+          ...copies && { copies: copies },
+          ...resolution && { resolution: resolution }
+        },
       })
     })
   }

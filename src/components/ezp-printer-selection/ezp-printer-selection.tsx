@@ -19,6 +19,7 @@ export class EzpPrinterSelection {
    */
   @Prop() clientID: string
   @Prop() redirectURI: string
+  @Prop() filename: string
   /**
    *
    * States
@@ -75,6 +76,10 @@ export class EzpPrinterSelection {
     this.printCancel.emit()
   }
 
+  handleSelect(event) {
+    console.log(event.target.value)
+  }
+
   /**
    *
    * Lifecycle methods
@@ -109,12 +114,13 @@ export class EzpPrinterSelection {
           <div id="backdrop" />
           <div id="header">
             <ezp-typo-body weight="heavy">Print:</ezp-typo-body>
-            <ezp-typo-body>My Document.docx</ezp-typo-body>
+            <ezp-typo-body>{this.filename}</ezp-typo-body>
             <ezp-icon-button level="tertiary" icon="menu" id="toggle-menu" onClick={this.logOut} />
           </div>
           <div id="content">
             <div id="printer">
               <ezp-select
+                onInput={(event) => this.handleSelect(event)}
                 label="Printer"
                 icon="printer"
                 placeholder="Select a printer"
@@ -129,6 +135,7 @@ export class EzpPrinterSelection {
             </div>
             <div id="options">
               <ezp-select
+
                 label="Color"
                 placeholder="Select a color"
                 toggleFlow="horizontal"
