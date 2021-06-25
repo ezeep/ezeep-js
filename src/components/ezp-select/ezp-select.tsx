@@ -65,6 +65,7 @@ export class EzpSelect {
    */
 
   @Event() selectToggle: EventEmitter
+  @Event() selectSelection: EventEmitter
 
   /**
    *
@@ -84,7 +85,6 @@ export class EzpSelect {
         this.expanded ? `${this.wrapTop * -1 + this.spacing}px` : '0px'
       )
     } else if (this.expandRise) {
-      console.log('hello')
       this.component.style.setProperty(
         '--list-height',
         this.expanded ? `${this.listHeight}px` : '0px'
@@ -116,6 +116,7 @@ export class EzpSelect {
     const delay = this.selected.id === id ? 0 : this.duration * 1000
 
     this.selected = this.options.find((option) => option.id === id)
+    this.selectSelection.emit(this.selected)
     window.setTimeout(() => {
       this.toggle()
     }, delay)

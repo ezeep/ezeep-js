@@ -117,8 +117,6 @@ export class EzpAuthorizationService {
         }
       })
   }
-
-  
 }
 
 const authStore = createStore({

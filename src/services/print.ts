@@ -123,25 +123,25 @@ export class EzpPrintService {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + accessToken,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         fileurl: fileUrl,
         type: fileType,
         printerid: printerID,
-        ...filename && { alias: filename },
-        ...printAndDelete && { printanddelete: printAndDelete },
+        ...(filename && { alias: filename }),
+        ...(printAndDelete && { printanddelete: printAndDelete }),
         properties: {
-          ...paperSize && { paper: paperSize },
-          ...paperID && { paperid: paperID },
-          ...color && { color: color },
-          ...duplex && { duplex: duplex },
-          ...duplexmode && { duplexmode: duplexmode },
-          ...orientation && { orientation: orientation },
-          ...copies && { copies: copies },
-          ...resolution && { resolution: resolution }
+          ...(paperSize && { paper: paperSize }),
+          ...(paperID && { paperid: paperID }),
+          ...(color && { color: color }),
+          ...(duplex && { duplex: duplex }),
+          ...(duplexmode && { duplexmode: duplexmode }),
+          ...(orientation && { orientation: orientation }),
+          ...(copies && { copies: copies }),
+          ...(resolution && { resolution: resolution }),
         },
-      })
+      }),
     })
   }
 }

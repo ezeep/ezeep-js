@@ -52,6 +52,11 @@ export class EzpPrinterSelection {
     this.showBackdrop = event.detail
   }
 
+  @Listen('selectSelection')
+  listenSelectSelection(event: CustomEvent) {
+    console.log(event.detail)
+  }
+
   /**
    *
    * Private methods
@@ -66,7 +71,13 @@ export class EzpPrinterSelection {
   /** Description... */
   private handlePrint = () => {
     const printService = new EzpPrintService(this.redirectURI, this.clientID)
-    printService.printFileByUrl(authStore.state.accessToken, 'fileurl', 'filetype', 'printerid', 'filename');
+    printService.printFileByUrl(
+      authStore.state.accessToken,
+      'fileurl',
+      'filetype',
+      'printerid',
+      'filename'
+    )
     this.printSubmit.emit()
   }
 
@@ -93,7 +104,7 @@ export class EzpPrinterSelection {
       })
     const printService = new EzpPrintService(this.redirectURI, this.clientID)
     printService.getPrinterList(authStore.state.accessToken).finally(() => (this.loading = false))
-    printService.getAllPrinterProperties(authStore.state.accessToken);
+    printService.getAllPrinterProperties(authStore.state.accessToken)
   }
 
   /**
@@ -131,7 +142,6 @@ export class EzpPrinterSelection {
             </div>
             <div id="options">
               <ezp-select
-
                 label="Color"
                 placeholder="Select a color"
                 toggleFlow="horizontal"

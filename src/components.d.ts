@@ -302,6 +302,7 @@ declare namespace LocalJSX {
           * Description...
          */
         "label"?: string;
+        "onSelectSelection"?: (event: CustomEvent<any>) => void;
         /**
           * Events
          */
