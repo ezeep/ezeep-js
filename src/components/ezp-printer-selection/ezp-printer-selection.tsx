@@ -20,6 +20,8 @@ export class EzpPrinterSelection {
   @Prop() clientID: string
   @Prop() redirectURI: string
   @Prop() filename: string
+  @Prop() fileurl: string
+  @Prop() filetype: string
   /**
    *
    * States
@@ -73,12 +75,11 @@ export class EzpPrinterSelection {
     const printService = new EzpPrintService(this.redirectURI, this.clientID)
     printService.printFileByUrl(
       authStore.state.accessToken,
-      'fileurl',
-      'filetype',
-      'printerid',
-      'filename'
-    )
-    this.printSubmit.emit()
+      this.fileurl,
+      this.filetype,
+      '867e37a5-336a-496c-b6e2-cb74b3eb32ea',
+      this.filename);
+    //this.printSubmit.emit()
   }
 
   logOut = () => {

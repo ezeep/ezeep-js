@@ -53,6 +53,8 @@ export namespace Components {
          */
         "clientID": string;
         "filename": string;
+        "filetype": string;
+        "fileurl": string;
         "redirectURI": string;
     }
     interface EzpPrinting {
@@ -269,6 +271,8 @@ declare namespace LocalJSX {
          */
         "clientID"?: string;
         "filename"?: string;
+        "filetype"?: string;
+        "fileurl"?: string;
         /**
           * Description...
          */
