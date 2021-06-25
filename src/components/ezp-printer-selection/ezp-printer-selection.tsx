@@ -11,7 +11,10 @@ import printStore, { EzpPrintService } from '../../services/print'
 export class EzpPrinterSelection {
   // private user: PrintUserType
   private options
-
+  private color: string
+  private orientation: string
+  private size: string
+  private printerID: string
   /**
    *
    * Properties
@@ -57,6 +60,7 @@ export class EzpPrinterSelection {
   @Listen('selectSelection')
   listenSelectSelection(event: CustomEvent) {
     console.log(event.detail)
+    this.setPrintProperties(event.detail)
   }
 
   /**
@@ -77,10 +81,38 @@ export class EzpPrinterSelection {
       authStore.state.accessToken,
       this.fileurl,
       this.filetype,
-      '867e37a5-336a-496c-b6e2-cb74b3eb32ea',
+      this.printerID,
       this.filename
     )
     //this.printSubmit.emit()
+  }
+
+  setPrintProperties(eventDetails) {
+    if (eventDetails.title.includes('Grayscale') || eventDetails.title.includes('Color')) {
+      this.color = eventDetails.title
+    } else if (
+      eventDetails.title.includes('Portrait') ||
+      eventDetails.title.includes('Landscape')
+    ) {
+      this.orientation = eventDetails.title
+    } else if (
+      eventDetails.title.includes('Auto') ||
+      eventDetails.title.includes('Letter') ||
+      eventDetails.title.includes('Ledger') ||
+      eventDetails.title.includes('Portrait') ||
+      eventDetails.title.includes('Legal') ||
+      eventDetails.title.includes('Executive') ||
+      eventDetails.title.includes('A3') ||
+      eventDetails.title.includes('A4') ||
+      eventDetails.title.includes('A5') ||
+      eventDetails.title.includes('Folio') ||
+      eventDetails.title.includes('Com-10')
+    ) {
+      this.size = eventDetails.title
+    } else {
+      this.printerID = eventDetails.id
+    }
+    console.log(this.color, this.orientation, this.size, this.printerID)
   }
 
   logOut = () => {

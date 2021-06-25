@@ -84,7 +84,6 @@ export class EzpPrintService {
       })
       .then((data) => {
         printStore.state.config = data
-        console.log(data)
       })
   }
 
@@ -109,15 +108,15 @@ export class EzpPrintService {
     fileType: string,
     printerID: string,
     filename?: string,
-    printAndDelete?: boolean,
+    color?: boolean,
+    orientation?: number,
     paperSize?: string,
     paperID?: number,
-    color?: boolean,
     duplex?: boolean,
     duplexmode?: number,
-    orientation?: number,
     copies?: number,
-    resolution?: string
+    resolution?: string,
+    printAndDelete?: boolean
   ) {
     return fetch(`${config.printingApiDev}/Print/`, {
       method: 'POST',
