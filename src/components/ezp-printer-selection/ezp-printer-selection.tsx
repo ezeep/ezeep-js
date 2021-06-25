@@ -78,7 +78,8 @@ export class EzpPrinterSelection {
       this.fileurl,
       this.filetype,
       '867e37a5-336a-496c-b6e2-cb74b3eb32ea',
-      this.filename);
+      this.filename
+    )
     //this.printSubmit.emit()
   }
 

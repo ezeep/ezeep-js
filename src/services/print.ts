@@ -141,8 +141,10 @@ export class EzpPrintService {
           ...(copies && { copies: copies }),
           ...(resolution && { resolution: resolution }),
         },
-      })
-    }).then(response => response.json()).then(data => console.log(data))
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
   }
 }
 
