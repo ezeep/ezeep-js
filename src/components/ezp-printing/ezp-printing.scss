@@ -15,12 +15,6 @@
 
 @import url('https://rsms.me/inter/inter.css');
 
-@supports (font-variation-settings: normal) {
-  html {
-    font-family: 'Inter var', sans-serif;
-  }
-}
-
 /**
  *
  * Rules
@@ -49,7 +43,7 @@
   -webkit-text-size-adjust: none;
 
   @supports (font-variation-settings: normal) {
-    --host-font-family: 'Inter var';
+    --host-font-family: 'Inter var', sans-serif;
   }
 
   @include global.color-declaration('light');
