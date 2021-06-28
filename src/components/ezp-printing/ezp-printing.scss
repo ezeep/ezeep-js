@@ -43,7 +43,7 @@
   -webkit-text-size-adjust: none;
 
   @supports (font-variation-settings: normal) {
-    --host-font-family: 'Inter var', sans-serif;
+    --host-font-family: 'Inter var';
   }
 
   @include global.color-declaration('light');
