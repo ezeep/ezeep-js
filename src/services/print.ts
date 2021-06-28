@@ -143,7 +143,22 @@ export class EzpPrintService {
       }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => {
+        console.log(data)
+        if (data.jobid) {
+          /* const interval = setInterval(() => { */this.getPrintStatus(authStore.state.accessToken, data.jobid)//}, 2000)
+          //clearInterval(interval)
+        }
+      })
+  }
+
+  getPrintStatus(accessToken: string, jobID: string) {
+    return fetch(`${config.printingApiDev}/Status/?id=${jobID}`, {
+      headers: {
+        Authorization: 'Bearer ' + accessToken
+      }
+    }).then(response => response.json())
+      .then(data => console.log(data))
   }
 }
 
