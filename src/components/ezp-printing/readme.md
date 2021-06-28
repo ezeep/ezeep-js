@@ -23,6 +23,12 @@ Public methods
 
 Type: `Promise<void>`
 
+## CSS Custom Properties
+
+| Name                 | Description    |
+| -------------------- | -------------- |
+| `--host-font-family` | Description... |
+
 ## Dependencies
 
 ### Depends on

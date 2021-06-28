@@ -7,7 +7,6 @@ import fs from 'fs'
 
 export const config: Config = {
   namespace: 'ezeep-js',
-  globalStyle: 'src/shared/global.scss',
   globalScript: 'src/shared/global.ts',
   plugins: [sass()],
   outputTargets: [
@@ -25,7 +24,7 @@ export const config: Config = {
     {
       type: 'www',
       serviceWorker: null,
-      copy: [{ src: 'assets' }, { src: 'data' }],
+      copy: [{ src: 'data' }],
     },
   ],
   devServer: {

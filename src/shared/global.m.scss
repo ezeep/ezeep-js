@@ -75,21 +75,6 @@ $colors: (
   ),
 );
 $font-features: 'calt', 'liga', 'case', 'ss03', 'zero', 'cv05', 'cv10';
-$font-path: '../assets/fonts';
-$font-styles: (
-  'Regular': (
-    normal,
-    400,
-  ),
-  'Medium': (
-    normal,
-    500,
-  ),
-  'SemiBold': (
-    normal,
-    600,
-  ),
-);
 $font-weights: (('soft', 400), ('strong', 500), ('heavy', 600));
 $spacings: (4px, 6px, 10px, 16px, 26px, 42px, 68px);
 $easings: (
