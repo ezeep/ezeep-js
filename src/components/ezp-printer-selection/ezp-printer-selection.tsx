@@ -13,7 +13,7 @@ export class EzpPrinterSelection {
   // private user: PrintUserType
   private options
   private printerID
-  private printerProperties: PrinterProperties = {}
+  private properties: PrinterProperties = {}
   /**
    *
    * Properties
@@ -81,20 +81,21 @@ export class EzpPrinterSelection {
       this.fileurl,
       this.filetype,
       this.printerID,
-      this.printerProperties,
+      this.properties,
       this.filename
     )
-    //this.printSubmit.emit()
+    localStorage.setItem('properties', JSON.stringify(this.properties))
+    // this.printSubmit.emit()
   }
 
   setPrintProperties(eventDetails) {
     if (eventDetails.title.includes('Grayscale') || eventDetails.title.includes('Color')) {
-      this.printerProperties.color = eventDetails.title
+      this.properties.color = eventDetails.title
     } else if (
       eventDetails.title.includes('Portrait') ||
       eventDetails.title.includes('Landscape')
     ) {
-      this.printerProperties.orientation = eventDetails.title
+      this.properties.orientation = eventDetails.title
     } else if (
       eventDetails.title.includes('Auto') ||
       eventDetails.title.includes('Letter') ||
@@ -108,11 +109,10 @@ export class EzpPrinterSelection {
       eventDetails.title.includes('Folio') ||
       eventDetails.title.includes('Com-10')
     ) {
-      this.printerProperties.paper = eventDetails.title
+      this.properties.paper = eventDetails.title
     } else {
       this.printerID = eventDetails.id
     }
-    console.log(this.printerProperties)
   }
 
   logOut = () => {
@@ -130,6 +130,9 @@ export class EzpPrinterSelection {
   /** Description... */
   async componentWillLoad() {
     this.loading = true
+    if (localStorage.getItem('properties')) {
+      this.properties = JSON.parse(localStorage.getItem('properties'))
+    }
     await Promise.all([fetch('/data/user.json'), fetch('/data/options.json')])
       .then((responses) => Promise.all(responses.map((response) => response.json())))
       .then((data) => {
