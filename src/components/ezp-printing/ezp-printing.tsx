@@ -73,12 +73,12 @@ export class EzpPrinting {
     let accessToken = authStore.state.accessToken
 
     if (accessToken === '') {
-      accessToken = sessionStorage.getItem('access_token')
+      accessToken = localStorage.getItem('access_token')
       authStore.state.accessToken = accessToken
     }
 
-    if (sessionStorage.getItem('isAuthorized')) {
-      authStore.state.isAuthorized = !!sessionStorage.getItem('isAuthorized')
+    if (localStorage.getItem('isAuthorized')) {
+      authStore.state.isAuthorized = !!localStorage.getItem('isAuthorized')
       this.authOpen = !authStore.state.isAuthorized
     }
     printService.getConfig(authStore.state.accessToken).catch(() => {

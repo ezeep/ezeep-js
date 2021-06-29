@@ -2,6 +2,7 @@ import { createStore } from '@stencil/store'
 import config from './../utils/config.json'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
+import { PrinterProperties } from '../shared/types'
 export class EzpPrintService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
@@ -17,10 +18,10 @@ export class EzpPrintService {
     if (authStore.state.refreshToken !== '') {
       return
     }
-    if (sessionStorage.getItem('refreshToken') === null) {
+    if (localStorage.getItem('refreshToken') === null) {
       authStore.state.refreshToken = ''
     } else {
-      authStore.state.refreshToken = sessionStorage.getItem('refreshToken')
+      authStore.state.refreshToken = localStorage.getItem('refreshToken')
     }
   }
 
@@ -107,15 +108,8 @@ export class EzpPrintService {
     fileUrl: string,
     fileType: string,
     printerID: string,
+    printerProperties: PrinterProperties,
     filename?: string,
-    color?: boolean,
-    orientation?: number,
-    paperSize?: string,
-    paperID?: number,
-    duplex?: boolean,
-    duplexmode?: number,
-    copies?: number,
-    resolution?: string,
     printAndDelete?: boolean
   ) {
     return fetch(`${config.printingApiDev}/Print/`, {
@@ -130,27 +124,17 @@ export class EzpPrintService {
         printerid: printerID,
         ...(filename && { alias: filename }),
         ...(printAndDelete && { printanddelete: printAndDelete }),
-        properties: {
-          ...(paperSize && { paper: paperSize }),
-          ...(paperID && { paperid: paperID }),
-          ...(color && { color: color }),
-          ...(duplex && { duplex: duplex }),
-          ...(duplexmode && { duplexmode: duplexmode }),
-          ...(orientation && { orientation: orientation }),
-          ...(copies && { copies: copies }),
-          ...(resolution && { resolution: resolution }),
-        },
+        printerProperties
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data)
         if (data.jobid) {
-          /* const interval = setInterval(() => { */ this.getPrintStatus(
+          this.getPrintStatus(
             authStore.state.accessToken,
             data.jobid
-          ) //}, 2000)
-          //clearInterval(interval)
+          )
         }
       })
   }

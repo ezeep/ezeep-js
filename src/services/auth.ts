@@ -76,14 +76,14 @@ export class EzpAuthorizationService {
         // actual object
         if (data.access_token) {
           authStore.state.isAuthorized = true
-          sessionStorage.setItem('isAuthorized', this.isAuthorized.toString())
+          localStorage.setItem('isAuthorized', this.isAuthorized.toString())
 
           this.accessToken = data.access_token
-          sessionStorage.setItem('access_token', this.accessToken)
+          localStorage.setItem('access_token', this.accessToken)
           authStore.state.accessToken = this.accessToken
 
           this.refreshToken = data.refresh_token
-          sessionStorage.setItem('refreshToken', this.refreshToken)
+          localStorage.setItem('refreshToken', this.refreshToken)
           authStore.state.refreshToken = this.refreshToken
         }
       })
@@ -106,11 +106,11 @@ export class EzpAuthorizationService {
       .then((data) => {
         if (data.access_token) {
           this.accessToken = data.access_token
-          sessionStorage.setItem('access_token', this.accessToken)
+          localStorage.setItem('access_token', this.accessToken)
           authStore.state.accessToken = this.accessToken
 
           this.refreshToken = data.refresh_token
-          sessionStorage.setItem('refreshToken', this.refreshToken)
+          localStorage.setItem('refreshToken', this.refreshToken)
           authStore.state.refreshToken = this.refreshToken
 
           authStore.state.isAuthorized = true

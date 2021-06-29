@@ -1,6 +1,7 @@
 import { Component, Host, Listen, Event, EventEmitter, State, h, Prop } from '@stencil/core'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
+import { PrinterProperties } from '../../shared/types'
 // import { PrintUserType } from '../../shared/types'
 
 @Component({
@@ -11,10 +12,8 @@ import printStore, { EzpPrintService } from '../../services/print'
 export class EzpPrinterSelection {
   // private user: PrintUserType
   private options
-  private color: string
-  private orientation: string
-  private size: string
-  private printerID: string
+  private printerID
+  private printerProperties: PrinterProperties = {}
   /**
    *
    * Properties
@@ -82,6 +81,7 @@ export class EzpPrinterSelection {
       this.fileurl,
       this.filetype,
       this.printerID,
+      this.printerProperties,
       this.filename
     )
     //this.printSubmit.emit()
@@ -89,12 +89,12 @@ export class EzpPrinterSelection {
 
   setPrintProperties(eventDetails) {
     if (eventDetails.title.includes('Grayscale') || eventDetails.title.includes('Color')) {
-      this.color = eventDetails.title
+      this.printerProperties.color = eventDetails.title
     } else if (
       eventDetails.title.includes('Portrait') ||
       eventDetails.title.includes('Landscape')
     ) {
-      this.orientation = eventDetails.title
+      this.printerProperties.orientation = eventDetails.title
     } else if (
       eventDetails.title.includes('Auto') ||
       eventDetails.title.includes('Letter') ||
@@ -108,15 +108,15 @@ export class EzpPrinterSelection {
       eventDetails.title.includes('Folio') ||
       eventDetails.title.includes('Com-10')
     ) {
-      this.size = eventDetails.title
+      this.printerProperties.paper = eventDetails.title
     } else {
       this.printerID = eventDetails.id
     }
-    console.log(this.color, this.orientation, this.size, this.printerID)
+    console.log(this.printerProperties)
   }
 
   logOut = () => {
-    sessionStorage.clear()
+    localStorage.clear()
     authStore.state.isAuthorized = false
     this.printCancel.emit()
   }
