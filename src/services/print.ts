@@ -108,7 +108,7 @@ export class EzpPrintService {
     fileUrl: string,
     fileType: string,
     printerID: string,
-    printerProperties: PrinterProperties,
+    properties: PrinterProperties,
     filename?: string,
     printAndDelete?: boolean
   ) {
@@ -124,17 +124,14 @@ export class EzpPrintService {
         printerid: printerID,
         ...(filename && { alias: filename }),
         ...(printAndDelete && { printanddelete: printAndDelete }),
-        printerProperties
+        properties,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data)
         if (data.jobid) {
-          this.getPrintStatus(
-            authStore.state.accessToken,
-            data.jobid
-          )
+          this.getPrintStatus(authStore.state.accessToken, data.jobid)
         }
       })
   }

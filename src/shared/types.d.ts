@@ -27,12 +27,12 @@ export type TypoHeadingTagTypes = 1 | 2 | 3 | 4 | 5 | 6
 export type TypoParagraphLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type TypoWeightTypes = 'soft' | 'strong' | 'heavy'
 export interface PrinterProperties {
-  paper?: string,
-  paperid?: string,
-  color?: boolean,
-  duplex?: boolean,
-  duplexmode?: number,
-  orientation?: number,
-  copies?: number,
+  paper?: string
+  paperid?: string
+  color?: boolean
+  duplex?: boolean
+  duplexmode?: number
+  orientation?: number
+  copies?: number
   resolution?: string
 }
