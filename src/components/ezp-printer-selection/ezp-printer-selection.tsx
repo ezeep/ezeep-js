@@ -118,6 +118,17 @@ export class EzpPrinterSelection {
     }
   }
 
+  getPropertiesFromLocalStorage() {
+    if (localStorage.getItem('properties')) {
+      this.properties = JSON.parse(localStorage.getItem('properties'))
+    }
+    if (localStorage.getItem('printer')) {
+      this.printer = JSON.parse(localStorage.getItem('printer'))
+    } else {
+      this.printer = { id: '', name: '' }
+    }
+  }
+
   logOut = () => {
     localStorage.clear()
     authStore.state.isAuthorized = false
@@ -133,14 +144,7 @@ export class EzpPrinterSelection {
   /** Description... */
   async componentWillLoad() {
     this.loading = true
-    if (localStorage.getItem('properties')) {
-      this.properties = JSON.parse(localStorage.getItem('properties'))
-    }
-    if (localStorage.getItem('printer')) {
-      this.printer = JSON.parse(localStorage.getItem('printer'))
-    } else {
-      this.printer = { id: '', name: '' }
-    }
+    this.getPropertiesFromLocalStorage()
     await Promise.all([fetch('/data/user.json'), fetch('/data/options.json')])
       .then((responses) => Promise.all(responses.map((response) => response.json())))
       .then((data) => {
