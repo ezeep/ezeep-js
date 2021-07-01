@@ -88,6 +88,22 @@ export class EzpPrintService {
       })
   }
 
+  getPrinterProperties(accessToken: string, printerID: string) {
+    return fetch(`${config.printingApiDev}/GetPrinterProperties/?id=${printerID}`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+      },
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        printStore.state.selectedPrinterProperties = data
+        console.log(printStore.state.selectedPrinterProperties)
+      })
+  }
+
   getAllPrinterProperties(accessToken: string) {
     return fetch(`${config.printingApiDev}/GetPrinterProperties/`, {
       method: 'GET',
@@ -150,6 +166,7 @@ export class EzpPrintService {
 const printStore = createStore({
   printers: [],
   config: [],
+  selectedPrinterProperties: {},
 })
 
 export default printStore

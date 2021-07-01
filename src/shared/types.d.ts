@@ -36,3 +36,8 @@ export interface PrinterProperties {
   copies?: number
   resolution?: string
 }
+
+export interface Printer {
+  name: string
+  id: string
+}

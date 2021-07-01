@@ -1,7 +1,7 @@
 import { Component, Host, Listen, Event, EventEmitter, State, h, Prop } from '@stencil/core'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
-import { PrinterProperties } from '../../shared/types'
+import { Printer, PrinterProperties } from '../../shared/types'
 // import { PrintUserType } from '../../shared/types'
 
 @Component({
@@ -12,7 +12,8 @@ import { PrinterProperties } from '../../shared/types'
 export class EzpPrinterSelection {
   // private user: PrintUserType
   private options
-  private printerID
+  private printer: Printer
+  private printService: EzpPrintService
   private properties: PrinterProperties = {}
   /**
    *
@@ -75,16 +76,16 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = () => {
-    const printService = new EzpPrintService(this.redirectURI, this.clientID)
-    printService.printFileByUrl(
+    this.printService.printFileByUrl(
       authStore.state.accessToken,
       this.fileurl,
       this.filetype,
-      this.printerID,
-      this.properties,
+      this.printer.id,
+      {}, //this.properties,
       this.filename
     )
     localStorage.setItem('properties', JSON.stringify(this.properties))
+    localStorage.setItem('printer', JSON.stringify(this.printer))
     // this.printSubmit.emit()
   }
 
@@ -111,7 +112,9 @@ export class EzpPrinterSelection {
     ) {
       this.properties.paper = eventDetails.title
     } else {
-      this.printerID = eventDetails.id
+      this.printer.id = eventDetails.id
+      this.printer.name = eventDetails.title
+      this.printService.getPrinterProperties(authStore.state.accessToken, this.printer.id)
     }
   }
 
@@ -133,15 +136,22 @@ export class EzpPrinterSelection {
     if (localStorage.getItem('properties')) {
       this.properties = JSON.parse(localStorage.getItem('properties'))
     }
+    if (localStorage.getItem('printer')) {
+      this.printer = JSON.parse(localStorage.getItem('printer'))
+    } else {
+      this.printer = { id: '', name: '' }
+    }
     await Promise.all([fetch('/data/user.json'), fetch('/data/options.json')])
       .then((responses) => Promise.all(responses.map((response) => response.json())))
       .then((data) => {
         // this.user = data[0]
         this.options = data[1]
       })
-    const printService = new EzpPrintService(this.redirectURI, this.clientID)
-    printService.getPrinterList(authStore.state.accessToken).finally(() => (this.loading = false))
-    printService.getAllPrinterProperties(authStore.state.accessToken)
+    this.printService = new EzpPrintService(this.redirectURI, this.clientID)
+    this.printService
+      .getPrinterList(authStore.state.accessToken)
+      .finally(() => (this.loading = false))
+    this.printService.getAllPrinterProperties(authStore.state.accessToken)
   }
 
   /**
@@ -175,6 +185,7 @@ export class EzpPrinterSelection {
                   title: printer.name,
                   meta: printer.location,
                 }))}
+                previouslySelected={this.printer.name}
               />
             </div>
             <div id="options">
@@ -188,6 +199,7 @@ export class EzpPrinterSelection {
                   title: color.name,
                   meta: '',
                 }))}
+                previouslySelected={this.properties.color}
               />
               <ezp-select
                 label="Orientation"
@@ -199,6 +211,7 @@ export class EzpPrinterSelection {
                   title: orientation.name,
                   meta: '',
                 }))}
+                previouslySelected={this.properties.orientation}
               />
               <ezp-select
                 label="Size"
@@ -210,6 +223,7 @@ export class EzpPrinterSelection {
                   title: size.name,
                   meta: size.description,
                 }))}
+                previouslySelected={this.properties.paper}
               />
             </div>
           </div>

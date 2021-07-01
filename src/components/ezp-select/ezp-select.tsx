@@ -46,6 +46,7 @@ export class EzpSelect {
   /** Description... */
   @Prop() toggleFlow: SelectFlowTypes = 'horizontal'
 
+  @Prop() previouslySelected: any
   /**
    *
    * States
@@ -130,6 +131,9 @@ export class EzpSelect {
 
   componentWillLoad() {
     this.dialog = this.component.closest('#dialog')
+    if (this.previouslySelected !== '') {
+      this.selected.title = this.previouslySelected
+    }
   }
 
   componentDidLoad() {
