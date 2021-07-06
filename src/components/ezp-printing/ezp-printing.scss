@@ -9,42 +9,21 @@
 
 /**
  *
- * Imports
- *
- */
-
-@import url('https://rsms.me/inter/inter.css');
-
-/**
- *
  * Rules
  *
  */
 
 :host {
-  /** @prop --host-font-family: Description... */
-  --host-font-family: 'Inter';
-
   align-content: center;
   background: var(--color-surface-primary);
   color: var(--color-foreground-primary);
   display: grid;
-  font-family: var(--host-font-family), sans-serif;
-  font-feature-settings: global.$font-features;
-  font-kerning: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   grid-template: auto / auto;
   justify-content: center;
   margin: 0;
   min-height: 100vh;
   -webkit-tap-highlight-color: transparent;
-  text-rendering: optimizeLegibility;
-  -webkit-text-size-adjust: none;
-
-  @supports (font-variation-settings: normal) {
-    --host-font-family: 'Inter var';
-  }
+  // font-family: 'Inter';
 
   @include global.color-declaration('light');
   @include global.spacing-declaration;

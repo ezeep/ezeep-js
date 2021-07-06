@@ -15,17 +15,6 @@ export type SelectFlowTypes = 'vertical' | 'horizontal'
 export type SelectOptionType = { id: number; title: string; meta: string }
 export type TextButtonLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type TextButtonTypeTypes = 'button'
-export type TypoBodyLevelTypes = 'primary' | 'secondary'
-export type TypoHeadingLevelTypes =
-  | 'primary'
-  | 'secondary'
-  | 'tertiary'
-  | 'quaternary'
-  | 'quinary'
-  | 'senary'
-export type TypoHeadingTagTypes = 1 | 2 | 3 | 4 | 5 | 6
-export type TypoParagraphLevelTypes = 'primary' | 'secondary' | 'tertiary'
-export type TypoWeightTypes = 'soft' | 'strong' | 'heavy'
 export interface PrinterProperties {
   paper?: string
   paperid?: string

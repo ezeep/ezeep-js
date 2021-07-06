@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property             | Attribute             | Description    | Type                                                                    | Default         |
@@ -15,14 +14,12 @@
 | `previouslySelected` | `previously-selected` |                | `any`                                                                   | `undefined`     |
 | `toggleFlow`         | `toggle-flow`         | Description... | `"horizontal" \| "vertical"`                                            | `'horizontal'`  |
 
-
 ## Events
 
 | Event             | Description | Type               |
 | ----------------- | ----------- | ------------------ |
 | `selectSelection` |             | `CustomEvent<any>` |
 | `selectToggle`    | Events      | `CustomEvent<any>` |
-
 
 ## CSS Custom Properties
 
@@ -58,27 +55,25 @@
 | `--wrap-separator-position-top`    | Description... |
 | `--wrap-translate-y`               | Description... |
 
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
 - [ezp-icon](../ezp-icon)
-- [ezp-typo-body](../ezp-typo-body)
+- ips-label
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-select --> ezp-icon
-  ezp-select --> ezp-typo-body
+  ezp-select --> ips-label
   ezp-printer-selection --> ezp-select
   style ezp-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

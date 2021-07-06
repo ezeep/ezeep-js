@@ -172,8 +172,8 @@ export class EzpPrinterSelection {
         <div id="dialog">
           <div id="backdrop" />
           <div id="header">
-            <ezp-typo-body weight="heavy">Print:</ezp-typo-body>
-            <ezp-typo-body>{this.filename}</ezp-typo-body>
+            <ips-label weight="heavy">Print:</ips-label>
+            <ips-label>{this.filename}</ips-label>
             <ezp-icon-button level="tertiary" icon="menu" id="toggle-menu" onClick={this.logOut} />
           </div>
           <div id="content">

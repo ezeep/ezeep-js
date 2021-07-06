@@ -83,10 +83,8 @@ export class EzpAuth {
           </div>
           <div id="content">
             <ezp-icon id="icon" name="rocket" size="large" />
-            <ezp-typo-heading level="quaternary">Get started</ezp-typo-heading>
-            <ezp-typo-body>
-              Quis et minima quae exercitationem cumque. Mollitia maiores sint.
-            </ezp-typo-body>
+            <ips-heading level="quaternary">Get started</ips-heading>
+            <ips-label>Quis et minima quae exercitationem cumque. Mollitia maiores sint.</ips-label>
             <ezp-text-button
               id="button"
               onClick={() => {

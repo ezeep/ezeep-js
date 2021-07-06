@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, TypoBodyLevelTypes, TypoHeadingLevelTypes, TypoHeadingTagTypes, TypoWeightTypes } from "./shared/types";
+import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes } from "./shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -124,30 +124,6 @@ export namespace Components {
          */
         "type": TextButtonTypeTypes;
     }
-    interface EzpTypoBody {
-        /**
-          * Description...
-         */
-        "level": TypoBodyLevelTypes;
-        /**
-          * Description...
-         */
-        "weight": TypoWeightTypes;
-    }
-    interface EzpTypoHeading {
-        /**
-          * Description...
-         */
-        "level": TypoHeadingLevelTypes;
-        /**
-          * Description...
-         */
-        "tag": TypoHeadingTagTypes;
-        /**
-          * Description...
-         */
-        "weight": TypoWeightTypes;
-    }
 }
 declare global {
     interface HTMLEzpAuthElement extends Components.EzpAuth, HTMLStencilElement {
@@ -198,18 +174,6 @@ declare global {
         prototype: HTMLEzpTextButtonElement;
         new (): HTMLEzpTextButtonElement;
     };
-    interface HTMLEzpTypoBodyElement extends Components.EzpTypoBody, HTMLStencilElement {
-    }
-    var HTMLEzpTypoBodyElement: {
-        prototype: HTMLEzpTypoBodyElement;
-        new (): HTMLEzpTypoBodyElement;
-    };
-    interface HTMLEzpTypoHeadingElement extends Components.EzpTypoHeading, HTMLStencilElement {
-    }
-    var HTMLEzpTypoHeadingElement: {
-        prototype: HTMLEzpTypoHeadingElement;
-        new (): HTMLEzpTypoHeadingElement;
-    };
     interface HTMLElementTagNameMap {
         "ezp-auth": HTMLEzpAuthElement;
         "ezp-icon": HTMLEzpIconElement;
@@ -219,8 +183,6 @@ declare global {
         "ezp-progress": HTMLEzpProgressElement;
         "ezp-select": HTMLEzpSelectElement;
         "ezp-text-button": HTMLEzpTextButtonElement;
-        "ezp-typo-body": HTMLEzpTypoBodyElement;
-        "ezp-typo-heading": HTMLEzpTypoHeadingElement;
     }
 }
 declare namespace LocalJSX {
@@ -352,30 +314,6 @@ declare namespace LocalJSX {
          */
         "type"?: TextButtonTypeTypes;
     }
-    interface EzpTypoBody {
-        /**
-          * Description...
-         */
-        "level"?: TypoBodyLevelTypes;
-        /**
-          * Description...
-         */
-        "weight"?: TypoWeightTypes;
-    }
-    interface EzpTypoHeading {
-        /**
-          * Description...
-         */
-        "level"?: TypoHeadingLevelTypes;
-        /**
-          * Description...
-         */
-        "tag"?: TypoHeadingTagTypes;
-        /**
-          * Description...
-         */
-        "weight"?: TypoWeightTypes;
-    }
     interface IntrinsicElements {
         "ezp-auth": EzpAuth;
         "ezp-icon": EzpIcon;
@@ -385,8 +323,6 @@ declare namespace LocalJSX {
         "ezp-progress": EzpProgress;
         "ezp-select": EzpSelect;
         "ezp-text-button": EzpTextButton;
-        "ezp-typo-body": EzpTypoBody;
-        "ezp-typo-heading": EzpTypoHeading;
     }
 }
 export { LocalJSX as JSX };
@@ -401,8 +337,6 @@ declare module "@stencil/core" {
             "ezp-progress": LocalJSX.EzpProgress & JSXBase.HTMLAttributes<HTMLEzpProgressElement>;
             "ezp-select": LocalJSX.EzpSelect & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
             "ezp-text-button": LocalJSX.EzpTextButton & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
-            "ezp-typo-body": LocalJSX.EzpTypoBody & JSXBase.HTMLAttributes<HTMLEzpTypoBodyElement>;
-            "ezp-typo-heading": LocalJSX.EzpTypoHeading & JSXBase.HTMLAttributes<HTMLEzpTypoHeadingElement>;
         }
     }
 }

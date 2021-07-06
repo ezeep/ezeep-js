@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property   | Attribute  | Description    | Type                                     | Default     |
@@ -12,7 +11,6 @@
 | `href`     | `href`     | Description... | `string`                                 | `undefined` |
 | `level`    | `level`    | Description... | `"primary" \| "secondary" \| "tertiary"` | `'primary'` |
 | `type`     | `type`     | Description... | `"button"`                               | `undefined` |
-
 
 ## CSS Custom Properties
 
@@ -28,27 +26,25 @@
 | `--button-color-init`          | Description... |
 | `--button-cursor`              | Description... |
 
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-auth](../ezp-auth)
- - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-auth](../ezp-auth)
+- [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
-- [ezp-typo-body](../ezp-typo-body)
+- ips-label
 
 ### Graph
+
 ```mermaid
 graph TD;
-  ezp-text-button --> ezp-typo-body
+  ezp-text-button --> ips-label
   ezp-auth --> ezp-text-button
   ezp-printer-selection --> ezp-text-button
   style ezp-text-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---
