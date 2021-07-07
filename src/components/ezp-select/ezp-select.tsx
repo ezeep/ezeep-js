@@ -173,7 +173,7 @@ export class EzpSelect {
             <ips-label id="label" level={labelLevel}>
               {this.label}
             </ips-label>
-            <ips-label id="value">
+            <ips-label id="value" clip>
               {this.selected.title !== '' ? this.selected.title : this.placeholder}
             </ips-label>
             <ezp-icon id="accessory" name="expand" />
