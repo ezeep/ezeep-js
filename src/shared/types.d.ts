@@ -19,10 +19,10 @@ export interface PrinterProperties {
   paper?: string
   paperid?: string
   color?: boolean | string
-  duplex?: boolean| string
-  duplexmode?: number| string
-  orientation?: number| string
-  copies?: number| string
+  duplex?: boolean | string
+  duplexmode?: number | string
+  orientation?: number | string
+  copies?: number | string
   resolution?: string
 }
 
@@ -32,25 +32,25 @@ export interface Printer {
 }
 
 export interface PaperFormat {
-  id: number
-  name: string
-  xRes: number
-  yRes: number
+  Id: number
+  Name: string
+  XRes: number
+  YRes: number
 }
 export interface PrinterConfig {
-  collate: boolean
-  color: boolean
-  driver: string
-  duplexMode: number
-  duplexSupported: boolean
-  id: string
-  location: string
-  mediaSupported: Array<string>
-  mediaSupportedId: Array<number>
-  name: string
-  orientationsSupported: Array<string>
-  orientationsSupportedId: Array<number>
-  paperFormats: Array<PaperFormat>
-  resolutions: Array<string>
-  tpuid: number
+  Collate?: boolean
+  Color?: boolean
+  Driver?: string
+  DuplexMode?: number
+  DuplexSupported?: boolean
+  Id?: string
+  Location?: string
+  MediaSupported?: Array<string>
+  MediaSupportedId?: Array<number>
+  Name?: string
+  OrientationsSupported?: Array<string>
+  OrientationsSupportedId?: Array<number>
+  PaperFormats?: Array<PaperFormat>
+  Resolutions?: Array<string>
+  TPUID?: number
 }

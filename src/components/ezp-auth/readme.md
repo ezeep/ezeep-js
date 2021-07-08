@@ -2,12 +2,14 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute        | Description | Type     | Default     |
 | ------------- | ---------------- | ----------- | -------- | ----------- |
 | `clientID`    | `client-i-d`     |             | `string` | `undefined` |
 | `redirectURI` | `redirect-u-r-i` |             | `string` | `undefined` |
+
 
 ## Events
 
@@ -16,6 +18,7 @@
 | `authCancel` |             | `CustomEvent<MouseEvent>` |
 | `printShow`  |             | `CustomEvent<any>`        |
 
+
 ## CSS Custom Properties
 
 | Name                          | Description    |
@@ -23,11 +26,12 @@
 | `--dialog-radius`             | Description... |
 | `--dialog-separator-position` | Description... |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ezp-printing](../ezp-printing)
+ - [ezp-printing](../ezp-printing)
 
 ### Depends on
 
@@ -38,7 +42,6 @@
 - [ezp-text-button](../ezp-text-button)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-auth --> ezp-icon-button
@@ -52,4 +55,6 @@ graph TD;
   style ezp-auth fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

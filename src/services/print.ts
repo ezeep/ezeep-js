@@ -2,7 +2,7 @@ import { createStore } from '@stencil/store'
 import config from './../utils/config.json'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
-import { PrinterProperties } from '../shared/types'
+import { PrinterProperties, PrinterConfig } from '../shared/types'
 export class EzpPrintService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
@@ -13,6 +13,7 @@ export class EzpPrintService {
 
   clientID: string
   redirectURI: string
+  printerConfig: PrinterConfig
 
   private checkRefreshToken() {
     if (authStore.state.refreshToken !== '') {
@@ -99,8 +100,8 @@ export class EzpPrintService {
         return response.json()
       })
       .then((data) => {
-        printStore.state.selectedPrinterProperties = data
-        console.log(printStore.state.selectedPrinterProperties)
+        this.printerConfig = data[0]
+        printStore.state.selectedPrinterProperties = this.printerConfig
       })
   }
 
@@ -110,13 +111,12 @@ export class EzpPrintService {
       headers: {
         Authorization: 'Bearer ' + accessToken,
       },
+    }).then((response) => {
+      return response.json()
     })
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {
+    /* .then((data) => {
         console.log(data)
-      })
+      }) */
   }
 
   printFileByUrl(
@@ -166,7 +166,7 @@ export class EzpPrintService {
 const printStore = createStore({
   printers: [],
   config: [],
-  selectedPrinterProperties: {},
+  selectedPrinterProperties: <PrinterConfig>{},
 })
 
 export default printStore
