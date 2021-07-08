@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property      | Attribute     | Description | Type      | Default     |
@@ -14,7 +13,6 @@
 | `fileurl`     | `fileurl`     |             | `string`  | `undefined` |
 | `redirecturi` | `redirecturi` |             | `string`  | `undefined` |
 
-
 ## Methods
 
 ### `open() => Promise<void>`
@@ -25,16 +23,6 @@ Public methods
 
 Type: `Promise<void>`
 
-
-
-
-## CSS Custom Properties
-
-| Name                 | Description    |
-| -------------------- | -------------- |
-| `--host-font-family` | Description... |
-
-
 ## Dependencies
 
 ### Depends on
@@ -44,6 +32,7 @@ Type: `Promise<void>`
 - [ezp-icon-button](../ezp-icon-button)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-printing --> ezp-auth
@@ -51,22 +40,20 @@ graph TD;
   ezp-printing --> ezp-icon-button
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-icon
-  ezp-auth --> ezp-typo-heading
-  ezp-auth --> ezp-typo-body
+  ezp-auth --> ips-heading
+  ezp-auth --> ips-label
   ezp-auth --> ezp-text-button
   ezp-icon-button --> ezp-icon
-  ezp-text-button --> ezp-typo-body
+  ezp-text-button --> ips-label
   ezp-printer-selection --> ezp-progress
-  ezp-printer-selection --> ezp-typo-body
+  ezp-printer-selection --> ips-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-text-button
-  ezp-progress --> ezp-typo-body
+  ezp-progress --> ips-label
   ezp-select --> ezp-icon
-  ezp-select --> ezp-typo-body
+  ezp-select --> ips-label
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

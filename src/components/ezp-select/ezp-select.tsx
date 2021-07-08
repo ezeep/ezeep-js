@@ -170,12 +170,12 @@ export class EzpSelect {
         <div id="wrap">
           <div id="toggle" onClick={() => this.toggle()}>
             {this.icon ? <ezp-icon id="icon" name={this.icon} /> : null}
-            <ezp-typo-body id="label" level={labelLevel}>
+            <ips-label id="label" level={labelLevel}>
               {this.label}
-            </ezp-typo-body>
-            <ezp-typo-body id="value">
+            </ips-label>
+            <ips-label id="value" clip>
               {this.selected.title !== '' ? this.selected.title : this.placeholder}
-            </ezp-typo-body>
+            </ips-label>
             <ezp-icon id="accessory" name="expand" />
           </div>
           <div id="list" ref={(element) => (this.list = element)}>
@@ -186,11 +186,11 @@ export class EzpSelect {
               >
                 <ezp-icon name="checkmark" class="indicator" />
                 <div class="details">
-                  <ezp-typo-body class="title">{option.title}</ezp-typo-body>
+                  <ips-label class="title">{option.title}</ips-label>
                   {option.meta !== '' ? (
-                    <ezp-typo-body level="secondary" class="meta">
+                    <ips-label level="secondary" class="meta">
                       {option.meta}
-                    </ezp-typo-body>
+                    </ips-label>
                   ) : null}
                 </div>
               </div>

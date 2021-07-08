@@ -50,9 +50,9 @@ export class EzpTextButton {
     return (
       <Host class={`${this.level}`}>
         <TagType class="button" {...attributes}>
-          <ezp-typo-body level="primary" weight="heavy">
+          <ips-label level="primary" weight="heavy">
             <slot />
-          </ezp-typo-body>
+          </ips-label>
         </TagType>
       </Host>
     )

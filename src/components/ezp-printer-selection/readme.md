@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property      | Attribute        | Description | Type     | Default     |
@@ -13,14 +12,12 @@
 | `fileurl`     | `fileurl`        |             | `string` | `undefined` |
 | `redirectURI` | `redirect-u-r-i` |             | `string` | `undefined` |
 
-
 ## Events
 
 | Event         | Description    | Type                      |
 | ------------- | -------------- | ------------------------- |
 | `printCancel` | Description... | `CustomEvent<MouseEvent>` |
 | `printSubmit` | Description... | `CustomEvent<MouseEvent>` |
-
 
 ## CSS Custom Properties
 
@@ -37,38 +34,36 @@
 | `--footer-separator-position` | Description... |
 | `--header-separator-position` | Description... |
 
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-printing](../ezp-printing)
+- [ezp-printing](../ezp-printing)
 
 ### Depends on
 
 - [ezp-progress](../ezp-progress)
-- [ezp-typo-body](../ezp-typo-body)
+- ips-label
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-select](../ezp-select)
 - [ezp-text-button](../ezp-text-button)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-printer-selection --> ezp-progress
-  ezp-printer-selection --> ezp-typo-body
+  ezp-printer-selection --> ips-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-text-button
-  ezp-progress --> ezp-typo-body
+  ezp-progress --> ips-label
   ezp-icon-button --> ezp-icon
   ezp-select --> ezp-icon
-  ezp-select --> ezp-typo-body
-  ezp-text-button --> ezp-typo-body
+  ezp-select --> ips-label
+  ezp-text-button --> ips-label
   ezp-printing --> ezp-printer-selection
   style ezp-printer-selection fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

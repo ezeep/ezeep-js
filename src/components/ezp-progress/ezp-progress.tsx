@@ -29,9 +29,9 @@ export class EzpProgress {
             <circle id="track" cx="22" cy="22" r="16" />
             <circle id="value" cx="22" cy="22" r="16" />
           </svg>
-          <ezp-typo-body id="status" level="secondary" weight="strong">
+          <ips-label id="status" level="secondary" weight="strong">
             {this.status}
-          </ezp-typo-body>
+          </ips-label>
         </div>
       </Host>
     )
