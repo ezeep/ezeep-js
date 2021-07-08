@@ -11,10 +11,10 @@ import { Printer, PrinterProperties } from '../../shared/types'
 })
 export class EzpPrinterSelection {
   // private user: PrintUserType
-  private options
+  
   private printer: Printer
   private printService: EzpPrintService
-  private properties: PrinterProperties = {}
+  private properties: PrinterProperties = { color: '', paper: '', orientation: '' }
   /**
    *
    * Properties
@@ -34,6 +34,7 @@ export class EzpPrinterSelection {
   /** Description... */
   @State() showBackdrop: boolean = false
   @State() loading: boolean = true
+  @State() options
   /**
    *
    * Events
@@ -59,7 +60,7 @@ export class EzpPrinterSelection {
 
   @Listen('selectSelection')
   listenSelectSelection(event: CustomEvent) {
-    console.log(event.detail)
+    console.log('selected:', event.detail)
     this.setPrintProperties(event.detail)
   }
 
@@ -115,6 +116,10 @@ export class EzpPrinterSelection {
       this.printer.id = eventDetails.id
       this.printer.name = eventDetails.title
       this.printService.getPrinterProperties(authStore.state.accessToken, this.printer.id)
+      this.options.orientations = printStore.state.selectedPrinterProperties[0].OrientationsSupported
+      this.options.sizes =  printStore.state.selectedPrinterProperties[0].PaperFormats
+      console.log('orientations:', this.options.orientations)
+      console.log('sizes', this.options.sizes)
     }
   }
 

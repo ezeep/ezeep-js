@@ -29,15 +29,39 @@ export type TypoWeightTypes = 'soft' | 'strong' | 'heavy'
 export interface PrinterProperties {
   paper?: string
   paperid?: string
-  color?: boolean
-  duplex?: boolean
-  duplexmode?: number
-  orientation?: number
-  copies?: number
+  color?: boolean | string
+  duplex?: boolean| string
+  duplexmode?: number| string
+  orientation?: number| string
+  copies?: number| string
   resolution?: string
 }
 
 export interface Printer {
   name: string
   id: string
+}
+
+export interface PaperFormat {
+  id: number
+  name: string
+  xRes: number
+  yRes: number
+}
+export interface PrinterConfig {
+  collate: boolean
+  color: boolean
+  driver: string
+  duplexMode: number
+  duplexSupported: boolean
+  id: string
+  location: string
+  mediaSupported: Array<string>
+  mediaSupportedId: Array<number>
+  name: string
+  orientationsSupported: Array<string>
+  orientationsSupportedId: Array<number>
+  paperFormats: Array<PaperFormat>
+  resolutions: Array<string>
+  tpuid: number
 }
