@@ -2,6 +2,7 @@ import { Component, Host, Listen, Event, EventEmitter, State, h, Prop } from '@s
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
+import { capitalize } from '../../utils/utils'
 // import { PrintUserType } from '../../shared/types'
 
 @Component({
@@ -90,7 +91,7 @@ export class EzpPrinterSelection {
     // this.printSubmit.emit()
   }
 
-  async setPrintProperties(eventDetails) {
+  setPrintProperties(eventDetails) {
     if (eventDetails.title.includes('Grayscale') || eventDetails.title.includes('Color')) {
       this.properties.color = eventDetails.title
     } else if (
@@ -113,27 +114,33 @@ export class EzpPrinterSelection {
     ) {
       this.properties.paper = eventDetails.title
     } else {
-      this.printer.id = eventDetails.id
-      this.printer.name = eventDetails.title
-      let paperformatlength = 0
-      await this.printService
-        .getPrinterProperties(authStore.state.accessToken, this.printer.id)
-        .finally(() => (this.printerConfig = printStore.state.selectedPrinterProperties))
-      this.printerConfig.OrientationsSupported.forEach((orientation, index) => {
-        this.options.orientations[index].name = orientation
-        this.options.orientations[index].id = index + 1
-      })
-
-      this.printerConfig.PaperFormats.forEach((paperformat, index) => {
-        paperformatlength += 1
-        this.options.sizes[index].name = paperformat.Name.toUpperCase()
-        this.options.sizes[index].id = paperformat.Id
-        this.options.sizes[index].description = paperformat.Name
-      })
-      this.options.sizes.length = paperformatlength
-      console.log('orientations:', this.options.orientations)
-      console.log('sizes', this.options.sizes)
+      this.setSelectedPrinterProperties(eventDetails)
     }
+  }
+
+  async setSelectedPrinterProperties(eventDetails) {
+    this.printer.id = eventDetails.id
+    this.printer.name = eventDetails.title
+
+    await this.printService
+      .getPrinterProperties(authStore.state.accessToken, this.printer.id)
+      .finally(() => (this.printerConfig = printStore.state.selectedPrinterProperties))
+
+    this.printerConfig.OrientationsSupported.forEach((orientation, index) => {
+      this.options.orientations[index].name = capitalize(orientation)
+      this.options.orientations[index].id = index + 1
+    })
+
+    this.printerConfig.PaperFormats.forEach((paperformat, index) => {
+      this.options.sizes[index].name = paperformat.Name
+      this.options.sizes[index].id = paperformat.Id
+      this.options.sizes[index].description = paperformat.Name
+    })
+
+    // delete all properties not supported
+    this.options.sizes.length = this.printerConfig.PaperFormats.length 
+    console.log('orientations:', this.options.orientations)
+    console.log('sizes', this.options.sizes)
   }
 
   getPropertiesFromLocalStorage() {

@@ -1,5 +1,6 @@
 import { createStore } from '@stencil/store'
 import config from './../utils/config.json'
+import { encodeFormData } from '../utils/utils'
 
 export class EzpAuthorizationService {
   constructor(redirectURI: string, clientID: string) {
@@ -48,12 +49,6 @@ export class EzpAuthorizationService {
     this.authURI.search = this.urlParams.toString()
   }
 
-  encodeFormData(data: { [x: string]: string | number | boolean }): string {
-    return Object.keys(data)
-      .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
-      .join('&')
-  }
-
   getAccessToken() {
     return fetch(this.accessTokenURL, {
       headers: {
@@ -61,7 +56,7 @@ export class EzpAuthorizationService {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       method: 'POST',
-      body: this.encodeFormData({
+      body: encodeFormData({
         grant_type: 'authorization_code',
         scope: 'printing',
         code: this.code,
@@ -96,7 +91,7 @@ export class EzpAuthorizationService {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       method: 'POST',
-      body: this.encodeFormData({
+      body: encodeFormData({
         grant_type: 'refresh_token',
         scope: 'printing',
         refresh_token: authStore.state.refreshToken,
