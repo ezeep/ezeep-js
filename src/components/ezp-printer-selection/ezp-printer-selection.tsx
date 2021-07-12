@@ -139,8 +139,6 @@ export class EzpPrinterSelection {
 
     // delete all properties not supported
     this.options.sizes.length = this.printerConfig.PaperFormats.length 
-    console.log('orientations:', this.options.orientations)
-    console.log('sizes', this.options.sizes)
   }
 
   getPropertiesFromLocalStorage() {

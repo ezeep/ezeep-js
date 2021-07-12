@@ -71,6 +71,7 @@ export class EzpAuthorizationService {
         // actual object
         if (data.access_token) {
           authStore.state.isAuthorized = true
+          this.isAuthorized = authStore.state.isAuthorized
           localStorage.setItem('isAuthorized', this.isAuthorized.toString())
 
           this.accessToken = data.access_token
