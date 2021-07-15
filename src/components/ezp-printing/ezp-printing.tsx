@@ -14,6 +14,7 @@ export class EzpPrinting {
   @Prop() fileurl: string
   @Prop() filetype: string
   @Prop() custom: boolean
+  @Prop() hidelogin: boolean
   /**
    *
    * States

@@ -138,7 +138,7 @@ export class EzpPrinterSelection {
     })
 
     // delete all properties not supported
-    this.options.sizes.length = this.printerConfig.PaperFormats.length 
+    this.options.sizes.length = this.printerConfig.PaperFormats.length
   }
 
   getPropertiesFromLocalStorage() {

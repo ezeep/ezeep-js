@@ -63,6 +63,7 @@ export namespace Components {
         "filename": string;
         "filetype": string;
         "fileurl": string;
+        "hidelogin": boolean;
         /**
           * Public methods
          */
@@ -252,6 +253,7 @@ declare namespace LocalJSX {
         "filename"?: string;
         "filetype"?: string;
         "fileurl"?: string;
+        "hidelogin"?: boolean;
         "redirecturi"?: string;
     }
     interface EzpProgress {

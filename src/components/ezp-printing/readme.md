@@ -12,6 +12,7 @@
 | `filename`    | `filename`    |             | `string`  | `undefined` |
 | `filetype`    | `filetype`    |             | `string`  | `undefined` |
 | `fileurl`     | `fileurl`     |             | `string`  | `undefined` |
+| `hidelogin`   | `hidelogin`   |             | `boolean` | `undefined` |
 | `redirecturi` | `redirecturi` |             | `string`  | `undefined` |
 
 
