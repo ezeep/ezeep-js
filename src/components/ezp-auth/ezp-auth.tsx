@@ -47,7 +47,15 @@ export class EzpAuth {
 
       this.windowObjectReference.focus()
     }
-
+    
+    // check if the window was closed and cancel login accordingly
+    let checkClosedTimer = setInterval(() => {
+      if (this.windowObjectReference.closed) {
+        this.handleCancel()
+        clearInterval(checkClosedTimer)
+      }
+    }, 500)
+    
     // add the listener for receiving a message from the popup
     window.addEventListener('message', (event) => this.receiveMessage(event), false)
 
@@ -61,6 +69,7 @@ export class EzpAuth {
       this.printShow.emit()
     })
   }
+
 
   handleCancel = () => {
     this.authCancel.emit()
@@ -106,3 +115,4 @@ export class EzpAuth {
     )
   }
 }
+
