@@ -9,6 +9,7 @@ import authStore from '../../services/auth'
 export class EzpAuth {
   @Prop({ mutable: true }) clientID: string
   @Prop({ mutable: true }) redirectURI: string
+  @Prop() hidelogin: boolean
   @State() auth: EzpAuthorizationService
   @State() authURI: string
   @State() accessToken: string
@@ -72,10 +73,16 @@ export class EzpAuth {
       await this.auth.generateCodeChallenge(authStore.state.codeVerifier)
       this.auth.buildAuthURI()
     }
+
+    if (this.hidelogin) {
+      this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
+    }
   }
 
   render() {
-    return (
+    return this.hidelogin ? (
+      <ezp-progress status="Logging in..."></ezp-progress>
+    ) : (
       <Host>
         <div id="dialog">
           <div id="header">

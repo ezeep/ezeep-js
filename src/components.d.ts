@@ -9,6 +9,7 @@ import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
+        "hidelogin": boolean;
         "redirectURI": string;
     }
     interface EzpIcon {
@@ -189,6 +190,7 @@ declare global {
 declare namespace LocalJSX {
     interface EzpAuth {
         "clientID"?: string;
+        "hidelogin"?: boolean;
         "onAuthCancel"?: (event: CustomEvent<MouseEvent>) => void;
         "onPrintShow"?: (event: CustomEvent<any>) => void;
         "redirectURI"?: string;

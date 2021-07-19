@@ -102,7 +102,11 @@ export class EzpPrinting {
     return (
       <Host>
         {this.authOpen ? (
-          <ezp-auth clientID={this.clientid} redirectURI={this.redirecturi}></ezp-auth>
+          <ezp-auth
+            clientID={this.clientid}
+            redirectURI={this.redirecturi}
+            hidelogin={this.hidelogin}
+          ></ezp-auth>
         ) : this.printOpen ? (
           <ezp-printer-selection
             clientID={this.clientid}

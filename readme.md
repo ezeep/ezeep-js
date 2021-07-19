@@ -37,7 +37,7 @@ After that, simply add the ezp-printing tag to your .html file:
 <ezp-printing></ezp-printing>
 ```
 
-There are multiple required and optional attributes the ezeep.js element needs in order to provide the print functionality.
+There are multiple required and optional attributes the ezp-printing element needs in order to provide the print functionality.
 
 | Attribute   | Description                             | Type   | Required |
 | ----------- | --------------------------------------- | ------ | -------- |

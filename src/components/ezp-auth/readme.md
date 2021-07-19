@@ -5,10 +5,11 @@
 
 ## Properties
 
-| Property      | Attribute        | Description | Type     | Default     |
-| ------------- | ---------------- | ----------- | -------- | ----------- |
-| `clientID`    | `client-i-d`     |             | `string` | `undefined` |
-| `redirectURI` | `redirect-u-r-i` |             | `string` | `undefined` |
+| Property      | Attribute        | Description | Type      | Default     |
+| ------------- | ---------------- | ----------- | --------- | ----------- |
+| `clientID`    | `client-i-d`     |             | `string`  | `undefined` |
+| `hidelogin`   | `hidelogin`      |             | `boolean` | `undefined` |
+| `redirectURI` | `redirect-u-r-i` |             | `string`  | `undefined` |
 
 
 ## Events
@@ -35,6 +36,7 @@
 
 ### Depends on
 
+- [ezp-progress](../ezp-progress)
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-icon](../ezp-icon)
 - ips-heading
@@ -44,11 +46,13 @@
 ### Graph
 ```mermaid
 graph TD;
+  ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-icon
   ezp-auth --> ips-heading
   ezp-auth --> ips-label
   ezp-auth --> ezp-text-button
+  ezp-progress --> ips-label
   ezp-icon-button --> ezp-icon
   ezp-text-button --> ips-label
   ezp-printing --> ezp-auth

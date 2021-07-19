@@ -43,11 +43,13 @@ graph TD;
   ezp-printing --> ezp-auth
   ezp-printing --> ezp-printer-selection
   ezp-printing --> ezp-icon-button
+  ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-icon
   ezp-auth --> ips-heading
   ezp-auth --> ips-label
   ezp-auth --> ezp-text-button
+  ezp-progress --> ips-label
   ezp-icon-button --> ezp-icon
   ezp-text-button --> ips-label
   ezp-printer-selection --> ezp-progress
@@ -55,7 +57,6 @@ graph TD;
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-text-button
-  ezp-progress --> ips-label
   ezp-select --> ezp-icon
   ezp-select --> ips-label
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px

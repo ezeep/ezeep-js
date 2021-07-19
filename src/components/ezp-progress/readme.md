@@ -24,6 +24,7 @@
 
 ### Used by
 
+ - [ezp-auth](../ezp-auth)
  - [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
@@ -34,6 +35,7 @@
 ```mermaid
 graph TD;
   ezp-progress --> ips-label
+  ezp-auth --> ezp-progress
   ezp-printer-selection --> ezp-progress
   style ezp-progress fill:#f9f,stroke:#333,stroke-width:4px
 ```
