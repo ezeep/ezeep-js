@@ -7,7 +7,7 @@
 ### Requirements
 
 - ezeep Blue administrator account
-- Your personal ezeep Client ID and Client Secret
+- Your personal ezeep Client ID and Client Secret<ezp-progress status="Loading printers"></ezp-progress>
 
 - Redirect Uri
 
@@ -39,13 +39,14 @@ After that, simply add the ezp-printing tag to your .html file:
 
 There are multiple required and optional attributes the ezp-printing element needs in order to provide the print functionality.
 
-| Attribute   | Description                             | Type   | Required |
-| ----------- | --------------------------------------- | ------ | -------- |
-| clientid    | Your clientID.                          | string | Yes      |
-| redirecturi | Your redirectURI.                       | string | Yes      |
-| fileurl     | The url to the file you want to print.  | string | Yes      |
-| filetype    | The type of the file you want to print. | string | No       |
-| filename    | The name of the file you want to print. | string | No       |
+| Attribute   | Description                                       | Type   | Required |
+| ----------- | --------------------------------------------------| ------ | -------- |
+| clientid    | Your clientID.                                    | string | Yes      |
+| redirecturi | Your redirectURI.                                 | string | Yes      |
+| fileurl     | The url to the file you want to print.            | string | Yes      |
+| filetype    | The type of the file you want to print.           | string | No       |
+| filename    | The name of the file you want to print.           | string | No       |
+| hidelogin   | Determines wether or not the login page is shown. | boolean| No       |
 
 ### Example
 
