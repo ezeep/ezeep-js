@@ -78,7 +78,7 @@ export class EzpAuth {
 
   async componentWillLoad() {
     initi18n()
-    this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
+    this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID, true)
     if (authStore.state.isAuthorized === false) {
       this.auth.generateCodeVerifier()
       await this.auth.generateCodeChallenge(authStore.state.codeVerifier)

@@ -176,7 +176,7 @@ export class EzpPrinterSelection {
         // this.user = data[0]
         this.options = data[1]
       })
-    this.printService = new EzpPrintService(this.redirectURI, this.clientID)
+    this.printService = new EzpPrintService(this.redirectURI, this.clientID, true)
     this.printService
       .getPrinterList(authStore.state.accessToken)
       .finally(() => (this.loading = false))

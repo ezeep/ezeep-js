@@ -3,12 +3,19 @@ import config from './../utils/config.json'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
 import { PrinterProperties, PrinterConfig } from '../shared/types'
+
 export class EzpPrintService {
-  constructor(redirectURI: string, clientID: string) {
+  constructor(redirectURI: string, clientID: string, dev?: boolean ) {
     this.redirectURI = redirectURI
     this.clientID = clientID
 
-    this.checkRefreshToken()
+    if (dev) {
+      this.printingApi = config.printingApiDev
+    } else {
+      this.printingApi = config.printingApiLive
+    }
+
+    this.checkStoredRefreshToken()
     this.registerFetchInterceptor()
   }
 
@@ -17,7 +24,7 @@ export class EzpPrintService {
   printerConfig: PrinterConfig
   printingApi: string
 
-  private checkRefreshToken() {
+  private checkStoredRefreshToken() {
     if (authStore.state.refreshToken !== '') {
       return
     }
@@ -44,7 +51,7 @@ export class EzpPrintService {
           if (authStore.state.refreshToken === '') {
             return response
           }
-          const authService = new EzpAuthorizationService(this.redirectURI, this.clientID)
+          const authService = new EzpAuthorizationService(this.redirectURI, this.clientID, true)
           authService.refreshTokens()
         }
         // Modify the reponse object
@@ -58,7 +65,7 @@ export class EzpPrintService {
   }
 
   getPrinterList(accessToken: string) {
-    return fetch(`${config.printingApiDev}/GetPrinter/`, {
+    return fetch(`${this.printingApi}/GetPrinter/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -71,7 +78,7 @@ export class EzpPrintService {
   }
 
   getConfig(accessToken: string) {
-    return fetch(`${config.printingApiDev}/GetConfiguration/`, {
+    return fetch(`${this.printingApi}/GetConfiguration/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -92,7 +99,7 @@ export class EzpPrintService {
   }
 
   getPrinterProperties(accessToken: string, printerID: string) {
-    return fetch(`${config.printingApiDev}/GetPrinterProperties/?id=${printerID}`, {
+    return fetch(`${this.printingApi}/GetPrinterProperties/?id=${printerID}`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -108,7 +115,7 @@ export class EzpPrintService {
   }
 
   getAllPrinterProperties(accessToken: string) {
-    return fetch(`${config.printingApiDev}/GetPrinterProperties/`, {
+    return fetch(`${this.printingApi}/GetPrinterProperties/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -130,7 +137,7 @@ export class EzpPrintService {
     filename?: string,
     printAndDelete?: boolean
   ) {
-    return fetch(`${config.printingApiDev}/Print/`, {
+    return fetch(`${this.printingApi}/Print/`, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -155,7 +162,7 @@ export class EzpPrintService {
   }
 
   getPrintStatus(accessToken: string, jobID: string) {
-    return fetch(`${config.printingApiDev}/Status/?id=${jobID}`, {
+    return fetch(`${this.printingApi}/Status/?id=${jobID}`, {
       headers: {
         Authorization: 'Bearer ' + accessToken,
       },

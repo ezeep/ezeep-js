@@ -70,7 +70,7 @@ export class EzpPrinting {
   }
 
   checkAuth() {
-    const printService = new EzpPrintService(this.redirecturi, this.clientid)
+    const printService = new EzpPrintService(this.redirecturi, this.clientid, true)
     let accessToken = authStore.state.accessToken
 
     if (accessToken === '') {

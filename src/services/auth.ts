@@ -3,18 +3,31 @@ import config from './../utils/config.json'
 import { encodeFormData } from '../utils/utils'
 
 export class EzpAuthorizationService {
-  constructor(redirectURI: string, clientID: string) {
+  constructor(redirectURI: string, clientID: string, dev?: boolean) {
     this.redirectURI = redirectURI
     this.clientID = clientID
+
+    if (dev) {
+      this.oauthUrl = config.oauthUrlDev
+      this.authURI = new URL(`${this.oauthUrl}/authorize/`)
+      this.accessTokenURL = `${this.oauthUrl}/access_token/`
+      console.log('auth is dev')
+    } else {
+      this.oauthUrl = config.oauthUrlLive
+      this.authURI = new URL(`${this.oauthUrl}/authorize/`)
+      this.accessTokenURL = `${this.oauthUrl}/access_token/`
+      console.log('auth is live')
+    }
   }
 
   clientID: string
   redirectURI: string
+  oauthUrl: string
   code: string
-  authURI = new URL(`${config.oauthUrlDev}/authorize/`)
+  authURI: URL
   urlParams = new URLSearchParams()
   isAuthorized = false
-  accessTokenURL = `${config.oauthUrlDev}/access_token/`
+  accessTokenURL: string
   codeVerifier: string
   codeChallenge: string
   accessToken: string
