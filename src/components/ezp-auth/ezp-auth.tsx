@@ -2,9 +2,8 @@ import { Component, Host, h, Prop, State, Event, EventEmitter } from '@stencil/c
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
 import i18next from 'i18next'
+import { initi18n } from '../../utils/utils'
 
-import translationsDE from '../../data/locales/de.json'
-import translationsEN from '../../data/locales/en.json'
 @Component({
   tag: 'ezp-auth',
   styleUrl: 'ezp-auth.scss',
@@ -53,12 +52,15 @@ export class EzpAuth {
     }
 
     // check if the window was closed and cancel login accordingly
-    let checkClosedTimer = setInterval(() => {
-      if (this.windowObjectReference.closed) {
-        this.handleCancel()
-        clearInterval(checkClosedTimer)
-      }
-    }, 500)
+    if (this.hidelogin) {
+      let checkClosedTimer = setInterval(() => {
+        if (this.windowObjectReference.closed) {
+          this.handleCancel()
+          clearInterval(checkClosedTimer)
+        }
+      }, 500)
+    }
+
 
     // add the listener for receiving a message from the popup
     window.addEventListener('message', (event) => this.receiveMessage(event), false)
@@ -68,36 +70,15 @@ export class EzpAuth {
 
   receiveMessage(event) {
     this.auth.code = event.data
-    this.auth.getAccessToken().finally(() => {
-      this.authCancel.emit()
-      this.printShow.emit()
-    })
+    this.auth.getAccessToken()
   }
 
   handleCancel = () => {
     this.authCancel.emit()
   }
 
-  init18n() {
-    const resources = {
-      en: {
-        translation: translationsEN,
-      },
-      de: {
-        translation: translationsDE,
-      },
-    }
-
-    i18next.init({
-      resources,
-      lng: 'de', //navigator.language,
-      // allow keys to be phrases having `:`, `.`
-      nsSeparator: false,
-      fallbackLng: 'en',
-    })
-  }
   async componentWillLoad() {
-    this.init18n()
+    initi18n()
     this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
     if (authStore.state.isAuthorized === false) {
       this.auth.generateCodeVerifier()
@@ -112,7 +93,7 @@ export class EzpAuth {
 
   render() {
     return this.hidelogin ? (
-      <ezp-progress status="Logging in..."></ezp-progress>
+      <ezp-progress status={i18next.t('login_page.login')}></ezp-progress>
     ) : (
       <Host>
         <div id="dialog">
@@ -122,14 +103,14 @@ export class EzpAuth {
           <div id="content">
             <ezp-icon id="icon" name="rocket" size="large" />
             <ips-heading level="quaternary">{i18next.t('login_page.get_started')}</ips-heading>
-            <ips-label>Quis et minima quae exercitationem cumque. Mollitia maiores sint.</ips-label>
+            <ips-label>{i18next.t('login_page.description')}</ips-label>
             <ezp-text-button
               id="button"
               onClick={() => {
                 this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
               }}
             >
-              Login
+              {i18next.t('login_page.login')}
             </ezp-text-button>
           </div>
         </div>

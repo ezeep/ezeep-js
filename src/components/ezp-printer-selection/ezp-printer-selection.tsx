@@ -1,8 +1,9 @@
 import { Component, Host, Listen, Event, EventEmitter, State, h, Prop } from '@stencil/core'
+import i18next from 'i18next'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
-import { capitalize } from '../../utils/utils'
+import { capitalize, initi18n } from '../../utils/utils'
 // import { PrintUserType } from '../../shared/types'
 
 @Component({
@@ -166,6 +167,7 @@ export class EzpPrinterSelection {
 
   /** Description... */
   async componentWillLoad() {
+    initi18n()
     this.loading = true
     this.getPropertiesFromLocalStorage()
     await Promise.all([fetch('/data/user.json'), fetch('/data/options.json')])
@@ -189,22 +191,22 @@ export class EzpPrinterSelection {
 
   render() {
     return this.loading ? (
-      <ezp-progress status="Loading printers"></ezp-progress>
+      <ezp-progress status={i18next.t('printer_selection.loading')}></ezp-progress>
     ) : (
       <Host class={{ 'show-backdrop': this.showBackdrop }}>
         <div id="dialog">
           <div id="backdrop" />
           <div id="header">
-            <ips-label weight="heavy">Print:</ips-label>
+            <ips-label weight="heavy">{i18next.t('printer_selection.print') + ':'}</ips-label>
             <ips-label>{this.filename}</ips-label>
             <ezp-icon-button level="tertiary" icon="menu" id="toggle-menu" onClick={this.logOut} />
           </div>
           <div id="content">
             <div id="printer">
               <ezp-select
-                label="Printer"
+                label={i18next.t('printer_selection.printer')}
                 icon="printer"
-                placeholder="Select a printer"
+                placeholder={i18next.t('printer_selection.select_printer')}
                 toggleFlow="vertical"
                 optionFlow="vertical"
                 options={printStore.state.printers.map((printer) => ({
@@ -217,8 +219,8 @@ export class EzpPrinterSelection {
             </div>
             <div id="options">
               <ezp-select
-                label="Color"
-                placeholder="Select a color"
+                label={i18next.t('printer_selection.color')}
+                placeholder={i18next.t('printer_selection.select_color')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
                 options={this.options.colors.map((color) => ({
@@ -229,8 +231,8 @@ export class EzpPrinterSelection {
                 previouslySelected={this.properties.color}
               />
               <ezp-select
-                label="Orientation"
-                placeholder="Select a orientation"
+                label={i18next.t('printer_selection.orientation')}
+                placeholder={i18next.t('printer_selection.select_orientation')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
                 options={this.options.orientations.map((orientation) => ({
@@ -241,8 +243,8 @@ export class EzpPrinterSelection {
                 previouslySelected={this.properties.orientation}
               />
               <ezp-select
-                label="Size"
-                placeholder="Select a size"
+                label={i18next.t('printer_selection.size')}
+                placeholder={i18next.t('printer_selection.select_size')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
                 options={this.options.sizes.map((size) => ({
@@ -256,10 +258,10 @@ export class EzpPrinterSelection {
           </div>
           <div id="footer">
             <ezp-text-button type="button" level="secondary" onClick={this.handleCancel}>
-              Cancel
+              {i18next.t('button_actions.cancel')}
             </ezp-text-button>
             <ezp-text-button type="button" onClick={this.handlePrint}>
-              Print
+              {i18next.t('button_actions.print')}
             </ezp-text-button>
           </div>
           {/*<ejs-progress status="Printjob in progress" />*/}
