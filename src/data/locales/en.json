@@ -1,24 +1,24 @@
 {
-    "login_page": {
-        "get_started": "Get started",
-        "login": "Login",
-        "description": "Quis et minima quae exercitationem cumque. Mollitia maiores sint."
-    },
-    "printer_selection": {
-        "loading": "Loading printers",
-        "print": "Print",
-        "printer": "Printer",
-        "color": "Color",
-        "orientation": "Orientation",
-        "size": "Size",
-        "select_printer": "Select a printer",
-        "select_color": "Select a color",
-        "select_orientation": "Select orientation",
-        "select_size": "Select a size"
-    },
-    "button_actions": {
-        "login": "Login",
-        "print": "Print",
-        "cancel": "Cancel"
-    }
+  "login_page": {
+    "get_started": "Get started",
+    "login": "Login",
+    "description": "Quis et minima quae exercitationem cumque. Mollitia maiores sint."
+  },
+  "printer_selection": {
+    "loading": "Loading printers",
+    "print": "Print",
+    "printer": "Printer",
+    "color": "Color",
+    "orientation": "Orientation",
+    "size": "Size",
+    "select_printer": "Select a printer",
+    "select_color": "Select a color",
+    "select_orientation": "Select orientation",
+    "select_size": "Select a size"
+  },
+  "button_actions": {
+    "login": "Login",
+    "print": "Print",
+    "cancel": "Cancel"
+  }
 }

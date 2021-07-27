@@ -1,4 +1,4 @@
-import i18next from "i18next"
+import i18next from 'i18next'
 import translationsDE from '../data/locales/de.json'
 import translationsEN from '../data/locales/en.json'
 

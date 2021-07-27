@@ -7,6 +7,7 @@ export class EzpPrintService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
     this.clientID = clientID
+
     this.checkRefreshToken()
     this.registerFetchInterceptor()
   }
@@ -14,6 +15,7 @@ export class EzpPrintService {
   clientID: string
   redirectURI: string
   printerConfig: PrinterConfig
+  printingApi: string
 
   private checkRefreshToken() {
     if (authStore.state.refreshToken !== '') {

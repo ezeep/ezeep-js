@@ -61,7 +61,6 @@ export class EzpAuth {
       }, 500)
     }
 
-
     // add the listener for receiving a message from the popup
     window.addEventListener('message', (event) => this.receiveMessage(event), false)
 
