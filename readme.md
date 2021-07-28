@@ -47,6 +47,7 @@ There are multiple required and optional attributes the ezp-printing element nee
 | filetype    | The type of the file you want to print.           | string  | No       |
 | filename    | The name of the file you want to print.           | string  | No       |
 | hidelogin   | Determines wether or not the login page is shown. | boolean | No       |
+| devapi      | If set, the development API is used.              | boolean | No       |
 
 ### Example
 
