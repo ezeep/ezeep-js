@@ -9,6 +9,7 @@
 | ------------- | ------------- | ----------- | --------- | ----------- |
 | `clientid`    | `clientid`    |             | `string`  | `undefined` |
 | `custom`      | `custom`      |             | `boolean` | `undefined` |
+| `devapi`      | `devapi`      |             | `boolean` | `undefined` |
 | `filename`    | `filename`    |             | `string`  | `undefined` |
 | `filetype`    | `filetype`    |             | `string`  | `undefined` |
 | `fileurl`     | `fileurl`     |             | `string`  | `undefined` |

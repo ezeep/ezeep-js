@@ -69,7 +69,10 @@ export class EzpAuth {
 
   receiveMessage(event) {
     this.auth.code = event.data
-    this.auth.getAccessToken()
+    this.auth.getAccessToken().finally(() => {
+      this.authCancel.emit()
+      this.printShow.emit()
+    })
   }
 
   handleCancel = () => {
@@ -78,7 +81,7 @@ export class EzpAuth {
 
   async componentWillLoad() {
     initi18n()
-    this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID, true)
+    this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID, authStore.state.devApi)
     if (authStore.state.isAuthorized === false) {
       this.auth.generateCodeVerifier()
       await this.auth.generateCodeChallenge(authStore.state.codeVerifier)

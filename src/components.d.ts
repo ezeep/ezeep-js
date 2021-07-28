@@ -61,6 +61,7 @@ export namespace Components {
     interface EzpPrinting {
         "clientid": string;
         "custom": boolean;
+        "devapi": boolean;
         "filename": string;
         "filetype": string;
         "fileurl": string;
@@ -252,6 +253,7 @@ declare namespace LocalJSX {
     interface EzpPrinting {
         "clientid"?: string;
         "custom"?: boolean;
+        "devapi"?: boolean;
         "filename"?: string;
         "filetype"?: string;
         "fileurl"?: string;

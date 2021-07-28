@@ -11,12 +11,10 @@ export class EzpAuthorizationService {
       this.oauthUrl = config.oauthUrlDev
       this.authURI = new URL(`${this.oauthUrl}/authorize/`)
       this.accessTokenURL = `${this.oauthUrl}/access_token/`
-      console.log('auth is dev')
     } else {
       this.oauthUrl = config.oauthUrlLive
       this.authURI = new URL(`${this.oauthUrl}/authorize/`)
       this.accessTokenURL = `${this.oauthUrl}/access_token/`
-      console.log('auth is live')
     }
   }
 
@@ -133,6 +131,7 @@ const authStore = createStore({
   accessToken: '',
   refreshToken: '',
   isAuthorized: false,
+  devApi: false,
 })
 
 export default authStore

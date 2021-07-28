@@ -15,6 +15,7 @@ export class EzpPrinting {
   @Prop() filetype: string
   @Prop() custom: boolean
   @Prop() hidelogin: boolean
+  @Prop() devapi: boolean
   /**
    *
    * States
@@ -70,7 +71,11 @@ export class EzpPrinting {
   }
 
   checkAuth() {
-    const printService = new EzpPrintService(this.redirecturi, this.clientid, true)
+    const printService = new EzpPrintService(
+      this.redirecturi,
+      this.clientid,
+      authStore.state.devApi
+    )
     let accessToken = authStore.state.accessToken
 
     if (accessToken === '') {
@@ -88,6 +93,7 @@ export class EzpPrinting {
   }
 
   componentWillLoad() {
+    authStore.state.devApi = this.devapi
     sendCodeToParentWindow()
     this.checkAuth()
   }

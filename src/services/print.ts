@@ -5,11 +5,11 @@ import fetchIntercept from 'fetch-intercept'
 import { PrinterProperties, PrinterConfig } from '../shared/types'
 
 export class EzpPrintService {
-  constructor(redirectURI: string, clientID: string, dev?: boolean ) {
+  constructor(redirectURI: string, clientID: string, dev?: boolean) {
     this.redirectURI = redirectURI
     this.clientID = clientID
-
-    if (dev) {
+    this.devApi = dev
+    if (this.devApi) {
       this.printingApi = config.printingApiDev
     } else {
       this.printingApi = config.printingApiLive
@@ -21,6 +21,7 @@ export class EzpPrintService {
 
   clientID: string
   redirectURI: string
+  devApi: boolean
   printerConfig: PrinterConfig
   printingApi: string
 
@@ -51,7 +52,11 @@ export class EzpPrintService {
           if (authStore.state.refreshToken === '') {
             return response
           }
-          const authService = new EzpAuthorizationService(this.redirectURI, this.clientID, true)
+          const authService = new EzpAuthorizationService(
+            this.redirectURI,
+            this.clientID,
+            this.devApi
+          )
           authService.refreshTokens()
         }
         // Modify the reponse object
