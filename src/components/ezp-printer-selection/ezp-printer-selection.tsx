@@ -4,7 +4,7 @@ import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { capitalize, initi18n } from '../../utils/utils'
-// import { PrintUserType } from '../../shared/types'
+
 
 @Component({
   tag: 'ezp-printer-selection',

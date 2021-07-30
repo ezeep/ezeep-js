@@ -3,7 +3,7 @@ import config from './../utils/config.json'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
 import { PrinterProperties, PrinterConfig } from '../shared/types'
-
+import { poll } from '../utils/utils'
 export class EzpPrintService {
   constructor(redirectURI: string, clientID: string, dev?: boolean) {
     this.redirectURI = redirectURI
@@ -24,6 +24,7 @@ export class EzpPrintService {
   devApi: boolean
   printerConfig: PrinterConfig
   printingApi: string
+  
 
   private checkStoredRefreshToken() {
     if (authStore.state.refreshToken !== '') {
@@ -161,19 +162,36 @@ export class EzpPrintService {
       .then((data) => {
         console.log(data)
         if (data.jobid) {
-          this.getPrintStatus(authStore.state.accessToken, data.jobid)
+          printStore.state.jobID = data.jobid
+          const POLL_INTERVAL = 2000
+          const validateData = jobstatus => {
+            if (jobstatus === 0) {
+              return true
+            }
+            return false
+          }
+          poll({
+            fn: this.getPrintStatus,
+            validate: validateData,
+            interval: POLL_INTERVAL,
+            maxAttempts: 10
+          })
+            .then(data => console.log(data))
+            .catch(err => console.warn(err))
         }
       })
   }
 
-  getPrintStatus(accessToken: string, jobID: string) {
-    return fetch(`${this.printingApi}/Status/?id=${jobID}`, {
+  getPrintStatus = () => {
+    return fetch(`${this.printingApi}/Status/?id=${printStore.state.jobID}`, {
       headers: {
-        Authorization: 'Bearer ' + accessToken,
+        Authorization: 'Bearer ' + authStore.state.accessToken,
       },
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => {
+        console.log(data)
+      })
   }
 }
 
@@ -181,6 +199,8 @@ const printStore = createStore({
   printers: [],
   config: [],
   selectedPrinterProperties: <PrinterConfig>{},
+  jobID: '',
+  printFinished: false
 })
 
 export default printStore
