@@ -214,7 +214,8 @@ export class EzpPrinterSelection {
    */
 
   render() {
-    return this.printInProgress ? (<ezp-progress status={i18next.t('printer_selection.print_in_progress')}></ezp-progress>
+    return this.printInProgress ? (
+      <ezp-progress status={i18next.t('printer_selection.print_in_progress')}></ezp-progress>
     ) : this.loading ? (
       <ezp-progress status={i18next.t('printer_selection.loading')}></ezp-progress>
     ) : (

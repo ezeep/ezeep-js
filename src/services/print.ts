@@ -163,8 +163,7 @@ export class EzpPrintService {
       headers: {
         Authorization: 'Bearer ' + authStore.state.accessToken,
       },
-    })
-      .then((response) => response.json())
+    }).then((response) => response.json())
   }
 }
 
