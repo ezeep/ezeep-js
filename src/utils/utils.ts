@@ -31,7 +31,7 @@ export function initi18n() {
   })
 }
 
-export const poll = async ({fn, validate, interval, maxAttempts}) => {
+export const poll = async ({ fn, validate, interval, maxAttempts }) => {
   let attempts = 0
 
   const executePoll = async (resolve, reject) => {

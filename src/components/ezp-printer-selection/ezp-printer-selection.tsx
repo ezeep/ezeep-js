@@ -3,8 +3,7 @@ import i18next from 'i18next'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
-import { capitalize, initi18n } from '../../utils/utils'
-
+import { capitalize, initi18n, poll } from '../../utils/utils'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -38,6 +37,7 @@ export class EzpPrinterSelection {
   @State() showBackdrop: boolean = false
   @State() loading: boolean = true
   @State() options
+  @State() printInProgress = false
   /**
    *
    * Events
@@ -79,14 +79,38 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = () => {
-    this.printService.printFileByUrl(
-      authStore.state.accessToken,
-      this.fileurl,
-      this.filetype,
-      this.printer.id,
-      {}, //this.properties,
-      this.filename
-    )
+    this.printInProgress = true
+    this.printService
+      .printFileByUrl(
+        authStore.state.accessToken,
+        this.fileurl,
+        this.filetype,
+        this.printer.id,
+        {}, //this.properties,
+        this.filename
+      )
+      .then((data) => {
+        console.log(data)
+        if (data.jobid) {
+          printStore.state.jobID = data.jobid
+          const POLL_INTERVAL = 2000
+          const validateData = (data) => {
+            if (data.jobstatus === 0) {
+              this.printInProgress = false
+              return true
+            }
+            return false
+          }
+          poll({
+            fn: this.printService.getPrintStatus,
+            validate: validateData,
+            interval: POLL_INTERVAL,
+            maxAttempts: 10,
+          })
+            .then((data) => console.log(data))
+            .catch((err) => console.warn(err))
+        }
+      })
     localStorage.setItem('properties', JSON.stringify(this.properties))
     localStorage.setItem('printer', JSON.stringify(this.printer))
     // this.printSubmit.emit()
@@ -190,7 +214,8 @@ export class EzpPrinterSelection {
    */
 
   render() {
-    return this.loading ? (
+    return this.printInProgress ? (<ezp-progress status={i18next.t('printer_selection.print_in_progress')}></ezp-progress>
+    ) : this.loading ? (
       <ezp-progress status={i18next.t('printer_selection.loading')}></ezp-progress>
     ) : (
       <Host class={{ 'show-backdrop': this.showBackdrop }}>

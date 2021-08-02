@@ -6,6 +6,7 @@
   },
   "printer_selection": {
     "loading": "Loading printers",
+    "print_in_progress": "Printing...",
     "print": "Print",
     "printer": "Printer",
     "color": "Color",
