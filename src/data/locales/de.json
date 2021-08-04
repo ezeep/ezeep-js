@@ -4,6 +4,7 @@
         "login": "Anmelden"
     },
     "printer_selection": {
-        "loading": "Drucker laden"
+        "loading": "Drucker laden",
+        "print": "Drucken"
     }
 }
