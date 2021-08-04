@@ -5,6 +5,7 @@
     },
     "printer_selection": {
         "loading": "Drucker laden",
-        "print": "Drucken"
+        "print": "Drucken",
+        "printer": "Drucker"
     }
 }
