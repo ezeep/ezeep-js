@@ -1,6 +1,9 @@
 {
-  "login_page": {
-    "get_started": "Starten",
-    "login": "Anmelden"
-  }
+    "login_page": {
+        "get_started": "Starten",
+        "login": "Anmelden"
+    },
+    "printer_selection": {
+        "loading": "Drucker laden"
+    }
 }
