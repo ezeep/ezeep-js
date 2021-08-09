@@ -1,18 +1,12 @@
 import { createStore } from '@stencil/store'
-import config from './../utils/config.json'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
-import { PrinterProperties, PrinterConfig } from '../shared/types'
+import { /* PrinterProperties, */ PrinterConfig } from '../shared/types'
 export class EzpPrintService {
-  constructor(redirectURI: string, clientID: string, dev?: boolean) {
+  constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
     this.clientID = clientID
-    this.devApi = dev
-    if (this.devApi) {
-      this.printingApi = config.printingApiDev
-    } else {
-      this.printingApi = config.printingApiLive
-    }
+    this.printingApi = printStore.state.printApiHostUrl
 
     this.checkStoredRefreshToken()
     this.registerFetchInterceptor()
@@ -51,11 +45,7 @@ export class EzpPrintService {
           if (authStore.state.refreshToken === '') {
             return response
           }
-          const authService = new EzpAuthorizationService(
-            this.redirectURI,
-            this.clientID,
-            this.devApi
-          )
+          const authService = new EzpAuthorizationService(this.redirectURI, this.clientID)
           authService.refreshTokens()
         }
         // Modify the reponse object
@@ -69,7 +59,7 @@ export class EzpPrintService {
   }
 
   getPrinterList(accessToken: string) {
-    return fetch(`${this.printingApi}/GetPrinter/`, {
+    return fetch(`https://${this.printingApi}/sfapi/GetPrinter/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -82,7 +72,7 @@ export class EzpPrintService {
   }
 
   getConfig(accessToken: string) {
-    return fetch(`${this.printingApi}/GetConfiguration/`, {
+    return fetch(`https://${this.printingApi}/sfapi/GetConfiguration/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -103,7 +93,7 @@ export class EzpPrintService {
   }
 
   getPrinterProperties(accessToken: string, printerID: string) {
-    return fetch(`${this.printingApi}/GetPrinterProperties/?id=${printerID}`, {
+    return fetch(`https://${this.printingApi}/sfapi/GetPrinterProperties/?id=${printerID}`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -119,7 +109,7 @@ export class EzpPrintService {
   }
 
   getAllPrinterProperties(accessToken: string) {
-    return fetch(`${this.printingApi}/GetPrinterProperties/`, {
+    return fetch(`https://${this.printingApi}/sfapi/GetPrinterProperties/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -137,11 +127,11 @@ export class EzpPrintService {
     fileUrl: string,
     fileType: string,
     printerID: string,
-    properties: PrinterProperties,
+    {}, //properties: PrinterProperties,
     filename?: string,
     printAndDelete?: boolean
   ) {
-    return fetch(`${this.printingApi}/Print/`, {
+    return fetch(`https://${this.printingApi}/sfapi/Print/`, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + accessToken,
@@ -153,17 +143,20 @@ export class EzpPrintService {
         printerid: printerID,
         ...(filename && { alias: filename }),
         ...(printAndDelete && { printanddelete: printAndDelete }),
-        properties,
+        //properties,
       }),
     }).then((response) => response.json())
   }
 
   getPrintStatus = () => {
-    return fetch(`${this.printingApi}/Status/?id=${printStore.state.jobID}`, {
-      headers: {
-        Authorization: 'Bearer ' + authStore.state.accessToken,
-      },
-    }).then((response) => response.json())
+    return fetch(
+      `https://${this.printingApi}/sfapi/Status/?id=${encodeURIComponent(printStore.state.jobID)}`,
+      {
+        headers: {
+          Authorization: 'Bearer ' + authStore.state.accessToken,
+        },
+      }
+    ).then((response) => response.json())
   }
 }
 
@@ -173,6 +166,7 @@ const printStore = createStore({
   selectedPrinterProperties: <PrinterConfig>{},
   jobID: '',
   printFinished: false,
+  printApiHostUrl: '',
 })
 
 export default printStore

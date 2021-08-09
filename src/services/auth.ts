@@ -1,21 +1,14 @@
 import { createStore } from '@stencil/store'
-import config from './../utils/config.json'
 import { encodeFormData } from '../utils/utils'
 
 export class EzpAuthorizationService {
-  constructor(redirectURI: string, clientID: string, dev?: boolean) {
+  constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
     this.clientID = clientID
 
-    if (dev) {
-      this.oauthUrl = config.oauthUrlDev
-      this.authURI = new URL(`${this.oauthUrl}/authorize/`)
-      this.accessTokenURL = `${this.oauthUrl}/access_token/`
-    } else {
-      this.oauthUrl = config.oauthUrlLive
-      this.authURI = new URL(`${this.oauthUrl}/authorize/`)
-      this.accessTokenURL = `${this.oauthUrl}/access_token/`
-    }
+    this.oauthUrl = authStore.state.authApiHostUrl
+    this.authURI = new URL(`https://${this.oauthUrl}/oauth/authorize/`)
+    this.accessTokenURL = `https://${this.oauthUrl}/oauth/access_token/`
   }
 
   clientID: string
@@ -132,6 +125,7 @@ const authStore = createStore({
   refreshToken: '',
   isAuthorized: false,
   devApi: false,
+  authApiHostUrl: '',
 })
 
 export default authStore

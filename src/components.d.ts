@@ -59,9 +59,9 @@ export namespace Components {
         "redirectURI": string;
     }
     interface EzpPrinting {
+        "authapihosturl": string;
         "clientid": string;
         "custom": boolean;
-        "devapi": boolean;
         "filename": string;
         "filetype": string;
         "fileurl": string;
@@ -70,6 +70,7 @@ export namespace Components {
           * Public methods
          */
         "open": () => Promise<void>;
+        "printapihosturl": string;
         "redirecturi": string;
     }
     interface EzpProgress {
@@ -251,13 +252,14 @@ declare namespace LocalJSX {
         "redirectURI"?: string;
     }
     interface EzpPrinting {
+        "authapihosturl"?: string;
         "clientid"?: string;
         "custom"?: boolean;
-        "devapi"?: boolean;
         "filename"?: string;
         "filetype"?: string;
         "fileurl"?: string;
         "hidelogin"?: boolean;
+        "printapihosturl"?: string;
         "redirecturi"?: string;
     }
     interface EzpProgress {

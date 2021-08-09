@@ -1,11 +1,11 @@
 {
-    "login_page": {
-        "get_started": "Starten",
-        "login": "Anmelden"
-    },
-    "printer_selection": {
-        "loading": "Drucker laden",
-        "print": "Drucken",
-        "printer": "Drucker"
-    }
+  "login_page": {
+    "get_started": "Starten",
+    "login": "Anmelden"
+  },
+  "printer_selection": {
+    "loading": "Drucker laden",
+    "print": "Drucken",
+    "printer": "Drucker"
+  }
 }

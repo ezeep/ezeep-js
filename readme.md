@@ -39,15 +39,16 @@ After that, simply add the ezp-printing tag to your .html file:
 
 There are multiple required and optional attributes the ezp-printing element needs in order to provide the print functionality.
 
-| Attribute   | Description                                       | Type    | Required |
-| ----------- | ------------------------------------------------- | ------- | -------- |
-| clientid    | Your clientID.                                    | string  | Yes      |
-| redirecturi | Your redirectURI.                                 | string  | Yes      |
-| fileurl     | The url to the file you want to print.            | string  | Yes      |
-| filetype    | The type of the file you want to print.           | string  | No       |
-| filename    | The name of the file you want to print.           | string  | No       |
-| hidelogin   | Determines wether or not the login page is shown. | boolean | No       |
-| devapi      | If set, the development API is used.              | boolean | No       |
+| Attribute      | Description                                       | Type    | Required |
+| -------------- | ------------------------------------------------- | ------- | -------- |
+| clientid       | Your clientID.                                    | string  | Yes      |
+| redirecturi    | Your redirectURI.                                 | string  | Yes      |
+| fileurl        | The url to the file you want to print.            | string  | Yes      |
+| authapihosturl | Host URL of ezeep blue authentication API.        | string  | Yes      |
+| authapihosturl | Host URL of ezeep blue printing API.              | string  | Yes      |
+| filetype       | The type of the file you want to print.           | string  | No       |
+| filename       | The name of the file you want to print.           | string  | No       |
+| hidelogin      | Determines wether or not the login page is shown. | boolean | No       |
 
 ### Example
 
@@ -66,6 +67,8 @@ There are multiple required and optional attributes the ezp-printing element nee
       filename="dummypdf"
       fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       filetype="pdf"
+      authapihosturl="account.dev.azdev.ezeep.com"
+      authapihosturl="printapi.dev.azdev.ezeep.com"
     >
     </ezp-printing>
   </body>
