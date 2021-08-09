@@ -45,7 +45,7 @@ There are multiple required and optional attributes the ezp-printing element nee
 | redirecturi    | Your redirectURI.                                 | string  | Yes      |
 | fileurl        | The url to the file you want to print.            | string  | Yes      |
 | authapihosturl | Host URL of ezeep blue authentication API.        | string  | Yes      |
-| authapihosturl | Host URL of ezeep blue printing API.              | string  | Yes      |
+| printapihosturl| Host URL of ezeep blue printing API.              | string  | Yes      |
 | filetype       | The type of the file you want to print.           | string  | No       |
 | filename       | The name of the file you want to print.           | string  | No       |
 | hidelogin      | Determines wether or not the login page is shown. | boolean | No       |
