@@ -68,7 +68,7 @@ There are multiple required and optional attributes the ezp-printing element nee
       fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       filetype="pdf"
       authapihosturl="account.dev.azdev.ezeep.com"
-      authapihosturl="printapi.dev.azdev.ezeep.com"
+      printapihosturl="printapi.dev.azdev.ezeep.com"
     >
     </ezp-printing>
   </body>
