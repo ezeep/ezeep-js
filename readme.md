@@ -39,16 +39,17 @@ After that, simply add the ezp-printing tag to your .html file:
 
 There are multiple required and optional attributes the ezp-printing element needs in order to provide the print functionality.
 
-| Attribute      | Description                                       | Type    | Required |
-| -------------- | ------------------------------------------------- | ------- | -------- |
-| clientid       | Your clientID.                                    | string  | Yes      |
-| redirecturi    | Your redirectURI.                                 | string  | Yes      |
-| fileurl        | The url to the file you want to print.            | string  | Yes      |
-| authapihosturl | Host URL of ezeep blue authentication API.        | string  | Yes      |
-| printapihosturl| Host URL of ezeep blue printing API.              | string  | Yes      |
-| filetype       | The type of the file you want to print.           | string  | No       |
-| filename       | The name of the file you want to print.           | string  | No       |
-| hidelogin      | Determines wether or not the login page is shown. | boolean | No       |
+| Attribute       | Description                                       | Type    | Required |
+| --------------- | ------------------------------------------------- | ------- | -------- |
+| clientid        | Your clientID.                                    | string  | Yes      |
+| redirecturi     | Your redirectURI.                                 | string  | Yes      |
+| fileurl         | The url to the file you want to print.            | string  | Yes      |
+| authapihosturl  | Host URL of ezeep blue authentication API.        | string  | Yes      |
+| printapihosturl | Host URL of ezeep blue printing API.              | string  | Yes      |
+| filetype        | The type of the file you want to print.           | string  | No       |
+| filename        | The name of the file you want to print.           | string  | No       |
+| hidelogin       | Determines wether or not the login page is shown. | boolean | No       |
+| custom          | Determines wether or not a custom button is used. | boolean | No       |
 
 ### Example
 
@@ -71,6 +72,54 @@ There are multiple required and optional attributes the ezp-printing element nee
       printapihosturl="printapi.dev.azdev.ezeep.com"
     >
     </ezp-printing>
+  </body>
+</html>
+```
+
+### Example with a custom button
+
+```html
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <title>ezeep-js</title>
+    <style>
+      .customButton {
+        background-color: DodgerBlue;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        padding: 12px 16px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .customButton:hover {
+        background-color: RoyalBlue;
+      }
+    </style>
+  </head>
+  <body>
+    <ezp-printing
+      clientid="your-own-client-id"
+      redirecturi="https://your-site.com/"
+      filename="dummypdf"
+      fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+      filetype="pdf"
+      authapihosturl="account.dev.azdev.ezeep.com"
+      printapihosturl="printapi.dev.azdev.ezeep.com"
+      custom
+    >
+      <button class="customButton">My custom styled print button</button>
+    </ezp-printing>
+    <script>
+      const ezpPrinting = document.querySelector('ezp-printing')
+      const button = document.querySelector('button')
+
+      button.onclick = async () => await ezpPrinting.open()
+    </script>
   </body>
 </html>
 ```
