@@ -6,6 +6,21 @@
     <title>ezeep-js</title>
     <script type="module" src="/build/ezeep-js.esm.js"></script>
     <script nomodule src="/build/ezeep-js.js"></script>
+    <style>
+      .customButton {
+        background-color: DodgerBlue;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        padding: 12px 16px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      
+      .customButton:hover {
+        background-color: RoyalBlue;
+      }
+      </style>
   </head>
 
   <body>
@@ -17,13 +32,15 @@
       filetype="pdf"
       authapihosturl="account.dev.azdev.ezeep.com"
       printapihosturl="printapi.dev.azdev.ezeep.com"
+      custom
     >
+      <button class="customButton">My custom styled print button</button>
     </ezp-printing>
     <script>
-      /* const root = document.querySelector('#print-root')
-    const trigger = document.querySelector('#print-trigger')
+    const ezpPrinting = document.querySelector('ezp-printing')
+    const button = document.querySelector('button')
 
-    trigger.onclick = async () => await root.openPrint() */
+    button.onclick = async () => await ezpPrinting.open()
     </script>
   </body>
 </html>

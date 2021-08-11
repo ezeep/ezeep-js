@@ -17,6 +17,7 @@ export class EzpPrinting {
   @Prop() hidelogin: boolean
   @Prop() authapihosturl: string
   @Prop() printapihosturl: string
+
   /**
    *
    * States
@@ -49,6 +50,11 @@ export class EzpPrinting {
   @Listen('authCancel')
   listenAuthCancel() {
     this.authOpen = false
+  }
+
+  @Listen('authShow')
+  listenAuthShow() {
+    this.authOpen = true
   }
 
   @Listen('printShow')
@@ -124,6 +130,8 @@ export class EzpPrinting {
             fileurl={this.fileurl}
             filetype={this.filetype}
           />
+        ) : this.custom ? (
+          <slot></slot>
         ) : (
           <ezp-icon-button
             id="print-trigger"
