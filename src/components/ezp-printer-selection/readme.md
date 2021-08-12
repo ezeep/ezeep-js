@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property      | Attribute        | Description | Type     | Default     |
@@ -13,14 +12,12 @@
 | `fileurl`     | `fileurl`        |             | `string` | `undefined` |
 | `redirectURI` | `redirect-u-r-i` |             | `string` | `undefined` |
 
-
 ## Events
 
 | Event         | Description    | Type                      |
 | ------------- | -------------- | ------------------------- |
 | `printCancel` | Description... | `CustomEvent<MouseEvent>` |
 | `printSubmit` | Description... | `CustomEvent<MouseEvent>` |
-
 
 ## CSS Custom Properties
 
@@ -37,38 +34,41 @@
 | `--footer-separator-position` | Description... |
 | `--header-separator-position` | Description... |
 
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-printing](../ezp-printing)
+- [ezp-printing](../ezp-printing)
 
 ### Depends on
 
 - [ezp-progress](../ezp-progress)
-- ips-label
+- cap-label
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-select](../ezp-select)
 - [ezp-text-button](../ezp-text-button)
+- [ezp-user-menu](../ezp-user-menu)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-printer-selection --> ezp-progress
-  ezp-printer-selection --> ips-label
+  ezp-printer-selection --> cap-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-text-button
-  ezp-progress --> ips-label
+  ezp-printer-selection --> ezp-user-menu
+  ezp-progress --> cap-label
   ezp-icon-button --> ezp-icon
   ezp-select --> ezp-icon
-  ezp-select --> ips-label
-  ezp-text-button --> ips-label
+  ezp-select --> cap-label
+  ezp-text-button --> cap-label
+  ezp-user-menu --> cap-label
+  ezp-user-menu --> ezp-icon-button
+  ezp-user-menu --> ezp-icon
   ezp-printing --> ezp-printer-selection
   style ezp-printer-selection fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

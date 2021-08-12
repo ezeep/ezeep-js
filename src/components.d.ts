@@ -128,6 +128,10 @@ export namespace Components {
          */
         "type": TextButtonTypeTypes;
     }
+    interface EzpUserMenu {
+        "name": string;
+        "open": boolean;
+    }
 }
 declare global {
     interface HTMLEzpAuthElement extends Components.EzpAuth, HTMLStencilElement {
@@ -178,6 +182,12 @@ declare global {
         prototype: HTMLEzpTextButtonElement;
         new (): HTMLEzpTextButtonElement;
     };
+    interface HTMLEzpUserMenuElement extends Components.EzpUserMenu, HTMLStencilElement {
+    }
+    var HTMLEzpUserMenuElement: {
+        prototype: HTMLEzpUserMenuElement;
+        new (): HTMLEzpUserMenuElement;
+    };
     interface HTMLElementTagNameMap {
         "ezp-auth": HTMLEzpAuthElement;
         "ezp-icon": HTMLEzpIconElement;
@@ -187,6 +197,7 @@ declare global {
         "ezp-progress": HTMLEzpProgressElement;
         "ezp-select": HTMLEzpSelectElement;
         "ezp-text-button": HTMLEzpTextButtonElement;
+        "ezp-user-menu": HTMLEzpUserMenuElement;
     }
 }
 declare namespace LocalJSX {
@@ -322,6 +333,14 @@ declare namespace LocalJSX {
          */
         "type"?: TextButtonTypeTypes;
     }
+    interface EzpUserMenu {
+        "name"?: string;
+        /**
+          * Events
+         */
+        "onUserMenuClosure"?: (event: CustomEvent<any>) => void;
+        "open"?: boolean;
+    }
     interface IntrinsicElements {
         "ezp-auth": EzpAuth;
         "ezp-icon": EzpIcon;
@@ -331,6 +350,7 @@ declare namespace LocalJSX {
         "ezp-progress": EzpProgress;
         "ezp-select": EzpSelect;
         "ezp-text-button": EzpTextButton;
+        "ezp-user-menu": EzpUserMenu;
     }
 }
 export { LocalJSX as JSX };
@@ -345,6 +365,7 @@ declare module "@stencil/core" {
             "ezp-progress": LocalJSX.EzpProgress & JSXBase.HTMLAttributes<HTMLEzpProgressElement>;
             "ezp-select": LocalJSX.EzpSelect & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
             "ezp-text-button": LocalJSX.EzpTextButton & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
+            "ezp-user-menu": LocalJSX.EzpUserMenu & JSXBase.HTMLAttributes<HTMLEzpUserMenuElement>;
         }
     }
 }

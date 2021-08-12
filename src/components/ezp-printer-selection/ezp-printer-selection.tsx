@@ -33,11 +33,12 @@ export class EzpPrinterSelection {
    *
    */
 
-  /** Description... */
   @State() showBackdrop: boolean = false
   @State() loading: boolean = true
   @State() options
-  @State() printInProgress = false
+  @State() printInProgress: boolean = false
+  @State() userMenuOpen: boolean = false
+
   /**
    *
    * Events
@@ -64,6 +65,12 @@ export class EzpPrinterSelection {
   @Listen('selectSelection')
   listenSelectSelection(event: CustomEvent) {
     this.setPrintProperties(event.detail)
+  }
+
+  @Listen('userMenuClosure')
+  listenUserMenuClosure() {
+    this.userMenuOpen = false
+    this.showBackdrop = false
   }
 
   /**
@@ -118,6 +125,11 @@ export class EzpPrinterSelection {
     localStorage.setItem('properties', JSON.stringify(this.properties))
     localStorage.setItem('printer', JSON.stringify(this.printer))
     // this.printSubmit.emit()
+  }
+
+  private handleUserMenu = () => {
+    this.userMenuOpen = true
+    this.showBackdrop = true
   }
 
   setPrintProperties(eventDetails) {
@@ -228,9 +240,14 @@ export class EzpPrinterSelection {
         <div id="dialog">
           <div id="backdrop" />
           <div id="header">
-            <ips-label weight="heavy">{i18next.t('printer_selection.print') + ':'}</ips-label>
-            <ips-label>{this.filename}</ips-label>
-            <ezp-icon-button level="tertiary" icon="menu" id="toggle-menu" onClick={this.logOut} />
+            <cap-label weight="heavy">{i18next.t('printer_selection.print') + ':'}</cap-label>
+            <cap-label>{this.filename}</cap-label>
+            <ezp-icon-button
+              level="tertiary"
+              icon="menu"
+              id="toggle-menu"
+              onClick={this.handleUserMenu}
+            />
           </div>
           <div id="content">
             <div id="printer">
@@ -295,6 +312,7 @@ export class EzpPrinterSelection {
               {i18next.t('button_actions.print')}
             </ezp-text-button>
           </div>
+          <ezp-user-menu open={this.userMenuOpen} />
           {/*<ejs-progress status="Printjob in progress" />*/}
         </div>
       </Host>

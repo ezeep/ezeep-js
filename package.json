@@ -30,7 +30,7 @@
     "format": "npm run stylelint && npm run prettier"
   },
   "dependencies": {
-    "@cgoern/ipsum": "^1.0.7",
+    "@cgoern/cap": "^1.0.0-alpha.4",
     "@stencil/core": "^2.6.0",
     "fetch-intercept": "^2.4.0",
     "i18next": "^20.3.4",

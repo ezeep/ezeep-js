@@ -1,0 +1,94 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './ezp-user-menu.m' as self;
+@use './../../shared/global.m' as global;
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  --host-visibility: hidden;
+  --host-opacity: 0;
+  --duration: 0.3s;
+  --host-transition: opacity var(--duration) var(--easing-out-quart),
+    transform var(--duration) var(--easing-out-quart), visibility 0s var(--duration);
+  --host-separator-position: 0 0 0 var(--hairline-positive);
+  --host-scale: 0.94, 0.94;
+  --link-background: transparent;
+
+  background: var(--color-surface-tertiary);
+  border-radius: 3px;
+  box-shadow: var(--host-separator-position) var(--color-outline-translucent-tertiary);
+  display: block;
+  left: var(--spacing-7);
+  opacity: var(--host-opacity);
+  position: absolute;
+  right: var(--spacing-2);
+  top: var(--spacing-2);
+  transform: scale(var(--host-scale));
+  transform-origin: right top;
+  transition: var(--host-transition);
+  visibility: var(--host-visibility);
+  z-index: 5;
+
+  @at-root {
+    #{&}(.is-open) {
+      --host-transition: opacity var(--duration) var(--easing-out-quart),
+        transform var(--duration) var(--easing-out-quart), visibility 0s 0s;
+      --host-visibility: visible;
+      --host-opacity: 1;
+      --host-scale: 1, 1;
+    }
+  }
+
+  @include global.media-appearance('dark') {
+    --host-separator-position: inset 0 0 0 var(--hairline-positive);
+  }
+}
+
+#header {
+  align-items: center;
+  display: grid;
+  grid-template: auto / 1fr auto;
+  padding: var(--spacing-3) var(--spacing-2) var(--spacing-3) var(--spacing-3);
+}
+
+#name {
+  color: var(--color-foreground-primary);
+}
+
+#close {
+  margin: calc(var(--spacing-3) * -1) 0;
+}
+
+#links {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-2) 0;
+}
+
+.link {
+  align-items: center;
+  background: var(--link-background);
+  color: var(--color-foreground-primary);
+  display: grid;
+  grid-gap: var(--spacing-3);
+  grid-template: auto / auto 1fr;
+  padding: var(--spacing-3);
+
+  &:hover {
+    --link-background: var(--color-shade-primary);
+  }
+
+  &__icon {
+    color: var(--color-main-primary);
+    margin: calc(var(--spacing-3) * -1) 0;
+  }
+}

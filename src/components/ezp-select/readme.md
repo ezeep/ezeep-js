@@ -2,19 +2,17 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
-| Property             | Attribute             | Description    | Type                                                                    | Default         |
-| -------------------- | --------------------- | -------------- | ----------------------------------------------------------------------- | --------------- |
-| `icon`               | `icon`                | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "printer" \| "rocket"` | `undefined`     |
-| `label`              | `label`               | Description... | `string`                                                                | `'Label'`       |
-| `optionFlow`         | `option-flow`         | Description... | `"horizontal" \| "vertical"`                                            | `'vertical'`    |
-| `options`            | --                    | Description... | `SelectOptionType[]`                                                    | `undefined`     |
-| `placeholder`        | `placeholder`         | Description... | `string`                                                                | `'Placeholder'` |
-| `previouslySelected` | `previously-selected` |                | `any`                                                                   | `undefined`     |
-| `toggleFlow`         | `toggle-flow`         | Description... | `"horizontal" \| "vertical"`                                            | `'horizontal'`  |
-
+| Property             | Attribute             | Description    | Type                                                                                                     | Default         |
+| -------------------- | --------------------- | -------------- | -------------------------------------------------------------------------------------------------------- | --------------- |
+| `icon`               | `icon`                | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "off" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined`     |
+| `label`              | `label`               | Description... | `string`                                                                                                 | `'Label'`       |
+| `optionFlow`         | `option-flow`         | Description... | `"horizontal" \| "vertical"`                                                                             | `'vertical'`    |
+| `options`            | --                    | Description... | `SelectOptionType[]`                                                                                     | `undefined`     |
+| `placeholder`        | `placeholder`         | Description... | `string`                                                                                                 | `'Placeholder'` |
+| `previouslySelected` | `previously-selected` |                | `any`                                                                                                    | `undefined`     |
+| `toggleFlow`         | `toggle-flow`         | Description... | `"horizontal" \| "vertical"`                                                                             | `'horizontal'`  |
 
 ## Events
 
@@ -22,7 +20,6 @@
 | ----------------- | ----------- | ------------------ |
 | `selectSelection` |             | `CustomEvent<any>` |
 | `selectToggle`    | Events      | `CustomEvent<any>` |
-
 
 ## CSS Custom Properties
 
@@ -58,27 +55,25 @@
 | `--wrap-separator-position-top`    | Description... |
 | `--wrap-translate-y`               | Description... |
 
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
 - [ezp-icon](../ezp-icon)
-- ips-label
+- cap-label
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-select --> ezp-icon
-  ezp-select --> ips-label
+  ezp-select --> cap-label
   ezp-printer-selection --> ezp-select
   style ezp-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

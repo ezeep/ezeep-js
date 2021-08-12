@@ -2,14 +2,12 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
-| Property            | Attribute | Description    | Type                                                                    | Default     |
-| ------------------- | --------- | -------------- | ----------------------------------------------------------------------- | ----------- |
-| `name` _(required)_ | `name`    | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "printer" \| "rocket"` | `undefined` |
-| `size`              | `size`    | Description... | `"large" \| "normal"`                                                   | `'normal'`  |
-
+| Property            | Attribute | Description    | Type                                                                                                     | Default     |
+| ------------------- | --------- | -------------- | -------------------------------------------------------------------------------------------------------- | ----------- |
+| `name` _(required)_ | `name`    | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "off" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined` |
+| `size`              | `size`    | Description... | `"large" \| "normal"`                                                                                    | `'normal'`  |
 
 ## CSS Custom Properties
 
@@ -17,24 +15,24 @@
 | ------------- | -------------- |
 | `--host-size` | Description... |
 
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-auth](../ezp-auth)
- - [ezp-icon-button](../ezp-icon-button)
- - [ezp-select](../ezp-select)
+- [ezp-auth](../ezp-auth)
+- [ezp-icon-button](../ezp-icon-button)
+- [ezp-select](../ezp-select)
+- [ezp-user-menu](../ezp-user-menu)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-auth --> ezp-icon
   ezp-icon-button --> ezp-icon
   ezp-select --> ezp-icon
+  ezp-user-menu --> ezp-icon
   style ezp-icon fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

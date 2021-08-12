@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property          | Attribute         | Description | Type      | Default     |
@@ -17,7 +16,6 @@
 | `printapihosturl` | `printapihosturl` |             | `string`  | `undefined` |
 | `redirecturi`     | `redirecturi`     |             | `string`  | `undefined` |
 
-
 ## Methods
 
 ### `open() => Promise<void>`
@@ -28,9 +26,6 @@ Public methods
 
 Type: `Promise<void>`
 
-
-
-
 ## Dependencies
 
 ### Depends on
@@ -40,6 +35,7 @@ Type: `Promise<void>`
 - [ezp-icon-button](../ezp-icon-button)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-printing --> ezp-auth
@@ -48,22 +44,24 @@ graph TD;
   ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-icon
-  ezp-auth --> ips-heading
-  ezp-auth --> ips-label
+  ezp-auth --> cap-heading
+  ezp-auth --> cap-label
   ezp-auth --> ezp-text-button
-  ezp-progress --> ips-label
+  ezp-progress --> cap-label
   ezp-icon-button --> ezp-icon
-  ezp-text-button --> ips-label
+  ezp-text-button --> cap-label
   ezp-printer-selection --> ezp-progress
-  ezp-printer-selection --> ips-label
+  ezp-printer-selection --> cap-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-text-button
+  ezp-printer-selection --> ezp-user-menu
   ezp-select --> ezp-icon
-  ezp-select --> ips-label
+  ezp-select --> cap-label
+  ezp-user-menu --> cap-label
+  ezp-user-menu --> ezp-icon-button
+  ezp-user-menu --> ezp-icon
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---
