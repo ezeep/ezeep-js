@@ -1,25 +1,25 @@
 {
-  "login_page": {
-    "get_started": "Get started",
-    "login": "Login",
-    "description": "Quis et minima quae exercitationem cumque. Mollitia maiores sint."
-  },
-  "printer_selection": {
-    "loading": "Loading printers",
-    "print_in_progress": "Printing in progress",
-    "print": "Print",
-    "printer": "Printer",
-    "color": "Color",
-    "orientation": "Orientation",
-    "size": "Size",
-    "select_printer": "Select a printer",
-    "select_color": "Select a color",
-    "select_orientation": "Select orientation",
-    "select_size": "Select a size"
-  },
-  "button_actions": {
-    "login": "Login",
-    "print": "Print",
-    "cancel": "Cancel"
-  }
+    "login_page": {
+        "get_started": "Print with ezeep Blue",
+        "login": "Sign in",
+        "description": "Sign in with your ezeep Blue account to print."
+    },
+    "printer_selection": {
+        "loading": "Loading printers…",
+        "print_in_progress": "Printing…",
+        "print": "Print",
+        "printer": "Printer",
+        "color": "Color",
+        "orientation": "Orientation",
+        "size": "Paper format",
+        "select_printer": "Select a printer",
+        "select_color": "Select a color",
+        "select_orientation": "Select an orientation",
+        "select_size": "Select a paper size"
+    },
+    "button_actions": {
+        "login": "Sign In",
+        "print": "Print",
+        "cancel": "Cancel"
+    }
 }
