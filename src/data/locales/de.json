@@ -1,25 +1,25 @@
 {
-    "login_page": {
-        "get_started": "Drucken mit ezeep Blue",
-        "login": "Anmelden",
-        "description": "Melde dich mit deinem ezeep Blue-Konto an, um zu drucken."
-    },
-    "printer_selection": {
-        "loading": "Lade Drucker…",
-        "print": "Drucken",
-        "printer": "Drucker",
-        "print_in_progress": "Drucke…",
-        "color": "Farbe",
-        "orientation": "Ausrichtung",
-        "size": "Papierformat",
-        "select_printer": "Wähle einen Drucker",
-        "select_color": "Wähle eine Farbe",
-        "select_size": "Wähle ein Papierformat",
-        "select_orientation": "Wähle eine Ausrichtung"
-    },
-    "button_actions": {
-        "login": "Anmelden",
-        "print": "Drucken",
-        "cancel": "Abbrechen"
-    }
+  "login_page": {
+    "get_started": "Drucken mit ezeep Blue",
+    "login": "Anmelden",
+    "description": "Melde dich mit deinem ezeep Blue-Konto an, um zu drucken."
+  },
+  "printer_selection": {
+    "loading": "Lade Drucker…",
+    "print": "Drucken",
+    "printer": "Drucker",
+    "print_in_progress": "Drucke…",
+    "color": "Farbe",
+    "orientation": "Ausrichtung",
+    "size": "Papierformat",
+    "select_printer": "Wähle einen Drucker",
+    "select_color": "Wähle eine Farbe",
+    "select_size": "Wähle ein Papierformat",
+    "select_orientation": "Wähle eine Ausrichtung"
+  },
+  "button_actions": {
+    "login": "Anmelden",
+    "print": "Drucken",
+    "cancel": "Abbrechen"
+  }
 }

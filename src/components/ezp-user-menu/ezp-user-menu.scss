@@ -74,6 +74,10 @@
   padding: var(--spacing-2) 0;
 }
 
+#organizations {
+  z-index: 9999;
+}
+
 .link {
   align-items: center;
   background: var(--link-background);

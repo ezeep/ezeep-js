@@ -14,19 +14,6 @@
  */
 
 :host {
-  /** @prop --backdrop-opacity: Description... */
-  --backdrop-opacity: 0;
-
-  /** @prop --backdrop-radius: Description... */
-  --backdrop-radius: var(--dialog-radius);
-
-  /** @prop --backdrop-transition: Description... */
-  --backdrop-transition: opacity var(--duration) var(--easing-out-quart),
-    visibility 0s var(--duration);
-
-  /** @prop --backdrop-visibility: Description... */
-  --backdrop-visibility: hidden;
-
   /** @prop --content-separator: Description... */
   --content-separator: none;
 
@@ -48,22 +35,13 @@
   align-content: center;
   background: var(--color-overlay);
   display: grid;
-  grid-template: auto / 280px;
+  grid-template: auto / 320px;
   height: 100vh;
   justify-content: center;
   left: 0;
   position: fixed;
   top: 0;
   width: 100vw;
-
-  @at-root {
-    #{&}(.show-backdrop) {
-      --backdrop-opacity: 1;
-      --backdrop-transition: opacity var(--duration) var(--easing-out-quart), visibility 0s 0s,
-        z-index 0s 0s;
-      --backdrop-visibility: visible;
-    }
-  }
 
   @include global.media-appearance('dark') {
     --content-separator: inset var(--hairline-positive) 0 0 0
@@ -85,21 +63,6 @@
     0 var(--spacing-4) var(--spacing-5) 0 var(--color-shadow),
     0 var(--spacing-5) var(--spacing-6) 0 var(--color-shadow);
   position: relative;
-}
-
-#backdrop {
-  background: var(--color-overlay);
-  border-radius: var(--backdrop-radius);
-  display: block;
-  height: 100%;
-  left: 0;
-  opacity: var(--backdrop-opacity);
-  position: absolute;
-  top: 0;
-  transition: var(--backdrop-transition);
-  visibility: var(--backdrop-visibility);
-  width: 100%;
-  z-index: 4;
 }
 
 #header {

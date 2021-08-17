@@ -33,7 +33,6 @@ export class EzpPrinterSelection {
    *
    */
 
-  @State() showBackdrop: boolean = false
   @State() loading: boolean = true
   @State() options
   @State() printInProgress: boolean = false
@@ -57,20 +56,15 @@ export class EzpPrinterSelection {
    *
    */
 
-  @Listen('selectToggle')
-  listenSelectExpand(event: CustomEvent) {
-    this.showBackdrop = event.detail
-  }
-
   @Listen('selectSelection')
   listenSelectSelection(event: CustomEvent) {
+    console.log(event)
     this.setPrintProperties(event.detail)
   }
 
   @Listen('userMenuClosure')
   listenUserMenuClosure() {
     this.userMenuOpen = false
-    this.showBackdrop = false
   }
 
   /**
@@ -129,7 +123,6 @@ export class EzpPrinterSelection {
 
   private handleUserMenu = () => {
     this.userMenuOpen = true
-    this.showBackdrop = true
   }
 
   setPrintProperties(eventDetails) {
@@ -233,12 +226,11 @@ export class EzpPrinterSelection {
     return this.loading ? (
       <ezp-progress status={i18next.t('printer_selection.loading')}></ezp-progress>
     ) : (
-      <Host class={{ 'show-backdrop': this.showBackdrop }}>
+      <Host>
         {this.printInProgress ? (
           <ezp-progress status={i18next.t('printer_selection.print_in_progress')}></ezp-progress>
         ) : null}
-        <div id="dialog">
-          <div id="backdrop" />
+        <div id="dialog" data-select-container>
           <div id="header">
             <cap-label weight="heavy">{i18next.t('printer_selection.print') + ':'}</cap-label>
             <cap-label>{this.filename}</cap-label>
@@ -270,7 +262,6 @@ export class EzpPrinterSelection {
                 label={i18next.t('printer_selection.color')}
                 placeholder={i18next.t('printer_selection.select_color')}
                 toggleFlow="horizontal"
-                optionFlow="horizontal"
                 options={this.options.colors.map((color) => ({
                   id: color.id,
                   title: color.name,
@@ -282,7 +273,6 @@ export class EzpPrinterSelection {
                 label={i18next.t('printer_selection.orientation')}
                 placeholder={i18next.t('printer_selection.select_orientation')}
                 toggleFlow="horizontal"
-                optionFlow="horizontal"
                 options={this.options.orientations.map((orientation) => ({
                   id: orientation.id,
                   title: orientation.name,
