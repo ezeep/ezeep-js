@@ -230,7 +230,7 @@ export class EzpPrinterSelection {
         {this.printInProgress ? (
           <ezp-progress status={i18next.t('printer_selection.print_in_progress')}></ezp-progress>
         ) : null}
-        <div id="dialog" data-select-container>
+        <div id="container" data-select-container>
           <div id="header">
             <cap-label weight="heavy">{i18next.t('printer_selection.print') + ':'}</cap-label>
             <cap-label>{this.filename}</cap-label>

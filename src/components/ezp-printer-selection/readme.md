@@ -57,6 +57,7 @@ graph TD;
   ezp-printer-selection --> ezp-user-menu
   ezp-progress --> cap-label
   ezp-icon-button --> ezp-icon
+  ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> cap-label
   ezp-text-button --> cap-label

@@ -64,6 +64,7 @@
 
 ### Depends on
 
+- [ezp-backdrop](../ezp-backdrop)
 - [ezp-icon](../ezp-icon)
 - cap-label
 
@@ -71,6 +72,7 @@
 
 ```mermaid
 graph TD;
+  ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> cap-label
   ezp-printer-selection --> ezp-select

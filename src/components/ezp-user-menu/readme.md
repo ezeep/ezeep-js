@@ -37,6 +37,7 @@ graph TD;
   ezp-user-menu --> ezp-select
   ezp-user-menu --> ezp-icon
   ezp-icon-button --> ezp-icon
+  ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> cap-label
   ezp-printer-selection --> ezp-user-menu

@@ -102,18 +102,16 @@ export class EzpSelect {
     }
 
     if (this.expanded) {
-      const backdrop = document.createElement('div')
+      const backdrop = document.createElement('ezp-backdrop') as HTMLEzpBackdropElement
 
-      backdrop.id = 'backdrop'
-      backdrop.setAttribute(
-        'style',
-        'background: var(--color-overlay);border-radius: var(--backdrop-radius);display: block;height: 100%;left: 0;opacity: var(--backdrop-opacity);position: absolute;top: 0;transition: var(--backdrop-transition);visibility: var(--backdrop-visibility);width: 100%;z-index: 4;'
-      )
       this.container.appendChild(backdrop)
     } else {
-      const backdrop = this.container.querySelector('#backdrop')
+      const backdrop = this.container.querySelector('ezp-backdrop')
 
-      this.container.removeChild(backdrop)
+      backdrop.hide = true
+      backdrop.onanimationend = () => {
+        this.container.removeChild(backdrop)
+      }
     }
   }
 
