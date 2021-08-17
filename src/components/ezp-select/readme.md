@@ -9,7 +9,7 @@
 | -------------------- | --------------------- | -------------- | -------------------------------------------------------------------------------------------------------- | --------------- |
 | `icon`               | `icon`                | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "off" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined`     |
 | `label`              | `label`               | Description... | `string`                                                                                                 | `'Label'`       |
-| `optionFlow`         | `option-flow`         | Description... | `"horizontal" \| "vertical"`                                                                             | `'vertical'`    |
+| `optionFlow`         | `option-flow`         | Description... | `"horizontal" \| "vertical"`                                                                             | `undefined`     |
 | `options`            | --                    | Description... | `SelectOptionType[]`                                                                                     | `undefined`     |
 | `placeholder`        | `placeholder`         | Description... | `string`                                                                                                 | `'Placeholder'` |
 | `previouslySelected` | `previously-selected` |                | `any`                                                                                                    | `undefined`     |
@@ -63,7 +63,8 @@
 
 ### Used by
 
- - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-user-menu](../ezp-user-menu)
 
 ### Depends on
 
@@ -76,6 +77,7 @@ graph TD;
   ezp-select --> ezp-icon
   ezp-select --> cap-label
   ezp-printer-selection --> ezp-select
+  ezp-user-menu --> ezp-select
   style ezp-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

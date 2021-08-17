@@ -64,6 +64,7 @@ graph TD;
   ezp-select --> cap-label
   ezp-user-menu --> cap-label
   ezp-user-menu --> ezp-icon-button
+  ezp-user-menu --> ezp-select
   ezp-user-menu --> ezp-icon
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```

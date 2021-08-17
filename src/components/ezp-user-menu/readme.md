@@ -29,6 +29,7 @@
 
 - cap-label
 - [ezp-icon-button](../ezp-icon-button)
+- [ezp-select](../ezp-select)
 - [ezp-icon](../ezp-icon)
 
 ### Graph
@@ -36,8 +37,11 @@
 graph TD;
   ezp-user-menu --> cap-label
   ezp-user-menu --> ezp-icon-button
+  ezp-user-menu --> ezp-select
   ezp-user-menu --> ezp-icon
   ezp-icon-button --> ezp-icon
+  ezp-select --> ezp-icon
+  ezp-select --> cap-label
   ezp-printer-selection --> ezp-user-menu
   style ezp-user-menu fill:#f9f,stroke:#333,stroke-width:4px
 ```

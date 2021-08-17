@@ -26,6 +26,21 @@ export class EzpUserMenu {
     }, */
   ]
 
+  private organizations = [
+    {
+      id: 1,
+      name: 'Organization 1',
+    },
+    {
+      id: 2,
+      name: 'Organization 2',
+    },
+    {
+      id: 3,
+      name: 'Organization 3',
+    },
+  ]
+
   @Prop() name: string = 'John Doe'
   @Prop({ mutable: true }) open: boolean = false
 

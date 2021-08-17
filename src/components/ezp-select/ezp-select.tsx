@@ -9,8 +9,8 @@ import { SelectFlowTypes, SelectOptionType, IconNameTypes } from '../../shared/t
 export class EzpSelect {
   @Element() component!: HTMLEzpSelectElement
 
-  private dialog: HTMLDivElement
-  private dialogHeight: number = 0
+  private container: HTMLDivElement
+  private containerHeight: number = 0
   private expandCover: boolean = false
   private expandRise: boolean = false
   private list: HTMLDivElement
@@ -35,7 +35,7 @@ export class EzpSelect {
   @Prop() label: string = 'Label'
 
   /** Description... */
-  @Prop() optionFlow: SelectFlowTypes = 'vertical'
+  @Prop() optionFlow: SelectFlowTypes
 
   /** Description... */
   @Prop() options: SelectOptionType[]
@@ -79,7 +79,7 @@ export class EzpSelect {
     if (this.expandCover) {
       this.component.style.setProperty(
         '--list-height',
-        this.expanded ? `${this.dialogHeight - this.toggleHeight}px` : '0px'
+        this.expanded ? `${this.containerHeight - this.toggleHeight}px` : '0px'
       )
       this.component.style.setProperty(
         '--wrap-translate-y',
@@ -99,6 +99,21 @@ export class EzpSelect {
         '--list-height',
         this.expanded ? `${this.listHeight}px` : '0px'
       )
+    }
+
+    if (this.expanded) {
+      const backdrop = document.createElement('div')
+
+      backdrop.id = 'backdrop'
+      backdrop.setAttribute(
+        'style',
+        'background: var(--color-overlay);border-radius: var(--backdrop-radius);display: block;height: 100%;left: 0;opacity: var(--backdrop-opacity);position: absolute;top: 0;transition: var(--backdrop-transition);visibility: var(--backdrop-visibility);width: 100%;z-index: 4;'
+      )
+      this.container.appendChild(backdrop)
+    } else {
+      const backdrop = this.container.querySelector('#backdrop')
+
+      this.container.removeChild(backdrop)
     }
   }
 
@@ -130,7 +145,7 @@ export class EzpSelect {
    */
 
   componentWillLoad() {
-    this.dialog = this.component.closest('#dialog')
+    this.container = this.component.closest('[data-select-container')
     if (this.previouslySelected !== '') {
       this.selected.title = this.previouslySelected
     }
@@ -141,13 +156,13 @@ export class EzpSelect {
 
     this.toggleHeight = parseInt(styles.getPropertyValue('--toggle-height'))
     this.duration = parseFloat(styles.getPropertyValue('--duration'))
-    this.dialogHeight = this.dialog.clientHeight - this.spacing * 2
+    this.containerHeight = this.container.clientHeight - this.spacing * 2
     this.listHeight = this.list.scrollHeight
     this.wrapTop = this.component.offsetTop
     this.wrapHeight = this.toggleHeight + this.listHeight
-    this.expandCover = this.wrapHeight > this.dialogHeight
-    this.expandRise = this.wrapHeight > this.dialogHeight - this.wrapTop
-    this.wrapDiff = this.dialogHeight - this.wrapHeight - this.wrapTop
+    this.expandCover = this.wrapHeight > this.containerHeight
+    this.expandRise = this.wrapHeight > this.containerHeight - this.wrapTop
+    this.wrapDiff = this.containerHeight - this.wrapHeight - this.wrapTop
   }
 
   /**
@@ -161,7 +176,7 @@ export class EzpSelect {
       this.expanded ? 'is-expanded' : '',
       this.icon ? 'has-icon' : '',
       `toggle-${this.toggleFlow}`,
-      `option-${this.optionFlow}`,
+      this.optionFlow ? `option-${this.optionFlow}` : '',
     ]
     const labelLevel = this.toggleFlow === 'horizontal' ? 'primary' : 'secondary'
 
@@ -181,7 +196,9 @@ export class EzpSelect {
           <div id="list" ref={(element) => (this.list = element)}>
             {this.options.map((option) => (
               <div
-                class={`option ${option.id === this.selected.id ? 'is-selected' : ''}`}
+                class={`option ${option.id === this.selected.id ? 'is-selected' : ''} ${
+                  option.meta !== '' ? 'has-meta' : ''
+                } `}
                 onClick={() => this.select(option.id)}
               >
                 <ezp-icon name="checkmark" class="indicator" />
