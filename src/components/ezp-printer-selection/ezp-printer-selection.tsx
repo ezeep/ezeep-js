@@ -2,6 +2,7 @@ import { Component, Host, Listen, Event, EventEmitter, State, h, Prop } from '@s
 import i18next from 'i18next'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
+import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { capitalize, initi18n, poll } from '../../utils/utils'
 
@@ -38,7 +39,7 @@ export class EzpPrinterSelection {
   @State() options
   @State() printInProgress: boolean = false
   @State() userMenuOpen: boolean = false
-
+  @State() userName: string
   /**
    *
    * Events
@@ -71,6 +72,11 @@ export class EzpPrinterSelection {
   listenUserMenuClosure() {
     this.userMenuOpen = false
     this.showBackdrop = false
+  }
+
+  @Listen('logoutEmitter')
+  listenLogout() {
+    this.printCancel.emit()
   }
 
   /**
@@ -193,10 +199,12 @@ export class EzpPrinterSelection {
     }
   }
 
-  logOut = () => {
-    localStorage.clear()
-    authStore.state.isAuthorized = false
-    this.printCancel.emit()
+  getUserInfo() {
+    const userService = new EzpUserService()
+    return userService.getUserInfo().then((user) => {
+      userStore.state.user = user
+      this.userName = userStore.state.user.display_name
+    })
   }
 
   /**
@@ -216,6 +224,7 @@ export class EzpPrinterSelection {
         // this.user = data[0]
         this.options = data[1]
       })
+    this.getUserInfo()
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService
       .getPrinterList(authStore.state.accessToken)
@@ -312,7 +321,7 @@ export class EzpPrinterSelection {
               {i18next.t('button_actions.print')}
             </ezp-text-button>
           </div>
-          <ezp-user-menu open={this.userMenuOpen} />
+          <ezp-user-menu open={this.userMenuOpen} name={this.userName} />
           {/*<ejs-progress status="Printjob in progress" />*/}
         </div>
       </Host>

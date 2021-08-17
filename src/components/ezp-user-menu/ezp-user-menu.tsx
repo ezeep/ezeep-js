@@ -1,4 +1,5 @@
 import { Component, Host, Prop, Event, EventEmitter, h } from '@stencil/core'
+import authStore from '../../services/auth'
 import { IconNameTypes } from '../../shared/types'
 
 @Component({
@@ -11,18 +12,18 @@ export class EzpUserMenu {
     {
       title: 'Manage Account',
       icon: 'user',
-      href: '#',
+      href: 'https://app.ezeep.com',
     },
     {
       title: 'Help & Support',
       icon: 'question',
-      href: '#',
+      href: 'https://support.ezeep.com',
     },
-    {
+    /* {
       title: 'Logout',
       icon: 'off',
       href: '#',
-    },
+    }, */
   ]
 
   @Prop() name: string = 'John Doe'
@@ -35,7 +36,7 @@ export class EzpUserMenu {
    */
 
   @Event() userMenuClosure: EventEmitter
-
+  @Event() logoutEmitter: EventEmitter
   /**
    *
    * Privatre methods
@@ -44,6 +45,12 @@ export class EzpUserMenu {
 
   private handleClose = () => {
     this.userMenuClosure.emit()
+  }
+
+  private logOut = () => {
+    localStorage.clear()
+    authStore.state.isAuthorized = false
+    this.logoutEmitter.emit()
   }
 
   /**
@@ -63,11 +70,15 @@ export class EzpUserMenu {
         </div>
         <div id="links">
           {this.links.map((link) => (
-            <a class="link" href={link.href}>
+            <a class="link" href={link.href} target="_blank" rel="noopener noreferrer">
               <ezp-icon class="link__icon" name={link.icon as IconNameTypes} />
               <cap-label>{link.title}</cap-label>
             </a>
           ))}
+          <a class="logout" onClick={this.logOut}>
+            <ezp-icon class="link__icon" name="off"></ezp-icon>
+            <cap-label>Logout</cap-label>
+          </a>
         </div>
       </Host>
     )

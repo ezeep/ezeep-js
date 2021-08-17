@@ -63,3 +63,21 @@ export interface PrinterConfig {
   Resolutions?: Array<string>
   TPUID?: number
 }
+
+export interface User {
+  azureProfile: any
+  dateJoined: string
+  displayName: string
+  email: string
+  firstName: string
+  id: string
+  idProfile: {
+    name: string
+    oid: string
+    preferredUsername: string
+  }
+  isVerfified: boolean
+  lastName: string
+  roles: Array<string>
+  userInvitations: any
+}

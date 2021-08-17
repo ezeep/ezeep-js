@@ -92,3 +92,23 @@
     margin: calc(var(--spacing-3) * -1) 0;
   }
 }
+
+.logout {
+  align-items: center;
+  background: var(--link-background);
+  color: var(--color-foreground-primary);
+  display: grid;
+  grid-gap: var(--spacing-3);
+  grid-template: auto / auto 1fr;
+  padding: var(--spacing-3);
+
+  &:hover {
+    --link-background: var(--color-shade-primary);
+    cursor: pointer;
+  }
+
+  &__icon {
+    color: var(--color-main-primary);
+    margin: calc(var(--spacing-3) * -1) 0;
+  }
+}

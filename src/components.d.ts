@@ -335,6 +335,7 @@ declare namespace LocalJSX {
     }
     interface EzpUserMenu {
         "name"?: string;
+        "onLogoutEmitter"?: (event: CustomEvent<any>) => void;
         /**
           * Events
          */
