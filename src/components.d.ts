@@ -12,6 +12,12 @@ export namespace Components {
         "hidelogin": boolean;
         "redirectURI": string;
     }
+    interface EzpBackdrop {
+        /**
+          * Properties
+         */
+        "hide": boolean;
+    }
     interface EzpIcon {
         /**
           * Description...
@@ -140,6 +146,12 @@ declare global {
         prototype: HTMLEzpAuthElement;
         new (): HTMLEzpAuthElement;
     };
+    interface HTMLEzpBackdropElement extends Components.EzpBackdrop, HTMLStencilElement {
+    }
+    var HTMLEzpBackdropElement: {
+        prototype: HTMLEzpBackdropElement;
+        new (): HTMLEzpBackdropElement;
+    };
     interface HTMLEzpIconElement extends Components.EzpIcon, HTMLStencilElement {
     }
     var HTMLEzpIconElement: {
@@ -190,6 +202,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "ezp-auth": HTMLEzpAuthElement;
+        "ezp-backdrop": HTMLEzpBackdropElement;
         "ezp-icon": HTMLEzpIconElement;
         "ezp-icon-button": HTMLEzpIconButtonElement;
         "ezp-printer-selection": HTMLEzpPrinterSelectionElement;
@@ -207,6 +220,12 @@ declare namespace LocalJSX {
         "onAuthCancel"?: (event: CustomEvent<MouseEvent>) => void;
         "onPrintShow"?: (event: CustomEvent<any>) => void;
         "redirectURI"?: string;
+    }
+    interface EzpBackdrop {
+        /**
+          * Properties
+         */
+        "hide"?: boolean;
     }
     interface EzpIcon {
         /**
@@ -344,6 +363,7 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "ezp-auth": EzpAuth;
+        "ezp-backdrop": EzpBackdrop;
         "ezp-icon": EzpIcon;
         "ezp-icon-button": EzpIconButton;
         "ezp-printer-selection": EzpPrinterSelection;
@@ -359,6 +379,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "ezp-auth": LocalJSX.EzpAuth & JSXBase.HTMLAttributes<HTMLEzpAuthElement>;
+            "ezp-backdrop": LocalJSX.EzpBackdrop & JSXBase.HTMLAttributes<HTMLEzpBackdropElement>;
             "ezp-icon": LocalJSX.EzpIcon & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
             "ezp-icon-button": LocalJSX.EzpIconButton & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
             "ezp-printer-selection": LocalJSX.EzpPrinterSelection & JSXBase.HTMLAttributes<HTMLEzpPrinterSelectionElement>;
