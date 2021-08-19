@@ -126,6 +126,8 @@ There are multiple required and optional attributes the ezp-printing element nee
 
 ## Getting started as a contributor
 
+Make sure you follow the GitHub flow if you want to contribute. Here is a short introduction: https://guides.github.com/introduction/flow/
+
 Clone this repository to a new directory:
 
 ```bash
