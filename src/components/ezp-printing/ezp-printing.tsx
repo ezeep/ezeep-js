@@ -99,10 +99,16 @@ export class EzpPrinting {
   componentWillLoad() {
     if (this.authapihosturl) {
       authStore.state.authApiHostUrl = this.authapihosturl
+    } else {
+      authStore.state.authApiHostUrl = 'account.ezeep.com'
     }
+
     if (this.printapihosturl) {
       printStore.state.printApiHostUrl = this.printapihosturl
+    } else {
+      printStore.state.printApiHostUrl = 'printapi.ezeep.com'
     }
+
     sendCodeToParentWindow()
     this.checkAuth()
   }
