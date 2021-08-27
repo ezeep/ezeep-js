@@ -50,7 +50,7 @@ There are multiple required and optional attributes the ezp-printing element nee
 | custom          | Needs to be set to true, if a custom html element instead of the ezp-printing tag is used (e.g. button). | boolean | No       |
 | filename        | The name of the file that is printed.                                                                    | string  | No       |
 | filetype        | The type of the file that is printed.                                                                    | string  | No       |
-| hidelogin       | Determines wether or not the login page is shown.                                                        | boolean | No       |
+| hidelogin       | If set to true, no additional info popup is shown before the user authentication.                        | boolean | No       |
 | authapihosturl  | Overrides the default URL of the authentication API.                                                     | string  | No       |
 | printapihosturl | Overrides the default URL of the printing API.                                                           | string  | No       |
 
@@ -58,6 +58,8 @@ There are multiple required and optional attributes the ezp-printing element nee
 
 
 ### Example
+
+To get started, you can use the default ezeep print button within your web app:
 
 ```html
 <!DOCTYPE html>
@@ -82,6 +84,8 @@ There are multiple required and optional attributes the ezp-printing element nee
 ```
 
 ### Example with a custom button
+
+If you want to bind the printing process to a custom html element, you can use this example:
 
 ```html
 <!DOCTYPE html>
@@ -130,7 +134,7 @@ There are multiple required and optional attributes the ezp-printing element nee
 
 ## Contribution Guide
 
-Make sure you follow the GitHub flow if you want to contribute. Here is a short introduction: https://guides.github.com/introduction/flow/
+Make sure you follow the [GitHub flow](https://guides.github.com/introduction/flow/) if you want to contribute. Clone and create a branch for your contribution. When finished, create a pull request for the main branch.
 
 Clone this repository to a new directory:
 
