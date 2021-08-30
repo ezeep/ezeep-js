@@ -25,7 +25,7 @@ export class EzpUserMenu {
       href: '#',
     }, */
   ]
-
+/* 
   private organizations = [
     {
       id: 1,
@@ -39,7 +39,7 @@ export class EzpUserMenu {
       id: 3,
       name: 'Organization 3',
     },
-  ]
+  ] */
 
   @Prop() name: string = 'John Doe'
   @Prop({ mutable: true }) open: boolean = false
