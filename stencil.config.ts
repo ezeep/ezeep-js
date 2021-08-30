@@ -26,7 +26,7 @@ export const config: Config = {
       serviceWorker: null,
       copy: [{ src: 'data' }],
     },
-  ],
+  ],/*
   devServer: {
     address: process.env.DEV_SERVER_ADDRESS,
     port: parseInt(process.env.DEV_SERVER_PORT),
@@ -34,7 +34,7 @@ export const config: Config = {
       cert: fs.readFileSync('certificate.pem', 'utf-8'),
       key: fs.readFileSync('key.pem', 'utf-8'),
     },
-  },
+  },*/
   rollupPlugins: {
     after: [
       replacePlugin({
