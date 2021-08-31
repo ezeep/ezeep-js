@@ -40,5 +40,6 @@ jobs:
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
-        tag: "0.1.${{ github.run_number }}"
+        tag: " ${{ secrets.VERSION }}.${{ github.run_number }}"
+        artifacts: dist/custom-elements/index.js
         token: ${{ secrets.GITHUB_TOKEN }}
