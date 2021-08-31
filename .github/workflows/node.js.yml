@@ -33,4 +33,9 @@ jobs:
       with:
         name: dist folder
         path: dist
-
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "dist"
+        tag: "0.1.1"
+        token: ${{ secrets.GITHUB_TOKEN }}
