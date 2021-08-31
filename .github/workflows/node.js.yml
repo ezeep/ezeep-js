@@ -41,4 +41,5 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         tag: "0.1.${{ github.run_number }}"
+        artifacts: ezeep.js
         token: ${{ secrets.GITHUB_TOKEN }}
