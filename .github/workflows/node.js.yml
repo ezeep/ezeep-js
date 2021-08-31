@@ -35,11 +35,10 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ezeep.js
-        path: dist/custom-elements/index.js
+        path: dist
         
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
-        tag: "${{ secrets.VERSION }}.${{ github.run_number }}"
-        artifacts: dist/custom-elements/index.js
+        tag: "0.1.${{ github.run_number }}"
         token: ${{ secrets.GITHUB_TOKEN }}
