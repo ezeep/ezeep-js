@@ -22,9 +22,13 @@ Register your web application to receive your **Client-ID**. Contact the ezeep t
 
 1. Include ezeep.js to your web app by the following options:
 
-Use a **script** tag in your html source:
+Use a **script** tags in your html source:
 ```html
-<script src="https://cdn.ezeep.com/js/ezeep.js"></script>
+<!-- use latest version -->
+<script src="https://cdn.ezeep.com/libs/js/ezeep.js"></script>
+
+<!-- use specific version -->
+<script src="https://cdn.ezeep.com/libs/js/**{{version}}**/ezeep.js"></script>
 ```
 
 Use npm:
@@ -53,8 +57,6 @@ There are multiple required and optional attributes the ezp-printing element nee
 | hidelogin       | If set to true, no additional info popup is shown before the user authentication.                        | boolean | No       |
 | authapihosturl  | Overrides the default URL of the authentication API.                                                     | string  | No       |
 | printapihosturl | Overrides the default URL of the printing API.                                                           | string  | No       |
-
-3. (Optional) 
 
 
 ### Example
