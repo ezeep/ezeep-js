@@ -11,12 +11,10 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 
 ### Getting started
 
-1. Create ezeep Blue Account
-Sign up for an ezeep Blue account. This creates an **administrator account** and a new **ezeep organization**.
+1. Sign up for an ezeep Blue account. This creates an **administrator account** and a new **ezeep organization**.
 [Sign up here](https://www.ezeep.com/blue/)
 
-2. Register Client
-Register your web application to receive your **Client-ID**. Contact the ezeep team at <helpdesk@ezeep.com> and provide the **Redirect Uri** of your web application. This Uri must host the ezeep.js component.
+2. Register your web application to receive your **Client-ID**. Contact the ezeep team at <helpdesk@ezeep.com> and provide the **Redirect Uri** of your web application. This Uri must host the ezeep.js component.
 
 ### Usage
 
@@ -25,12 +23,12 @@ Register your web application to receive your **Client-ID**. Contact the ezeep t
 Use a **script** tags in your html source:
 ```html
 <!-- use latest version -->
-<script type="module" src="https://cdn.ezeep.com/libs/js/index.js"></script>
-<script nomodule src="https://cdn.ezeep.com/libs/js/index.cjs.js"></script>
+<script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
+<script nomodule src="https://cdn.ezeep.com/libs/js/esm/ezeep.js"></script>
 
 <!-- use specific version -->
-<script type="module" src="https://cdn.ezeep.com/libs/js/{{version}}/index.js"></script>
-<script nomodule src="https://cdn.ezeep.com/libs/js/{{version}}/index.cjs.js"></script>
+<script type="module" src="https://cdn.ezeep.com/libs/js/{{version}}/ezeep/ezeep.esm.js"></script>
+<script nomodule src="https://cdn.ezeep.com/libs/js/{{version}}/esm/ezeep.js"></script>
 ```
 
 Use npm:
@@ -71,7 +69,8 @@ To get started, you can use the default ezeep print button within your web app:
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-    <script src="https://cdn.ezeep.com/js/ezeep.js"></script>
+    <script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/libs/js/esm/ezeep.js"></script>
     <title>ezeep-js</title>
   </head>
   <body>
@@ -97,7 +96,8 @@ If you want to bind the printing process to a custom html element, you can use t
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-    <script src="https://cdn.ezeep.com/js/ezeep.js"></script>
+    <script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/libs/js/esm/ezeep.js"></script>
     <title>ezeep-js</title>
     <style>
       .customButton {
