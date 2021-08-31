@@ -25,10 +25,12 @@ Register your web application to receive your **Client-ID**. Contact the ezeep t
 Use a **script** tags in your html source:
 ```html
 <!-- use latest version -->
-<script src="https://cdn.ezeep.com/libs/js/ezeep.js"></script>
+<script type="module" src="https://cdn.ezeep.com/libs/js/index.js"></script>
+<script nomodule src="https://cdn.ezeep.com/libs/js/index.cjs.js"></script>
 
 <!-- use specific version -->
-<script src="https://cdn.ezeep.com/libs/js/**{{version}}**/ezeep.js"></script>
+<script type="module" src="https://cdn.ezeep.com/libs/js/{{version}}/index.js"></script>
+<script nomodule src="https://cdn.ezeep.com/libs/js/{{version}}/index.cjs.js"></script>
 ```
 
 Use npm:
