@@ -41,7 +41,8 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@v2
       with:
-        path: ezeep-js.zip
+        path: dist
+        name: ezeep-js.zip
         
     - name: Create Release
       uses: ncipollo/release-action@v1
