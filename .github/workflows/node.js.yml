@@ -31,16 +31,22 @@ jobs:
         npm ci
         npm run build
         
+    - name: ZIP Release
+      uses: thedoctor0/zip-release@master
+      with:
+        type: 'zip'
+        path: 'dist'
+        filename: 'ezeep-js.zip'
+        
     - name: Archive artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: ezeep.js
-        path: dist
+        path: ezeep-js.zip
         
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
         tag: "0.1.${{ github.run_number }}"
         prerelease: true
-        artifacts: "dist/*"
+        artifacts: "ezeep-js.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
