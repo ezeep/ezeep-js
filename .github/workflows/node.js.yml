@@ -3,9 +3,10 @@
 name: Node.js Build
 
 env:
-  MODULE_VERSION: '0.1'   # manually change major and minor build version of component here
-  PRERELEASE: true        # true if marked as pre-release, false if production-ready
-  
+  MODULE_VERSION: '0.1.${{ github.run_number }}'   # manually change major and minor build version of component here
+  DIST_PATH: 'dist/ezeep'                          # deployment path
+  ARTIFACT_NAME: 'ezeep-js.zip'                    # artifact name
+  PRERELEASE: true                                 # true if marked as pre-release, false if production-ready
 
 on:
   push:
@@ -39,21 +40,21 @@ jobs:
     - name: Archive Artifacts
       uses: actions/upload-artifact@v2
       with:
-        path: dist/ezeep
-        name: ezeep-js.zip
+        path: ${{ env.DIST_PATH }}
+        name: ${{ env.ARTIFACT_NAME }}
     
     - name: ZIP Release
       uses: thedoctor0/zip-release@master
       with:
         type: 'zip'
-        directory: 'dist/ezeep'
+        directory: ${{ env.DIST_PATH }}
         path: '.'
-        filename: 'ezeep-js.zip'
+        filename: ${{ env.ARTIFACT_NAME }}
         
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
-        tag: "${{ env.MODULE_VERSION }}.${{ github.run_number }}"
+        tag: "${{ env.MODULE_VERSION }}"
         prerelease: ${{ env.PRERELEASE }}
-        artifacts: "dist/ezeep/ezeep-js.zip"
+        artifacts: "${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
         token: ${{ secrets.GITHUB_TOKEN }}
