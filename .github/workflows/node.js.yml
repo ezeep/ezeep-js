@@ -3,7 +3,8 @@
 name: Node.js Build
 
 env:
-  MODULE_VERSION: '0.1' # manually change major and minor build version of component here
+  MODULE_VERSION: '0.1'   # manually change major and minor build version of component here
+  PRERELEASE: true        # true if marked as pre-release, false if production-ready
   
 
 on:
@@ -53,6 +54,6 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         tag: "${{ env.MODULE_VERSION }}.${{ github.run_number }}"
-        prerelease: true
+        prerelease: ${{ env.PRERELEASE }}
         artifacts: "dist/ezeep/ezeep-js.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
