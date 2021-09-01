@@ -28,7 +28,7 @@ Use a **script** tags in your html source:
 
 <!-- use specific version -->
 <script type="module" src="https://cdn.ezeep.com/libs/js/{{version}}/ezeep/ezeep.esm.js"></script>
-<script nomodule src="https://cdn.ezeep.com/libs/js/{{version}}/esm/ezeep.js"></script>
+<script nomodule src="https://cdn.ezeep.com/libs/js/{{version}}/ezeep/ezeep.js"></script>
 ```
 
 Use npm:
