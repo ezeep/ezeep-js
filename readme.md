@@ -11,7 +11,7 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 ### Getting started
 
 1. Sign up for an ezeep Blue account. This creates an **administrator account** and a new **ezeep organization**.
-[Sign up here](https://www.ezeep.com/blue/)
+   [Sign up here](https://www.ezeep.com/blue/)
 
 2. Register your web application to receive your **Client-ID**. Contact the ezeep team at <helpdesk@ezeep.com> and provide the **Redirect Uri** of your web application. This Uri must host the ezeep.js component.
 
@@ -20,6 +20,7 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 1. Include ezeep.js to your web app by the following options:
 
 Use a **script** tags in your html source:
+
 ```html
 <!-- use latest version -->
 <script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
@@ -55,7 +56,6 @@ There are multiple required and optional attributes the ezp-printing element nee
 | hidelogin       | If set to true, no additional info popup is shown before the user authentication.                        | boolean | No       |
 | authapihosturl  | Overrides the default URL of the authentication API.                                                     | string  | No       |
 | printapihosturl | Overrides the default URL of the printing API.                                                           | string  | No       |
-
 
 ### Example
 

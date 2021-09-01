@@ -53,5 +53,5 @@ export const config: Config = {
     appendChildSlotFix: false,
     cloneNodeFix: false,
     slotChildNodesFix: true,
-  }
+  },
 }
