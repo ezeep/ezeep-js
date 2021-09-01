@@ -35,7 +35,7 @@ jobs:
       uses: thedoctor0/zip-release@master
       with:
         type: 'zip'
-        path: 'dist/ezeep'
+        directory: 'dist/ezeep'
         filename: 'ezeep-js.zip'
         
     - name: Archive Artifacts
