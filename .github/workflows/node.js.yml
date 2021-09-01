@@ -2,6 +2,10 @@
 
 name: Node.js Build
 
+env:
+  MODULE_VERSION: '0.1' # manually change major and minor build version of component here
+  
+
 on:
   push:
     branches: [ main ]
@@ -48,7 +52,7 @@ jobs:
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
-        tag: "0.1.${{ github.run_number }}"
+        tag: "${{ env.MODULE_VERSION }}.${{ github.run_number }}"
         prerelease: true
         artifacts: "dist/ezeep/ezeep-js.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
