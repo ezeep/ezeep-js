@@ -5,6 +5,7 @@ import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { capitalize, initi18n, poll } from '../../utils/utils'
+import options from '../../data/options.json'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -35,7 +36,7 @@ export class EzpPrinterSelection {
    */
 
   @State() loading: boolean = true
-  @State() options
+  @State() options = options
   @State() printInProgress: boolean = false
   @State() userMenuOpen: boolean = false
   @State() userName: string
@@ -209,12 +210,7 @@ export class EzpPrinterSelection {
     initi18n()
     this.loading = true
     this.getPropertiesFromLocalStorage()
-    await Promise.all([fetch('/data/user.json'), fetch('/data/options.json')])
-      .then((responses) => Promise.all(responses.map((response) => response.json())))
-      .then((data) => {
-        // this.user = data[0]
-        this.options = data[1]
-      })
+  
     this.getUserInfo()
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService
