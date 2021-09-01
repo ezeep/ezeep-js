@@ -16,7 +16,7 @@
 | Event             | Description | Type               |
 | ----------------- | ----------- | ------------------ |
 | `logoutEmitter`   |             | `CustomEvent<any>` |
-| `userMenuClosure` |  Events     | `CustomEvent<any>` |
+| `userMenuClosure` | Events      | `CustomEvent<any>` |
 
 
 ## Dependencies

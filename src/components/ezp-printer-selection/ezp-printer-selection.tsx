@@ -113,7 +113,7 @@ export class EzpPrinterSelection {
             interval: POLL_INTERVAL,
             maxAttempts: 10,
           })
-            .then((data))
+            .then(data)
             .catch((err) => {
               console.warn(err)
               this.printInProgress = false
