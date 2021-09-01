@@ -25,7 +25,7 @@ export class EzpUserMenu {
       href: '#',
     }, */
   ]
-/* 
+  /* 
   private organizations = [
     {
       id: 1,

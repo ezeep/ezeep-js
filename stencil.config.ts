@@ -6,7 +6,7 @@ import replacePlugin from '@rollup/plugin-replace'
 import fs from 'fs'
 
 export const config: Config = {
-  namespace: 'ezeep-js',
+  namespace: 'ezeep',
   globalScript: 'src/shared/global.ts',
   plugins: [sass()],
   outputTargets: [
@@ -26,15 +26,15 @@ export const config: Config = {
       serviceWorker: null,
       copy: [{ src: 'data' }],
     },
-  ],/*
-  devServer: {
+  ],
+  /* devServer: {
     address: process.env.DEV_SERVER_ADDRESS,
     port: parseInt(process.env.DEV_SERVER_PORT),
     https: {
       cert: fs.readFileSync('certificate.pem', 'utf-8'),
       key: fs.readFileSync('key.pem', 'utf-8'),
     },
-  },*/
+  }, */
   rollupPlugins: {
     after: [
       replacePlugin({
@@ -42,5 +42,16 @@ export const config: Config = {
         delimiters: ['<%', '%>'],
       }),
     ],
+  },
+  buildEs5: true,
+  extras: {
+    cssVarsShim: true,
+    dynamicImportShim: true,
+    shadowDomShim: true,
+    safari10: true,
+    scriptDataOpts: true,
+    appendChildSlotFix: true,
+    cloneNodeFix: true,
+    slotChildNodesFix: true,
   },
 }

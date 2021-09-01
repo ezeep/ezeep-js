@@ -63,8 +63,7 @@
 
 ### Used by
 
-- [ezp-printer-selection](../ezp-printer-selection)
-- [ezp-user-menu](../ezp-user-menu)
+ - [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
@@ -79,7 +78,6 @@ graph TD;
   ezp-select --> ezp-icon
   ezp-select --> cap-label
   ezp-printer-selection --> ezp-select
-  ezp-user-menu --> ezp-select
   style ezp-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

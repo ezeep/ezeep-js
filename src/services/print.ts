@@ -1,7 +1,7 @@
 import { createStore } from '@stencil/store'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
-import { /* PrinterProperties, */ PrinterConfig } from '../shared/types'
+import { /* PrinterProperties, */ PrinterConfig, PrinterProperties } from '../shared/types'
 export class EzpPrintService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
@@ -127,7 +127,7 @@ export class EzpPrintService {
     fileUrl: string,
     fileType: string,
     printerID: string,
-    {}, //properties: PrinterProperties,
+    properties: PrinterProperties,
     filename?: string,
     printAndDelete?: boolean
   ) {
@@ -143,7 +143,7 @@ export class EzpPrintService {
         printerid: printerID,
         ...(filename && { alias: filename }),
         ...(printAndDelete && { printanddelete: printAndDelete }),
-        //properties,
+        properties,
       }),
     }).then((response) => response.json())
   }

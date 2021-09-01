@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@cgoern/cap": "^1.0.0-alpha.4",
-    "@stencil/core": "^2.6.0",
+    "@stencil/core": "^2.7.1",
     "fetch-intercept": "^2.4.0",
     "i18next": "^20.3.4",
     "whatwg-fetch": "^3.6.2"

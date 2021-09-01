@@ -59,7 +59,6 @@ export class EzpPrinterSelection {
 
   @Listen('selectSelection')
   listenSelectSelection(event: CustomEvent) {
-    console.log(event)
     this.setPrintProperties(event.detail)
   }
 
@@ -97,7 +96,6 @@ export class EzpPrinterSelection {
         this.filename
       )
       .then((data) => {
-        console.log(data)
         if (data.jobid) {
           printStore.state.jobID = data.jobid
           const POLL_INTERVAL = 2000
@@ -115,7 +113,7 @@ export class EzpPrinterSelection {
             interval: POLL_INTERVAL,
             maxAttempts: 10,
           })
-            .then((data) => console.log(data))
+            .then(data)
             .catch((err) => {
               console.warn(err)
               this.printInProgress = false
