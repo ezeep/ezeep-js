@@ -31,18 +31,19 @@ jobs:
         npm ci
         npm run build
         
-    - name: ZIP Release
-      uses: thedoctor0/zip-release@master
-      with:
-        type: 'zip'
-        directory: 'dist/ezeep'
-        filename: 'ezeep-js.zip'
-        
     - name: Archive Artifacts
       uses: actions/upload-artifact@v2
       with:
         path: dist/ezeep
         name: ezeep-js.zip
+    
+    - name: ZIP Release
+      uses: thedoctor0/zip-release@master
+      with:
+        type: 'zip'
+        directory: 'dist/ezeep'
+        path: 'dist/ezeep'
+        filename: 'ezeep-js.zip'
         
     - name: Create Release
       uses: ncipollo/release-action@v1
