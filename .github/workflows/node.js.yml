@@ -42,7 +42,7 @@ jobs:
       with:
         type: 'zip'
         directory: 'dist/ezeep'
-        path: 'dist/ezeep'
+        path: '.'
         filename: 'ezeep-js.zip'
         
     - name: Create Release
