@@ -50,5 +50,5 @@ jobs:
       with:
         tag: "0.1.${{ github.run_number }}"
         prerelease: true
-        artifacts: "/dist/ezeep/ezeep-js.zip"
+        artifacts: "dist/ezeep/ezeep-js.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
