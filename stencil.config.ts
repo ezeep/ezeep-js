@@ -43,15 +43,15 @@ export const config: Config = {
       }),
     ],
   },
-  buildEs5: 'prod',
+  buildEs5: true,
   extras: {
     cssVarsShim: true,
     dynamicImportShim: true,
     shadowDomShim: true,
     safari10: true,
     scriptDataOpts: true,
-    appendChildSlotFix: false,
-    cloneNodeFix: false,
+    appendChildSlotFix: true,
+    cloneNodeFix: true,
     slotChildNodesFix: true,
   },
 }
