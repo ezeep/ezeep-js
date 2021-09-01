@@ -24,7 +24,7 @@ Use a **script** tags in your html source:
 ```html
 <!-- use latest version -->
 <script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
-<script nomodule src="https://cdn.ezeep.com/libs/js/esm/ezeep.js"></script>
+<script nomodule src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.js"></script>
 
 <!-- use specific version -->
 <script type="module" src="https://cdn.ezeep.com/libs/js/{{version}}/ezeep/ezeep.esm.js"></script>
