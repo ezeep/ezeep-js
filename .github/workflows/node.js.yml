@@ -99,10 +99,10 @@ jobs:
         azcliversion: 2.0.72
         inlineScript: |
            az cdn endpoint purge \
-             --resource-group "${{ env.RESOURCE_GROUP }}"
+             --resource-group "${{ env.RESOURCE_GROUP }}" \
              --name "${{ env.CDN_ENDPOINT }}" \
              --profile-name "${{ env.CDN_PROFILE_NAME }}" \
-             --content-paths  "/*"
+             --content-paths "/${{ env.STORAGE_CONTAINER }}/*"
 
     - name: logout
       run: |
