@@ -72,9 +72,9 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - uses: actions/download-artifact@v2
-          with:
-             name: ${{ env.ARTIFACT_NAME }}
-             path: "v${{ env.MODULE_VERSION }}"
+        with:
+           name: ${{ env.ARTIFACT_NAME }}
+           path: "v${{ env.MODULE_VERSION }}"
 
       - name: List directory contents
         shell: bash
