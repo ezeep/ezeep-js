@@ -34,7 +34,7 @@ export const config: Config = {
       cert: fs.readFileSync('certificate.pem', 'utf-8'),
       key: fs.readFileSync('key.pem', 'utf-8'),
     },
-  },
+  },*/
   rollupPlugins: {
     after: [
       replacePlugin({
@@ -42,7 +42,7 @@ export const config: Config = {
         delimiters: ['<%', '%>'],
       }),
     ],
-  }, */
+  }, 
   buildEs5: true,
   extras: {
     cssVarsShim: true,
