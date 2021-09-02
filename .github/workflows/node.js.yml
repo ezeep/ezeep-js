@@ -11,8 +11,8 @@ env:
   RESOURCE_GROUP: "ezp-cdn"
   STORAGE_ACCOUNT: "ezeepcdn"
   STORAGE_CONTAINER: "ezeep-js"
-  CDN_PROFILE_NAME: "ezpcdn"
-  CDN_ENDPOINT: "ezpcdn"
+  CDN_PROFILE_NAME: "ezeepcdn"
+  CDN_ENDPOINT: "ezeepcdn"
 
 on:
   push:
