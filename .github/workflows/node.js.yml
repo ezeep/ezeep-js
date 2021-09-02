@@ -11,8 +11,8 @@ env:
   RESOURCE_GROUP: "ezp-cdn"
   STORAGE_ACCOUNT: "ezeepcdn"
   STORAGE_CONTAINER: "ezeep-js"
-  CDN_PROFILE_NAME: "ezpcdn"
-  CDN_ENDPOINT: "ezpcdn"
+  CDN_PROFILE_NAME: "ezeepcdn"
+  CDN_ENDPOINT: "ezeepcdn"
 
 on:
   push:
@@ -64,23 +64,24 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
+    environment: Production
     needs: build
     runs-on: ubuntu-latest
     steps:
 
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.ARTIFACT_NAME }}
-        path: "v${{ env.MODULE_VERSION }}"
+        path: "artifacts/v${{ env.MODULE_VERSION }}"
 
     - name: List directory contents
       shell: bash
       run: |
         ls -laR .
+
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Upload to blob storage
       uses: azure/CLI@v1
@@ -88,9 +89,9 @@ jobs:
         azcliversion: 2.0.72
         inlineScript: |
           az storage blob upload-batch \
-            --account-name "{{ env.STORAGE_ACCOUNT }}" \
-            -d "{{ env.STORAGE_CONTAINER }}" \
-            -s "v${{ env.MODULE_VERSION }}"
+            --account-name "${{ env.STORAGE_ACCOUNT }}" \
+            -d "${{ env.STORAGE_CONTAINER }}" \
+            -s "artifacts"
 
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
@@ -98,12 +99,11 @@ jobs:
         azcliversion: 2.0.72
         inlineScript: |
            az cdn endpoint purge \
-             --resource-group "{{ env.RESOURCE_GROUP }}"
-             --name "{{ env.CDN_ENDPOINT }}" \
-             --profile-name "{{ env.CDN_PROFILE_NAME }}" \
-             --content-paths  "/ezeep-js/*"
+             --resource-group "${{ env.RESOURCE_GROUP }}" \
+             --name "${{ env.CDN_ENDPOINT }}" \
+             --profile-name "${{ env.CDN_PROFILE_NAME }}" \
+             --content-paths "/${{ env.STORAGE_CONTAINER }}/*"
 
-      # Azure logout
     - name: logout
       run: |
         az logout
