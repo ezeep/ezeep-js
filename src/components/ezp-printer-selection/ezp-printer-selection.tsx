@@ -93,19 +93,18 @@ export class EzpPrinterSelection {
         this.fileurl,
         this.filetype,
         this.printer.id,
-        this.properties, //{},
+        {},// this.properties,
         this.filename
       )
       .then((data) => {
         if (data.jobid) {
           printStore.state.jobID = data.jobid
           const POLL_INTERVAL = 2000
-          const validateData = () => {
-            // data
-            /* if (data.jobstatus === 0) {
+          const validateData = (data) => {
+            if (data.jobstatus === 0) {
               this.printInProgress = false
               return true
-            } */
+            } 
             return false
           }
           poll({
@@ -119,6 +118,8 @@ export class EzpPrinterSelection {
               console.warn(err)
               this.printInProgress = false
             })
+        } else {
+          this.printInProgress = false
         }
       })
     localStorage.setItem('properties', JSON.stringify(this.properties))

@@ -19,16 +19,18 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 
 1. Include ezeep.js to your web app by the following options:
 
-Use a **script** tags in your html source:
+Use **script** tags in your html source:
 
 ```html
-<!-- use latest version -->
-<script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
-<script nomodule src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.js"></script>
+<!-- use latest version (not yet available) -->
+
+
+<script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
+<script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
 
 <!-- use specific version -->
-<script type="module" src="https://cdn.ezeep.com/libs/js/{{version}}/ezeep/ezeep.esm.js"></script>
-<script nomodule src="https://cdn.ezeep.com/libs/js/{{version}}/ezeep/ezeep.js"></script>
+<script type="module" src="https://cdn.ezeep.com/ezeep-js/v0.1.50/ezeep.esm.js"></script>
+<script nomodule src="https://cdn.ezeep.com/ezeep-js/v0.1.50/ezeep.js"></script>
 ```
 
 Use npm:
