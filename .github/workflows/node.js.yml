@@ -8,43 +8,45 @@ env:
   ARTIFACT_NAME: 'ezeep-js.zip'                    # artifact name
   PRERELEASE: true                                 # true if marked as pre-release, false if production-ready
 
+  RESOURCE_GROUP: "ezp-cdn"
+  STORAGE_ACCOUNT: "ezeepcdn"
+  STORAGE_CONTAINER: "ezeep-js"
+  CDN_PROFILE_NAME: "ezpcdn"
+  CDN_ENDPOINT: "ezpcdn"
+
 on:
   push:
     branches: [ main ]
 
 jobs:
   build:
-
     environment: Production
-    
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [14.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        
+
     - name: Build
-      run: | 
+      run: |
         npm ci
         npm run build
-        
+
     - name: Archive Artifacts
       uses: actions/upload-artifact@v2
       with:
         path: ${{ env.DIST_PATH }}
         name: ${{ env.ARTIFACT_NAME }}
-    
+
     - name: ZIP Release
       uses: thedoctor0/zip-release@master
       with:
@@ -52,7 +54,7 @@ jobs:
         directory: ${{ env.DIST_PATH }}
         path: '.'
         filename: ${{ env.ARTIFACT_NAME }}
-        
+
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
@@ -60,3 +62,47 @@ jobs:
         prerelease: ${{ env.PRERELEASE }}
         artifacts: "${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
         token: ${{ secrets.GITHUB_TOKEN }}
+
+    publish:
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      steps:
+       - name: Download artifact
+         uses: actions/download-artifact@v2
+           with:
+              name: ${{ env.ARTIFACT_NAME }}
+              path: "v${{ env.MODULE_VERSION }}"
+
+       - name: List directory contents
+         shell: bash
+         run: |
+           ls -laR .
+
+       - name: Upload to blob storage
+         uses: azure/CLI@v1
+         with:
+           azcliversion: 2.0.72
+           inlineScript: |
+             az storage blob upload-batch \
+               --account-name "{{ env.STORAGE_ACCOUNT }}" \
+               -d "{{ env.STORAGE_CONTAINER }}" \
+               -s "v${{ env.MODULE_VERSION }}"
+
+      - name: Purge CDN endpoint
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.0.72
+          inlineScript: |
+             az cdn endpoint purge \
+               --resource-group "{{ env.RESOURCE_GROUP }}"
+               --name "{{ env.CDN_ENDPOINT }}" \
+               --profile-name "{{ env.CDN_PROFILE_NAME }}" \
+               --content-paths  "/ezeep-js/*"
+
+      # Azure logout
+      - name: logout
+        run: |
+          az logout
+        if: always()
