@@ -64,13 +64,10 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
+    environment: Production
     needs: build
     runs-on: ubuntu-latest
     steps:
-
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - uses: actions/download-artifact@v2
       with:
@@ -81,6 +78,10 @@ jobs:
       shell: bash
       run: |
         ls -laR .
+
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Upload to blob storage
       uses: azure/CLI@v1
