@@ -64,31 +64,32 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     publish:
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
+      runs-on: ubuntu-latest
       steps:
-       - name: Download artifact
-         uses: actions/download-artifact@v2
-           with:
-              name: ${{ env.ARTIFACT_NAME }}
-              path: "v${{ env.MODULE_VERSION }}"
 
-       - name: List directory contents
-         shell: bash
-         run: |
-           ls -laR .
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - name: Upload to blob storage
-         uses: azure/CLI@v1
-         with:
-           azcliversion: 2.0.72
-           inlineScript: |
-             az storage blob upload-batch \
-               --account-name "{{ env.STORAGE_ACCOUNT }}" \
-               -d "{{ env.STORAGE_CONTAINER }}" \
-               -s "v${{ env.MODULE_VERSION }}"
+      - uses: actions/download-artifact@v2
+          with:
+             name: ${{ env.ARTIFACT_NAME }}
+             path: "v${{ env.MODULE_VERSION }}"
+
+      - name: List directory contents
+        shell: bash
+        run: |
+          ls -laR .
+
+      - name: Upload to blob storage
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.0.72
+          inlineScript: |
+            az storage blob upload-batch \
+              --account-name "{{ env.STORAGE_ACCOUNT }}" \
+              -d "{{ env.STORAGE_CONTAINER }}" \
+              -s "v${{ env.MODULE_VERSION }}"
 
       - name: Purge CDN endpoint
         uses: azure/CLI@v1
