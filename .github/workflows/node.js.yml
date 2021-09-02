@@ -63,47 +63,48 @@ jobs:
         artifacts: "${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    publish:
-      runs-on: ubuntu-latest
-      steps:
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
 
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: actions/download-artifact@v2
-        with:
-           name: ${{ env.ARTIFACT_NAME }}
-           path: "v${{ env.MODULE_VERSION }}"
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.ARTIFACT_NAME }}
+        path: "v${{ env.MODULE_VERSION }}"
 
-      - name: List directory contents
-        shell: bash
-        run: |
-          ls -laR .
+    - name: List directory contents
+      shell: bash
+      run: |
+        ls -laR .
 
-      - name: Upload to blob storage
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.0.72
-          inlineScript: |
-            az storage blob upload-batch \
-              --account-name "{{ env.STORAGE_ACCOUNT }}" \
-              -d "{{ env.STORAGE_CONTAINER }}" \
-              -s "v${{ env.MODULE_VERSION }}"
+    - name: Upload to blob storage
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+          az storage blob upload-batch \
+            --account-name "{{ env.STORAGE_ACCOUNT }}" \
+            -d "{{ env.STORAGE_CONTAINER }}" \
+            -s "v${{ env.MODULE_VERSION }}"
 
-      - name: Purge CDN endpoint
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.0.72
-          inlineScript: |
-             az cdn endpoint purge \
-               --resource-group "{{ env.RESOURCE_GROUP }}"
-               --name "{{ env.CDN_ENDPOINT }}" \
-               --profile-name "{{ env.CDN_PROFILE_NAME }}" \
-               --content-paths  "/ezeep-js/*"
+    - name: Purge CDN endpoint
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+           az cdn endpoint purge \
+             --resource-group "{{ env.RESOURCE_GROUP }}"
+             --name "{{ env.CDN_ENDPOINT }}" \
+             --profile-name "{{ env.CDN_PROFILE_NAME }}" \
+             --content-paths  "/ezeep-js/*"
 
       # Azure logout
-      - name: logout
-        run: |
-          az logout
-        if: always()
+    - name: logout
+      run: |
+        az logout
+      if: always()
