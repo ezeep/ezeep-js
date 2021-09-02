@@ -72,7 +72,7 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.ARTIFACT_NAME }}
-        path: "v${{ env.MODULE_VERSION }}"
+        path: "artifacts/v${{ env.MODULE_VERSION }}"
 
     - name: List directory contents
       shell: bash
@@ -91,7 +91,7 @@ jobs:
           az storage blob upload-batch \
             --account-name "${{ env.STORAGE_ACCOUNT }}" \
             -d "${{ env.STORAGE_CONTAINER }}" \
-            -s "v${{ env.MODULE_VERSION }}"
+            -s "artifacts"
 
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
@@ -102,7 +102,7 @@ jobs:
              --resource-group "${{ env.RESOURCE_GROUP }}"
              --name "${{ env.CDN_ENDPOINT }}" \
              --profile-name "${{ env.CDN_PROFILE_NAME }}" \
-             --content-paths  "/${{ env.STORAGE_CONTAINER }}/*"
+             --content-paths  "/*"
 
     - name: logout
       run: |
