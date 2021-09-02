@@ -104,7 +104,6 @@ jobs:
              --profile-name "{{ env.CDN_PROFILE_NAME }}" \
              --content-paths  "/ezeep-js/*"
 
-      # Azure logout
     - name: logout
       run: |
         az logout
