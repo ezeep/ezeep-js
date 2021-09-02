@@ -93,6 +93,36 @@ jobs:
             -d "${{ env.STORAGE_CONTAINER }}" \
             -s "artifacts"
 
+    - name: Update Url redirect
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+          index=$(az cdn endpoint rule action show  \
+                -g "${{ env.RESOURCE_GROUP }}" \
+                --profile-name "${{ env.CDN_PROFILE_NAME }}" \
+                -n "${{ env.CDN_ENDPOINT }}" \
+                | jq '.deliveryPolicy.rules[] \
+                    | select(.name == "latest") \
+                    | .actions | to_entries | .[] \
+                    | select(.value.name == "UrlRedirect") | .key')
+
+          az cdn endpoint rule action remove \
+            -g "${{ env.RESOURCE_GROUP }}" \
+            --profile-name "${{ env.CDN_PROFILE_NAME }}" \
+            -n "${{ env.CDN_ENDPOINT }}" \
+            --rule-name 'latest' \
+            --index $index
+
+          az cdn endpoint rule action add  \
+            -g "${{ env.RESOURCE_GROUP }}" \
+            --profile-name "${{ env.CDN_PROFILE_NAME }}" \
+            -n "${{ env.CDN_ENDPOINT }}" \
+            --rule-name latest \
+            --action-name UrlRedirect \
+            --custom-path '/ezeep-js/v{{ env.MODULE_VERSION }}/ezeep.js' \
+            --redirect-type Found
+
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
       with:
