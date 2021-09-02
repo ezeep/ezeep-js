@@ -86,7 +86,7 @@ jobs:
     - name: Upload to blob storage
       uses: azure/CLI@v1
       with:
-        azcliversion: 2.0.72
+        azcliversion: 2.27.1
         inlineScript: |
           az storage blob upload-batch \
             --account-name "${{ env.STORAGE_ACCOUNT }}" \
@@ -96,16 +96,17 @@ jobs:
     - name: Update Url redirect
       uses: azure/CLI@v1
       with:
-        azcliversion: 2.0.72
+        azcliversion: 2.27.1
         inlineScript: |
           index=$(az cdn endpoint rule action show  \
                 -g "${{ env.RESOURCE_GROUP }}" \
                 --profile-name "${{ env.CDN_PROFILE_NAME }}" \
                 -n "${{ env.CDN_ENDPOINT }}" \
-                | jq '.deliveryPolicy.rules[] \
-                    | select(.name == "latest") \
-                    | .actions | to_entries | .[] \
-                    | select(.value.name == "UrlRedirect") | .key')
+                | jq '.deliveryPolicy.rules[] 
+                    | select(.name == "latest") 
+                    | .actions | to_entries | .[] 
+                    | select(.value.name == "UrlRedirect") | .key' \
+                )
 
           az cdn endpoint rule action remove \
             -g "${{ env.RESOURCE_GROUP }}" \
@@ -126,7 +127,7 @@ jobs:
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
       with:
-        azcliversion: 2.0.72
+        azcliversion: 2.27.1
         inlineScript: |
            az cdn endpoint purge \
              --resource-group "${{ env.RESOURCE_GROUP }}" \
