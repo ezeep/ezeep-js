@@ -121,7 +121,7 @@ jobs:
             -n "${{ env.CDN_ENDPOINT }}" \
             --rule-name latest \
             --action-name UrlRedirect \
-            --custom-path '/ezeep-js/v{{ env.MODULE_VERSION }}/ezeep.js' \
+            --custom-path '/ezeep-js/v${{ env.MODULE_VERSION }}/ezeep.js' \
             --redirect-type Found
 
     - name: Purge CDN endpoint
