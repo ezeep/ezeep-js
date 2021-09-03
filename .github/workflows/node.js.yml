@@ -8,12 +8,6 @@ env:
   ARTIFACT_NAME: 'ezeep-js.zip'                    # artifact name
   PRERELEASE: true                                 # true if marked as pre-release, false if production-ready
 
-  RESOURCE_GROUP: "ezp-cdn"
-  STORAGE_ACCOUNT: "ezeepcdn"
-  STORAGE_CONTAINER: "ezeep-js"
-  CDN_PROFILE_NAME: "ezeepcdn"
-  CDN_ENDPOINT: "ezeepcdn"
-
 on:
   push:
     branches: [ main ]
@@ -74,11 +68,6 @@ jobs:
         name: ${{ env.ARTIFACT_NAME }}
         path: "artifacts/v${{ env.MODULE_VERSION }}"
 
-    - name: List directory contents
-      shell: bash
-      run: |
-        ls -laR .
-
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -88,9 +77,13 @@ jobs:
       with:
         azcliversion: 2.27.1
         inlineScript: |
+          azenv='${{ secrets.AZURE_ENVIRONMENT }}'
+          account=$(jq -crM .storage.account <<< $azenv)
+          container=$(jq -crM .storage.container <<< $azenv)
+
           az storage blob upload-batch \
-            --account-name "${{ env.STORAGE_ACCOUNT }}" \
-            -d "${{ env.STORAGE_CONTAINER }}" \
+            --account-name $account \
+            -d $container \
             -s "artifacts"
 
     - name: Update Url redirect
@@ -98,42 +91,67 @@ jobs:
       with:
         azcliversion: 2.27.1
         inlineScript: |
+
+        azenv='${{ secrets.AZURE_ENVIRONMENT }}'
+        resourceGroup=$(jq -crM .resourceGroup <<< $azenv)
+        profile=$(jq -crM .cdn.profileName <<< $azenv)
+        endpoint=$(jq -crM .cdn.endpoint.name <<< $azenv)
+        rules=$(jq -crM .cdn.endpoint.rules[].name <<< $azenv)
+        container=$(jq -crM .storage.container <<< $azenv)
+
+        for rule in $rules; do
+          filename=$(jq --arg rule "$rule" \
+            '.cdn.endpoint.rules[]
+            | select(.name == $rule)
+            | .fileName' \
+            <<< $azenv)
+
           index=$(az cdn endpoint rule action show  \
-                -g "${{ env.RESOURCE_GROUP }}" \
-                --profile-name "${{ env.CDN_PROFILE_NAME }}" \
-                -n "${{ env.CDN_ENDPOINT }}" \
-                | jq '.deliveryPolicy.rules[] 
-                    | select(.name == "latest") 
-                    | .actions | to_entries | .[] 
+                -g $resourceGroup \
+                --profile-name $profile \
+                -n $endpoint \
+                | jq --arg rule "$rule" '.deliveryPolicy.rules[]
+                    | select(.name == $rule)
+                    | .actions | to_entries | .[]
                     | select(.value.name == "UrlRedirect") | .key' \
                 )
 
           az cdn endpoint rule action remove \
-            -g "${{ env.RESOURCE_GROUP }}" \
-            --profile-name "${{ env.CDN_PROFILE_NAME }}" \
-            -n "${{ env.CDN_ENDPOINT }}" \
-            --rule-name 'latest' \
-            --index $index
+            -g $resourceGroup \
+            --profile-name $profile \
+            -n $endpoint \
+            --rule-name $rule \
+            --index $index \
+            -o none
 
           az cdn endpoint rule action add  \
-            -g "${{ env.RESOURCE_GROUP }}" \
-            --profile-name "${{ env.CDN_PROFILE_NAME }}" \
-            -n "${{ env.CDN_ENDPOINT }}" \
-            --rule-name latest \
+            -g $resourceGroup \
+            --profile-name $profile \
+            -n $endpoint \
+            --rule-name $rule \
             --action-name UrlRedirect \
-            --custom-path '/ezeep-js/v${{ env.MODULE_VERSION }}/ezeep.js' \
-            --redirect-type Found
+            --custom-path "/$container/v${{ env.MODULE_VERSION }}/$fileName" \
+            --redirect-type Found \
+            -o none
+        done
 
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
       with:
         azcliversion: 2.27.1
         inlineScript: |
+           azenv='${{ secrets.AZURE_ENVIRONMENT }}'
+           resourceGroup=$(jq -crM .resourceGroup <<< $azenv)
+           profile=$(jq -crM .cdn.profileName <<< $azenv)
+           endpoint=$(jq -crM .cdn.endpoint.name <<< $azenv)
+           container=$(jq -crM .storage.container <<< $azenv)
+
            az cdn endpoint purge \
-             --resource-group "${{ env.RESOURCE_GROUP }}" \
-             --name "${{ env.CDN_ENDPOINT }}" \
-             --profile-name "${{ env.CDN_PROFILE_NAME }}" \
-             --content-paths "/${{ env.STORAGE_CONTAINER }}/*"
+             -g $resourceGroup \
+             --profile-name $profile \
+             -n $endpoint \
+             --content-paths "/$container/*" \
+             -o none
 
     - name: logout
       run: |
