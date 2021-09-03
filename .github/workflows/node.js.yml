@@ -82,9 +82,11 @@ jobs:
           container=$(jq -crM .storage.container <<< $azenv)
 
           az storage blob upload-batch \
+            --auth-mode login
             --account-name $account \
             -d $container \
-            -s "artifacts"
+            -s "artifacts" \
+            -o none
 
     - name: Update Url redirect
       uses: azure/CLI@v1
@@ -99,7 +101,7 @@ jobs:
           container=$(jq -crM .storage.container <<< $azenv)
 
           for rule in $rules; do
-            filename=$(jq --arg rule "$rule" \
+            fileName=$(jq --arg rule "$rule" \
               '.cdn.endpoint.rules[]
               | select(.name == $rule)
               | .fileName' \
