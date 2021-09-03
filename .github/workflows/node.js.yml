@@ -91,49 +91,48 @@ jobs:
       with:
         azcliversion: 2.27.1
         inlineScript: |
+          azenv='${{ secrets.AZURE_ENVIRONMENT }}'
+          resourceGroup=$(jq -crM .resourceGroup <<< $azenv)
+          profile=$(jq -crM .cdn.profileName <<< $azenv)
+          endpoint=$(jq -crM .cdn.endpoint.name <<< $azenv)
+          rules=$(jq -crM .cdn.endpoint.rules[].name <<< $azenv)
+          container=$(jq -crM .storage.container <<< $azenv)
 
-        azenv='${{ secrets.AZURE_ENVIRONMENT }}'
-        resourceGroup=$(jq -crM .resourceGroup <<< $azenv)
-        profile=$(jq -crM .cdn.profileName <<< $azenv)
-        endpoint=$(jq -crM .cdn.endpoint.name <<< $azenv)
-        rules=$(jq -crM .cdn.endpoint.rules[].name <<< $azenv)
-        container=$(jq -crM .storage.container <<< $azenv)
+          for rule in $rules; do
+            filename=$(jq --arg rule "$rule" \
+              '.cdn.endpoint.rules[]
+              | select(.name == $rule)
+              | .fileName' \
+              <<< $azenv)
 
-        for rule in $rules; do
-          filename=$(jq --arg rule "$rule" \
-            '.cdn.endpoint.rules[]
-            | select(.name == $rule)
-            | .fileName' \
-            <<< $azenv)
+            index=$(az cdn endpoint rule action show  \
+                  -g $resourceGroup \
+                  --profile-name $profile \
+                  -n $endpoint \
+                  | jq --arg rule "$rule" '.deliveryPolicy.rules[]
+                      | select(.name == $rule)
+                      | .actions | to_entries | .[]
+                      | select(.value.name == "UrlRedirect") | .key' \
+                  )
 
-          index=$(az cdn endpoint rule action show  \
-                -g $resourceGroup \
-                --profile-name $profile \
-                -n $endpoint \
-                | jq --arg rule "$rule" '.deliveryPolicy.rules[]
-                    | select(.name == $rule)
-                    | .actions | to_entries | .[]
-                    | select(.value.name == "UrlRedirect") | .key' \
-                )
+            az cdn endpoint rule action remove \
+              -g $resourceGroup \
+              --profile-name $profile \
+              -n $endpoint \
+              --rule-name $rule \
+              --index $index \
+              -o none
 
-          az cdn endpoint rule action remove \
-            -g $resourceGroup \
-            --profile-name $profile \
-            -n $endpoint \
-            --rule-name $rule \
-            --index $index \
-            -o none
-
-          az cdn endpoint rule action add  \
-            -g $resourceGroup \
-            --profile-name $profile \
-            -n $endpoint \
-            --rule-name $rule \
-            --action-name UrlRedirect \
-            --custom-path "/$container/v${{ env.MODULE_VERSION }}/$fileName" \
-            --redirect-type Found \
-            -o none
-        done
+            az cdn endpoint rule action add  \
+              -g $resourceGroup \
+              --profile-name $profile \
+              -n $endpoint \
+              --rule-name $rule \
+              --action-name UrlRedirect \
+              --custom-path "/$container/v${{ env.MODULE_VERSION }}/$fileName" \
+              --redirect-type Found \
+              -o none
+          done
 
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
