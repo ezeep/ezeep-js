@@ -101,7 +101,7 @@ jobs:
           container=$(jq -crM .storage.container <<< $azenv)
 
           for rule in $rules; do
-            fileName=$(jq --arg rule "$rule" \
+            fileName=$(jq -crM --arg rule "$rule" \
               '.cdn.endpoint.rules[]
               | select(.name == $rule)
               | .fileName' \
