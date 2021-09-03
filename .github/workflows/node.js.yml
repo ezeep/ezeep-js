@@ -82,7 +82,7 @@ jobs:
           container=$(jq -crM .storage.container <<< $azenv)
 
           az storage blob upload-batch \
-            --auth-mode login
+            --auth-mode login \
             --account-name $account \
             -d $container \
             -s "artifacts" \
@@ -152,6 +152,7 @@ jobs:
              --profile-name $profile \
              -n $endpoint \
              --content-paths "/$container/*" \
+             --no-wait \
              -o none
 
     - name: logout
