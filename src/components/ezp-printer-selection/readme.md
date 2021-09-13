@@ -7,7 +7,7 @@
 
 | Property      | Attribute        | Description | Type     | Default     |
 | ------------- | ---------------- | ----------- | -------- | ----------- |
-| `clientID`    | `client-i-d`     | Properties  | `string` | `undefined` |
+| `clientID`    | `client-i-d`     |  Properties | `string` | `undefined` |
 | `filename`    | `filename`       |             | `string` | `undefined` |
 | `filetype`    | `filetype`       |             | `string` | `undefined` |
 | `fileurl`     | `fileurl`        |             | `string` | `undefined` |
