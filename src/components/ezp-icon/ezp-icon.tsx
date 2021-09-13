@@ -32,7 +32,7 @@ export class EzpIcon {
     return (
       <Host class={this.size}>
         <svg id="glyph">
-          <use xlinkHref={`${glyphsPath}#glyph-${this.name}`}></use>
+          <use href={`${glyphsPath}#glyph-${this.name}`}></use>
         </svg>
       </Host>
     )
