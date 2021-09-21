@@ -10,6 +10,7 @@ export class EzpSelect {
   @Element() component!: HTMLEzpSelectElement
 
   private container: HTMLDivElement
+  private backdrop: HTMLEzpBackdropElement = document.createElement('ezp-backdrop')
   private containerHeight: number = 0
   private expandCover: boolean = false
   private expandRise: boolean = false
@@ -102,16 +103,10 @@ export class EzpSelect {
     }
 
     if (this.expanded) {
-      const backdrop = document.createElement('ezp-backdrop') as HTMLEzpBackdropElement
-
-      this.container.appendChild(backdrop)
+      this.backdrop.visible = true
+      this.container.appendChild(this.backdrop)
     } else {
-      const backdrop = this.container.querySelector('ezp-backdrop')
-
-      backdrop.hide = true
-      backdrop.onanimationend = () => {
-        this.container.removeChild(backdrop)
-      }
+      this.backdrop.visible = false
     }
   }
 
@@ -143,7 +138,16 @@ export class EzpSelect {
    */
 
   componentWillLoad() {
-    this.container = this.component.closest('[data-select-container')
+    this.container = this.component.closest('[data-backdrop-surface]')
+
+    this.backdrop.addEventListener('backdropHideStart', () => {
+      this.expanded = false
+    })
+
+    this.backdrop.addEventListener('backdropHideEnd', () => {
+      this.container.removeChild(this.backdrop)
+    })
+
     if (this.previouslySelected !== '') {
       this.selected.title = this.previouslySelected
     }

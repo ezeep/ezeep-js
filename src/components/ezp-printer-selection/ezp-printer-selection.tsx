@@ -93,7 +93,7 @@ export class EzpPrinterSelection {
         this.fileurl,
         this.filetype,
         this.printer.id,
-        {},// this.properties,
+        {}, // this.properties,
         this.filename
       )
       .then((data) => {
@@ -104,7 +104,7 @@ export class EzpPrinterSelection {
             if (data.jobstatus === 0) {
               this.printInProgress = false
               return true
-            } 
+            }
             return false
           }
           poll({
@@ -211,7 +211,7 @@ export class EzpPrinterSelection {
     initi18n()
     this.loading = true
     this.getPropertiesFromLocalStorage()
-  
+
     this.getUserInfo()
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService
@@ -234,7 +234,7 @@ export class EzpPrinterSelection {
         {this.printInProgress ? (
           <ezp-progress status={i18next.t('printer_selection.print_in_progress')}></ezp-progress>
         ) : null}
-        <div id="container" data-select-container>
+        <div id="container" data-backdrop-surface>
           <div id="header">
             <cap-label weight="heavy">{i18next.t('printer_selection.print') + ':'}</cap-label>
             <cap-label>{this.filename}</cap-label>
@@ -242,6 +242,7 @@ export class EzpPrinterSelection {
               level="tertiary"
               icon="menu"
               id="toggle-menu"
+              type="button"
               onClick={this.handleUserMenu}
             />
           </div>

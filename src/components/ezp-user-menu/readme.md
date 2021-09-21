@@ -2,14 +2,12 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property | Attribute | Description | Type      | Default      |
 | -------- | --------- | ----------- | --------- | ------------ |
 | `name`   | `name`    |             | `string`  | `'John Doe'` |
 | `open`   | `open`    |             | `boolean` | `false`      |
-
 
 ## Events
 
@@ -18,22 +16,24 @@
 | `logoutEmitter`   |             | `CustomEvent<any>` |
 | `userMenuClosure` | Events      | `CustomEvent<any>` |
 
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
+- [ezp-backdrop](../ezp-backdrop)
 - cap-label
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-icon](../ezp-icon)
 
 ### Graph
+
 ```mermaid
 graph TD;
+  ezp-user-menu --> ezp-backdrop
   ezp-user-menu --> cap-label
   ezp-user-menu --> ezp-icon-button
   ezp-user-menu --> ezp-icon
@@ -42,6 +42,4 @@ graph TD;
   style ezp-user-menu fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

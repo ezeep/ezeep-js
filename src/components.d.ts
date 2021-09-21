@@ -13,10 +13,7 @@ export namespace Components {
         "redirectURI": string;
     }
     interface EzpBackdrop {
-        /**
-          * Properties
-         */
-        "hide": boolean;
+        "visible": boolean;
     }
     interface EzpIcon {
         /**
@@ -222,10 +219,9 @@ declare namespace LocalJSX {
         "redirectURI"?: string;
     }
     interface EzpBackdrop {
-        /**
-          * Properties
-         */
-        "hide"?: boolean;
+        "onBackdropHideEnd"?: (event: CustomEvent<any>) => void;
+        "onBackdropHideStart"?: (event: CustomEvent<any>) => void;
+        "visible"?: boolean;
     }
     interface EzpIcon {
         /**

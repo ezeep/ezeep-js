@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property             | Attribute             | Description    | Type                                                                                                     | Default         |
@@ -15,14 +14,12 @@
 | `previouslySelected` | `previously-selected` |                | `any`                                                                                                    | `undefined`     |
 | `toggleFlow`         | `toggle-flow`         | Description... | `"horizontal" \| "vertical"`                                                                             | `'horizontal'`  |
 
-
 ## Events
 
 | Event             | Description | Type               |
 | ----------------- | ----------- | ------------------ |
 | `selectSelection` |             | `CustomEvent<any>` |
 | `selectToggle`    | Events      | `CustomEvent<any>` |
-
 
 ## CSS Custom Properties
 
@@ -58,12 +55,11 @@
 | `--wrap-separator-position-top`    | Description... |
 | `--wrap-translate-y`               | Description... |
 
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
@@ -72,6 +68,7 @@
 - cap-label
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-select --> ezp-backdrop
@@ -81,6 +78,4 @@ graph TD;
   style ezp-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

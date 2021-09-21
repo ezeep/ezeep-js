@@ -1,4 +1,4 @@
-import { Component, Host, Prop, h } from '@stencil/core'
+import { Component, Element, Host, Prop, Listen, Event, EventEmitter, h } from '@stencil/core'
 
 @Component({
   tag: 'ezp-backdrop',
@@ -6,20 +6,24 @@ import { Component, Host, Prop, h } from '@stencil/core'
   shadow: true,
 })
 export class EzpBackdrop {
-  /**
-   *
-   * Properties
-   *
-   */
+  @Element() component!: HTMLEzpBackdropElement
+  @Prop({ mutable: true }) visible: boolean = true
+  @Event() backdropHideStart: EventEmitter
+  @Event() backdropHideEnd: EventEmitter
 
-  @Prop() hide: boolean = false
-  /**
-   *
-   * Render method
-   *
-   */
+  private handleClick() {
+    this.visible = false
+    this.backdropHideStart.emit()
+  }
+
+  @Listen('animationend')
+  listenAnimationEnd() {
+    if (!this.visible) {
+      this.backdropHideEnd.emit()
+    }
+  }
 
   render() {
-    return <Host class={{ 'should-hide': this.hide }} />
+    return <Host class={{ hide: !this.visible }} onClick={() => this.handleClick()} />
   }
 }
