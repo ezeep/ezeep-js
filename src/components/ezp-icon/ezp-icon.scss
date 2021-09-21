@@ -13,25 +13,28 @@
  */
 
 :host {
-  /** @prop --host-size: Description... */
-  --host-size: auto;
+  /** @prop --glyph-size: Description... */
+  --glyph-size: auto;
 
   display: block;
-  height: var(--host-size);
-  width: var(--host-size);
 
   @at-root {
     #{&}(.normal) {
-      --host-size: 22px;
+      --glyph-size: 22px;
     }
 
     #{&}(.large) {
-      --host-size: 44px;
+      --glyph-size: 44px;
     }
   }
 }
 
 #glyph {
+  height: var(--glyph-size);
+  width: var(--glyph-size);
+}
+
+svg {
   display: block;
   fill: currentColor;
   height: 100%;
