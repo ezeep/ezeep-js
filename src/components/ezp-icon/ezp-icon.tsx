@@ -8,6 +8,8 @@ import { IconNameTypes, IconSizeTypes } from '../../shared/types'
   assetsDirs: ['assets'],
 })
 export class EzpIcon {
+  private glyph: string
+
   /**
    *
    * Properties
@@ -22,18 +24,29 @@ export class EzpIcon {
 
   /**
    *
+   * Lifecycle methods
+   *
+   */
+
+  async componentWillLoad() {
+    await fetch(getAssetPath(`./assets/glyph-${this.name}.svg`))
+      .then((response) => response.text())
+      .then((result) => {
+        this.glyph = result
+      })
+      .catch((error) => console.log(error))
+  }
+
+  /**
+   *
    * Render method
    *
    */
 
   render() {
-    const glyphsPath = getAssetPath('./assets/glyphs.svg')
-
     return (
       <Host class={this.size}>
-        <svg id="glyph">
-          <use href={`${glyphsPath}#glyph-${this.name}`}></use>
-        </svg>
+        <div id="glyph" innerHTML={this.glyph} />
       </Host>
     )
   }
