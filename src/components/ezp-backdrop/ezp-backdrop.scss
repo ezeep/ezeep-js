@@ -14,10 +14,10 @@
 
 :host {
   --host-animation-name: host-in;
-  animation: var(--host-animation-name) 0.3s forwards var(--easing-out-quart);
 
+  animation: var(--host-animation-name) 0.3s forwards var(--easing-out-quart);
   background: var(--color-overlay);
-  border-radius: var(--host-radius);
+  border-radius: 8px;
   display: block;
   height: 100%;
   left: 0;
@@ -28,7 +28,7 @@
   z-index: 4;
 
   @at-root {
-    #{&}(.should-hide) {
+    #{&}(.hide) {
       --host-animation-name: host-out;
     }
   }

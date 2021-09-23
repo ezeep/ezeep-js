@@ -1,4 +1,4 @@
-import { Component, Host, Prop, Event, EventEmitter, h } from '@stencil/core'
+import { Component, Host, Prop, Event, Element, EventEmitter, Watch, h } from '@stencil/core'
 import authStore from '../../services/auth'
 import { IconNameTypes } from '../../shared/types'
 
@@ -8,6 +8,10 @@ import { IconNameTypes } from '../../shared/types'
   shadow: true,
 })
 export class EzpUserMenu {
+  @Element() component!: HTMLEzpUserMenuElement
+
+  private container: HTMLDivElement
+  private backdrop: HTMLEzpBackdropElement = document.createElement('ezp-backdrop')
   private links = [
     {
       title: 'Manage Account',
@@ -58,6 +62,23 @@ export class EzpUserMenu {
    *
    */
 
+  /**
+   *
+   * Watchers
+   *
+   */
+
+  @Watch('open')
+  watchOpen() {
+    if (this.open) {
+      this.backdrop.visible = true
+      this.container.appendChild(this.backdrop)
+    } else {
+      this.backdrop.visible = false
+      this.userMenuClosure.emit()
+    }
+  }
+
   private handleClose = () => {
     this.userMenuClosure.emit()
   }
@@ -66,6 +87,24 @@ export class EzpUserMenu {
     localStorage.clear()
     authStore.state.isAuthorized = false
     this.logoutEmitter.emit()
+  }
+
+  /**
+   *
+   * Render method
+   *
+   */
+
+  componentWillLoad() {
+    this.container = this.component.closest('[data-backdrop-surface]')
+
+    this.backdrop.addEventListener('backdropHideStart', () => {
+      this.open = false
+    })
+
+    this.backdrop.addEventListener('backdropHideEnd', () => {
+      this.container.removeChild(this.backdrop)
+    })
   }
 
   /**
