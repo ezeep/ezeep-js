@@ -93,25 +93,6 @@ $ratios: (1, 2, 3);
  *
  */
 
-@function get-typo-track($scale) {
-  $a: -0.0223;
-  $b: 0.185;
-  $c: -0.1745;
-  $d: $scale / 1px;
-  $track: ($a + ($b * math.pow(math.$e, $c * $d))) * 1em;
-
-  @return $track;
-}
-
-@function get-typo-offset($scale, $lead) {
-  $upm: 2816;
-  $cap-height: 2048;
-  $box-height: 2 * math.round((($cap-height / $upm) * $scale) / 2);
-  $offset: ($lead - $box-height) / 2;
-
-  @return $offset;
-}
-
 @function get-color-display-p3($color) {
   $red: color.red($color) / 255;
   $green: color.green($color) / 255;
@@ -164,11 +145,11 @@ $ratios: (1, 2, 3);
   }
 }
 
-@mixin hairline-declaration() {
+@mixin hairline-width-declaration() {
   @each $ratio in $ratios {
     @include media-density($ratio) {
-      --hairline-positive: calc(1px / #{$ratio});
-      --hairline-negative: calc(-1px / #{$ratio});
+      --hairline-width-positive: calc(1px / #{$ratio});
+      --hairline-width-negative: calc(-1px / #{$ratio});
     }
   }
 }
@@ -182,56 +163,5 @@ $ratios: (1, 2, 3);
 @mixin easing-declaration() {
   @each $easing in $easings {
     --easing-#{list.nth($easing, 1)}: #{list.nth($easing, 2)};
-  }
-}
-
-@mixin typo-declaration($props, $name, $height: true, $offset: true) {
-  --#{$name}-size: #{list.nth($props, 1)};
-  --#{$name}-spacing: #{get-typo-track(list.nth($props, 1))};
-
-  @if ($height) {
-    --#{$name}-height: #{list.nth($props, 2)};
-  }
-
-  @if ($offset) {
-    --#{$name}-offset: #{get-typo-offset(list.nth($props, 1), list.nth($props, 2))};
-  }
-}
-
-@mixin typo-level-declaration($levels, $name) {
-  @each $level, $props in $levels {
-    :host(.#{$level}) {
-      @include typo-declaration($props, $name);
-    }
-  }
-}
-
-@mixin typo-trim-offset($name) {
-  & {
-    padding-bottom: 1px;
-    padding-top: 1px;
-  }
-
-  &::before,
-  &::after {
-    content: '';
-    display: block;
-    height: 0;
-  }
-
-  &:before {
-    margin-top: calc((var(--#{$name}-offset) + 1px) * -1);
-  }
-
-  &:after {
-    margin-bottom: calc((var(--#{$name}-offset) + 1px) * -1);
-  }
-}
-
-@mixin typo-weight-declaration($name) {
-  @each $weight in $font-weights {
-    :host(.#{list.nth($weight, 1)}) {
-      --#{$name}-weight: #{list.nth($weight, 2)};
-    }
   }
 }

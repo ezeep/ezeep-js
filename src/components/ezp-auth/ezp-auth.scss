@@ -18,7 +18,7 @@
   --dialog-radius: 8px;
 
   /** @prop --dialog-separator-position: Description... */
-  --dialog-separator-position: 0 0 0 var(--hairline-positive);
+  --dialog-separator-position: 0 0 0 var(--hairline-width-positive);
 
   align-content: center;
   background: var(--color-overlay);
@@ -32,7 +32,7 @@
   width: 100%;
 
   @include global.media-appearance('dark') {
-    --dialog-separator-position: inset 0 0 0 var(--hairline-positive);
+    --dialog-separator-position: inset 0 0 0 var(--hairline-width-positive);
   }
 }
 

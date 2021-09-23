@@ -50,7 +50,7 @@ export class EzpTextButton {
     return (
       <Host class={`${this.level}`}>
         <TagType class="button" {...attributes}>
-          <cap-label level="primary" weight="heavy">
+          <cap-label weight="heavy">
             <slot />
           </cap-label>
         </TagType>

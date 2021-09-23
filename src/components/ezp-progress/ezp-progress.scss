@@ -15,7 +15,7 @@
 
 :host {
   /** @prop --box-separator-position: Description... */
-  --box-separator-position: 0 0 0 var(--hairline-positive);
+  --box-separator-position: 0 0 0 var(--hairline-width-positive);
 
   /** @prop --duration: Description... */
   --duration: 1s;
@@ -44,7 +44,7 @@
   z-index: 9999;
 
   @include global.media-appearance('dark') {
-    --box-separator-position: inset 0 0 0 var(--hairline-positive);
+    --box-separator-position: inset 0 0 0 var(--hairline-width-positive);
   }
 }
 

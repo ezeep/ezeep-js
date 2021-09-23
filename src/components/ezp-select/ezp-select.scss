@@ -62,7 +62,7 @@
   --list-height: 0;
 
   /** @prop --list-separator-position: Description... */
-  --list-separator-position: inset 0 var(--hairline-positive);
+  --list-separator-position: inset 0 var(--hairline-width-positive);
 
   /** @prop --option-height: Description... */
   --option-height: auto;
@@ -89,16 +89,16 @@
   --wrap-separator-color: var(--color-outline-translucent-tertiary);
 
   /** @prop --wrap-separator-position-bottom: Description... */
-  --wrap-separator-position-bottom: 0 var(--hairline-positive) 0 0;
+  --wrap-separator-position-bottom: 0 var(--hairline-width-positive) 0 0;
 
   /** @prop --wrap-separator-position-left: Description... */
-  --wrap-separator-position-left: var(--hairline-negative) 0 0 0;
+  --wrap-separator-position-left: var(--hairline-width-negative) 0 0 0;
 
   /** @prop --wrap-separator-position-right: Description... */
-  --wrap-separator-position-right: var(--hairline-positive) 0 0 0;
+  --wrap-separator-position-right: var(--hairline-width-positive) 0 0 0;
 
   /** @prop --wrap-separator-position-top: Description... */
-  --wrap-separator-position-top: 0 var(--hairline-negative) 0 0;
+  --wrap-separator-position-top: 0 var(--hairline-width-negative) 0 0;
 
   /** @prop --wrap-translate-y: Description... */
   --wrap-translate-y: 0;
@@ -177,11 +177,11 @@
   }
 
   @include global.media-appearance('dark') {
-    --list-separator-position: 0 var(--hairline-negative) 0 0;
-    --wrap-separator-position-bottom: inset 0 var(--hairline-negative) 0 0;
-    --wrap-separator-position-left: inset var(--hairline-positive) 0 0 0;
-    --wrap-separator-position-right: inset var(--hairline-negative) 0 0 0;
-    --wrap-separator-position-top: inset 0 var(--hairline-positive) 0 0;
+    --list-separator-position: 0 var(--hairline-width-negative) 0 0;
+    --wrap-separator-position-bottom: inset 0 var(--hairline-width-negative) 0 0;
+    --wrap-separator-position-left: inset var(--hairline-width-positive) 0 0 0;
+    --wrap-separator-position-right: inset var(--hairline-width-negative) 0 0 0;
+    --wrap-separator-position-top: inset 0 var(--hairline-width-positive) 0 0;
   }
 }
 
@@ -260,7 +260,7 @@
   padding: 0 0 0 var(--spacing-3);
 
   &:not(:first-child) {
-    --details-separator: 0 var(--hairline-negative) 0 0 var(--color-outline-translucent-tertiary);
+    --details-separator: 0 var(--hairline-width-negative) 0 0 var(--color-outline-translucent-tertiary);
   }
 
   &:hover {

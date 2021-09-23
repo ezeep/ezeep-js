@@ -21,16 +21,16 @@
   --dialog-radius: 8px;
 
   /** @prop --dialog-separator-position: Description... */
-  --dialog-separator-position: 0 0 0 var(--hairline-positive);
+  --dialog-separator-position: 0 0 0 var(--hairline-width-positive);
 
   /** @prop --duration: Description... */
   --duration: 0.3s;
 
   /** @prop --footer-separator-position: Description... */
-  --footer-separator-position: 0 var(--hairline-negative) 0 0;
+  --footer-separator-position: 0 var(--hairline-width-negative) 0 0;
 
   /** @prop --header-separator-position: Description... */
-  --header-separator-position: 0 var(--hairline-positive) 0 0;
+  --header-separator-position: 0 var(--hairline-width-positive) 0 0;
 
   align-content: center;
   background: var(--color-overlay);
@@ -44,12 +44,12 @@
   width: 100vw;
 
   @include global.media-appearance('dark') {
-    --content-separator: inset var(--hairline-positive) 0 0 0
+    --content-separator: inset var(--hairline-width-positive) 0 0 0
         var(--color-outline-translucent-tertiary),
-      inset var(--hairline-negative) 0 0 0 var(--color-outline-translucent-tertiary);
-    --dialog-separator-position: inset 0 0 0 var(--hairline-positive);
-    --footer-separator-position: inset 0 var(--hairline-positive) 0 0;
-    --header-separator-position: inset 0 var(--hairline-negative) 0 0;
+      inset var(--hairline-width-negative) 0 0 0 var(--color-outline-translucent-tertiary);
+    --dialog-separator-position: inset 0 0 0 var(--hairline-width-positive);
+    --footer-separator-position: inset 0 var(--hairline-width-positive) 0 0;
+    --header-separator-position: inset 0 var(--hairline-width-negative) 0 0;
   }
 }
 

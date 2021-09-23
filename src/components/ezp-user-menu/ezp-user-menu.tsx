@@ -117,10 +117,10 @@ export class EzpUserMenu {
     return (
       <Host class={this.open ? 'is-open' : ''}>
         <div id="header">
-          <cap-label id="name" level="primary" weight="strong">
+          <cap-label id="name" clip weight="strong">
             {this.name}
           </cap-label>
-          <ezp-icon-button id="close" level="quaternary" icon="cross" onClick={this.handleClose} />
+          <ezp-icon-button id="close" level="tertiary" icon="cross" onClick={this.handleClose} />
         </div>
         <div id="links">
           {this.links.map((link) => (
