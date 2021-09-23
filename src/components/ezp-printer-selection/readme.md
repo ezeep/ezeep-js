@@ -19,17 +19,6 @@
 | `printCancel` | Description... | `CustomEvent<MouseEvent>` |
 | `printSubmit` | Description... | `CustomEvent<MouseEvent>` |
 
-## CSS Custom Properties
-
-| Name                          | Description    |
-| ----------------------------- | -------------- |
-| `--content-separator`         | Description... |
-| `--dialog-radius`             | Description... |
-| `--dialog-separator-position` | Description... |
-| `--duration`                  | Description... |
-| `--footer-separator-position` | Description... |
-| `--header-separator-position` | Description... |
-
 ## Dependencies
 
 ### Used by

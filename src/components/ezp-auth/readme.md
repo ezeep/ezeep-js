@@ -17,13 +17,6 @@
 | `authCancel` |             | `CustomEvent<MouseEvent>` |
 | `printShow`  |             | `CustomEvent<any>`        |
 
-## CSS Custom Properties
-
-| Name                          | Description    |
-| ----------------------------- | -------------- |
-| `--dialog-radius`             | Description... |
-| `--dialog-separator-position` | Description... |
-
 ## Dependencies
 
 ### Used by

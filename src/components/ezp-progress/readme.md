@@ -8,15 +8,6 @@
 | -------- | --------- | ----------- | -------- | ------------- |
 | `status` | `status`  | Status...   | `string` | `'Status...'` |
 
-## CSS Custom Properties
-
-| Name                       | Description    |
-| -------------------------- | -------------- |
-| `--box-separator-position` | Description... |
-| `--duration`               | Description... |
-| `--indicator-size`         | Description... |
-| `--stroke-width`           | Description... |
-
 ## Dependencies
 
 ### Used by

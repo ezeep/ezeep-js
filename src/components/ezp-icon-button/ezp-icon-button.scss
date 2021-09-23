@@ -13,44 +13,19 @@
  */
 
 :host {
-  /** @prop --button-background: Description... */
-  --button-background: var(--button-background-init);
-
-  /** @prop --button-background-active: Description... */
   --button-background-active: transparent;
-
-  /** @prop --button-background-disabled: Description... */
   --button-background-disabled: transparent;
-
-  /** @prop --button-background-hover: Description... */
   --button-background-hover: transparent;
-
-  /** @prop --button-background-init: Description... */
   --button-background-init: transparent;
-
-  /** @prop --button-color: Description... */
-  --button-color: var(--button-color-init);
-
-  /** @prop --button-color-disabled: Description... */
+  --button-background: var(--button-background-init);
   --button-color-disabled: inherit;
-
-  /** @prop --button-color-init: Description... */
   --button-color-init: inherit;
-
-  /** @prop --button-cursor: Description... */
+  --button-color: var(--button-color-init);
   --button-cursor: pointer;
-
-  /** @prop --button-opacity-init: Description... */
-  --button-opacity: var(--button-opacity-init);
-
-  /** @prop --button-opacity-init: Description... */
-  --button-opacity-init: 1;
-
-  /** @prop --button-opacity-hover: Description... */
-  --button-opacity-hover: 1;
-
-  /** @prop --button-opacity-active: Description... */
   --button-opacity-active: 1;
+  --button-opacity-hover: 1;
+  --button-opacity-init: 1;
+  --button-opacity: var(--button-opacity-init);
 
   display: block;
 
@@ -83,8 +58,8 @@
     #{&}(.quaternary) {
       --button-color-disabled: var(--color-foreground-tertiary);
       --button-color-init: var(--color-main-primary);
-      --button-opacity-hover: 0.68;
       --button-opacity-active: 0.42;
+      --button-opacity-hover: 0.68;
     }
   }
 }

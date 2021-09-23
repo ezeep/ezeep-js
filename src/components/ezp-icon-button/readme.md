@@ -13,23 +13,6 @@
 | `level`             | `level`    | Description... | `"primary" \| "quaternary" \| "secondary" \| "tertiary"`                                                 | `'primary'` |
 | `type`              | `type`     | Description... | `"button"`                                                                                               | `undefined` |
 
-## CSS Custom Properties
-
-| Name                           | Description    |
-| ------------------------------ | -------------- |
-| `--button-background`          | Description... |
-| `--button-background-active`   | Description... |
-| `--button-background-disabled` | Description... |
-| `--button-background-hover`    | Description... |
-| `--button-background-init`     | Description... |
-| `--button-color`               | Description... |
-| `--button-color-disabled`      | Description... |
-| `--button-color-init`          | Description... |
-| `--button-cursor`              | Description... |
-| `--button-opacity-active`      | Description... |
-| `--button-opacity-hover`       | Description... |
-| `--button-opacity-init`        | Description... |
-
 ## Dependencies
 
 ### Used by

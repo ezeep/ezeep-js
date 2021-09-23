@@ -19,10 +19,10 @@
   --cap-upm-sans: 2816;
 
   align-content: center;
-  font-feature-settings: 'calt', 'liga', 'ss03', 'zero', 'cv05', 'cv10';
   background: var(--color-surface-primary);
   color: var(--color-foreground-primary);
   display: grid;
+  font-feature-settings: 'calt', 'liga', 'ss03', 'zero', 'cv05', 'cv10';
   grid-template: auto / auto;
   justify-content: center;
   margin: 0;

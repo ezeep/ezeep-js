@@ -9,12 +9,6 @@
 | `name` _(required)_ | `name`    | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "off" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined` |
 | `size`              | `size`    | Description... | `"large" \| "normal"`                                                                                    | `'normal'`  |
 
-## CSS Custom Properties
-
-| Name           | Description    |
-| -------------- | -------------- |
-| `--glyph-size` | Description... |
-
 ## Dependencies
 
 ### Used by

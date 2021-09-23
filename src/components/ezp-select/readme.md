@@ -21,40 +21,6 @@
 | `selectSelection` |             | `CustomEvent<any>` |
 | `selectToggle`    | Events      | `CustomEvent<any>` |
 
-## CSS Custom Properties
-
-| Name                               | Description    |
-| ---------------------------------- | -------------- |
-| `--accessory-color`                | Description... |
-| `--details-columns`                | Description... |
-| `--details-rows`                   | Description... |
-| `--duration`                       | Description... |
-| `--host-height`                    | Description... |
-| `--host-transition`                | Description... |
-| `--host-z-index`                   | Description... |
-| `--icon-color`                     | Description... |
-| `--indicator-opacity`              | Description... |
-| `--indicator-transform`            | Description... |
-| `--indicator-transition`           | Description... |
-| `--indicator-visibility`           | Description... |
-| `--label-align`                    | Description... |
-| `--label-color`                    | Description... |
-| `--list-height`                    | Description... |
-| `--list-separator-position`        | Description... |
-| `--option-height`                  | Description... |
-| `--toggle-areas`                   | Description... |
-| `--toggle-columns`                 | Description... |
-| `--toggle-height`                  | Description... |
-| `--toggle-rows`                    | Description... |
-| `--value-align`                    | Description... |
-| `--wrap-radius`                    | Description... |
-| `--wrap-separator-color`           | Description... |
-| `--wrap-separator-position-bottom` | Description... |
-| `--wrap-separator-position-left`   | Description... |
-| `--wrap-separator-position-right`  | Description... |
-| `--wrap-separator-position-top`    | Description... |
-| `--wrap-translate-y`               | Description... |
-
 ## Dependencies
 
 ### Used by

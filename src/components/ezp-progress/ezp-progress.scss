@@ -14,16 +14,9 @@
  */
 
 :host {
-  /** @prop --box-separator-position: Description... */
   --box-separator-position: 0 0 0 var(--hairline-width-positive);
-
-  /** @prop --duration: Description... */
   --duration: 1s;
-
-  /** @prop --indicator-size: Description... */
   --indicator-size: 44px;
-
-  /** @prop --stroke-width: Description... */
   --stroke-width: 4;
 
   align-content: center;

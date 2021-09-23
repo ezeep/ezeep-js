@@ -18,7 +18,8 @@
   --host-opacity: 0;
   --host-scale: 0.94, 0.94;
   --host-separator-position: 0 0 0 var(--hairline-width-positive);
-  --host-transition: opacity var(--duration) var(--easing-out-quart), transform var(--duration) var(--easing-out-quart), visibility 0s var(--duration);
+  --host-transition: opacity var(--duration) var(--easing-out-quart),
+    transform var(--duration) var(--easing-out-quart), visibility 0s var(--duration);
   --host-visibility: hidden;
   --link-background: transparent;
 
@@ -41,7 +42,8 @@
     #{&}(.is-open) {
       --host-opacity: 1;
       --host-scale: 1, 1;
-      --host-transition: opacity var(--duration) var(--easing-out-quart), transform var(--duration) var(--easing-out-quart), visibility 0s 0s;
+      --host-transition: opacity var(--duration) var(--easing-out-quart),
+        transform var(--duration) var(--easing-out-quart), visibility 0s 0s;
       --host-visibility: visible;
     }
   }
@@ -52,12 +54,12 @@
 }
 
 #header {
-  box-shadow: 0 var(--hairline-width-positive) 0 0 var(--hairline-color);
   align-items: center;
+  box-shadow: 0 var(--hairline-width-positive) 0 0 var(--hairline-color);
+  box-shadow: 0;
   display: grid;
   grid-template: auto / 1fr auto;
   padding: var(--spacing-4) var(--spacing-2) var(--spacing-4) var(--spacing-4);
-  box-shadow: 0 ;
 }
 
 #name {
@@ -81,8 +83,8 @@
 .link {
   align-items: center;
   background: var(--link-background);
-  color: var(--color-foreground-primary);
   border-radius: 3px;
+  color: var(--color-foreground-primary);
   display: grid;
   grid-gap: var(--spacing-3);
   grid-template: auto / auto 1fr;

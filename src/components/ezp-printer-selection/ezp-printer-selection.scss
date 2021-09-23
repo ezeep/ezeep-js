@@ -14,22 +14,11 @@
  */
 
 :host {
-  /** @prop --content-separator: Description... */
   --content-separator: none;
-
-  /** @prop --dialog-radius: Description... */
   --dialog-radius: 8px;
-
-  /** @prop --dialog-separator-position: Description... */
   --dialog-separator-position: 0 0 0 var(--hairline-width-positive);
-
-  /** @prop --duration: Description... */
   --duration: 0.3s;
-
-  /** @prop --footer-separator-position: Description... */
   --footer-separator-position: 0 var(--hairline-width-negative) 0 0;
-
-  /** @prop --header-separator-position: Description... */
   --header-separator-position: 0 var(--hairline-width-positive) 0 0;
 
   align-content: center;
@@ -44,8 +33,7 @@
   width: 100vw;
 
   @include global.media-appearance('dark') {
-    --content-separator: inset var(--hairline-width-positive) 0 0 0
-        var(--hairline-color),
+    --content-separator: inset var(--hairline-width-positive) 0 0 0 var(--hairline-color),
       inset var(--hairline-width-negative) 0 0 0 var(--hairline-color);
     --dialog-separator-position: inset 0 0 0 var(--hairline-width-positive);
     --footer-separator-position: inset 0 var(--hairline-width-positive) 0 0;

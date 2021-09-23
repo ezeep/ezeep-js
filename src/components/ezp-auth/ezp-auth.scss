@@ -14,10 +14,7 @@
  */
 
 :host {
-  /** @prop --dialog-radius: Description... */
   --dialog-radius: 8px;
-
-  /** @prop --dialog-separator-position: Description... */
   --dialog-separator-position: 0 0 0 var(--hairline-width-positive);
 
   align-content: center;
