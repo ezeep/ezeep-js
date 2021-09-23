@@ -14,18 +14,17 @@
  */
 
 :host {
-  --host-visibility: hidden;
-  --host-opacity: 0;
   --duration: 0.3s;
-  --host-transition: opacity var(--duration) var(--easing-out-quart),
-    transform var(--duration) var(--easing-out-quart), visibility 0s var(--duration);
-  --host-separator-position: 0 0 0 var(--hairline-width-positive);
+  --host-opacity: 0;
   --host-scale: 0.94, 0.94;
+  --host-separator-position: 0 0 0 var(--hairline-width-positive);
+  --host-transition: opacity var(--duration) var(--easing-out-quart), transform var(--duration) var(--easing-out-quart), visibility 0s var(--duration);
+  --host-visibility: hidden;
   --link-background: transparent;
 
   background: var(--color-surface-tertiary);
   border-radius: 3px;
-  box-shadow: var(--host-separator-position) var(--color-outline-translucent-tertiary);
+  box-shadow: var(--host-separator-position) var(--hairline-color);
   display: block;
   left: var(--spacing-7);
   opacity: var(--host-opacity);
@@ -40,11 +39,10 @@
 
   @at-root {
     #{&}(.is-open) {
-      --host-transition: opacity var(--duration) var(--easing-out-quart),
-        transform var(--duration) var(--easing-out-quart), visibility 0s 0s;
-      --host-visibility: visible;
       --host-opacity: 1;
       --host-scale: 1, 1;
+      --host-transition: opacity var(--duration) var(--easing-out-quart), transform var(--duration) var(--easing-out-quart), visibility 0s 0s;
+      --host-visibility: visible;
     }
   }
 
@@ -54,7 +52,7 @@
 }
 
 #header {
-  box-shadow: 0 var(--hairline-width-positive) 0 0 var(--color-outline-translucent-tertiary);
+  box-shadow: 0 var(--hairline-width-positive) 0 0 var(--hairline-color);
   align-items: center;
   display: grid;
   grid-template: auto / 1fr auto;
@@ -112,6 +110,7 @@
 
   &:hover {
     --link-background: var(--color-shade-primary);
+
     cursor: pointer;
   }
 

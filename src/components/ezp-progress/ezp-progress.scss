@@ -51,7 +51,7 @@
 #box {
   background: var(--color-surface-tertiary);
   border-radius: 3px;
-  box-shadow: var(--box-separator-position) var(--color-outline-translucent-tertiary);
+  box-shadow: var(--box-separator-position) var(--hairline-color);
   display: grid;
   grid-row-gap: var(--spacing-2);
   grid-template-columns: 1fr;
@@ -70,7 +70,7 @@
 
 #track {
   fill: none;
-  stroke: var(--color-outline-translucent-secondary);
+  stroke: var(--color-outline-secondary);
   stroke-width: var(--stroke-width);
 }
 

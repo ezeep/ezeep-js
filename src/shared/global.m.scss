@@ -39,11 +39,8 @@ $colors: (
     'foreground-primary': rgba(0 0 0 / 94%),
     'foreground-secondary': rgba(99 99 99 / 90%),
     'foreground-tertiary': rgba(99 99 99 / 58%),
-    'outline-solid-primary': rgb(226 226 226),
-    'outline-solid-secondary': rgb(209 209 209),
-    'outline-translucent-primary': rgba(119 119 119 / 10%),
-    'outline-translucent-secondary': rgba(119 119 119 / 16%),
-    'outline-translucent-tertiary': rgba(119 119 119 / 22%),
+    'outline-primary': rgba(119 119 119 / 16%),
+    'outline-secondary': rgba(119 119 119 / 26%),
     'overlay': rgba(0 0 0 / 26%),
     'shadow': rgba(0 0 0 / 4%),
   ),
@@ -65,17 +62,12 @@ $colors: (
     'foreground-primary': rgba(255 255 255 / 94%),
     'foreground-secondary': rgba(139 139 139 / 90%),
     'foreground-tertiary': rgba(139 139 139 / 58%),
-    'outline-solid-primary': rgb(40 40 40),
-    'outline-solid-secondary': rgb(62 62 62),
-    'outline-translucent-primary': rgba(119 119 119 / 28%),
-    'outline-translucent-secondary': rgba(119 119 119 / 34%),
-    'outline-translucent-tertiary': rgba(119 119 119 / 40%),
+    'outline-primary': rgba(119 119 119 / 26%),
+    'outline-secondary': rgba(119 119 119 / 32%),
     'overlay': rgba(0 0 0 / 68%),
     'shadow': rgba(0 0 0 / 10%),
   ),
 );
-$font-features: 'calt', 'liga', 'case', 'ss03', 'zero', 'cv05', 'cv10';
-$font-weights: (('soft', 400), ('strong', 500), ('heavy', 600));
 $spacings: (4px, 6px, 10px, 16px, 26px, 42px, 68px);
 $easings: (
   'in-quart': cubic-bezier(0.11, 0, 0.5, 0),
@@ -151,6 +143,14 @@ $ratios: (1, 2, 3);
       --hairline-width-positive: calc(1px / #{$ratio});
       --hairline-width-negative: calc(-1px / #{$ratio});
     }
+  }
+}
+
+@mixin hairline-color-declaration() {
+  --hairline-color: var(--color-outline-primary);
+
+  @include media-density(2) {
+    --hairline-color: var(--color-outline-secondary);
   }
 }
 

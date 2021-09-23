@@ -86,7 +86,7 @@
   --wrap-radius: 0;
 
   /** @prop --wrap-separator-color: Description... */
-  --wrap-separator-color: var(--color-outline-translucent-tertiary);
+  --wrap-separator-color: var(--hairline-color);
 
   /** @prop --wrap-separator-position-bottom: Description... */
   --wrap-separator-position-bottom: 0 var(--hairline-width-positive) 0 0;
@@ -241,7 +241,7 @@
 }
 
 #list {
-  box-shadow: var(--list-separator-position) var(--color-outline-translucent-tertiary);
+  box-shadow: var(--list-separator-position) var(--hairline-color);
   height: var(--list-height);
   overflow: auto;
   transition: height var(--duration) var(--easing-out-quart);
@@ -260,7 +260,7 @@
   padding: 0 0 0 var(--spacing-3);
 
   &:not(:first-child) {
-    --details-separator: 0 var(--hairline-width-negative) 0 0 var(--color-outline-translucent-tertiary);
+    --details-separator: 0 var(--hairline-width-negative) 0 0 var(--hairline-color);
   }
 
   &:hover {
