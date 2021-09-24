@@ -44,7 +44,6 @@ graph TD;
   ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-icon
-  ezp-auth --> cap-heading
   ezp-auth --> cap-label
   ezp-auth --> ezp-text-button
   ezp-progress --> cap-label

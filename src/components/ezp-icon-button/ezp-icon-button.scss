@@ -26,6 +26,7 @@
   --button-opacity-hover: 1;
   --button-opacity-init: 1;
   --button-opacity: var(--button-opacity-init);
+  --button-size: 34px;
 
   display: block;
 
@@ -74,11 +75,11 @@
   color: var(--button-color);
   cursor: var(--button-cursor);
   display: flex;
+  height: var(--button-size);
   justify-content: center;
   margin: 0;
   opacity: var(--button-opacity);
   outline: none;
-  padding: var(--spacing-1);
   width: var(--button-size);
 
   &:not(:disabled) {

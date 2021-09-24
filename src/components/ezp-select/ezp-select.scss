@@ -73,7 +73,7 @@
       --label-align: start;
       --toggle-areas: 'label value accessory';
       --toggle-columns: 1fr repeat(2, auto);
-      --toggle-height: 30px;
+      --toggle-height: 34px;
       --toggle-rows: auto;
       --value-align: end;
     }
@@ -87,7 +87,7 @@
       --label-align: center;
       --toggle-areas: 'label accessory' 'value accessory';
       --toggle-columns: 1fr auto;
-      --toggle-height: 48px;
+      --toggle-height: 52px;
       --toggle-rows: repeat(2, auto);
       --value-align: center;
     }
@@ -100,13 +100,13 @@
     #{&}(.option-horizontal) {
       --details-columns: repeat(2, 1fr);
       --details-rows: auto;
-      --option-height: 30px;
+      --option-height: 34px;
     }
 
     #{&}(.option-vertical) {
       --details-columns: 1fr;
       --details-rows: repeat(2, auto);
-      --option-height: 48px;
+      --option-height: 52px;
     }
 
     #{&}(.is-expanded) {
@@ -145,7 +145,7 @@
   box-sizing: border-box;
   cursor: pointer;
   display: grid;
-  grid-gap: var(--spacing-2);
+  gap: var(--spacing-2);
   grid-template-areas: var(--toggle-areas);
   grid-template-columns: var(--toggle-columns);
   grid-template-rows: var(--toggle-rows);
@@ -241,7 +241,7 @@
 .details {
   box-shadow: var(--details-separator);
   display: grid;
-  grid-gap: var(--spacing-2);
+  gap: var(--spacing-2);
   grid-template-columns: var(--details-columns);
   grid-template-rows: var(--details-rows);
   padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) 0;

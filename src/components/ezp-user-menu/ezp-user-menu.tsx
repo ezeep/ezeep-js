@@ -120,7 +120,7 @@ export class EzpUserMenu {
           <cap-label id="name" clip weight="strong">
             {this.name}
           </cap-label>
-          <ezp-icon-button id="close" level="tertiary" icon="cross" onClick={this.handleClose} />
+          <ezp-icon-button id="close" level="quaternary" icon="cross" onClick={this.handleClose} />
         </div>
         <div id="links">
           {this.links.map((link) => (
@@ -129,7 +129,7 @@ export class EzpUserMenu {
               <cap-label>{link.title}</cap-label>
             </a>
           ))}
-          <a class="logout" onClick={this.logOut}>
+          <a class="link" onClick={this.logOut}>
             <ezp-icon class="link__icon" name="off"></ezp-icon>
             <cap-label>Logout</cap-label>
           </a>
