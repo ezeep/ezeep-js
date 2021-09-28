@@ -31,18 +31,18 @@
   },
   "dependencies": {
     "@cgoern/cap": "^1.0.0-alpha.4",
-    "@stencil/core": "^2.8.0",
+    "@stencil/core": "^2.8.1",
     "fetch-intercept": "^2.4.0",
-    "i18next": "^20.3.4",
+    "i18next": "^20.6.1",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^2.4.2",
     "@stencil/sass": "^1.4.1",
     "@stencil/store": "^1.4.1",
-    "@types/node": "^15.14.2",
+    "@types/node": "^15.14.9",
     "dotenv": "^10.0.0",
-    "prettier": "^2.3.2",
+    "prettier": "^2.4.1",
     "rollup": "^1.32.1",
     "stylelint": "^13.13.1",
     "stylelint-config-prettier": "^8.0.2",

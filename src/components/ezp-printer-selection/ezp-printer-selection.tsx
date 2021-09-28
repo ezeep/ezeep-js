@@ -4,7 +4,7 @@ import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
-import { capitalize, initi18n, poll } from '../../utils/utils'
+import { initi18n, poll, removeEmptyStrings } from '../../utils/utils'
 import options from '../../data/options.json'
 
 @Component({
@@ -15,10 +15,7 @@ import options from '../../data/options.json'
 export class EzpPrinterSelection {
   // private user: PrintUserType
 
-  private printer: Printer
   private printService: EzpPrintService
-  private properties: PrinterProperties = { color: '', paper: '', orientation: '' }
-  private printerConfig: PrinterConfig
   /**
    *
    * Properties
@@ -40,6 +37,30 @@ export class EzpPrinterSelection {
   @State() printInProgress: boolean = false
   @State() userMenuOpen: boolean = false
   @State() userName: string
+  @State() printers: Printer[]
+  @State() selectedPrinter: Printer = { id: '', location: '', name: '' }
+  @State() printerConfig: PrinterConfig
+  // needs to be initialised with empty strings
+  @State() selectedProperties: PrinterProperties = {
+    paper: '',
+    paperid: '',
+    color: '',
+    duplex: '',
+    duplexmode: '',
+    orientation: '',
+    copies: '',
+    resolution: '',
+  }
+  @State() previouslySelectedProperties: PrinterProperties = {
+    paper: '',
+    paperid: '',
+    color: '',
+    duplex: '',
+    duplexmode: '',
+    orientation: '',
+    copies: '',
+    resolution: '',
+  }
   /**
    *
    * Events
@@ -60,7 +81,7 @@ export class EzpPrinterSelection {
 
   @Listen('selectSelection')
   listenSelectSelection(event: CustomEvent) {
-    this.setPrintProperties(event.detail)
+    this.setSelectedProperties(event.detail)
   }
 
   @Listen('userMenuClosure')
@@ -92,8 +113,10 @@ export class EzpPrinterSelection {
         authStore.state.accessToken,
         this.fileurl,
         this.filetype,
-        this.printer.id,
-        {}, // this.properties,
+        this.selectedPrinter.id,
+        // we have to initialse this obj with empty strings to display the select component
+        // but don't want to send any attributes with empty strings to the API
+        removeEmptyStrings(this.selectedProperties),
         this.filename
       )
       .then((data) => {
@@ -122,8 +145,12 @@ export class EzpPrinterSelection {
           this.printInProgress = false
         }
       })
-    localStorage.setItem('properties', JSON.stringify(this.properties))
-    localStorage.setItem('printer', JSON.stringify(this.printer))
+    localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
+    localStorage.setItem('printer', JSON.stringify(this.selectedPrinter))
+    localStorage.setItem(
+      'previouslySelectedProperties',
+      JSON.stringify(this.previouslySelectedProperties)
+    )
     // this.printSubmit.emit()
   }
 
@@ -131,73 +158,56 @@ export class EzpPrinterSelection {
     this.userMenuOpen = true
   }
 
-  setPrintProperties(eventDetails) {
-    if (eventDetails.title.includes('Grayscale') || eventDetails.title.includes('Color')) {
-      this.properties.color = false //eventDetails.title
-    } else if (
-      eventDetails.title.includes('Portrait') ||
-      eventDetails.title.includes('Landscape')
-    ) {
-      this.properties.orientation = eventDetails.title
-    } else if (
-      eventDetails.title.includes('Auto') ||
-      eventDetails.title.includes('Letter') ||
-      eventDetails.title.includes('Ledger') ||
-      eventDetails.title.includes('Portrait') ||
-      eventDetails.title.includes('Legal') ||
-      eventDetails.title.includes('Executive') ||
-      eventDetails.title.includes('A3') ||
-      eventDetails.title.includes('A4') ||
-      eventDetails.title.includes('A5') ||
-      eventDetails.title.includes('Folio') ||
-      eventDetails.title.includes('Com-10')
-    ) {
-      this.properties.paper = eventDetails.title
-    } else {
-      this.setSelectedPrinterProperties(eventDetails)
-    }
-  }
-
-  async setSelectedPrinterProperties(eventDetails) {
-    this.printer.id = eventDetails.id
-    this.printer.name = eventDetails.title
-
-    await this.printService
-      .getPrinterProperties(authStore.state.accessToken, this.printer.id)
-      .finally(() => (this.printerConfig = printStore.state.selectedPrinterProperties))
-
-    this.printerConfig.OrientationsSupported.forEach((orientation, index) => {
-      this.options.orientations[index].name = capitalize(orientation)
-      this.options.orientations[index].id = index + 1
-    })
-
-    this.printerConfig.PaperFormats.forEach((paperformat, index) => {
-      this.options.sizes[index].name = paperformat.Name
-      this.options.sizes[index].id = paperformat.Id
-      this.options.sizes[index].description = paperformat.Name
-    })
-
-    // delete all properties not supported
-    this.options.sizes.length = this.printerConfig.PaperFormats.length
-  }
-
-  getPropertiesFromLocalStorage() {
+  private getPropertiesFromLocalStorage() {
     if (localStorage.getItem('properties')) {
-      this.properties = JSON.parse(localStorage.getItem('properties'))
+      this.selectedProperties = JSON.parse(localStorage.getItem('properties'))
     }
+
     if (localStorage.getItem('printer')) {
-      this.printer = JSON.parse(localStorage.getItem('printer'))
+      this.selectedPrinter = JSON.parse(localStorage.getItem('printer'))
     } else {
-      this.printer = { id: '', name: '' }
+      this.selectedPrinter = { id: '', location: '', name: '' }
+    }
+
+    if (localStorage.getItem('previouslySelectedProperties')) {
+      this.previouslySelectedProperties = JSON.parse(
+        localStorage.getItem('previouslySelectedProperties')
+      )
     }
   }
 
-  getUserInfo() {
+  private getUserInfo() {
     const userService = new EzpUserService()
     return userService.getUserInfo().then((user) => {
       userStore.state.user = user
       this.userName = userStore.state.user.display_name
     })
+  }
+
+  private setSelectedProperties(eventDetails: { type: string; id: string; title: string }) {
+    switch (eventDetails.type) {
+      case 'printer':
+        this.selectedPrinter.id = eventDetails.id
+        this.selectedPrinter.name = eventDetails.title
+        break
+      case 'color':
+        this.selectedProperties.color = !!eventDetails.id
+        this.previouslySelectedProperties.color = eventDetails.title
+        break
+      case 'orientation':
+        this.selectedProperties.orientation = eventDetails.id
+        this.previouslySelectedProperties.orientation = eventDetails.title
+        break
+      case 'format':
+        console.log('format selected')
+        this.selectedProperties.paper = eventDetails.title
+        this.selectedProperties.paperid = eventDetails.id
+        this.previouslySelectedProperties.paper = eventDetails.title
+        this.previouslySelectedProperties.paperid = eventDetails.id
+        break
+      default:
+        break
+    }
   }
 
   /**
@@ -214,10 +224,18 @@ export class EzpPrinterSelection {
 
     this.getUserInfo()
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
-    this.printService
+    await this.printService
       .getPrinterList(authStore.state.accessToken)
-      .finally(() => (this.loading = false))
-    this.printService.getAllPrinterProperties(authStore.state.accessToken)
+      .then((printers: Printer[]) => {
+        this.printers = printers
+      })
+    await this.printService
+      .getAllPrinterProperties(authStore.state.accessToken)
+      .then((printerConfig: PrinterConfig[]) => {
+        this.printerConfig = printerConfig[0]
+        console.log(this.printerConfig)
+      })
+    this.loading = false
   }
 
   /**
@@ -254,12 +272,13 @@ export class EzpPrinterSelection {
                 placeholder={i18next.t('printer_selection.select_printer')}
                 toggleFlow="vertical"
                 optionFlow="vertical"
-                options={printStore.state.printers.map((printer) => ({
+                options={this.printers.map((printer) => ({
                   id: printer.id,
                   title: printer.name,
                   meta: printer.location,
+                  type: 'printer',
                 }))}
-                previouslySelected={this.printer.name}
+                previouslySelected={this.selectedPrinter.name}
               />
             </div>
             <div id="options">
@@ -267,35 +286,51 @@ export class EzpPrinterSelection {
                 label={i18next.t('printer_selection.color')}
                 placeholder={i18next.t('printer_selection.select_color')}
                 toggleFlow="horizontal"
-                options={this.options.colors.map((color) => ({
-                  id: color.id,
-                  title: color.name,
-                  meta: '',
-                }))}
-                previouslySelected={this.properties.color}
+                options={
+                  this.printerConfig.Color
+                    ? [
+                        {
+                          id: 1,
+                          title: i18next.t('printer_selection.color_color'),
+                          meta: '',
+                          type: 'color',
+                        },
+                      ]
+                    : [
+                        {
+                          id: 0,
+                          title: i18next.t('printer_selection.color_grayscale'),
+                          meta: '',
+                          type: 'color',
+                        },
+                      ]
+                }
+                previouslySelected={this.previouslySelectedProperties.color}
               />
               <ezp-select
                 label={i18next.t('printer_selection.orientation')}
                 placeholder={i18next.t('printer_selection.select_orientation')}
                 toggleFlow="horizontal"
-                options={this.options.orientations.map((orientation) => ({
-                  id: orientation.id,
-                  title: orientation.name,
+                options={this.printerConfig.OrientationsSupported.map((orientation, index) => ({
+                  id: this.printerConfig.OrientationsSupportedId[index],
+                  title: i18next.t(`printer_selection.orientation_${orientation}`),
                   meta: '',
+                  type: 'orientation',
                 }))}
-                previouslySelected={this.properties.orientation}
+                previouslySelected={this.previouslySelectedProperties.orientation}
               />
               <ezp-select
                 label={i18next.t('printer_selection.size')}
                 placeholder={i18next.t('printer_selection.select_size')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
-                options={this.options.sizes.map((size) => ({
-                  id: size.id,
-                  title: size.name,
-                  meta: size.description,
+                options={this.printerConfig.PaperFormats.map((format) => ({
+                  id: format.Id,
+                  title: i18next.t(`printer_selection.format_${format.Name}`),
+                  meta: `${format.XRes} x ${format.YRes} in`,
+                  type: 'format',
                 }))}
-                previouslySelected={this.properties.paper}
+                previouslySelected={this.previouslySelectedProperties.paper}
               />
             </div>
           </div>
@@ -308,7 +343,6 @@ export class EzpPrinterSelection {
             </ezp-text-button>
           </div>
           <ezp-user-menu open={this.userMenuOpen} name={this.userName} />
-          {/*<ejs-progress status="Printjob in progress" />*/}
         </div>
       </Host>
     )

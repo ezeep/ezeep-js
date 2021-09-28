@@ -49,3 +49,13 @@ export const poll = async ({ fn, validate, interval, maxAttempts }) => {
 
   return new Promise(executePoll)
 }
+
+export const removeEmptyStrings = (obj: { [x: string]: any }) => {
+  let newObj = {}
+  Object.keys(obj).forEach((prop) => {
+    if (obj[prop] !== '') {
+      newObj[prop] = obj[prop]
+    }
+  })
+  return newObj
+}

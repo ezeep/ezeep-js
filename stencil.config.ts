@@ -27,14 +27,14 @@ export const config: Config = {
       copy: [{ src: 'data' }],
     },
   ],
-  /* devServer: {
+  devServer: {
     address: process.env.DEV_SERVER_ADDRESS,
     port: parseInt(process.env.DEV_SERVER_PORT),
     https: {
       cert: fs.readFileSync('certificate.pem', 'utf-8'),
       key: fs.readFileSync('key.pem', 'utf-8'),
     },
-  },*/
+  },
   rollupPlugins: {
     after: [
       replacePlugin({
@@ -42,7 +42,7 @@ export const config: Config = {
         delimiters: ['<%', '%>'],
       }),
     ],
-  }, 
+  },
   buildEs5: true,
   extras: {
     cssVarsShim: true,
