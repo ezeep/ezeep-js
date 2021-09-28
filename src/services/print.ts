@@ -104,9 +104,6 @@ export class EzpPrintService {
     }).then((response) => {
       return response.json()
     })
-    /* .then((data) => {
-        console.log(data)
-      }) */
   }
 
   printFileByUrl(

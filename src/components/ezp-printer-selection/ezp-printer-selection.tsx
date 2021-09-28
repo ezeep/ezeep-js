@@ -199,7 +199,6 @@ export class EzpPrinterSelection {
         this.previouslySelectedProperties.orientation = eventDetails.title
         break
       case 'format':
-        console.log('format selected')
         this.selectedProperties.paper = eventDetails.title
         this.selectedProperties.paperid = eventDetails.id
         this.previouslySelectedProperties.paper = eventDetails.title
@@ -233,7 +232,6 @@ export class EzpPrinterSelection {
       .getAllPrinterProperties(authStore.state.accessToken)
       .then((printerConfig: PrinterConfig[]) => {
         this.printerConfig = printerConfig[0]
-        console.log(this.printerConfig)
       })
     this.loading = false
   }
