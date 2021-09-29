@@ -325,7 +325,7 @@ export class EzpPrinterSelection {
                 options={this.printerConfig.PaperFormats.map((format) => ({
                   id: format.Id,
                   title: i18next.t(`printer_selection.format_${format.Name}`),
-                  meta: `${format.XRes} x ${format.YRes} in`,
+                  meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
                 previouslySelected={this.previouslySelectedProperties.paper}
