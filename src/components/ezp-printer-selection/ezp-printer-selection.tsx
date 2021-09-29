@@ -324,7 +324,7 @@ export class EzpPrinterSelection {
                 optionFlow="horizontal"
                 options={this.printerConfig.PaperFormats.map((format) => ({
                   id: format.Id,
-                  title: i18next.t(`printer_selection.format_${format.Name}`),
+                  title: format.Name,
                   meta: `${format.XRes} x ${format.YRes} in`,
                   type: 'format',
                 }))}
