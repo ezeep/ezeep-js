@@ -25,17 +25,7 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
     - name: Checkout repository and bump package.js version
-    - uses: actions/checkout@v2
-    - uses: copapow/version-bump-package@v1
-      id: bump
-      with:
-          major_label: ${{ env.MAJOR_VERSION }}
-          minor_label: ${{ env.MINOR_VERSION }}
-          patch_label: ${{ env.PATCH_VERSION }}
-          default_branch: main       
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-    - run: |
-        echo "New package.js version: ${{ steps.bump.outputs.new_version }}"
+      uses: actions/checkout@v2
     
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
