@@ -19,17 +19,7 @@
         "color_color": "Farbe",
         "color_grayscale": "Graustufen",
         "orientation_portrait": "Hochformat",
-        "orientation_landscape": "Querformat",
-        "format_Letter": "[DE PH] Letter",
-        "format_Legal": "Legal",
-        "format_Executive": "Executive",
-        "format_A3": "A3",
-        "format_Com-10": "Com-10",
-        "format_Auto": "Auto",
-        "format_Ledger": "Ledger",
-        "format_A4": "A4",
-        "format_Folio": "Folio",
-        "format_A5": "A5"
+        "orientation_landscape": "Querformat"
     },
     "button_actions": {
         "login": "Anmelden",

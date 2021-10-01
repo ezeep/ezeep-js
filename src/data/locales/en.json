@@ -19,17 +19,7 @@
     "color_color": "Color",
     "color_grayscale": "Grayscale",
     "orientation_portrait": "Portrait",
-    "orientation_landscape": "Landscape",
-    "format_Auto": "Auto",
-    "format_Letter": "Letter",
-    "format_Ledger": "Ledger",
-    "format_Legal": "Legal",
-    "format_Executive": "Executive",
-    "format_A3": "A3",
-    "format_A4": "A4",
-    "format_A5": "A5",
-    "format_Folio": "Folio",
-    "format_Com-10": "Com-10"
+    "orientation_landscape": "Landscape"
   },
   "button_actions": {
     "login": "Sign In",
