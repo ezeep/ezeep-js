@@ -22,7 +22,7 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 Use **script** tags in your html source:
 
 ```html
-<!-- use latest version (not yet available) -->
+<!-- use latest version -->
 
 <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
 <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
