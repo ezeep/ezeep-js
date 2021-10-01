@@ -22,7 +22,7 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 Use **script** tags in your html source:
 
 ```html
-<!-- use latest version (not yet available) -->
+<!-- use latest version -->
 
 <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
 <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
@@ -35,7 +35,7 @@ Use **script** tags in your html source:
 Use npm:
 
 ```bash
-npm install ezeep.js
+npm install @ezeep/ezeep-js
 ```
 
 2. Add the **ezp-printing** tag to your html source.
