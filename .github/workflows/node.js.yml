@@ -24,6 +24,11 @@ jobs:
     - name: Checkout repository and bump package.js version
       uses: actions/checkout@v2
     
+    - name: Bump package.json version
+      uses: reedyuk/npm-version@1.1.1
+      with:
+        version: "${{ env.MODULE_VERSION }}"
+    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
