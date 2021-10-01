@@ -3,13 +3,10 @@
 name: Node.js Build
 
 env:
-  MAJOR_VERSION: 1          # update MAJOR and MINOR version here
-  MINOR_VERSION: 0
-  PATCH_VERSION: ${{ github.run_number }}
-  MODULE_VERSION: '${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}'
+  MODULE_VERSION: '1.0.${{ github.run_number }}'   # update MAJOR and MINOR version here
   DIST_PATH: 'dist/ezeep'                          # deployment path
   ARTIFACT_NAME: 'ezeep-js.zip'                    # artifact name
-  PRERELEASE: false                                 # true if marked as pre-release, false if production-ready
+  PRERELEASE: false                                # true if marked as pre-release, false if production-ready
 
 on:
   push:
