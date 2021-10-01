@@ -35,7 +35,7 @@ Use **script** tags in your html source:
 Use npm:
 
 ```bash
-npm install ezeep.js
+npm install @ezeep/ezeep-js
 ```
 
 2. Add the **ezp-printing** tag to your html source.
