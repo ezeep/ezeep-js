@@ -28,19 +28,21 @@ jobs:
       uses: reedyuk/npm-version@1.1.1
       with:
         version: "${{ env.MODULE_VERSION }}"
-        git-tag-version: 'true'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
+        registry-url: 'https://registry.npmjs.org'
         cache: 'npm'
 
     - name: Build
       run: |
         npm ci
         npm run build
+        npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: Archive Artifacts
       uses: actions/upload-artifact@v2
@@ -64,6 +66,7 @@ jobs:
         artifacts: "${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
         token: ${{ secrets.GITHUB_TOKEN }}
 
+ 
   publish:
     environment: Production
     needs: build
