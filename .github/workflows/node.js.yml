@@ -36,6 +36,8 @@ jobs:
           patch_label: ${{ env.PATCH_VERSION }}
           default_branch: main       
           github_token: ${{ secrets.GITHUB_TOKEN }}
+    - run: |
+        echo "New package.js version: ${{ steps.bump.outputs.new_version }}"
     
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
