@@ -1,9 +1,9 @@
 {
   "name": "@ezeep/ezeep-js",
   "version": "1.0.0-alpha.0",
-  "description": "Print with ezeep from the web.",
-  "author": "Cortado Holding AG",
-  "license": "UNLICENSED",
+  "description": "A JavaScript library to enable easy and fast printing on any web application uising ezeep Blue.",
+  "author": "Thinprint GmbH",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ezeep/ezeep-js.git"
