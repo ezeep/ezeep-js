@@ -104,7 +104,7 @@ export class EzpAuth {
           </div>
           <div id="content">
             <ezp-icon id="icon" name="rocket" size="large" />
-            <cap-heading level="quaternary">{i18next.t('login_page.get_started')}</cap-heading>
+            <cap-heading level="tertiary">{i18next.t('login_page.get_started')}</cap-heading>
             <cap-label>{i18next.t('login_page.description')}</cap-label>
             <ezp-text-button
               id="button"

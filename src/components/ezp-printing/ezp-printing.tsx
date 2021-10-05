@@ -97,6 +97,8 @@ export class EzpPrinting {
   }
 
   componentWillLoad() {
+    authStore.state.redirectUri = this.redirecturi
+
     if (this.authapihosturl) {
       authStore.state.authApiHostUrl = this.authapihosturl
     } else {
