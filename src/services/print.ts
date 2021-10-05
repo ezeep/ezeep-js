@@ -64,11 +64,7 @@ export class EzpPrintService {
       headers: {
         Authorization: 'Bearer ' + accessToken,
       },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        printStore.state.printers = data
-      })
+    }).then((response) => response.json())
   }
 
   getConfig(accessToken: string) {
@@ -77,19 +73,15 @@ export class EzpPrintService {
       headers: {
         Authorization: 'Bearer ' + accessToken,
       },
+    }).then((response) => {
+      if (response.ok) {
+        authStore.state.isAuthorized = true
+      }
+      if (!response.ok) {
+        throw new Error('http status ' + response.status)
+      }
+      return response.json()
     })
-      .then((response) => {
-        if (response.ok) {
-          authStore.state.isAuthorized = true
-        }
-        if (!response.ok) {
-          throw new Error('http status ' + response.status)
-        }
-        return response.json()
-      })
-      .then((data) => {
-        printStore.state.config = data
-      })
   }
 
   getPrinterProperties(accessToken: string, printerID: string) {
@@ -98,14 +90,9 @@ export class EzpPrintService {
       headers: {
         Authorization: 'Bearer ' + accessToken,
       },
+    }).then((response) => {
+      return response.json()
     })
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {
-        this.printerConfig = data[0]
-        printStore.state.selectedPrinterProperties = this.printerConfig
-      })
   }
 
   getAllPrinterProperties(accessToken: string) {
@@ -117,9 +104,6 @@ export class EzpPrintService {
     }).then((response) => {
       return response.json()
     })
-    /* .then((data) => {
-        console.log(data)
-      }) */
   }
 
   printFileByUrl(
@@ -162,8 +146,6 @@ export class EzpPrintService {
 
 const printStore = createStore({
   printers: [],
-  config: [],
-  selectedPrinterProperties: <PrinterConfig>{},
   jobID: '',
   printFinished: false,
   printApiHostUrl: '',

@@ -121,7 +121,7 @@ export class EzpSelect {
     this.selectToggle.emit(this.expanded)
   }
 
-  private select = (id: number) => {
+  private select = (id: number | string) => {
     const delay = this.selected.id === id ? 0 : this.duration * 1000
 
     this.selected = this.options.find((option) => option.id === id)

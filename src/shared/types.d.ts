@@ -21,12 +21,13 @@ export type PrintUserType = {
   organizations: PrintOrganizationType[]
 }
 export type SelectFlowTypes = 'vertical' | 'horizontal'
-export type SelectOptionType = { id: number; title: string; meta: string }
+export type SelectOptionType = { id: number | string; title: string; meta: string; type?: string }
 export type TextButtonLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type TextButtonTypeTypes = 'button'
+
 export interface PrinterProperties {
   paper?: string
-  paperid?: string
+  paperid?: number | string
   color?: boolean | string
   duplex?: boolean | string
   duplexmode?: number | string
@@ -36,8 +37,9 @@ export interface PrinterProperties {
 }
 
 export interface Printer {
-  name: string
   id: string
+  location: string
+  name: string
 }
 
 export interface PaperFormat {

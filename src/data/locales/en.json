@@ -15,7 +15,11 @@
     "select_printer": "Select a printer",
     "select_color": "Select a color",
     "select_orientation": "Select an orientation",
-    "select_size": "Select a paper size"
+    "select_size": "Select a paper size",
+    "color_color": "Color",
+    "color_grayscale": "Grayscale",
+    "orientation_portrait": "Portrait",
+    "orientation_landscape": "Landscape"
   },
   "button_actions": {
     "login": "Sign In",
