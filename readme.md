@@ -17,6 +17,8 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 
 ### Usage
 
+Important: You need to set up your server with https!
+
 1. Include ezeep.js to your web app by the following options:
 
 Use **script** tags in your html source:
@@ -138,6 +140,8 @@ If you want to bind the printing process to a custom html element, you can use t
 ## Contribution Guide
 
 Make sure you follow the [GitHub flow](https://guides.github.com/introduction/flow/) if you want to contribute. Clone and create a branch for your contribution. When finished, create a pull request for the main branch.
+
+Important: You need to set up your development server with https!
 
 Clone this repository to a new directory:
 
