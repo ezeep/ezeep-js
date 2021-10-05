@@ -205,7 +205,9 @@ export class EzpSelect {
               >
                 <ezp-icon name="checkmark" class="indicator" />
                 <div class="details">
-                  <cap-label class="title">{option.title}</cap-label>
+                  <cap-label class="title" clip>
+                    {option.title}
+                  </cap-label>
                   {option.meta !== '' ? (
                     <cap-label level="tertiary" class="meta">
                       {option.meta}
