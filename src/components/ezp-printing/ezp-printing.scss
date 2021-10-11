@@ -14,10 +14,15 @@
  */
 
 :host {
+  --cap-cap-height-sans: 2048;
+  --cap-font-family-sans: 'Inter var';
+  --cap-upm-sans: 2816;
+
   align-content: center;
   background: var(--color-surface-primary);
   color: var(--color-foreground-primary);
   display: grid;
+  font-feature-settings: 'calt', 'liga', 'ss03', 'zero', 'cv05', 'cv10';
   grid-template: auto / auto;
   justify-content: center;
   margin: 0;
@@ -27,7 +32,8 @@
   @include global.color-declaration('light');
   @include global.spacing-declaration;
   @include global.easing-declaration;
-  @include global.hairline-declaration;
+  @include global.hairline-width-declaration;
+  @include global.hairline-color-declaration;
   @include global.media-appearance('dark') {
     @include global.color-declaration('dark');
   }

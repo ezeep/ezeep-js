@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property            | Attribute | Description    | Type                                                                                                     | Default     |
@@ -10,24 +9,17 @@
 | `name` _(required)_ | `name`    | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "off" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined` |
 | `size`              | `size`    | Description... | `"large" \| "normal"`                                                                                    | `'normal'`  |
 
-
-## CSS Custom Properties
-
-| Name           | Description    |
-| -------------- | -------------- |
-| `--glyph-size` | Description... |
-
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-auth](../ezp-auth)
- - [ezp-icon-button](../ezp-icon-button)
- - [ezp-select](../ezp-select)
- - [ezp-user-menu](../ezp-user-menu)
+- [ezp-auth](../ezp-auth)
+- [ezp-icon-button](../ezp-icon-button)
+- [ezp-select](../ezp-select)
+- [ezp-user-menu](../ezp-user-menu)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-auth --> ezp-icon
@@ -37,6 +29,4 @@ graph TD;
   style ezp-icon fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

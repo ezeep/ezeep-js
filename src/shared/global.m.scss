@@ -39,11 +39,8 @@ $colors: (
     'foreground-primary': rgba(0 0 0 / 94%),
     'foreground-secondary': rgba(99 99 99 / 90%),
     'foreground-tertiary': rgba(99 99 99 / 58%),
-    'outline-solid-primary': rgb(226 226 226),
-    'outline-solid-secondary': rgb(209 209 209),
-    'outline-translucent-primary': rgba(119 119 119 / 10%),
-    'outline-translucent-secondary': rgba(119 119 119 / 16%),
-    'outline-translucent-tertiary': rgba(119 119 119 / 22%),
+    'outline-primary': rgba(119 119 119 / 16%),
+    'outline-secondary': rgba(119 119 119 / 26%),
     'overlay': rgba(0 0 0 / 26%),
     'shadow': rgba(0 0 0 / 4%),
   ),
@@ -65,18 +62,13 @@ $colors: (
     'foreground-primary': rgba(255 255 255 / 94%),
     'foreground-secondary': rgba(139 139 139 / 90%),
     'foreground-tertiary': rgba(139 139 139 / 58%),
-    'outline-solid-primary': rgb(40 40 40),
-    'outline-solid-secondary': rgb(62 62 62),
-    'outline-translucent-primary': rgba(119 119 119 / 28%),
-    'outline-translucent-secondary': rgba(119 119 119 / 34%),
-    'outline-translucent-tertiary': rgba(119 119 119 / 40%),
+    'outline-primary': rgba(119 119 119 / 26%),
+    'outline-secondary': rgba(119 119 119 / 32%),
     'overlay': rgba(0 0 0 / 68%),
     'shadow': rgba(0 0 0 / 10%),
   ),
 );
-$font-features: 'calt', 'liga', 'case', 'ss03', 'zero', 'cv05', 'cv10';
-$font-weights: (('soft', 400), ('strong', 500), ('heavy', 600));
-$spacings: (4px, 6px, 10px, 16px, 26px, 42px, 68px);
+$spacings: (4px, 8px, 12px, 20px, 32px, 52px, 84px);
 $easings: (
   'in-quart': cubic-bezier(0.11, 0, 0.5, 0),
   'in-out-quart': cubic-bezier(0.76, 0, 0.24, 1),
@@ -92,25 +84,6 @@ $ratios: (1, 2, 3);
  * Functions
  *
  */
-
-@function get-typo-track($scale) {
-  $a: -0.0223;
-  $b: 0.185;
-  $c: -0.1745;
-  $d: $scale / 1px;
-  $track: ($a + ($b * math.pow(math.$e, $c * $d))) * 1em;
-
-  @return $track;
-}
-
-@function get-typo-offset($scale, $lead) {
-  $upm: 2816;
-  $cap-height: 2048;
-  $box-height: 2 * math.round((($cap-height / $upm) * $scale) / 2);
-  $offset: ($lead - $box-height) / 2;
-
-  @return $offset;
-}
 
 @function get-color-display-p3($color) {
   $red: color.red($color) / 255;
@@ -164,12 +137,20 @@ $ratios: (1, 2, 3);
   }
 }
 
-@mixin hairline-declaration() {
+@mixin hairline-width-declaration() {
   @each $ratio in $ratios {
     @include media-density($ratio) {
-      --hairline-positive: calc(1px / #{$ratio});
-      --hairline-negative: calc(-1px / #{$ratio});
+      --hairline-width-positive: calc(1px / #{$ratio});
+      --hairline-width-negative: calc(-1px / #{$ratio});
     }
+  }
+}
+
+@mixin hairline-color-declaration() {
+  --hairline-color: var(--color-outline-primary);
+
+  @include media-density(2) {
+    --hairline-color: var(--color-outline-secondary);
   }
 }
 
@@ -182,56 +163,5 @@ $ratios: (1, 2, 3);
 @mixin easing-declaration() {
   @each $easing in $easings {
     --easing-#{list.nth($easing, 1)}: #{list.nth($easing, 2)};
-  }
-}
-
-@mixin typo-declaration($props, $name, $height: true, $offset: true) {
-  --#{$name}-size: #{list.nth($props, 1)};
-  --#{$name}-spacing: #{get-typo-track(list.nth($props, 1))};
-
-  @if ($height) {
-    --#{$name}-height: #{list.nth($props, 2)};
-  }
-
-  @if ($offset) {
-    --#{$name}-offset: #{get-typo-offset(list.nth($props, 1), list.nth($props, 2))};
-  }
-}
-
-@mixin typo-level-declaration($levels, $name) {
-  @each $level, $props in $levels {
-    :host(.#{$level}) {
-      @include typo-declaration($props, $name);
-    }
-  }
-}
-
-@mixin typo-trim-offset($name) {
-  & {
-    padding-bottom: 1px;
-    padding-top: 1px;
-  }
-
-  &::before,
-  &::after {
-    content: '';
-    display: block;
-    height: 0;
-  }
-
-  &:before {
-    margin-top: calc((var(--#{$name}-offset) + 1px) * -1);
-  }
-
-  &:after {
-    margin-bottom: calc((var(--#{$name}-offset) + 1px) * -1);
-  }
-}
-
-@mixin typo-weight-declaration($name) {
-  @each $weight in $font-weights {
-    :host(.#{list.nth($weight, 1)}) {
-      --#{$name}-weight: #{list.nth($weight, 2)};
-    }
   }
 }

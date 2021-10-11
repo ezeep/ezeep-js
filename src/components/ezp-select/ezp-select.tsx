@@ -180,7 +180,7 @@ export class EzpSelect {
       `toggle-${this.toggleFlow}`,
       this.optionFlow ? `option-${this.optionFlow}` : '',
     ]
-    const labelLevel = this.toggleFlow === 'horizontal' ? 'primary' : 'secondary'
+    const labelLevel = this.toggleFlow === 'horizontal' ? 'secondary' : 'tertiary'
 
     return (
       <Host class={hostClasses.join(' ')}>
@@ -205,9 +205,11 @@ export class EzpSelect {
               >
                 <ezp-icon name="checkmark" class="indicator" />
                 <div class="details">
-                  <cap-label class="title">{option.title}</cap-label>
+                  <cap-label class="title" clip>
+                    {option.title}
+                  </cap-label>
                   {option.meta !== '' ? (
-                    <cap-label level="secondary" class="meta">
+                    <cap-label level="tertiary" class="meta">
                       {option.meta}
                     </cap-label>
                   ) : null}

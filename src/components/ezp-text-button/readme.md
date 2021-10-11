@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property   | Attribute  | Description    | Type                                     | Default     |
@@ -13,34 +12,19 @@
 | `level`    | `level`    | Description... | `"primary" \| "secondary" \| "tertiary"` | `'primary'` |
 | `type`     | `type`     | Description... | `"button"`                               | `undefined` |
 
-
-## CSS Custom Properties
-
-| Name                           | Description    |
-| ------------------------------ | -------------- |
-| `--button-background`          | Description... |
-| `--button-background-active`   | Description... |
-| `--button-background-disabled` | Description... |
-| `--button-background-hover`    | Description... |
-| `--button-background-init`     | Description... |
-| `--button-color`               | Description... |
-| `--button-color-disabled`      | Description... |
-| `--button-color-init`          | Description... |
-| `--button-cursor`              | Description... |
-
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-auth](../ezp-auth)
- - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-auth](../ezp-auth)
+- [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
 - cap-label
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-text-button --> cap-label
@@ -49,6 +33,4 @@ graph TD;
   style ezp-text-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---
