@@ -14,16 +14,9 @@
  */
 
 :host {
-  /** @prop --box-separator-position: Description... */
-  --box-separator-position: 0 0 0 var(--hairline-positive);
-
-  /** @prop --duration: Description... */
+  --box-separator-position: 0 0 0 var(--hairline-width-positive);
   --duration: 1s;
-
-  /** @prop --indicator-size: Description... */
   --indicator-size: 44px;
-
-  /** @prop --stroke-width: Description... */
   --stroke-width: 4;
 
   align-content: center;
@@ -44,14 +37,14 @@
   z-index: 9999;
 
   @include global.media-appearance('dark') {
-    --box-separator-position: inset 0 0 0 var(--hairline-positive);
+    --box-separator-position: inset 0 0 0 var(--hairline-width-positive);
   }
 }
 
 #box {
   background: var(--color-surface-tertiary);
   border-radius: 3px;
-  box-shadow: var(--box-separator-position) var(--color-outline-translucent-tertiary);
+  box-shadow: var(--box-separator-position) var(--hairline-color);
   display: grid;
   grid-row-gap: var(--spacing-2);
   grid-template-columns: 1fr;
@@ -70,7 +63,7 @@
 
 #track {
   fill: none;
-  stroke: var(--color-outline-translucent-secondary);
+  stroke: var(--color-outline-secondary);
   stroke-width: var(--stroke-width);
 }
 

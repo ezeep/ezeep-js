@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property          | Attribute         | Description | Type      | Default     |
@@ -17,7 +16,6 @@
 | `printapihosturl` | `printapihosturl` |             | `string`  | `undefined` |
 | `redirecturi`     | `redirecturi`     |             | `string`  | `undefined` |
 
-
 ## Methods
 
 ### `open() => Promise<void>`
@@ -28,9 +26,6 @@ Public methods
 
 Type: `Promise<void>`
 
-
-
-
 ## Dependencies
 
 ### Depends on
@@ -40,6 +35,7 @@ Type: `Promise<void>`
 - [ezp-icon-button](../ezp-icon-button)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-printing --> ezp-auth
@@ -48,7 +44,6 @@ graph TD;
   ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-icon
-  ezp-auth --> cap-heading
   ezp-auth --> cap-label
   ezp-auth --> ezp-text-button
   ezp-progress --> cap-label
@@ -70,6 +65,4 @@ graph TD;
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

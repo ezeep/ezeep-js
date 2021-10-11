@@ -13,31 +13,14 @@
  */
 
 :host {
-  /** @prop --button-background: Description... */
-  --button-background: var(--button-background-init);
-
-  /** @prop --button-background-active: Description... */
   --button-background-active: transparent;
-
-  /** @prop --button-background-disabled: Description... */
   --button-background-disabled: transparent;
-
-  /** @prop --button-background-hover: Description... */
   --button-background-hover: transparent;
-
-  /** @prop --button-background-init: Description... */
   --button-background-init: transparent;
-
-  /** @prop --button-color: Description... */
-  --button-color: var(--button-color-init);
-
-  /** @prop --button-color-disabled: Description... */
+  --button-background: var(--button-background-init);
   --button-color-disabled: inherit;
-
-  /** @prop --button-color-init: Description... */
   --button-color-init: inherit;
-
-  /** @prop --button-cursor: Description... */
+  --button-color: var(--button-color-init);
   --button-cursor: pointer;
 
   display: flex;

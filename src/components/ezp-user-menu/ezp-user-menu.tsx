@@ -117,7 +117,7 @@ export class EzpUserMenu {
     return (
       <Host class={this.open ? 'is-open' : ''}>
         <div id="header">
-          <cap-label id="name" level="primary" weight="strong">
+          <cap-label id="name" clip weight="strong">
             {this.name}
           </cap-label>
           <ezp-icon-button id="close" level="quaternary" icon="cross" onClick={this.handleClose} />
@@ -129,7 +129,7 @@ export class EzpUserMenu {
               <cap-label>{link.title}</cap-label>
             </a>
           ))}
-          <a class="logout" onClick={this.logOut}>
+          <a class="link" onClick={this.logOut}>
             <ezp-icon class="link__icon" name="off"></ezp-icon>
             <cap-label>Logout</cap-label>
           </a>
