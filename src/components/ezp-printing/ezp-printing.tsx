@@ -1,6 +1,7 @@
 import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
 import authStore, { sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
+import config from '../../shared/config.json'
 
 @Component({
   tag: 'ezp-printing',
@@ -102,13 +103,13 @@ export class EzpPrinting {
     if (this.authapihosturl) {
       authStore.state.authApiHostUrl = this.authapihosturl
     } else {
-      authStore.state.authApiHostUrl = 'account.ezeep.com'
+      authStore.state.authApiHostUrl = config.authApiHostUrl
     }
 
     if (this.printapihosturl) {
       printStore.state.printApiHostUrl = this.printapihosturl
     } else {
-      printStore.state.printApiHostUrl = 'printapi.ezeep.com'
+      printStore.state.printApiHostUrl = config.printingApiHostUrl
     }
 
     sendCodeToParentWindow()
