@@ -31,6 +31,7 @@
 - cap-label
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-select](../ezp-select)
+- [ezp-stepper](../ezp-stepper)
 - [ezp-text-button](../ezp-text-button)
 - [ezp-user-menu](../ezp-user-menu)
 
@@ -42,6 +43,7 @@ graph TD;
   ezp-printer-selection --> cap-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
+  ezp-printer-selection --> ezp-stepper
   ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
   ezp-progress --> cap-label
@@ -49,6 +51,8 @@ graph TD;
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> cap-label
+  ezp-stepper --> cap-label
+  ezp-stepper --> ezp-icon
   ezp-text-button --> cap-label
   ezp-user-menu --> ezp-backdrop
   ezp-user-menu --> cap-label

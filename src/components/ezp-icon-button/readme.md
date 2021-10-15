@@ -4,14 +4,14 @@
 
 ## Properties
 
-| Property            | Attribute  | Description    | Type                                                                                                     | Default     |
-| ------------------- | ---------- | -------------- | -------------------------------------------------------------------------------------------------------- | ----------- |
-| `blank`             | `blank`    | Description... | `boolean`                                                                                                | `false`     |
-| `disabled`          | `disabled` | Description... | `boolean`                                                                                                | `false`     |
-| `href`              | `href`     | Description... | `string`                                                                                                 | `undefined` |
-| `icon` _(required)_ | `icon`     | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "off" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined` |
-| `level`             | `level`    | Description... | `"primary" \| "quaternary" \| "secondary" \| "tertiary"`                                                 | `'primary'` |
-| `type`              | `type`     | Description... | `"button"`                                                                                               | `undefined` |
+| Property            | Attribute  | Description    | Type                                                                                                                          | Default     |
+| ------------------- | ---------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `blank`             | `blank`    | Description... | `boolean`                                                                                                                     | `false`     |
+| `disabled`          | `disabled` | Description... | `boolean`                                                                                                                     | `false`     |
+| `href`              | `href`     | Description... | `string`                                                                                                                      | `undefined` |
+| `icon` _(required)_ | `icon`     | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "minus" \| "off" \| "plus" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined` |
+| `level`             | `level`    | Description... | `"primary" \| "quaternary" \| "secondary" \| "tertiary"`                                                                      | `'primary'` |
+| `type`              | `type`     | Description... | `"button"`                                                                                                                    | `undefined` |
 
 ## Dependencies
 

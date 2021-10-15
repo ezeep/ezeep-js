@@ -4,15 +4,15 @@
 
 ## Properties
 
-| Property             | Attribute             | Description    | Type                                                                                                     | Default         |
-| -------------------- | --------------------- | -------------- | -------------------------------------------------------------------------------------------------------- | --------------- |
-| `icon`               | `icon`                | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "off" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined`     |
-| `label`              | `label`               | Description... | `string`                                                                                                 | `'Label'`       |
-| `optionFlow`         | `option-flow`         | Description... | `"horizontal" \| "vertical"`                                                                             | `undefined`     |
-| `options`            | --                    | Description... | `SelectOptionType[]`                                                                                     | `undefined`     |
-| `placeholder`        | `placeholder`         | Description... | `string`                                                                                                 | `'Placeholder'` |
-| `previouslySelected` | `previously-selected` |                | `any`                                                                                                    | `undefined`     |
-| `toggleFlow`         | `toggle-flow`         | Description... | `"horizontal" \| "vertical"`                                                                             | `'horizontal'`  |
+| Property             | Attribute             | Description    | Type                                                                                                                          | Default         |
+| -------------------- | --------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `icon`               | `icon`                | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "minus" \| "off" \| "plus" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined`     |
+| `label`              | `label`               | Description... | `string`                                                                                                                      | `'Label'`       |
+| `optionFlow`         | `option-flow`         | Description... | `"horizontal" \| "vertical"`                                                                                                  | `undefined`     |
+| `options`            | --                    | Description... | `SelectOptionType[]`                                                                                                          | `undefined`     |
+| `placeholder`        | `placeholder`         | Description... | `string`                                                                                                                      | `'Placeholder'` |
+| `previouslySelected` | `previously-selected` |                | `any`                                                                                                                         | `undefined`     |
+| `toggleFlow`         | `toggle-flow`         | Description... | `"horizontal" \| "vertical"`                                                                                                  | `'horizontal'`  |
 
 ## Events
 

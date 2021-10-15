@@ -53,11 +53,14 @@ graph TD;
   ezp-printer-selection --> cap-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
+  ezp-printer-selection --> ezp-stepper
   ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> cap-label
+  ezp-stepper --> cap-label
+  ezp-stepper --> ezp-icon
   ezp-user-menu --> ezp-backdrop
   ezp-user-menu --> cap-label
   ezp-user-menu --> ezp-icon-button

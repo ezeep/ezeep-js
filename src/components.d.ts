@@ -109,6 +109,20 @@ export namespace Components {
          */
         "toggleFlow": SelectFlowTypes;
     }
+    interface EzpStepper {
+        /**
+          * Description...
+         */
+        "label": string;
+        /**
+          * Description...
+         */
+        "max": number;
+        /**
+          * Description...
+         */
+        "min": number;
+    }
     interface EzpTextButton {
         /**
           * Description...
@@ -185,6 +199,12 @@ declare global {
         prototype: HTMLEzpSelectElement;
         new (): HTMLEzpSelectElement;
     };
+    interface HTMLEzpStepperElement extends Components.EzpStepper, HTMLStencilElement {
+    }
+    var HTMLEzpStepperElement: {
+        prototype: HTMLEzpStepperElement;
+        new (): HTMLEzpStepperElement;
+    };
     interface HTMLEzpTextButtonElement extends Components.EzpTextButton, HTMLStencilElement {
     }
     var HTMLEzpTextButtonElement: {
@@ -206,6 +226,7 @@ declare global {
         "ezp-printing": HTMLEzpPrintingElement;
         "ezp-progress": HTMLEzpProgressElement;
         "ezp-select": HTMLEzpSelectElement;
+        "ezp-stepper": HTMLEzpStepperElement;
         "ezp-text-button": HTMLEzpTextButtonElement;
         "ezp-user-menu": HTMLEzpUserMenuElement;
     }
@@ -326,6 +347,20 @@ declare namespace LocalJSX {
          */
         "toggleFlow"?: SelectFlowTypes;
     }
+    interface EzpStepper {
+        /**
+          * Description...
+         */
+        "label"?: string;
+        /**
+          * Description...
+         */
+        "max"?: number;
+        /**
+          * Description...
+         */
+        "min"?: number;
+    }
     interface EzpTextButton {
         /**
           * Description...
@@ -366,6 +401,7 @@ declare namespace LocalJSX {
         "ezp-printing": EzpPrinting;
         "ezp-progress": EzpProgress;
         "ezp-select": EzpSelect;
+        "ezp-stepper": EzpStepper;
         "ezp-text-button": EzpTextButton;
         "ezp-user-menu": EzpUserMenu;
     }
@@ -382,6 +418,7 @@ declare module "@stencil/core" {
             "ezp-printing": LocalJSX.EzpPrinting & JSXBase.HTMLAttributes<HTMLEzpPrintingElement>;
             "ezp-progress": LocalJSX.EzpProgress & JSXBase.HTMLAttributes<HTMLEzpProgressElement>;
             "ezp-select": LocalJSX.EzpSelect & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
+            "ezp-stepper": LocalJSX.EzpStepper & JSXBase.HTMLAttributes<HTMLEzpStepperElement>;
             "ezp-text-button": LocalJSX.EzpTextButton & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
             "ezp-user-menu": LocalJSX.EzpUserMenu & JSXBase.HTMLAttributes<HTMLEzpUserMenuElement>;
         }

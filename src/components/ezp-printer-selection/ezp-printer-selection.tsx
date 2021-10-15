@@ -330,6 +330,7 @@ export class EzpPrinterSelection {
                 }))}
                 previouslySelected={this.previouslySelectedProperties.paper}
               />
+              <ezp-stepper label="Copies" max={10} />
             </div>
           </div>
           <div id="footer">
