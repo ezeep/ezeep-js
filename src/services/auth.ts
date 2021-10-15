@@ -126,6 +126,7 @@ const authStore = createStore({
   isAuthorized: false,
   devApi: false,
   authApiHostUrl: '',
+  redirectUri: ''
 })
 
 export default authStore
@@ -136,7 +137,7 @@ export function sendCodeToParentWindow() {
   const code = params.get('code')
   if (window.opener) {
     // send them to the opening window
-    window.opener.postMessage(code, 'https://develop.dev.azdev.ezeep.com:3333/')
+    window.opener.postMessage(code, authStore.state.redirectUri)
     window.close()
   }
 }
