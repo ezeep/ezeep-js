@@ -28,7 +28,7 @@
 ### Depends on
 
 - [ezp-progress](../ezp-progress)
-- cap-label
+- [ezp-label](../ezp-label)
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-select](../ezp-select)
 - [ezp-stepper](../ezp-stepper)
@@ -40,22 +40,22 @@
 ```mermaid
 graph TD;
   ezp-printer-selection --> ezp-progress
-  ezp-printer-selection --> cap-label
+  ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-stepper
   ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
-  ezp-progress --> cap-label
+  ezp-progress --> ezp-label
   ezp-icon-button --> ezp-icon
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
-  ezp-select --> cap-label
-  ezp-stepper --> cap-label
+  ezp-select --> ezp-label
+  ezp-stepper --> ezp-label
   ezp-stepper --> ezp-icon
-  ezp-text-button --> cap-label
+  ezp-text-button --> ezp-label
   ezp-user-menu --> ezp-backdrop
-  ezp-user-menu --> cap-label
+  ezp-user-menu --> ezp-label
   ezp-user-menu --> ezp-icon-button
   ezp-user-menu --> ezp-icon
   ezp-printing --> ezp-printer-selection

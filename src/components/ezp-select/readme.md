@@ -31,7 +31,7 @@
 
 - [ezp-backdrop](../ezp-backdrop)
 - [ezp-icon](../ezp-icon)
-- cap-label
+- [ezp-label](../ezp-label)
 
 ### Graph
 
@@ -39,7 +39,7 @@
 graph TD;
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
-  ezp-select --> cap-label
+  ezp-select --> ezp-label
   ezp-printer-selection --> ezp-select
   style ezp-select fill:#f9f,stroke:#333,stroke-width:4px
 ```

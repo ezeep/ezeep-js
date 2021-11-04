@@ -18,14 +18,14 @@
 
 ### Depends on
 
-- cap-label
+- [ezp-label](../ezp-label)
 - [ezp-icon](../ezp-icon)
 
 ### Graph
 
 ```mermaid
 graph TD;
-  ezp-stepper --> cap-label
+  ezp-stepper --> ezp-label
   ezp-stepper --> ezp-icon
   ezp-printer-selection --> ezp-stepper
   style ezp-stepper fill:#f9f,stroke:#333,stroke-width:4px

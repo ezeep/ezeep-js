@@ -26,6 +26,8 @@ export type SelectFlowTypes = 'vertical' | 'horizontal'
 export type SelectOptionType = { id: number | string; title: string; meta: string; type?: string }
 export type TextButtonLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type TextButtonTypeTypes = 'button'
+export type LabelLevelTypes = 'primary' | 'secondary' | 'tertiary'
+export type WeightTypes = 'soft' | 'strong' | 'heavy'
 
 export interface PrinterProperties {
   paper?: string

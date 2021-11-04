@@ -44,13 +44,13 @@ graph TD;
   ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-icon
-  ezp-auth --> cap-label
+  ezp-auth --> ezp-label
   ezp-auth --> ezp-text-button
-  ezp-progress --> cap-label
+  ezp-progress --> ezp-label
   ezp-icon-button --> ezp-icon
-  ezp-text-button --> cap-label
+  ezp-text-button --> ezp-label
   ezp-printer-selection --> ezp-progress
-  ezp-printer-selection --> cap-label
+  ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-stepper
@@ -58,11 +58,11 @@ graph TD;
   ezp-printer-selection --> ezp-user-menu
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
-  ezp-select --> cap-label
-  ezp-stepper --> cap-label
+  ezp-select --> ezp-label
+  ezp-stepper --> ezp-label
   ezp-stepper --> ezp-icon
   ezp-user-menu --> ezp-backdrop
-  ezp-user-menu --> cap-label
+  ezp-user-menu --> ezp-label
   ezp-user-menu --> ezp-icon-button
   ezp-user-menu --> ezp-icon
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px

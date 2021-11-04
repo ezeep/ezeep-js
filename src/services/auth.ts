@@ -126,7 +126,7 @@ const authStore = createStore({
   isAuthorized: false,
   devApi: false,
   authApiHostUrl: '',
-  redirectUri: ''
+  redirectUri: '',
 })
 
 export default authStore

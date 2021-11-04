@@ -30,7 +30,6 @@
     "format": "npm run stylelint && npm run prettier"
   },
   "dependencies": {
-    "@cgoern/cap": "^1.0.0-beta.5",
     "@stencil/core": "^2.8.1",
     "fetch-intercept": "^2.4.0",
     "i18next": "21.2.4",
@@ -40,7 +39,7 @@
     "@rollup/plugin-replace": "3.0.0",
     "@stencil/angular-output-target": "0.2.0",
     "@stencil/react-output-target": "^0.1.0",
-    "@stencil/sass": "^1.4.1",
+    "@stencil/sass": "^1.5.2",
     "@stencil/store": "^1.4.1",
     "@types/css-font-loading-module": "^0.0.6",
     "@types/node": "^15.14.9",

@@ -246,14 +246,14 @@ export class EzpPrinterSelection {
     return this.loading ? (
       <ezp-progress status={i18next.t('printer_selection.loading')}></ezp-progress>
     ) : (
-      <Host>
+      <Host exportparts="test: hello">
         {this.printInProgress ? (
           <ezp-progress status={i18next.t('printer_selection.print_in_progress')}></ezp-progress>
         ) : null}
         <div id="container" data-backdrop-surface>
           <div id="header">
-            <cap-label weight="heavy">{i18next.t('printer_selection.print') + ':'}</cap-label>
-            <cap-label>{this.filename}</cap-label>
+            <ezp-label weight="heavy" text={i18next.t('printer_selection.print') + ':'} />
+            <ezp-label text={this.filename} />
             <ezp-icon-button
               level="tertiary"
               icon="menu"
@@ -334,12 +334,17 @@ export class EzpPrinterSelection {
             </div>
           </div>
           <div id="footer">
-            <ezp-text-button type="button" level="secondary" onClick={this.handleCancel}>
-              {i18next.t('button_actions.cancel')}
-            </ezp-text-button>
-            <ezp-text-button type="button" onClick={this.handlePrint}>
-              {i18next.t('button_actions.print')}
-            </ezp-text-button>
+            <ezp-text-button
+              type="button"
+              level="secondary"
+              onClick={this.handleCancel}
+              label={i18next.t('button_actions.cancel')}
+            />
+            <ezp-text-button
+              type="button"
+              onClick={this.handlePrint}
+              label={i18next.t('button_actions.print')}
+            />
           </div>
           <ezp-user-menu open={this.userMenuOpen} name={this.userName} />
         </div>

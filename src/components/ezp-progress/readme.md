@@ -17,13 +17,13 @@
 
 ### Depends on
 
-- cap-label
+- [ezp-label](../ezp-label)
 
 ### Graph
 
 ```mermaid
 graph TD;
-  ezp-progress --> cap-label
+  ezp-progress --> ezp-label
   ezp-auth --> ezp-progress
   ezp-printer-selection --> ezp-progress
   style ezp-progress fill:#f9f,stroke:#333,stroke-width:4px

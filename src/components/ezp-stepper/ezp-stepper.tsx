@@ -87,7 +87,7 @@ export class EzpStepper {
   render() {
     return (
       <Host>
-        <cap-label id="label">{this.label}</cap-label>
+        <ezp-label noWrap id="label" text={this.label} />
         <input
           id="input"
           type="number"

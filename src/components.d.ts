@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes } from "./shared/types";
+import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, WeightTypes } from "./shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -50,6 +50,28 @@ export namespace Components {
           * Description...
          */
         "type": IconButtonTypeTypes;
+    }
+    interface EzpLabel {
+        /**
+          * Description...
+         */
+        "ellipsis": boolean;
+        /**
+          * Description...
+         */
+        "level": LabelLevelTypes;
+        /**
+          * Description...
+         */
+        "noWrap": boolean;
+        /**
+          * Description...
+         */
+        "text": string;
+        /**
+          * Description...
+         */
+        "weight": WeightTypes;
     }
     interface EzpPrinterSelection {
         /**
@@ -139,6 +161,10 @@ export namespace Components {
         /**
           * Description...
          */
+        "label": string;
+        /**
+          * Description...
+         */
         "level": TextButtonLevelTypes;
         /**
           * Description...
@@ -174,6 +200,12 @@ declare global {
     var HTMLEzpIconButtonElement: {
         prototype: HTMLEzpIconButtonElement;
         new (): HTMLEzpIconButtonElement;
+    };
+    interface HTMLEzpLabelElement extends Components.EzpLabel, HTMLStencilElement {
+    }
+    var HTMLEzpLabelElement: {
+        prototype: HTMLEzpLabelElement;
+        new (): HTMLEzpLabelElement;
     };
     interface HTMLEzpPrinterSelectionElement extends Components.EzpPrinterSelection, HTMLStencilElement {
     }
@@ -222,6 +254,7 @@ declare global {
         "ezp-backdrop": HTMLEzpBackdropElement;
         "ezp-icon": HTMLEzpIconElement;
         "ezp-icon-button": HTMLEzpIconButtonElement;
+        "ezp-label": HTMLEzpLabelElement;
         "ezp-printer-selection": HTMLEzpPrinterSelectionElement;
         "ezp-printing": HTMLEzpPrintingElement;
         "ezp-progress": HTMLEzpProgressElement;
@@ -279,6 +312,28 @@ declare namespace LocalJSX {
           * Description...
          */
         "type"?: IconButtonTypeTypes;
+    }
+    interface EzpLabel {
+        /**
+          * Description...
+         */
+        "ellipsis"?: boolean;
+        /**
+          * Description...
+         */
+        "level"?: LabelLevelTypes;
+        /**
+          * Description...
+         */
+        "noWrap"?: boolean;
+        /**
+          * Description...
+         */
+        "text"?: string;
+        /**
+          * Description...
+         */
+        "weight"?: WeightTypes;
     }
     interface EzpPrinterSelection {
         /**
@@ -377,6 +432,10 @@ declare namespace LocalJSX {
         /**
           * Description...
          */
+        "label"?: string;
+        /**
+          * Description...
+         */
         "level"?: TextButtonLevelTypes;
         /**
           * Description...
@@ -397,6 +456,7 @@ declare namespace LocalJSX {
         "ezp-backdrop": EzpBackdrop;
         "ezp-icon": EzpIcon;
         "ezp-icon-button": EzpIconButton;
+        "ezp-label": EzpLabel;
         "ezp-printer-selection": EzpPrinterSelection;
         "ezp-printing": EzpPrinting;
         "ezp-progress": EzpProgress;
@@ -414,6 +474,7 @@ declare module "@stencil/core" {
             "ezp-backdrop": LocalJSX.EzpBackdrop & JSXBase.HTMLAttributes<HTMLEzpBackdropElement>;
             "ezp-icon": LocalJSX.EzpIcon & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
             "ezp-icon-button": LocalJSX.EzpIconButton & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
+            "ezp-label": LocalJSX.EzpLabel & JSXBase.HTMLAttributes<HTMLEzpLabelElement>;
             "ezp-printer-selection": LocalJSX.EzpPrinterSelection & JSXBase.HTMLAttributes<HTMLEzpPrinterSelectionElement>;
             "ezp-printing": LocalJSX.EzpPrinting & JSXBase.HTMLAttributes<HTMLEzpPrintingElement>;
             "ezp-progress": LocalJSX.EzpProgress & JSXBase.HTMLAttributes<HTMLEzpProgressElement>;
