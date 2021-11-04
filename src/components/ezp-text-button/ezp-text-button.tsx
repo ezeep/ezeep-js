@@ -26,6 +26,9 @@ export class EzpTextButton {
   @Prop() level: TextButtonLevelTypes = 'primary'
 
   /** Description... */
+  @Prop() label: string
+
+  /** Description... */
   @Prop() type: TextButtonTypeTypes
 
   /**
@@ -50,9 +53,7 @@ export class EzpTextButton {
     return (
       <Host class={`${this.level}`}>
         <TagType class="button" {...attributes}>
-          <cap-label weight="heavy">
-            <slot />
-          </cap-label>
+          <ezp-label weight="heavy" text={this.label} />
         </TagType>
       </Host>
     )

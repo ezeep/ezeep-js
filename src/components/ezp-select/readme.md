@@ -4,15 +4,15 @@
 
 ## Properties
 
-| Property             | Attribute             | Description    | Type                                                                                                     | Default         |
-| -------------------- | --------------------- | -------------- | -------------------------------------------------------------------------------------------------------- | --------------- |
-| `icon`               | `icon`                | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "off" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined`     |
-| `label`              | `label`               | Description... | `string`                                                                                                 | `'Label'`       |
-| `optionFlow`         | `option-flow`         | Description... | `"horizontal" \| "vertical"`                                                                             | `undefined`     |
-| `options`            | --                    | Description... | `SelectOptionType[]`                                                                                     | `undefined`     |
-| `placeholder`        | `placeholder`         | Description... | `string`                                                                                                 | `'Placeholder'` |
-| `previouslySelected` | `previously-selected` |                | `any`                                                                                                    | `undefined`     |
-| `toggleFlow`         | `toggle-flow`         | Description... | `"horizontal" \| "vertical"`                                                                             | `'horizontal'`  |
+| Property             | Attribute             | Description    | Type                                                                                                                          | Default         |
+| -------------------- | --------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `icon`               | `icon`                | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "minus" \| "off" \| "plus" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined`     |
+| `label`              | `label`               | Description... | `string`                                                                                                                      | `'Label'`       |
+| `optionFlow`         | `option-flow`         | Description... | `"horizontal" \| "vertical"`                                                                                                  | `undefined`     |
+| `options`            | --                    | Description... | `SelectOptionType[]`                                                                                                          | `undefined`     |
+| `placeholder`        | `placeholder`         | Description... | `string`                                                                                                                      | `'Placeholder'` |
+| `previouslySelected` | `previously-selected` |                | `any`                                                                                                                         | `undefined`     |
+| `toggleFlow`         | `toggle-flow`         | Description... | `"horizontal" \| "vertical"`                                                                                                  | `'horizontal'`  |
 
 ## Events
 
@@ -31,7 +31,7 @@
 
 - [ezp-backdrop](../ezp-backdrop)
 - [ezp-icon](../ezp-icon)
-- cap-label
+- [ezp-label](../ezp-label)
 
 ### Graph
 
@@ -39,7 +39,7 @@
 graph TD;
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
-  ezp-select --> cap-label
+  ezp-select --> ezp-label
   ezp-printer-selection --> ezp-select
   style ezp-select fill:#f9f,stroke:#333,stroke-width:4px
 ```

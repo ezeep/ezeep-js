@@ -29,9 +29,7 @@ export class EzpProgress {
             <circle id="track" cx="22" cy="22" r="16" />
             <circle id="value" cx="22" cy="22" r="16" />
           </svg>
-          <cap-label id="status" level="tertiary" weight="strong">
-            {this.status}
-          </cap-label>
+          <ezp-label id="status" level="tertiary" weight="strong" text={this.status} />
         </div>
       </Host>
     )

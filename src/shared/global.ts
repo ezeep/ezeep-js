@@ -1,6 +1,6 @@
 export default async () => {
   const font = new FontFace(
-    'Inter var',
+    'Inter',
     'url(https://rsms.me/inter/font-files/Inter-roman.var.woff2)',
     {
       style: 'normal',

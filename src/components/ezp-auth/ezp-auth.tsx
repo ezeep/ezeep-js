@@ -104,18 +104,15 @@ export class EzpAuth {
           </div>
           <div id="content">
             <ezp-icon id="icon" name="rocket" size="large" />
-            <cap-label level="primary" weight="heavy">
-              {i18next.t('login_page.get_started')}
-            </cap-label>
-            <cap-label>{i18next.t('login_page.description')}</cap-label>
+            <ezp-label level="primary" weight="heavy" text={i18next.t('login_page.get_started')} />
+            <ezp-label text={i18next.t('login_page.description')} />
             <ezp-text-button
+              label={i18next.t('login_page.login')}
               id="button"
               onClick={() => {
                 this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
               }}
-            >
-              {i18next.t('login_page.login')}
-            </ezp-text-button>
+            />
           </div>
         </div>
       </Host>

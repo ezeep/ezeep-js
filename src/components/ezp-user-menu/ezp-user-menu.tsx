@@ -117,21 +117,19 @@ export class EzpUserMenu {
     return (
       <Host class={this.open ? 'is-open' : ''}>
         <div id="header">
-          <cap-label id="name" clip weight="strong">
-            {this.name}
-          </cap-label>
+          <ezp-label ellipsis id="name" weight="strong" text={this.name} />
           <ezp-icon-button id="close" level="quaternary" icon="cross" onClick={this.handleClose} />
         </div>
         <div id="links">
           {this.links.map((link) => (
             <a class="link" href={link.href} target="_blank" rel="noopener noreferrer">
               <ezp-icon class="link__icon" name={link.icon as IconNameTypes} />
-              <cap-label>{link.title}</cap-label>
+              <ezp-label text={link.title} />
             </a>
           ))}
           <a class="link" onClick={this.logOut}>
             <ezp-icon class="link__icon" name="off"></ezp-icon>
-            <cap-label>Logout</cap-label>
+            <ezp-label text="Logout" />
           </a>
         </div>
       </Host>

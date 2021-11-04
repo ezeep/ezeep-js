@@ -187,12 +187,12 @@ export class EzpSelect {
         <div id="wrap">
           <div id="toggle" onClick={() => this.toggle()}>
             {this.icon ? <ezp-icon id="icon" name={this.icon} /> : null}
-            <cap-label id="label" level={labelLevel}>
-              {this.label}
-            </cap-label>
-            <cap-label id="value" clip>
-              {this.selected.title !== '' ? this.selected.title : this.placeholder}
-            </cap-label>
+            <ezp-label id="label" noWrap level={labelLevel} text={this.label} />
+            <ezp-label
+              id="value"
+              ellipsis
+              text={this.selected.title !== '' ? this.selected.title : this.placeholder}
+            />
             <ezp-icon id="accessory" name="expand" />
           </div>
           <div id="list" ref={(element) => (this.list = element)}>
@@ -205,13 +205,9 @@ export class EzpSelect {
               >
                 <ezp-icon name="checkmark" class="indicator" />
                 <div class="details">
-                  <cap-label class="title" clip>
-                    {option.title}
-                  </cap-label>
+                  <ezp-label class="title" ellipsis text={option.title} />
                   {option.meta !== '' ? (
-                    <cap-label level="tertiary" class="meta">
-                      {option.meta}
-                    </cap-label>
+                    <ezp-label level="tertiary" class="meta" text={option.meta} />
                   ) : null}
                 </div>
               </div>
