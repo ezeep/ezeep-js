@@ -197,29 +197,13 @@ export class EzpProgress {
 
 export declare interface EzpSelect extends Components.EzpSelect {}
 @ProxyCmp({
-  inputs: [
-    'icon',
-    'label',
-    'optionFlow',
-    'options',
-    'placeholder',
-    'previouslySelected',
-    'toggleFlow',
-  ],
+  inputs: ['icon', 'label', 'optionFlow', 'options', 'placeholder', 'preSelected', 'toggleFlow'],
 })
 @Component({
   selector: 'ezp-select',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
-  inputs: [
-    'icon',
-    'label',
-    'optionFlow',
-    'options',
-    'placeholder',
-    'previouslySelected',
-    'toggleFlow',
-  ],
+  inputs: ['icon', 'label', 'optionFlow', 'options', 'placeholder', 'preSelected', 'toggleFlow'],
   outputs: ['selectToggle', 'selectSelection'],
 })
 export class EzpSelect {

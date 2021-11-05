@@ -12,6 +12,8 @@
     "color": "Farbe",
     "orientation": "Ausrichtung",
     "size": "Papierformat",
+    "duplex": "Duplex",
+    "quality": "Qualität",
     "select_printer": "Wähle einen Drucker",
     "select_color": "Wähle eine Farbe",
     "select_size": "Wähle ein Papierformat",
