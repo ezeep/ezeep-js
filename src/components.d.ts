@@ -125,7 +125,10 @@ export namespace Components {
           * Description...
          */
         "placeholder": string;
-        "previouslySelected": any;
+        /**
+          * Description...
+         */
+        "preSelected": any;
         /**
           * Description...
          */
@@ -396,7 +399,10 @@ declare namespace LocalJSX {
           * Description...
          */
         "placeholder"?: string;
-        "previouslySelected"?: any;
+        /**
+          * Description...
+         */
+        "preSelected"?: any;
         /**
           * Description...
          */
