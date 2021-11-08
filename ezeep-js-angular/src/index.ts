@@ -228,12 +228,16 @@ export declare interface EzpStepper extends Components.EzpStepper {}
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   inputs: ['label', 'max', 'min'],
+  outputs: ['stepperChanged'],
 })
 export class EzpStepper {
+  /** Events */
+  stepperChanged!: EventEmitter<CustomEvent<any>>
   protected el: HTMLElement
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach()
     this.el = r.nativeElement
+    proxyOutputs(this, this.el, ['stepperChanged'])
   }
 }
 

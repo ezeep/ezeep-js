@@ -13,24 +13,25 @@
  */
 
 :host {
-  --glyph-size: auto;
-
+  align-content: center;
   display: block;
+  display: grid;
+  grid-template: var(--host-gridTemplate) / var(--host-gridTemplate);
+  height: var(--host-size);
+  justify-content: center;
+  width: var(--host-size);
 
   @at-root {
     #{&}(.normal) {
-      --glyph-size: 22px;
+      --host-size: 18px;
+      --host-gridTemplate: 22px;
     }
 
     #{&}(.large) {
-      --glyph-size: 44px;
+      --host-size: 36px;
+      --host-gridTemplate: 44px;
     }
   }
-}
-
-#glyph {
-  height: var(--glyph-size);
-  width: var(--glyph-size);
 }
 
 svg {

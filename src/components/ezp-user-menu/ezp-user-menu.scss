@@ -27,7 +27,7 @@
   border-radius: 3px;
   box-shadow: var(--host-separator-position) var(--hairline-color);
   display: block;
-  left: var(--spacing-7);
+  left: var(--spacing-8);
   opacity: var(--host-opacity);
   position: absolute;
   right: var(--spacing-2);
@@ -59,7 +59,7 @@
   box-shadow: 0;
   display: grid;
   grid-template: auto / 1fr auto;
-  padding: var(--spacing-3) var(--spacing-2) var(--spacing-3) var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-1) var(--spacing-3) var(--spacing-3);
 }
 
 #name {
@@ -67,7 +67,7 @@
 }
 
 #close {
-  margin: calc(var(--spacing-3) * -1) 0 calc(var(--spacing-3) * -1) 0;
+  margin: calc(var(--spacing-3) * -1) 0;
 }
 
 #links {
@@ -96,27 +96,6 @@
 
   &__icon {
     color: var(--color-main-primary);
-    margin: calc(var(--spacing-3) * -1) 0;
-  }
-}
-
-.logout {
-  align-items: center;
-  background: var(--link-background);
-  color: var(--color-foreground-primary);
-  display: grid;
-  gap: var(--spacing-3);
-  grid-template: auto / auto 1fr;
-  padding: var(--spacing-3);
-
-  &:hover {
-    --link-background: var(--color-shade-primary);
-
-    cursor: pointer;
-  }
-
-  &__icon {
-    color: var(--color-main-primary);
-    margin: calc(var(--spacing-3) * -1) 0;
+    margin: calc(var(--spacing-2) * -1) 0;
   }
 }

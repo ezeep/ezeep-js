@@ -73,7 +73,7 @@
       --label-align: start;
       --toggle-areas: 'label value accessory';
       --toggle-columns: 1fr repeat(2, auto);
-      --toggle-height: 34px;
+      --toggle-height: 30px;
       --toggle-rows: auto;
       --value-align: end;
     }
@@ -87,7 +87,7 @@
       --label-align: center;
       --toggle-areas: 'label accessory' 'value accessory';
       --toggle-columns: 1fr auto;
-      --toggle-height: 52px;
+      --toggle-height: 48px;
       --toggle-rows: repeat(2, auto);
       --value-align: center;
     }
@@ -100,13 +100,13 @@
     #{&}(.option-horizontal) {
       --details-columns: repeat(2, 1fr);
       --details-rows: auto;
-      --option-height: 34px;
+      --option-height: 30px;
     }
 
     #{&}(.option-vertical) {
       --details-columns: 1fr;
       --details-rows: repeat(2, auto);
-      --option-height: 52px;
+      --option-height: 48px;
     }
 
     #{&}(.is-expanded) {
@@ -145,7 +145,7 @@
   box-sizing: border-box;
   cursor: pointer;
   display: grid;
-  gap: var(--spacing-2);
+  gap: var(--spacing-2) var(--spacing-3);
   grid-template-areas: var(--toggle-areas);
   grid-template-columns: var(--toggle-columns);
   grid-template-rows: var(--toggle-rows);
@@ -161,7 +161,7 @@
   align-self: center;
   color: var(--icon-color);
   grid-area: icon;
-  margin: calc(var(--spacing-3) * -1) 0;
+  margin: calc(var(--spacing-2) * -1) 0;
 }
 
 #label {
@@ -180,7 +180,7 @@
   align-self: center;
   color: var(--accessory-color);
   grid-area: accessory;
-  margin: calc(var(--spacing-3) * -1) 0;
+  margin: calc(var(--spacing-2) * -1) 0;
 }
 
 #list {
@@ -195,10 +195,8 @@
   box-sizing: border-box;
   cursor: pointer;
   display: grid;
-  grid-column-gap: var(--spacing-3);
-  grid-row-gap: var(--spacing-2);
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto;
+  gap: var(--spacing-3);
+  grid-template: auto / auto 1fr;
   height: var(--option-height);
   padding: 0 0 0 var(--spacing-3);
 
@@ -231,7 +229,7 @@
 .indicator {
   align-self: center;
   color: var(--color-main-primary);
-  margin: calc(var(--spacing-3) * -1) 0;
+  margin: calc(var(--spacing-2) * -1) 0;
   opacity: var(--indicator-opacity);
   transform: var(--indicator-transform);
   transition: var(--indicator-transition);

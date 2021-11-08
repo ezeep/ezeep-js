@@ -10,6 +10,12 @@
 | `max`    | `max`     | Description... | `number` | `undefined` |
 | `min`    | `min`     | Description... | `number` | `1`         |
 
+## Events
+
+| Event            | Description | Type               |
+| ---------------- | ----------- | ------------------ |
+| `stepperChanged` | Events      | `CustomEvent<any>` |
+
 ## Dependencies
 
 ### Used by

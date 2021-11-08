@@ -421,6 +421,10 @@ declare namespace LocalJSX {
           * Description...
          */
         "min"?: number;
+        /**
+          * Events
+         */
+        "onStepperChanged"?: (event: CustomEvent<any>) => void;
     }
     interface EzpTextButton {
         /**

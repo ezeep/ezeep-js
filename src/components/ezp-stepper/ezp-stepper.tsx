@@ -1,4 +1,4 @@
-import { Component, Host, Prop, State, Watch, h } from '@stencil/core'
+import { Component, Host, Prop, State, Event, EventEmitter, Watch, h } from '@stencil/core'
 
 @Component({
   tag: 'ezp-stepper',
@@ -40,6 +40,14 @@ export class EzpStepper {
 
   /**
    *
+   * Events
+   *
+   */
+
+  @Event() stepperChanged: EventEmitter
+
+  /**
+   *
    * Watchers
    *
    */
@@ -48,6 +56,7 @@ export class EzpStepper {
   watchValue() {
     this.canIncrease = this.max !== undefined ? this.value < this.max : true
     this.canDecrease = this.min !== undefined ? this.value > this.min : true
+    this.stepperChanged.emit(this.value)
   }
 
   /**

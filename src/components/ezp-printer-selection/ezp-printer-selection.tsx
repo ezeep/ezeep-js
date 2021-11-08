@@ -113,6 +113,11 @@ export class EzpPrinterSelection {
     this.setSelectedProperties(event.detail)
   }
 
+  @Listen('stepperChanged')
+  listenStepperChanged(event: CustomEvent) {
+    console.log(event.detail)
+  }
+
   @Listen('userMenuClosure')
   listenUserMenuClosure() {
     this.userMenuOpen = false
@@ -302,7 +307,10 @@ export class EzpPrinterSelection {
                 options={this.printers.map((printer) => ({
                   id: printer.id,
                   title: printer.name,
-                  meta: printer.location,
+                  meta:
+                    printer.location !== ''
+                      ? printer.location
+                      : i18next.t('printer_selection.unknown_location'),
                   type: 'printer',
                 }))}
                 preSelected={this.selectedPrinter.name}
@@ -389,8 +397,8 @@ export class EzpPrinterSelection {
                     : this.previouslySelectedProperties.duplexmode
                 }
               />
-              <ezp-stepper label="Copies" max={10} />
             </div>
+            <ezp-stepper label="Copies" max={10} />
           </div>
           <div id="footer">
             <ezp-text-button
