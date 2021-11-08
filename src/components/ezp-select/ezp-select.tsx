@@ -45,9 +45,11 @@ export class EzpSelect {
   @Prop() placeholder: string = 'Placeholder'
 
   /** Description... */
+  @Prop() preSelected: any
+
+  /** Description... */
   @Prop() toggleFlow: SelectFlowTypes = 'horizontal'
 
-  @Prop() previouslySelected: any
   /**
    *
    * States
@@ -148,8 +150,12 @@ export class EzpSelect {
       this.container.removeChild(this.backdrop)
     })
 
-    if (this.previouslySelected !== '') {
-      this.selected.title = this.previouslySelected
+    if (this.preSelected) {
+      this.selected = this.options.find((option) =>
+        typeof this.preSelected === 'number'
+          ? option.id === this.preSelected
+          : option.title === this.preSelected
+      )
     }
   }
 
