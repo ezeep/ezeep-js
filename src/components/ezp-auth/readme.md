@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute        | Description | Type      | Default     |
@@ -10,6 +11,7 @@
 | `hidelogin`   | `hidelogin`      |             | `boolean` | `undefined` |
 | `redirectURI` | `redirect-u-r-i` |             | `string`  | `undefined` |
 
+
 ## Events
 
 | Event        | Description | Type                      |
@@ -17,11 +19,12 @@
 | `authCancel` |             | `CustomEvent<MouseEvent>` |
 | `printShow`  |             | `CustomEvent<any>`        |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ezp-printing](../ezp-printing)
+ - [ezp-printing](../ezp-printing)
 
 ### Depends on
 
@@ -32,7 +35,6 @@
 - [ezp-text-button](../ezp-text-button)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-auth --> ezp-progress
@@ -47,4 +49,6 @@ graph TD;
   style ezp-auth fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

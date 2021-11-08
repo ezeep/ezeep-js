@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute      | Description    | Type                                                                                                                          | Default         |
@@ -14,18 +15,20 @@
 | `preSelected` | `pre-selected` | Description... | `any`                                                                                                                         | `undefined`     |
 | `toggleFlow`  | `toggle-flow`  | Description... | `"horizontal" \| "vertical"`                                                                                                  | `'horizontal'`  |
 
+
 ## Events
 
 | Event             | Description | Type               |
 | ----------------- | ----------- | ------------------ |
 | `selectSelection` |             | `CustomEvent<any>` |
-| `selectToggle`    | Events      | `CustomEvent<any>` |
+| `selectToggle`    |  Events     | `CustomEvent<any>` |
+
 
 ## Dependencies
 
 ### Used by
 
-- [ezp-printer-selection](../ezp-printer-selection)
+ - [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
@@ -34,7 +37,6 @@
 - [ezp-label](../ezp-label)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-select --> ezp-backdrop
@@ -44,4 +46,6 @@ graph TD;
   style ezp-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

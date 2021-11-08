@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property   | Attribute  | Description    | Type                                     | Default     |
@@ -13,19 +14,19 @@
 | `level`    | `level`    | Description... | `"primary" \| "secondary" \| "tertiary"` | `'primary'` |
 | `type`     | `type`     | Description... | `"button"`                               | `undefined` |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ezp-auth](../ezp-auth)
-- [ezp-printer-selection](../ezp-printer-selection)
+ - [ezp-auth](../ezp-auth)
+ - [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
 - [ezp-label](../ezp-label)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-text-button --> ezp-label
@@ -34,4 +35,6 @@ graph TD;
   style ezp-text-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property   | Attribute  | Description    | Type                                     | Default       |
@@ -12,20 +13,20 @@
 | `text`     | `text`     | Description... | `string`                                 | `'Label'`     |
 | `weight`   | `weight`   | Description... | `"heavy" \| "soft" \| "strong"`          | `'soft'`      |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ezp-auth](../ezp-auth)
-- [ezp-printer-selection](../ezp-printer-selection)
-- [ezp-progress](../ezp-progress)
-- [ezp-select](../ezp-select)
-- [ezp-stepper](../ezp-stepper)
-- [ezp-text-button](../ezp-text-button)
-- [ezp-user-menu](../ezp-user-menu)
+ - [ezp-auth](../ezp-auth)
+ - [ezp-printer-selection](../ezp-printer-selection)
+ - [ezp-progress](../ezp-progress)
+ - [ezp-select](../ezp-select)
+ - [ezp-stepper](../ezp-stepper)
+ - [ezp-text-button](../ezp-text-button)
+ - [ezp-user-menu](../ezp-user-menu)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-auth --> ezp-label
@@ -38,4 +39,6 @@ graph TD;
   style ezp-label fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+
