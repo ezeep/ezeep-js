@@ -103,7 +103,9 @@ jobs:
       run: npm install -g @angular/cli
        
     - name: Change working dir
-      run: cd ezeep-js-angular
+      run: |
+        ls -R
+        cd ezeep-js-angular
     
     - name: Build
       run: ng build ngx-ezeep-js
