@@ -100,7 +100,8 @@ jobs:
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
     
     - name: Install angular cli
-      run: npm install -g @angular/cli
+      run: npm install @angular/cli
+      working-directory: ./ezeep-js-angular
        
     - name: Change working dir
       run: ls -R
