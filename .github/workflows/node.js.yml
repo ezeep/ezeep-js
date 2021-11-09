@@ -72,26 +72,26 @@ jobs:
         artifacts: "${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
         token: ${{ secrets.GITHUB_TOKEN }}
   
-#  build-ng:
-#   environment: Production
-#    needs: build-npm
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        node-version: [14.x]
+  build-ng:
+    environment: Production
+    needs: build-npm
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     
-#    steps:
-#    - name: Checkout angular branch
-#      uses: actions/checkout@v2
-#      with:
-#        ref: ngx-ezeep-js
+    steps:
+    - name: Checkout angular branch
+      uses: actions/checkout@v2
+      with:
+        ref: ngx-ezeep-js
          
-#    - name: Bump package.json version
-#      uses: reedyuk/npm-version@1.1.1
-#      with:
-#        package: 'ezeep-js-angular/projects/ngx-ezeep-js'
-#        version: "${{ env.MODULE_VERSION }}"
+    - name: Bump package.json version
+      uses: reedyuk/npm-version@1.1.1
+      with:
+        package: 'ezeep-js-angular/projects/ngx-ezeep-js'
+        version: "${{ env.MODULE_VERSION }}"
     
 #    - name: download directives artifact
 #      uses: actions/download-artifact@v2
