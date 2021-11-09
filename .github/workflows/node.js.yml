@@ -93,17 +93,17 @@ jobs:
         package: 'ezeep-js-angular/projects/ngx-ezeep-js'
         version: "${{ env.MODULE_VERSION }}"
     
-#    - name: download directives artifact
-#      uses: actions/download-artifact@v2
-#      with:
-#          name: ng-directives.zip
-#          path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
+    - name: download directives artifact
+      uses: actions/download-artifact@v2
+      with:
+          name: ng-directives.zip
+          path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
     
-#    - name: Change working dir
-#      run: cd ezeep-js-angular
+    - name: Change working dir
+      run: cd ezeep-js-angular
         
-#    - name: Build
-#      run: ng build ngx-ezeep-js
+    - name: Build
+      run: ng build ngx-ezeep-js
  
   publish:
     environment: Production
