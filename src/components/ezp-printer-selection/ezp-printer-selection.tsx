@@ -55,6 +55,7 @@ export class EzpPrinterSelection {
   @Prop() filename: string
   @Prop() fileurl: string
   @Prop() filetype: string
+
   /**
    *
    * States

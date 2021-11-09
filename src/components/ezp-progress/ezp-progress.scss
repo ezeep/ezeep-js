@@ -4,7 +4,6 @@
  *
  */
 
-@use './ezp-progress.m' as self;
 @use './../../shared/global';
 
 /**
@@ -22,7 +21,7 @@
   align-content: center;
   align-items: center;
   background: var(--color-overlay);
-  border-radius: 8px;
+  border-radius: 6px;
   box-sizing: border-box;
   display: grid;
   grid-template: auto / auto;
@@ -70,7 +69,7 @@
 #value {
   animation: offset var(--duration) linear alternate infinite;
   fill: none;
-  stroke: var(--color-main-primary);
+  stroke: var(--color-theme);
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
   stroke-linecap: round;

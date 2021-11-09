@@ -1,17 +1,18 @@
 export type IconButtonLevelTypes = 'primary' | 'secondary' | 'tertiary' | 'quaternary'
 export type IconButtonTypeTypes = 'button'
 export type IconNameTypes =
-  | 'expand'
   | 'checkmark'
-  | 'menu'
-  | 'printer'
-  | 'rocket'
   | 'cross'
-  | 'user'
-  | 'question'
-  | 'off'
+  | 'dot'
+  | 'expand'
+  | 'menu'
   | 'minus'
+  | 'off'
   | 'plus'
+  | 'printer'
+  | 'question'
+  | 'rocket'
+  | 'user'
 export type IconSizeTypes = 'normal' | 'large'
 export type PrintOrganizationType = { id: number; name: string; printers: PrintPrinterType[] }
 export type PrintPrinterType = { id: number; name: string; location: string }
@@ -28,6 +29,7 @@ export type TextButtonLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type TextButtonTypeTypes = 'button'
 export type LabelLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type WeightTypes = 'soft' | 'strong' | 'heavy'
+export type ThemeTypes = 'pink' | 'red' | 'orange' | 'green' | 'cyan' | 'blue' | 'violet'
 
 export interface PrinterProperties {
   paper?: string

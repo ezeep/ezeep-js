@@ -4,7 +4,6 @@
  *
  */
 
-@use './ezp-auth.m' as self;
 @use './../../shared/global';
 
 /**
@@ -14,7 +13,7 @@
  */
 
 :host {
-  --dialog-radius: 8px;
+  --dialog-radius: 6px;
   --dialog-separator-position: 0 0 0 var(--hairline-width-positive);
 
   align-content: center;
@@ -63,7 +62,7 @@
 }
 
 #icon {
-  color: var(--color-main-primary);
+  color: var(--color-theme);
 }
 
 #button {

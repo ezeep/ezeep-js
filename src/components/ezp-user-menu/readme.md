@@ -4,10 +4,11 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type      | Default      |
-| -------- | --------- | ----------- | --------- | ------------ |
-| `name`   | `name`    |             | `string`  | `'John Doe'` |
-| `open`   | `open`    |             | `boolean` | `false`      |
+| Property | Attribute | Description | Type                                                                     | Default      |
+| -------- | --------- | ----------- | ------------------------------------------------------------------------ | ------------ |
+| `name`   | `name`    |             | `string`                                                                 | `'John Doe'` |
+| `open`   | `open`    |             | `boolean`                                                                | `false`      |
+| `theme`  | `theme`   |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "violet"` | `'cyan'`     |
 
 ## Events
 

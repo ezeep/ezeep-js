@@ -4,7 +4,6 @@
  *
  */
 
-@use './ezp-select.m' as self;
 @use './../../shared/global';
 
 /**
@@ -21,7 +20,7 @@
   --host-height: var(--toggle-height);
   --host-transition: z-index 0s var(--duration);
   --host-z-index: 3;
-  --icon-color: var(--color-foreground-secondary);
+  --icon-color: var(--color-theme);
   --indicator-opacity: 0;
   --indicator-transform: translateX(var(--spacing-3));
   --indicator-transition: opacity var(--indicator-duration) var(--easing-out-quart),
@@ -110,11 +109,11 @@
     }
 
     #{&}(.is-expanded) {
-      --accessory-color: var(--color-main-primary);
+      --accessory-color: var(--color-theme);
       --host-transition: z-index 0s 0s;
       --host-z-index: 9999;
-      --icon-color: var(--color-main-primary);
-      --label-color: var(--color-main-primary);
+      --icon-color: var(--color-theme);
+      --label-color: var(--color-theme);
       --wrap-radius: 3px;
     }
   }
@@ -228,7 +227,7 @@
 
 .indicator {
   align-self: center;
-  color: var(--color-main-primary);
+  color: var(--color-theme);
   margin: calc(var(--spacing-2) * -1) 0;
   opacity: var(--indicator-opacity);
   transform: var(--indicator-transform);

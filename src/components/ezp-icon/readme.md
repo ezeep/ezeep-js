@@ -4,10 +4,10 @@
 
 ## Properties
 
-| Property            | Attribute | Description    | Type                                                                                                                          | Default     |
-| ------------------- | --------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `name` _(required)_ | `name`    | Description... | `"checkmark" \| "cross" \| "expand" \| "menu" \| "minus" \| "off" \| "plus" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined` |
-| `size`              | `size`    | Description... | `"large" \| "normal"`                                                                                                         | `'normal'`  |
+| Property            | Attribute | Description    | Type                                                                                                                                   | Default     |
+| ------------------- | --------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `name` _(required)_ | `name`    | Description... | `"checkmark" \| "cross" \| "dot" \| "expand" \| "menu" \| "minus" \| "off" \| "plus" \| "printer" \| "question" \| "rocket" \| "user"` | `undefined` |
+| `size`              | `size`    | Description... | `"large" \| "normal"`                                                                                                                  | `'normal'`  |
 
 ## Dependencies
 

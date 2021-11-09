@@ -4,7 +4,6 @@
  *
  */
 
-@use './ezp-printing.m.scss' as self;
 @use './../../shared/global';
 
 /**
@@ -38,5 +37,13 @@
   @include global.hairline-color-declaration;
   @include global.media-appearance('dark') {
     @include global.color-declaration('dark');
+  }
+
+  @at-root {
+    @each $theme in global.$themes {
+      #{&}(.#{$theme}) {
+        --color-theme: var(--color-theme-#{$theme});
+      }
+    }
   }
 }

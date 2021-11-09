@@ -4,7 +4,6 @@
  *
  */
 
-@use './ezp-user-menu.m' as self;
 @use './../../shared/global';
 
 /**
@@ -24,14 +23,14 @@
   --link-background: transparent;
 
   background: var(--color-surface-tertiary);
-  border-radius: 3px;
+  border-radius: 6px;
   box-shadow: var(--host-separator-position) var(--hairline-color);
   display: block;
-  left: var(--spacing-8);
+  left: var(--spacing-7);
   opacity: var(--host-opacity);
   position: absolute;
-  right: var(--spacing-2);
-  top: var(--spacing-2);
+  right: 0;
+  top: 0;
   transform: scale(var(--host-scale));
   transform-origin: right top;
   transition: var(--host-transition);
@@ -59,7 +58,7 @@
   box-shadow: 0;
   display: grid;
   grid-template: auto / 1fr auto;
-  padding: var(--spacing-3) var(--spacing-1) var(--spacing-3) var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-3) var(--spacing-4) var(--spacing-4);
 }
 
 #name {
@@ -71,17 +70,16 @@
 }
 
 #links {
+  box-shadow: 0 var(--hairline-width-positive) 0 0 var(--hairline-color);
   display: flex;
   flex-direction: column;
-}
-
-#organizations {
-  z-index: 9999;
+  padding: var(--spacing-2);
 }
 
 .link {
   align-items: center;
   background: var(--link-background);
+  border-radius: 3px;
   color: var(--color-foreground-primary);
   cursor: pointer;
   display: grid;
@@ -95,7 +93,34 @@
   }
 
   &__icon {
-    color: var(--color-main-primary);
+    color: var(--color-theme);
     margin: calc(var(--spacing-2) * -1) 0;
+  }
+}
+
+#theme {
+  display: grid;
+  gap: var(--spacing-2);
+  grid-template: repeat(2, auto) / 1fr;
+  padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
+}
+
+#dots {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 calc(var(--spacing-2) * -1);
+}
+
+.dot {
+  border-radius: 50%;
+
+  &--selected {
+    box-shadow: inset 0 0 0 1px var(--color-theme);
+  }
+
+  @each $theme in global.$themes {
+    &--#{$theme} {
+      --color-theme: var(--color-theme-#{$theme});
+    }
   }
 }

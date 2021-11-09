@@ -4,7 +4,6 @@
  *
  */
 
-@use './ezp-printer-selection.m' as self;
 @use './../../shared/global';
 
 /**
@@ -40,7 +39,7 @@
 
 #container {
   background: var(--color-surface-tertiary);
-  border-radius: 8px;
+  border-radius: 6px;
   box-shadow: var(--dialog-separator-position) var(--hairline-color),
     0 var(--spacing-3) var(--spacing-4) 0 var(--color-shadow),
     0 var(--spacing-4) var(--spacing-5) 0 var(--color-shadow),

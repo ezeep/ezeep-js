@@ -22,14 +22,14 @@ $breakpoints: (
 );
 $colors: (
   'light': (
-    'main-primary': rgb(31 144 178),
-    'main-secondary': rgb(48 154 189),
-    'main-tertiary': rgb(1 133 167),
-    'accent-primary': rgb(207 65 96),
-    'accent-secondary': rgb(219 77 106),
-    'accent-tertiary': rgb(195 53 87),
-    'on-main-primary': rgb(255 255 255),
-    'on-accent-primary': rgb(255 255 255),
+    'theme-blue': rgb(78 129 243),
+    'theme-cyan': rgb(0 145 180),
+    'theme-green': rgb(93 146 0),
+    'theme-orange': rgb(254 114 0),
+    'theme-pink': rgb(242 50 103),
+    'theme-red': rgb(242 59 34),
+    'theme-violet': rgb(174 94 243),
+    'on-theme': rgb(255 255 255),
     'surface-primary': rgb(255 255 255),
     'surface-secondary': rgb(243 243 243),
     'surface-tertiary': rgb(255 255 255),
@@ -45,14 +45,14 @@ $colors: (
     'shadow': rgba(0 0 0 / 4%),
   ),
   'dark': (
-    'main-primary': rgb(48 154 189),
-    'main-secondary': rgb(63 165 200),
-    'main-tertiary': rgb(31 144 178),
-    'accent-primary': rgb(219 77 106),
-    'accent-secondary': rgb(232 88 116),
-    'accent-tertiary': rgb(207 65 96),
-    'on-main-primary': rgb(0 0 0),
-    'on-accent-primary': rgb(0 0 0),
+    'theme-blue': rgb(91 139 255),
+    'theme-cyan': rgb(32 155 191),
+    'theme-green': rgb(103 156 21),
+    'theme-orange': rgb(255 129 28),
+    'theme-pink': rgb(255 65 113),
+    'theme-red': rgb(255 72 44),
+    'theme-violet': rgb(186 105 255),
+    'on-theme': rgb(255 255 255),
     'surface-primary': rgb(0 0 0),
     'surface-secondary': rgb(27 27 27),
     'surface-tertiary': rgb(40 40 40),
@@ -78,6 +78,7 @@ $easings: (
   'out-expo': cubic-bezier(0.16, 1, 0.3, 1),
 );
 $ratios: (1, 2, 3);
+$themes: ('blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet');
 
 /**
  *

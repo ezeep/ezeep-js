@@ -1,13 +1,5 @@
 /**
  *
- * Modules
- *
- */
-
-@use './ezp-backdrop.m' as self;
-
-/**
- *
  * Rules
  *
  */
@@ -17,7 +9,7 @@
 
   animation: var(--host-animation-name) 0.3s forwards var(--easing-out-quart);
   background: var(--color-overlay);
-  border-radius: 8px;
+  border-radius: 6px;
   display: block;
   height: 100%;
   left: 0;

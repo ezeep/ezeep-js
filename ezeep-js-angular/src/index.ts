@@ -261,13 +261,13 @@ export class EzpTextButton {
 
 export declare interface EzpUserMenu extends Components.EzpUserMenu {}
 @ProxyCmp({
-  inputs: ['name', 'open'],
+  inputs: ['name', 'open', 'theme'],
 })
 @Component({
   selector: 'ezp-user-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
-  inputs: ['name', 'open'],
+  inputs: ['name', 'open', 'theme'],
   outputs: ['userMenuClosure', 'logoutEmitter'],
 })
 export class EzpUserMenu {

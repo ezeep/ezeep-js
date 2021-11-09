@@ -1,6 +1,7 @@
 import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
 import authStore, { sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
+import userStore from '../../services/user'
 import config from '../../shared/config.json'
 
 @Component({
@@ -124,7 +125,7 @@ export class EzpPrinting {
 
   render() {
     return (
-      <Host>
+      <Host class={userStore.state.theme}>
         {this.authOpen ? (
           <ezp-auth
             clientID={this.clientid}
