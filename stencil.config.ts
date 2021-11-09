@@ -18,7 +18,7 @@ export const config: Config = {
     }),
     reactOutputTarget({
       componentCorePackage: '@ezeep/ezeep-js',
-      proxiesFile: 'ezeep-js-react/src/index.ts',
+      proxiesFile: 'dist/directives/proxies.ts',
     }),
     {
       type: 'dist',
