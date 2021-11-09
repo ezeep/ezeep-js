@@ -13,7 +13,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-npm:
     environment: Production
     runs-on: ubuntu-latest
     strategy:
@@ -44,11 +44,17 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-    - name: Archive Artifacts
+    - name: Archive NPM Artifacts
       uses: actions/upload-artifact@v2
       with:
         path: ${{ env.DIST_PATH }}
         name: ${{ env.ARTIFACT_NAME }}
+        
+    - name: Archive NG Directives Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        path: 'dist/directives'
+        name: ng-directives.zip        
 
     - name: ZIP Release
       uses: thedoctor0/zip-release@master
@@ -65,14 +71,46 @@ jobs:
         prerelease: ${{ env.PRERELEASE }}
         artifacts: "${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
         token: ${{ secrets.GITHUB_TOKEN }}
-
+  
+#  build-ng:
+#   environment: Production
+#    needs: build-npm
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        node-version: [14.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    
+#    steps:
+#    - name: Checkout angular branch
+#      uses: actions/checkout@v2
+#      with:
+#        ref: ngx-ezeep-js
+         
+#    - name: Bump package.json version
+#      uses: reedyuk/npm-version@1.1.1
+#      with:
+#        package: 'ezeep-js-angular/projects/ngx-ezeep-js'
+#        version: "${{ env.MODULE_VERSION }}"
+    
+#    - name: download directives artifact
+#      uses: actions/download-artifact@v2
+#      with:
+#          name: ng-directives.zip
+#          path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
+    
+#    - name: Change working dir
+#      run: cd ezeep-js-angular
+        
+#    - name: Build
+#      run: ng build ngx-ezeep-js
  
   publish:
     environment: Production
-    needs: build
+    needs: build-npm
     runs-on: ubuntu-latest
     steps:
-
+ 
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.ARTIFACT_NAME }}
