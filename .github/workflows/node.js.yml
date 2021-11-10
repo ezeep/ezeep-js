@@ -115,8 +115,9 @@ jobs:
         cd ezeep-js-angular
         pwd
         npm ci --include=dev 
+        npm install -g @angular/cli
         pwd
-        ng build ngx-ezeep-js 
+        ng build ngx-ezeep-js
       
     #- name: list directory
     #  run: ls -R
