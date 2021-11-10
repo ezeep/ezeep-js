@@ -42,30 +42,15 @@ jobs:
       with:
         version: "${{ env.MODULE_VERSION }}"
     
-    - name: Build
+    - name: NPM Build
       run: |
         npm ci
         npm run build
 
-
-  publish-npm:
-    environment: Production
-    runs-on: ubuntu-latest
-    needs: build-npm
-    
-    steps:
-    - name: Build
+    - name: NPM Publish
       run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        
-
-  create-artifacts-and-release:
-    environment: Production
-    runs-on: ubuntu-latest
-    needs: build-npm
-    
-    steps:
 
     - name: Archive NPM Artifacts
       uses: actions/upload-artifact@v2
@@ -98,7 +83,7 @@ jobs:
 
   build-ng:
     environment: Production
-    needs: create-artifacts-and-release
+    needs: build-npm
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -120,24 +105,24 @@ jobs:
     - name: download directives artifact
       uses: actions/download-artifact@v2
       with:
-          name: ng-directives.zip
+          name: ${{ env.ARTIFACT_NAME_NG }}
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
     
     - name: Install angular cli
       run: npm install @angular/cli
-      working-directory: ./ezeep-js-angular
+      working-directory: ezeep-js-angular
        
     - name: Change working dir
       run: ls -R
     
     - name: Build
       run: ng build ngx-ezeep-js
-      working-directory: ./ezeep-js-angular
+      working-directory: ezeep-js-angular
  
  
   cdn-upload:
     environment: Production
-    needs: create-artifacts-and-release
+    needs: build-npm
     runs-on: ubuntu-latest
     steps:
  
