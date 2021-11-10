@@ -112,7 +112,8 @@ jobs:
           
     - name: Install and build angular library
       run: |
-        cd ezeep-js-angular
+        # cd ezeep-js-angular
+        pwd
         npm install -g @angular/cli
         npm install
         cd projects/ngx-ezeep-js
