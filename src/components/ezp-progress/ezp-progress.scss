@@ -68,7 +68,7 @@
 #value {
   animation: offset var(--duration-6) linear alternate infinite;
   fill: none;
-  stroke: var(--color-theme);
+  stroke: var(--color-theme-solid);
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
   stroke-linecap: round;

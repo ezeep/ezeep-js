@@ -134,6 +134,7 @@ export class EzpUserMenu {
             ))}
           </div>
         </div>
+        <div class="blubb" />
       </Host>
     )
   }

@@ -261,17 +261,18 @@ export class EzpPrinterSelection {
       .then((printerConfig: PrinterConfig[]) => {
         this.printerConfig = printerConfig[0]
       })
-      console.log(this.printerConfig);
-      console.log('resolutions/quality');
-      console.log(this.printerConfig.Resolutions.map(option => option));
-      console.log(this.printerConfig.Resolutions.map((option, index) => ({
+    console.log(this.printerConfig)
+    console.log('resolutions/quality')
+    console.log(this.printerConfig.Resolutions.map((option) => option))
+    console.log(
+      this.printerConfig.Resolutions.map((option, index) => ({
         id: index,
         title: option,
         meta: '',
         type: 'quality',
-      })));
-      
-      
+      }))
+    )
+
     this.loading = false
   }
 
@@ -329,21 +330,21 @@ export class EzpPrinterSelection {
                 options={
                   this.printerConfig.Color
                     ? [
-                      {
-                        id: 1,
-                        title: i18next.t('printer_selection.color_color'),
-                        meta: '',
-                        type: 'color',
-                      },
-                    ]
+                        {
+                          id: 1,
+                          title: i18next.t('printer_selection.color_color'),
+                          meta: '',
+                          type: 'color',
+                        },
+                      ]
                     : [
-                      {
-                        id: 0,
-                        title: i18next.t('printer_selection.color_grayscale'),
-                        meta: '',
-                        type: 'color',
-                      },
-                    ]
+                        {
+                          id: 0,
+                          title: i18next.t('printer_selection.color_grayscale'),
+                          meta: '',
+                          type: 'color',
+                        },
+                      ]
                 }
                 preSelected={this.previouslySelectedProperties.color}
               />
@@ -387,7 +388,7 @@ export class EzpPrinterSelection {
                     : this.previouslySelectedProperties.resolution
                 }
               />
-              { this.printerConfig.DuplexSupported ?
+              {this.printerConfig.DuplexSupported ? (
                 <ezp-select
                   label={i18next.t('printer_selection.duplex')}
                   toggleFlow="horizontal"
@@ -402,8 +403,8 @@ export class EzpPrinterSelection {
                       ? 'None'
                       : this.previouslySelectedProperties.duplexmode
                   }
-                /> : null
-              }
+                />
+              ) : null}
             </div>
             <ezp-stepper label="Copies" max={10} />
           </div>

@@ -43,7 +43,8 @@
   @at-root {
     @each $theme in global.$themes {
       #{&}(.#{$theme}) {
-        --color-theme: var(--color-theme-#{$theme});
+        --color-theme-solid: var(--color-theme-#{$theme}-solid);
+        --color-theme-translucent: var(--color-theme-#{$theme}-translucent);
       }
     }
   }

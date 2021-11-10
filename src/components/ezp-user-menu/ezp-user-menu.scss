@@ -92,7 +92,7 @@
   }
 
   &__icon {
-    color: var(--color-theme);
+    color: var(--color-theme-solid);
     margin: calc(var(--spacing-2) * -1) 0;
   }
 }
@@ -116,37 +116,41 @@
   background: var(--swatch-background, transparent);
   border: 0;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px var(--swatch-boxShadowColor, transparent);
   color: var(--swatch-color);
   cursor: var(--swatch-cursor, pointer);
   display: flex;
   justify-content: center;
   margin: 0;
+  opacity: var(--swatch-opacity, 1);
   outline: none;
   padding: var(--spacing-2);
-  transition: box-shadow var(--duration-2);
 
   &:not(.selected) {
     @media (hover: hover) {
       &:hover {
-        --swatch-background: var(--color-shade-primary);
+        --swatch-background: var(--swatch-theme-translucent);
       }
 
       &:active {
-        --swatch-background: var(--color-shade-secondary);
+        --swatch-opacity: 0.74;
       }
     }
   }
 
   &.selected {
+
     --dot-boxShadowSize: 9px;
-    --swatch-boxShadowColor: var(--swatch-theme);
+    --swatch-background: var(--swatch-theme-translucent);
     --swatch-cursor: normal;
+    > .dot {
+      animation: dot-bounce var(--duration-2) ease-in-out;
+    }
   }
 
   @each $theme in global.$themes {
     &--#{$theme} {
-      --swatch-theme: var(--color-theme-#{$theme});
+      --swatch-theme-solid: var(--color-theme-#{$theme}-solid);
+      --swatch-theme-translucent: var(--color-theme-#{$theme}-translucent);
     }
   }
 }
@@ -154,8 +158,22 @@
 .dot {
   background: var(--dot-background, transparent);
   border-radius: 50%;
-  box-shadow: inset 0 0 0 var(--dot-boxShadowSize, 4px) var(--swatch-theme);
+  box-shadow: inset 0 0 0 var(--dot-boxShadowSize, 4px) var(--swatch-theme-solid);
   height: 18px;
   transition: box-shadow var(--duration-2);
   width: 18px;
+}
+
+@keyframes dot-bounce {
+  0% {
+    transform: scale(1, 1);
+  }
+
+  50% {
+    transform: scale(0.84, 0.84);
+  }
+
+  100% {
+    transform: scale(1, 1);
+  }
 }
