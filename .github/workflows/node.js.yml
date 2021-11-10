@@ -109,10 +109,7 @@ jobs:
       with:
           name: ng-directives.zip
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
-    
-    - name: change directory
-      run: cd ezeep-js-angular
-      
+          
     - name: list directory
       run: ls -R
 
@@ -121,9 +118,11 @@ jobs:
     
     - name: Install angular cli
       run: npm ci
+      working-directory: "./ezeep-js-angular"
 
     - name: Build angular project
       run: ng build ngx-ezeep-js
+      working-directory: "./ezeep-js-angular"
  
  
   cdn-upload-npm:
