@@ -110,13 +110,14 @@ jobs:
           name: ng-directives.zip
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
           
-    - name: Install angular cli
+    - name: Install and build angular library
       run: |
         cd ezeep-js-angular
-        pwd
-        npm ci --include=dev 
         npm install -g @angular/cli
-        pwd
+        npm install
+        cd projects/ngx-ezeep-js
+        npm install
+        cd ../..
         ng build ngx-ezeep-js
       
     #- name: list directory
