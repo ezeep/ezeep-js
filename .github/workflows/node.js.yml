@@ -119,14 +119,9 @@ jobs:
         npm install
         cd ../..
         ng build ngx-ezeep-js
-      
-    #- name: list directory
-    #  run: ls -R
+        # cd dist/ngx-ezeep-js
+        # npm publish
 
-    #- name: Build angular project
-    #  run: ng build ngx-ezeep-js
-    #  working-directory: "./ezeep-js-angular"
- 
  
   cdn-upload-npm:
     environment: Production
