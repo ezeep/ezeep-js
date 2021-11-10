@@ -112,8 +112,10 @@ jobs:
           
     - name: Install angular cli
       run: |
-        cd ezeep-js-angular 
+        cd ezeep-js-angular
+        pwd
         npm ci --include=dev 
+        pwd
         ng build ngx-ezeep-js 
       
     #- name: list directory
