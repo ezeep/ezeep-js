@@ -112,6 +112,12 @@ jobs:
     
     - name: change directory
       run: cd ezeep-js-angular
+      
+    - name: list directory
+      run: ls -R
+
+    - name: current directory
+      run: pwd
     
     - name: Install angular cli
       run: npm ci
