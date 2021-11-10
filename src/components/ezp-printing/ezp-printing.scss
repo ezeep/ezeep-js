@@ -31,6 +31,7 @@
   -webkit-text-size-adjust: none;
 
   @include global.color-declaration('light');
+  @include global.duration-declaration;
   @include global.spacing-declaration;
   @include global.easing-declaration;
   @include global.hairline-width-declaration;

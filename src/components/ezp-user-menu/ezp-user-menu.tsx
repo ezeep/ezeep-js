@@ -121,17 +121,16 @@ export class EzpUserMenu {
         </div>
         <div id="theme">
           <ezp-label text="Color Theme:" />
-          <div id="dots">
+          <div id="swatches">
             {this.themes.map((theme) => (
-              <ezp-icon-button
-                class={`dot dot--${theme} ${
-                  theme === userStore.state.theme ? 'dot--selected' : ''
+              <button
+                class={`swatch swatch--${theme} ${
+                  theme === userStore.state.theme ? 'selected' : ''
                 }`}
-                icon="dot"
-                level="tertiary"
-                type="button"
                 onClick={() => this.handleTheme(theme)}
-              />
+              >
+                <span class="dot" />
+              </button>
             ))}
           </div>
         </div>

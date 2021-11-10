@@ -16,16 +16,15 @@
   --accessory-color: var(--color-foreground-secondary);
   --details-columns: 1fr;
   --details-rows: auto;
-  --duration: 0.3s;
   --host-height: var(--toggle-height);
+  --duration: var(--duration-3);
   --host-transition: z-index 0s var(--duration);
   --host-z-index: 3;
   --icon-color: var(--color-theme);
   --indicator-opacity: 0;
   --indicator-transform: translateX(var(--spacing-3));
-  --indicator-transition: opacity var(--indicator-duration) var(--easing-out-quart),
-    transform var(--indicator-duration) var(--easing-out-quart),
-    visibility 0s var(--indicator-duration);
+  --indicator-transition: opacity var(--duration) var(--easing-out-quart),
+    transform var(--duration) var(--easing-out-quart), visibility 0s var(--duration);
   --indicator-visibility: hidden;
   --label-align: auto;
   --label-color: var(--color-foreground-secondary);

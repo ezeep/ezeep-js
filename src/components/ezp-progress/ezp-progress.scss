@@ -14,7 +14,6 @@
 
 :host {
   --box-separator-position: 0 0 0 var(--hairline-width-positive);
-  --duration: 1s;
   --indicator-size: 44px;
   --stroke-width: 4;
 
@@ -53,7 +52,7 @@
 }
 
 #indicator {
-  animation: rotate var(--duration) linear infinite;
+  animation: rotate var(--duration-6) linear infinite;
   display: block;
   height: var(--indicator-size);
   transform: rotate(0);
@@ -67,7 +66,7 @@
 }
 
 #value {
-  animation: offset var(--duration) linear alternate infinite;
+  animation: offset var(--duration-6) linear alternate infinite;
   fill: none;
   stroke: var(--color-theme);
   stroke-dasharray: 100;
