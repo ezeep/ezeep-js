@@ -10,6 +10,8 @@ env:
   DIST_PATH_NG: 'dist/directives'                  # angular directives deployment path
   ARTIFACT_NAME_NG: 'ng-directives.zip'            # angular directives artifact name
   
+  NPM_REGISTRY: 'https://registry.npmjs.org'       # npm registry url
+  
   PRERELEASE: false                                # true if marked as pre-release, false if production-ready
 
 on:
@@ -34,7 +36,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-        registry-url: 'https://registry.npmjs.org'
+        registry-url: "${{ env.NPM_REGISTRY }}"
         cache: 'npm'
    
     - name: Bump package.json version of npm package
@@ -47,39 +49,24 @@ jobs:
         npm ci
         npm run build
 
-
-  publish-npm:
-    environment: Production
-    runs-on: ubuntu-latest
-    needs: build-npm
-    
-    steps:
-    - name: Build
+    - name: Publish npm package to npm registry
       run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         
-
-  create-artifacts-and-release:
-    environment: Production
-    runs-on: ubuntu-latest
-    needs: build-npm
-    
-    steps:
-
-    - name: Archive NPM Artifacts
+    - name: Upload npm artifact
       uses: actions/upload-artifact@v2
       with:
         path: ${{ env.DIST_PATH }}
         name: ${{ env.ARTIFACT_NAME }}
         
-    - name: Archive NG Directives Artifacts
+    - name: Upload ng directives artifacts
       uses: actions/upload-artifact@v2
       with:
         path: ${{ env.DIST_PATH_NG }}
         name: ${{ env.ARTIFACT_NAME_NG }}        
 
-    - name: ZIP NPM artifact for release
+    - name: Zip npm artifact for release
       uses: thedoctor0/zip-release@master
       with:
         type: 'zip'
@@ -87,7 +74,7 @@ jobs:
         path: '.'
         filename: ${{ env.ARTIFACT_NAME }}
 
-    - name: Create Release with npm package
+    - name: Create release with npm package
       uses: ncipollo/release-action@v1
       with:
         tag: "${{ env.MODULE_VERSION }}"
@@ -98,7 +85,7 @@ jobs:
 
   build-ng:
     environment: Production
-    needs: create-artifacts-and-release
+    needs: build-npm
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -133,20 +120,22 @@ jobs:
  
   cdn-upload-npm:
     environment: Production
-    needs: create-artifacts-and-release
+    needs: build-npm
     runs-on: ubuntu-latest
     steps:
  
-    - uses: actions/download-artifact@v2
+    - name: Download npm artifact
+      uses: actions/download-artifact@v2
       with:
         name: ${{ env.ARTIFACT_NAME }}
         path: "artifacts/v${{ env.MODULE_VERSION }}"
 
-    - uses: azure/login@v1
+    - name: Login to Azure CLI
+      uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Upload to blob storage
+    - name: Upload artifact to blob storage
       uses: azure/CLI@v1
       with:
         azcliversion: 2.27.1
@@ -229,7 +218,7 @@ jobs:
              --no-wait \
              -o none
 
-    - name: logout
+    - name: Azure CLI logout
       run: |
         az logout
       if: always()
