@@ -111,7 +111,13 @@ jobs:
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
     
     - name: Install angular cli
-      run: npm install -g @angular/cli
+      run: npm ci
+
+    - name: List directory structure
+      run: ls -R
+      
+    - name: Current working directory
+      run: pwd
        
     - name: Build angular project
       run: ng build ngx-ezeep-js
