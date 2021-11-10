@@ -6,6 +6,10 @@ env:
   MODULE_VERSION: '1.0.${{ github.run_number }}'   # update MAJOR and MINOR version here
   DIST_PATH: 'dist/ezeep'                          # deployment path
   ARTIFACT_NAME: 'ezeep-js.zip'                    # artifact name
+  
+  DIST_PATH_NG: 'dist/directives'                  # angular directives deployment path
+  ARTIFACT_NAME_NG: 'ng-directives.zip'            # angular directives artifact name
+  
   PRERELEASE: false                                # true if marked as pre-release, false if production-ready
 
 on:
@@ -13,7 +17,9 @@ on:
     branches: [ main ]
 
 jobs:
-  build-npm:
+  
+  
+  setup-build:
     environment: Production
     runs-on: ubuntu-latest
     strategy:
@@ -21,28 +27,54 @@ jobs:
         node-version: [14.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
-    - name: Checkout repository and bump package.js version
-      uses: actions/checkout@v2
     
-    - name: Bump package.json version
-      uses: reedyuk/npm-version@1.1.1
-      with:
-        version: "${{ env.MODULE_VERSION }}"
-    
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: 'https://registry.npmjs.org'
         cache: 'npm'
-
+   
+   
+  build-npm:
+    environment: Production
+    runs-on: ubuntu-latest
+    needs: setup-build
+    
+    steps:
+    
+    - name: Checkout main branch
+      uses: actions/checkout@v2
+    
+    - name: Bump package.json version of npm package
+      uses: reedyuk/npm-version@1.1.1
+      with:
+        version: "${{ env.MODULE_VERSION }}"
+    
     - name: Build
       run: |
         npm ci
         npm run build
-        npm publish --access public
+
+
+  publish-npm:
+    environment: Production
+    runs-on: ubuntu-latest
+    needs: build-npm
+    
+    steps:
+    - name: Build
+      run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
+
+  create-artifacts-and-release:
+    environment: Production
+    runs-on: ubuntu-latest
+    needs: build-npm
+    
+    steps:
 
     - name: Archive NPM Artifacts
       uses: actions/upload-artifact@v2
@@ -53,10 +85,10 @@ jobs:
     - name: Archive NG Directives Artifacts
       uses: actions/upload-artifact@v2
       with:
-        path: 'dist/directives'
-        name: ng-directives.zip        
+        path: ${{ env.DIST_PATH_NG }}
+        name: ${{ env.ARTIFACT_NAME_NG }}        
 
-    - name: ZIP Release
+    - name: ZIP NPM artifact for release
       uses: thedoctor0/zip-release@master
       with:
         type: 'zip'
@@ -64,17 +96,18 @@ jobs:
         path: '.'
         filename: ${{ env.ARTIFACT_NAME }}
 
-    - name: Create Release
+    - name: Create Release with npm package
       uses: ncipollo/release-action@v1
       with:
         tag: "${{ env.MODULE_VERSION }}"
         prerelease: ${{ env.PRERELEASE }}
         artifacts: "${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
         token: ${{ secrets.GITHUB_TOKEN }}
-  
+
+
   build-ng:
     environment: Production
-    needs: build-npm
+    needs: create-artifacts-and-release
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -110,9 +143,10 @@ jobs:
       run: ng build ngx-ezeep-js
       working-directory: ./ezeep-js-angular
  
-  publish:
+ 
+  cdn-upload:
     environment: Production
-    needs: build-npm
+    needs: create-artifacts-and-release
     runs-on: ubuntu-latest
     steps:
  
