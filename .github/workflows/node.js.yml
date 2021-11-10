@@ -104,7 +104,7 @@ jobs:
         package: 'ezeep-js-angular/projects/ngx-ezeep-js'
         version: "${{ env.MODULE_VERSION }}"
     
-    - name: download directives artifact
+    - name: download angular build artifact
       uses: actions/download-artifact@v2
       with:
           name: ng-directives.zip
@@ -119,9 +119,17 @@ jobs:
         npm install
         cd ../..
         ng build ngx-ezeep-js
-        # cd dist/ngx-ezeep-js
-        # npm publish
-
+  
+  publish-angular-component:
+    environment: Production
+    needs: build-ng
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout ngx-ezeep-js branch
+      run: | 
+        cd ezeep-js-angular/dist/ngx-ezeep-js
+        pwd
+      # npm publish 
  
   cdn-upload-npm:
     environment: Production
