@@ -111,15 +111,17 @@ jobs:
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
           
     - name: Install angular cli
-      run: npm ci --include=dev
-      working-directory: "./ezeep-js-angular"
+      run: |
+        cd ezeep-js-angular 
+        npm ci --include=dev 
+        ng build ngx-ezeep-js 
       
-    - name: list directory
-      run: ls -R
+    #- name: list directory
+    #  run: ls -R
 
-    - name: Build angular project
-      run: ng build ngx-ezeep-js
-      working-directory: "./ezeep-js-angular"
+    #- name: Build angular project
+    #  run: ng build ngx-ezeep-js
+    #  working-directory: "./ezeep-js-angular"
  
  
   cdn-upload-npm:
