@@ -51,8 +51,8 @@ graph TD;
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> ezp-label
-  ezp-stepper --> ezp-label
   ezp-stepper --> ezp-icon
+  ezp-stepper --> ezp-label
   ezp-text-button --> ezp-label
   ezp-user-menu --> ezp-backdrop
   ezp-user-menu --> ezp-label

@@ -30,21 +30,6 @@ export class EzpPrinterSelection {
       title: 'Short edge binding',
     },
   ]
-  private qualityOptions = [
-    {
-      id: 1,
-      title: 'Draft',
-    },
-    {
-      id: 2,
-      title: 'Normal',
-    },
-    {
-      id: 3,
-      title: 'Best',
-    },
-  ]
-
   /**
    *
    * Properties
@@ -55,6 +40,7 @@ export class EzpPrinterSelection {
   @Prop() filename: string
   @Prop() fileurl: string
   @Prop() filetype: string
+
   /**
    *
    * States
@@ -111,6 +97,11 @@ export class EzpPrinterSelection {
   @Listen('selectSelection')
   listenSelectSelection(event: CustomEvent) {
     this.setSelectedProperties(event.detail)
+  }
+
+  @Listen('stepperChanged')
+  listenStepperChanged(event: CustomEvent) {
+    this.selectedProperties.copies = event.detail
   }
 
   @Listen('userMenuClosure')
@@ -233,6 +224,14 @@ export class EzpPrinterSelection {
         this.previouslySelectedProperties.paper = eventDetails.title
         this.previouslySelectedProperties.paperid = eventDetails.id
         break
+      case 'quality':
+        this.selectedProperties.resolution = eventDetails.id
+        this.previouslySelectedProperties.resolution = eventDetails.id
+        break
+      case 'duplex':
+        this.selectedProperties.duplexmode = eventDetails.title
+        this.previouslySelectedProperties.duplexmode = eventDetails.title
+        break
       default:
         break
     }
@@ -249,19 +248,21 @@ export class EzpPrinterSelection {
     initi18n()
     this.loading = true
     this.getPropertiesFromLocalStorage()
-
     this.getUserInfo()
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
+
     await this.printService
       .getPrinterList(authStore.state.accessToken)
       .then((printers: Printer[]) => {
         this.printers = printers
       })
+
     await this.printService
       .getAllPrinterProperties(authStore.state.accessToken)
       .then((printerConfig: PrinterConfig[]) => {
         this.printerConfig = printerConfig[0]
       })
+
     this.loading = false
   }
 
@@ -302,7 +303,10 @@ export class EzpPrinterSelection {
                 options={this.printers.map((printer) => ({
                   id: printer.id,
                   title: printer.name,
-                  meta: printer.location,
+                  meta:
+                    printer.location !== ''
+                      ? printer.location
+                      : i18next.t('printer_selection.unknown_location'),
                   type: 'printer',
                 }))}
                 preSelected={this.selectedPrinter.name}
@@ -311,6 +315,7 @@ export class EzpPrinterSelection {
             <div id="options">
               <ezp-select
                 label={i18next.t('printer_selection.color')}
+                icon="color"
                 placeholder={i18next.t('printer_selection.select_color')}
                 toggleFlow="horizontal"
                 options={
@@ -336,10 +341,11 @@ export class EzpPrinterSelection {
               />
               <ezp-select
                 label={i18next.t('printer_selection.orientation')}
+                icon="orientation"
                 placeholder={i18next.t('printer_selection.select_orientation')}
                 toggleFlow="horizontal"
                 options={this.printerConfig.OrientationsSupported.map((orientation, index) => ({
-                  id: this.printerConfig.OrientationsSupportedId[index],
+                  id: index,
                   title: i18next.t(`printer_selection.orientation_${orientation}`),
                   meta: '',
                   type: 'orientation',
@@ -348,12 +354,13 @@ export class EzpPrinterSelection {
               />
               <ezp-select
                 label={i18next.t('printer_selection.size')}
+                icon="size"
                 placeholder={i18next.t('printer_selection.select_size')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
                 options={this.printerConfig.PaperFormats.map((format) => ({
                   id: format.Id,
-                  title: i18next.t(`printer_selection.format_${format.Name}`),
+                  title: format.Name,
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
@@ -361,36 +368,40 @@ export class EzpPrinterSelection {
               />
               <ezp-select
                 label={i18next.t('printer_selection.quality')}
+                icon="quality"
                 toggleFlow="horizontal"
-                options={this.qualityOptions.map((option) => ({
-                  id: option.id,
-                  title: option.title,
+                options={this.printerConfig.Resolutions.map((option, index) => ({
+                  id: index,
+                  title: option,
                   meta: '',
                   type: 'quality',
                 }))}
                 preSelected={
                   !this.previouslySelectedProperties.resolution
-                    ? 'Normal'
+                    ? this.printerConfig.Resolutions[0]
                     : this.previouslySelectedProperties.resolution
                 }
               />
-              <ezp-select
-                label={i18next.t('printer_selection.duplex')}
-                toggleFlow="horizontal"
-                options={this.duplexOptions.map((option) => ({
-                  id: option.id,
-                  title: option.title,
-                  meta: '',
-                  type: 'duplex',
-                }))}
-                preSelected={
-                  !this.previouslySelectedProperties.duplex
-                    ? 'None'
-                    : this.previouslySelectedProperties.duplexmode
-                }
-              />
-              <ezp-stepper label="Copies" max={10} />
+              {this.printerConfig.DuplexSupported ? (
+                <ezp-select
+                  label={i18next.t('printer_selection.duplex')}
+                  icon="duplex"
+                  toggleFlow="horizontal"
+                  options={this.duplexOptions.map((option) => ({
+                    id: option.id,
+                    title: option.title,
+                    meta: '',
+                    type: 'duplex',
+                  }))}
+                  preSelected={
+                    !this.previouslySelectedProperties.duplex
+                      ? 'None'
+                      : this.previouslySelectedProperties.duplexmode
+                  }
+                />
+              ) : null}
             </div>
+            <ezp-stepper label="Copies" max={10} icon="copies" />
           </div>
           <div id="footer">
             <ezp-text-button

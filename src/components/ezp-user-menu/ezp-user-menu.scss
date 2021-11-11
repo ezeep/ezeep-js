@@ -4,7 +4,6 @@
  *
  */
 
-@use './ezp-user-menu.m' as self;
 @use './../../shared/global';
 
 /**
@@ -14,36 +13,33 @@
  */
 
 :host {
-  --duration: 0.3s;
-  --host-opacity: 0;
-  --host-scale: 0.94, 0.94;
-  --host-separator-position: 0 0 0 var(--hairline-width-positive);
-  --host-transition: opacity var(--duration) var(--easing-out-quart),
-    transform var(--duration) var(--easing-out-quart), visibility 0s var(--duration);
-  --host-visibility: hidden;
-  --link-background: transparent;
-
   background: var(--color-surface-tertiary);
-  border-radius: 3px;
-  box-shadow: var(--host-separator-position) var(--hairline-color);
+  border-radius: 6px;
+  box-shadow: var(--host-separator-position, 0 0 0 var(--hairline-width-positive))
+    var(--hairline-color);
   display: block;
-  left: var(--spacing-7);
-  opacity: var(--host-opacity);
+  // left: var(--spacing-7);
+  opacity: var(--host-opacity, 0);
   position: absolute;
-  right: var(--spacing-2);
-  top: var(--spacing-2);
-  transform: scale(var(--host-scale));
+  right: 0;
+  top: 0;
+  transform: scale(var(--host-scale, 0.94, 0.94));
   transform-origin: right top;
-  transition: var(--host-transition);
-  visibility: var(--host-visibility);
+  transition: var(
+    --host-transition,
+    opacity var(--duration-3) var(--easing-out-quart),
+    transform var(--duration-3) var(--easing-out-quart),
+    visibility 0s var(--duration-3)
+  );
+  visibility: var(--host-visibility, hidden);
   z-index: 5;
 
   @at-root {
     #{&}(.is-open) {
       --host-opacity: 1;
       --host-scale: 1, 1;
-      --host-transition: opacity var(--duration) var(--easing-out-quart),
-        transform var(--duration) var(--easing-out-quart), visibility 0s 0s;
+      --host-transition: opacity var(--duration-3) var(--easing-out-quart),
+        transform var(--duration-3) var(--easing-out-quart), visibility 0s 0s;
       --host-visibility: visible;
     }
   }
@@ -59,7 +55,7 @@
   box-shadow: 0;
   display: grid;
   grid-template: auto / 1fr auto;
-  padding: var(--spacing-3) var(--spacing-2) var(--spacing-3) var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-3) var(--spacing-4) var(--spacing-4);
 }
 
 #name {
@@ -67,25 +63,24 @@
 }
 
 #close {
-  margin: calc(var(--spacing-3) * -1) 0 calc(var(--spacing-3) * -1) 0;
+  margin: calc(var(--spacing-3) * -1) 0;
 }
 
 #links {
+  box-shadow: 0 var(--hairline-width-positive) 0 0 var(--hairline-color);
   display: flex;
   flex-direction: column;
-}
-
-#organizations {
-  z-index: 9999;
+  padding: var(--spacing-2);
 }
 
 .link {
   align-items: center;
-  background: var(--link-background);
+  background: var(--link-background, transparent);
+  border-radius: 3px;
   color: var(--color-foreground-primary);
   cursor: pointer;
   display: grid;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   grid-template: auto / auto 1fr;
   padding: var(--spacing-3);
   text-decoration: none;
@@ -95,28 +90,86 @@
   }
 
   &__icon {
-    color: var(--color-main-primary);
-    margin: calc(var(--spacing-3) * -1) 0;
+    color: var(--color-theme-solid);
+    margin: calc(var(--spacing-2) * -1) 0;
   }
 }
 
-.logout {
-  align-items: center;
-  background: var(--link-background);
-  color: var(--color-foreground-primary);
+#theme {
   display: grid;
   gap: var(--spacing-3);
-  grid-template: auto / auto 1fr;
-  padding: var(--spacing-3);
+  grid-template: repeat(2, auto) / 1fr;
+  padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
+}
 
-  &:hover {
-    --link-background: var(--color-shade-primary);
+#swatches {
+  display: flex;
+  margin: 0 calc(var(--spacing-2) * -1);
+}
 
-    cursor: pointer;
+.swatch {
+  align-items: center;
+  appearance: none;
+  background: var(--swatch-background, transparent);
+  border: 0;
+  border-radius: 50%;
+  color: var(--swatch-color);
+  cursor: var(--swatch-cursor, pointer);
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  opacity: var(--swatch-opacity, 1);
+  outline: none;
+  padding: var(--spacing-2);
+
+  &:not(.selected) {
+    @media (hover: hover) {
+      &:hover {
+        --swatch-background: var(--swatch-theme-translucent);
+      }
+
+      &:active {
+        --swatch-opacity: 0.74;
+      }
+    }
   }
 
-  &__icon {
-    color: var(--color-main-primary);
-    margin: calc(var(--spacing-3) * -1) 0;
+  &.selected {
+    --dot-boxShadowSize: 10px;
+    --swatch-background: var(--swatch-theme-translucent);
+    --swatch-cursor: normal;
+    > .dot {
+      animation: dot-bounce var(--duration-2) ease-in-out;
+    }
+  }
+
+  @each $theme in global.$themes {
+    &--#{$theme} {
+      --swatch-theme-solid: var(--color-theme-#{$theme}-solid);
+      --swatch-theme-translucent: var(--color-theme-#{$theme}-translucent);
+    }
+  }
+}
+
+.dot {
+  background: var(--dot-background, transparent);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 var(--dot-boxShadowSize, 4px) var(--swatch-theme-solid);
+  height: 18px;
+  transition: box-shadow var(--duration-2);
+  width: 18px;
+}
+
+@keyframes dot-bounce {
+  0% {
+    transform: scale(1, 1);
+  }
+
+  50% {
+    transform: scale(0.84, 0.84);
+  }
+
+  100% {
+    transform: scale(1, 1);
   }
 }

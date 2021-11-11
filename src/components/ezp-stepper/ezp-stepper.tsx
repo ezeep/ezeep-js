@@ -1,4 +1,5 @@
-import { Component, Host, Prop, State, Watch, h } from '@stencil/core'
+import { Component, Host, Prop, State, Event, EventEmitter, Watch, h } from '@stencil/core'
+import { IconNameTypes } from '../../shared/types'
 
 @Component({
   tag: 'ezp-stepper',
@@ -13,6 +14,9 @@ export class EzpStepper {
    * Properties
    *
    */
+
+  /** Description... */
+  @Prop() icon: IconNameTypes
 
   /** Description... */
   @Prop() label: string = 'Label'
@@ -36,7 +40,18 @@ export class EzpStepper {
   @State() canIncrease: boolean = true
 
   /** Description... */
+  @State() focused: boolean = false
+
+  /** Description... */
   @State() value: number = 1
+
+  /**
+   *
+   * Events
+   *
+   */
+
+  @Event() stepperChanged: EventEmitter
 
   /**
    *
@@ -48,6 +63,7 @@ export class EzpStepper {
   watchValue() {
     this.canIncrease = this.max !== undefined ? this.value < this.max : true
     this.canDecrease = this.min !== undefined ? this.value > this.min : true
+    this.stepperChanged.emit(this.value)
   }
 
   /**
@@ -68,6 +84,18 @@ export class EzpStepper {
     this.value = this.input.value !== '' ? parseInt(this.input.value) : this.min
   }
 
+  private setFocus = () => {
+    this.input.focus()
+  }
+
+  private handleBlur = () => {
+    this.focused = false
+  }
+
+  private handleFocus = () => {
+    this.focused = true
+  }
+
   /**
    *
    * Lifecycle methods
@@ -86,8 +114,10 @@ export class EzpStepper {
 
   render() {
     return (
-      <Host>
-        <ezp-label noWrap id="label" text={this.label} />
+      <Host class={`${this.focused ? 'focused' : ''} ${this.icon ? 'has-icon' : ''}`}>
+        <div id="toggle" onClick={this.setFocus} />
+        {this.icon ? <ezp-icon id="icon" name={this.icon} /> : null}
+        <ezp-label id="label" noWrap text={this.label} />
         <input
           id="input"
           type="number"
@@ -96,6 +126,8 @@ export class EzpStepper {
           max={this.max.toString()}
           value={this.value.toString()}
           onInput={this.handleInput}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
         />
         <div class="buttons">
           <button class="button" disabled={!this.canDecrease} onClick={this.handleDecrease}>

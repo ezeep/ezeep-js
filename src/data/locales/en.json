@@ -21,7 +21,8 @@
     "color_color": "Color",
     "color_grayscale": "Grayscale",
     "orientation_portrait": "Portrait",
-    "orientation_landscape": "Landscape"
+    "orientation_landscape": "Landscape",
+    "unknown_location": "Unknown location"
   },
   "button_actions": {
     "login": "Sign In",

@@ -4,7 +4,7 @@
  *
  */
 
-@use './ezp-stepper.m' as self;
+@use './../../shared/global';
 
 /**
  *
@@ -15,30 +15,53 @@
 :host {
   align-items: center;
   background: var(--color-surface-tertiary);
-  border-radius: var(--stepper-radius, 0);
+  border-radius: 3px;
   box-shadow: 0 0 0 var(--hairline-width-positive) var(--hairline-color);
   display: grid;
   gap: var(--spacing-3);
-  grid-template: auto / auto 1fr auto;
-  padding: 0 var(--spacing-3);
+  grid-template: var(--host-gridTemplate, auto / auto 1fr auto);
+  padding: 0 var(--spacing-2) 0 var(--spacing-3);
+  position: relative;
+  z-index: 0;
 
   @at-root {
-    #{&}(:first-child) {
-      --stepper-radius: 3px 3px 0 0;
+    #{&}(.focused) {
+      --icon-color: var(--color-theme-solid);
+      --label-color: var(--color-theme-solid);
     }
 
-    #{&}(:last-child) {
-      --stepper-radius: 0 0 3px 3px;
-    }
-
-    #{&}(:first-child:last-child) {
-      --stepper-radius: 3px;
+    #{&}(.has-icon) {
+      --host-gridTemplate: auto / repeat(2, auto) 1fr auto;
     }
   }
 }
 
+#toggle {
+  background: var(--toggle-background, transparent);
+  border-radius: 3px;
+  cursor: pointer;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: -1;
+
+  @media (hover: hover) {
+    &:hover {
+      --toggle-background: var(--color-shade-primary);
+    }
+  }
+}
+
+#icon {
+  color: var(--icon-color, var(--color-foreground-secondary));
+  pointer-events: none;
+}
+
 #label {
-  color: var(--color-foreground-secondary);
+  color: var(--label-color, var(--color-foreground-secondary));
+  pointer-events: none;
 }
 
 #input {
@@ -47,25 +70,29 @@
    * FIXME
    *
    * - adapt font properties
+   * - hover / focus state
    *
    */
 
   -moz-appearance: textfield;
   appearance: none;
-  background: var(--stepper-input-background, transparent);
+  background: transparent;
   border: 0;
-  border-radius: 0;
+  border-radius: 3px;
   box-shadow: none;
+  box-sizing: border-box;
   color: var(--color-foreground-primary);
+  cursor: inherit;
   font-family: inherit;
   font-feature-settings: 'tnum';
-  font-size: 15px;
+  font-size: 14px;
   -webkit-font-smoothing: antialiased;
-  height: 34px;
-  letter-spacing: -0.009em;
+  height: 30px;
+  letter-spacing: #{global.getLetterSpacing(14px)};
   margin: 0;
   outline: none;
   padding: 0;
+  pointer-events: none;
   text-align: right;
   width: 100%;
 }
@@ -78,47 +105,37 @@
 
 .buttons {
   display: flex;
-  gap: 1px;
 }
 
 .button {
   align-items: center;
   appearance: none;
-  background: var(--stepper-button-background, var(--color-shade-primary));
+  background: var(--button-background, transparent);
   border: 0;
-  border-radius: var(--stepper-button-radius);
+  border-radius: 50%;
   box-shadow: none;
-  color: var(--stepper-button-color, var(--color-foreground-secondary));
-  cursor: var(--stepper-button-cursor, pointer);
+  color: var(--button-color, var(--color-theme-solid));
+  cursor: var(--button-cursor, pointer);
   display: flex;
   justify-content: center;
   margin: 0;
   outline: none;
-  padding: 0;
-
-  &:first-child {
-    --stepper-button-radius: 3px 0 0 3px;
-  }
-
-  &:last-child {
-    --stepper-button-radius: 0 3px 3px 0;
-  }
+  padding: var(--spacing-1);
 
   &:not(:disabled) {
     @media (hover: hover) {
       &:hover {
-        --stepper-button-background: var(--color-shade-secondary);
+        --button-background: var(--color-shade-primary);
       }
 
       &:active {
-        --stepper-button-background: var(--color-shade-tertiary);
+        --button-background: var(--color-shade-secondary);
       }
     }
   }
 
   &:disabled {
-    --stepper-button-color: var(--color-foreground-tertiary);
-    --stepper-button-background: transparent;
-    --stepper-button-cursor: not-allowed;
+    --button-color: var(--color-foreground-tertiary);
+    --button-cursor: not-allowed;
   }
 }

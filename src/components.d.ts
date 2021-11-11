@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, WeightTypes } from "./shared/types";
+import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, WeightTypes } from "./shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -97,6 +97,7 @@ export namespace Components {
         "open": () => Promise<void>;
         "printapihosturl": string;
         "redirecturi": string;
+        "theme": ThemeTypes;
     }
     interface EzpProgress {
         /**
@@ -135,6 +136,10 @@ export namespace Components {
         "toggleFlow": SelectFlowTypes;
     }
     interface EzpStepper {
+        /**
+          * Description...
+         */
+        "icon": IconNameTypes;
         /**
           * Description...
          */
@@ -366,6 +371,7 @@ declare namespace LocalJSX {
         "hidelogin"?: boolean;
         "printapihosturl"?: string;
         "redirecturi"?: string;
+        "theme"?: ThemeTypes;
     }
     interface EzpProgress {
         /**
@@ -412,6 +418,10 @@ declare namespace LocalJSX {
         /**
           * Description...
          */
+        "icon"?: IconNameTypes;
+        /**
+          * Description...
+         */
         "label"?: string;
         /**
           * Description...
@@ -421,6 +431,10 @@ declare namespace LocalJSX {
           * Description...
          */
         "min"?: number;
+        /**
+          * Events
+         */
+        "onStepperChanged"?: (event: CustomEvent<any>) => void;
     }
     interface EzpTextButton {
         /**

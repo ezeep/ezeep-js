@@ -1,38 +1,20 @@
 /**
  *
- * Modules
- *
- */
-
-@use './ezp-text-button.m' as self;
-
-/**
- *
  * Rules
  *
  */
 
 :host {
-  --button-background-active: transparent;
-  --button-background-disabled: transparent;
-  --button-background-hover: transparent;
-  --button-background-init: transparent;
-  --button-background: var(--button-background-init);
-  --button-color-disabled: inherit;
-  --button-color-init: inherit;
-  --button-color: var(--button-color-init);
-  --button-cursor: pointer;
-
   display: flex;
 
   @at-root {
     #{&}(.primary) {
-      --button-background-active: var(--color-main-tertiary);
       --button-background-disabled: var(--color-shade-primary);
-      --button-background-hover: var(--color-main-secondary);
-      --button-background-init: var(--color-main-primary);
+      --button-background-init: var(--color-theme-solid);
       --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-on-main-primary);
+      --button-color-init: var(--color-on-theme);
+      --button-opacity-active: 0.74;
+      --button-opacity-hover: 0.84;
     }
 
     #{&}(.secondary) {
@@ -41,14 +23,16 @@
       --button-background-hover: var(--color-shade-secondary);
       --button-background-init: var(--color-shade-primary);
       --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-main-primary);
+      --button-color-init: var(--color-theme-solid);
     }
 
     #{&}(.tertiary) {
       --button-background-active: var(--color-shade-secondary);
+      --button-background-disabled: transparent;
       --button-background-hover: var(--color-shade-primary);
+      --button-background-init: transparent;
       --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-main-primary);
+      --button-color-init: var(--color-theme-solid);
     }
   }
 }
@@ -56,16 +40,17 @@
 .button {
   align-items: center;
   appearance: none;
-  background: var(--button-background);
+  background: var(--button-background, var(--button-background-init));
   border: 0;
   border-radius: 3px;
   box-shadow: none;
-  color: var(--button-color);
-  cursor: var(--button-cursor);
+  color: var(--button-color, var(--button-color-init));
+  cursor: var(--button-cursor, pointer);
   display: flex;
   font-family: inherit;
   justify-content: center;
   margin: 0;
+  opacity: var(--button-opacity, 1);
   outline: none;
   padding: var(--spacing-3);
   white-space: nowrap;
@@ -74,11 +59,13 @@
   &:not(:disabled) {
     @media (hover: hover) {
       &:hover {
-        --button-background: var(--button-background-hover);
+        --button-background: var(--button-background-hover, var(--button-background-init));
+        --button-opacity: var(--button-opacity-hover, 1);
       }
 
       &:active {
-        --button-background: var(--button-background-active);
+        --button-background: var(--button-background-active, var(--button-background-init));
+        --button-opacity: var(--button-opacity-active, 1);
       }
     }
   }

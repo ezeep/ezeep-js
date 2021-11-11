@@ -4,7 +4,6 @@
  *
  */
 
-@use './ezp-select.m' as self;
 @use './../../shared/global';
 
 /**
@@ -17,16 +16,14 @@
   --accessory-color: var(--color-foreground-secondary);
   --details-columns: 1fr;
   --details-rows: auto;
-  --duration: 0.3s;
   --host-height: var(--toggle-height);
+  --duration: var(--duration-3);
   --host-transition: z-index 0s var(--duration);
   --host-z-index: 3;
-  --icon-color: var(--color-foreground-secondary);
   --indicator-opacity: 0;
   --indicator-transform: translateX(var(--spacing-3));
-  --indicator-transition: opacity var(--indicator-duration) var(--easing-out-quart),
-    transform var(--indicator-duration) var(--easing-out-quart),
-    visibility 0s var(--indicator-duration);
+  --indicator-transition: opacity var(--duration) var(--easing-out-quart),
+    transform var(--duration) var(--easing-out-quart), visibility 0s var(--duration);
   --indicator-visibility: hidden;
   --label-align: auto;
   --label-color: var(--color-foreground-secondary);
@@ -73,7 +70,7 @@
       --label-align: start;
       --toggle-areas: 'label value accessory';
       --toggle-columns: 1fr repeat(2, auto);
-      --toggle-height: 34px;
+      --toggle-height: 30px;
       --toggle-rows: auto;
       --value-align: end;
     }
@@ -87,7 +84,7 @@
       --label-align: center;
       --toggle-areas: 'label accessory' 'value accessory';
       --toggle-columns: 1fr auto;
-      --toggle-height: 52px;
+      --toggle-height: 48px;
       --toggle-rows: repeat(2, auto);
       --value-align: center;
     }
@@ -100,21 +97,21 @@
     #{&}(.option-horizontal) {
       --details-columns: repeat(2, 1fr);
       --details-rows: auto;
-      --option-height: 34px;
+      --option-height: 30px;
     }
 
     #{&}(.option-vertical) {
       --details-columns: 1fr;
       --details-rows: repeat(2, auto);
-      --option-height: 52px;
+      --option-height: 48px;
     }
 
     #{&}(.is-expanded) {
-      --accessory-color: var(--color-main-primary);
+      --accessory-color: var(--color-theme-solid);
       --host-transition: z-index 0s 0s;
       --host-z-index: 9999;
-      --icon-color: var(--color-main-primary);
-      --label-color: var(--color-main-primary);
+      --icon-color: var(--color-theme-solid);
+      --label-color: var(--color-theme-solid);
       --wrap-radius: 3px;
     }
   }
@@ -145,7 +142,7 @@
   box-sizing: border-box;
   cursor: pointer;
   display: grid;
-  gap: var(--spacing-2);
+  gap: var(--spacing-2) var(--spacing-3);
   grid-template-areas: var(--toggle-areas);
   grid-template-columns: var(--toggle-columns);
   grid-template-rows: var(--toggle-rows);
@@ -159,9 +156,9 @@
 
 #icon {
   align-self: center;
-  color: var(--icon-color);
+  color: var(--icon-color, var(--color-foreground-secondary));
   grid-area: icon;
-  margin: calc(var(--spacing-3) * -1) 0;
+  margin: calc(var(--spacing-2) * -1) 0;
 }
 
 #label {
@@ -180,7 +177,7 @@
   align-self: center;
   color: var(--accessory-color);
   grid-area: accessory;
-  margin: calc(var(--spacing-3) * -1) 0;
+  margin: calc(var(--spacing-2) * -1) 0;
 }
 
 #list {
@@ -195,10 +192,8 @@
   box-sizing: border-box;
   cursor: pointer;
   display: grid;
-  grid-column-gap: var(--spacing-3);
-  grid-row-gap: var(--spacing-2);
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto;
+  gap: var(--spacing-3);
+  grid-template: auto / auto 1fr;
   height: var(--option-height);
   padding: 0 0 0 var(--spacing-3);
 
@@ -230,8 +225,8 @@
 
 .indicator {
   align-self: center;
-  color: var(--color-main-primary);
-  margin: calc(var(--spacing-3) * -1) 0;
+  color: var(--color-theme-solid);
+  margin: calc(var(--spacing-2) * -1) 0;
   opacity: var(--indicator-opacity);
   transform: var(--indicator-transform);
   transition: var(--indicator-transition);

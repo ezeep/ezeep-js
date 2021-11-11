@@ -1,6 +1,7 @@
 import { Component, Host, Prop, Event, Element, EventEmitter, Watch, h } from '@stencil/core'
 import authStore from '../../services/auth'
-import { IconNameTypes } from '../../shared/types'
+import userStore from '../../services/user'
+import { IconNameTypes, ThemeTypes } from '../../shared/types'
 
 @Component({
   tag: 'ezp-user-menu',
@@ -15,35 +16,16 @@ export class EzpUserMenu {
   private links = [
     {
       title: 'Manage Account',
-      icon: 'user',
+      icon: 'account',
       href: 'https://app.ezeep.com',
     },
     {
       title: 'Help & Support',
-      icon: 'question',
+      icon: 'help',
       href: 'https://support.ezeep.com',
     },
-    /* {
-      title: 'Logout',
-      icon: 'off',
-      href: '#',
-    }, */
   ]
-  /* 
-  private organizations = [
-    {
-      id: 1,
-      name: 'Organization 1',
-    },
-    {
-      id: 2,
-      name: 'Organization 2',
-    },
-    {
-      id: 3,
-      name: 'Organization 3',
-    },
-  ] */
+  private themes = ['pink', 'red', 'orange', 'green', 'cyan', 'blue', 'violet']
 
   @Prop() name: string = 'John Doe'
   @Prop({ mutable: true }) open: boolean = false
@@ -89,6 +71,10 @@ export class EzpUserMenu {
     this.logoutEmitter.emit()
   }
 
+  private handleTheme = (theme) => {
+    userStore.state.theme = theme as ThemeTypes
+  }
+
   /**
    *
    * Render method
@@ -118,7 +104,7 @@ export class EzpUserMenu {
       <Host class={this.open ? 'is-open' : ''}>
         <div id="header">
           <ezp-label ellipsis id="name" weight="strong" text={this.name} />
-          <ezp-icon-button id="close" level="quaternary" icon="cross" onClick={this.handleClose} />
+          <ezp-icon-button id="close" level="tertiary" icon="close" onClick={this.handleClose} />
         </div>
         <div id="links">
           {this.links.map((link) => (
@@ -128,9 +114,24 @@ export class EzpUserMenu {
             </a>
           ))}
           <a class="link" onClick={this.logOut}>
-            <ezp-icon class="link__icon" name="off"></ezp-icon>
+            <ezp-icon class="link__icon" name="logout" />
             <ezp-label text="Logout" />
           </a>
+        </div>
+        <div id="theme">
+          <ezp-label text="Color Theme:" />
+          <div id="swatches">
+            {this.themes.map((theme) => (
+              <button
+                class={`swatch swatch--${theme} ${
+                  theme === userStore.state.theme ? 'selected' : ''
+                }`}
+                onClick={() => this.handleTheme(theme)}
+              >
+                <span class="dot" />
+              </button>
+            ))}
+          </div>
         </div>
       </Host>
     )

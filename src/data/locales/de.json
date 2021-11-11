@@ -21,7 +21,8 @@
     "color_color": "Farbe",
     "color_grayscale": "Graustufen",
     "orientation_portrait": "Hochformat",
-    "orientation_landscape": "Querformat"
+    "orientation_landscape": "Querformat",
+    "unknown_location": "Unbekannter Standort"
   },
   "button_actions": {
     "login": "Anmelden",

@@ -4,17 +4,18 @@
 
 ## Properties
 
-| Property          | Attribute         | Description | Type      | Default     |
-| ----------------- | ----------------- | ----------- | --------- | ----------- |
-| `authapihosturl`  | `authapihosturl`  |             | `string`  | `undefined` |
-| `clientid`        | `clientid`        |             | `string`  | `undefined` |
-| `custom`          | `custom`          |             | `boolean` | `undefined` |
-| `filename`        | `filename`        |             | `string`  | `undefined` |
-| `filetype`        | `filetype`        |             | `string`  | `undefined` |
-| `fileurl`         | `fileurl`         |             | `string`  | `undefined` |
-| `hidelogin`       | `hidelogin`       |             | `boolean` | `undefined` |
-| `printapihosturl` | `printapihosturl` |             | `string`  | `undefined` |
-| `redirecturi`     | `redirecturi`     |             | `string`  | `undefined` |
+| Property          | Attribute         | Description | Type                                                                     | Default     |
+| ----------------- | ----------------- | ----------- | ------------------------------------------------------------------------ | ----------- |
+| `authapihosturl`  | `authapihosturl`  |             | `string`                                                                 | `undefined` |
+| `clientid`        | `clientid`        |             | `string`                                                                 | `undefined` |
+| `custom`          | `custom`          |             | `boolean`                                                                | `undefined` |
+| `filename`        | `filename`        |             | `string`                                                                 | `undefined` |
+| `filetype`        | `filetype`        |             | `string`                                                                 | `undefined` |
+| `fileurl`         | `fileurl`         |             | `string`                                                                 | `undefined` |
+| `hidelogin`       | `hidelogin`       |             | `boolean`                                                                | `undefined` |
+| `printapihosturl` | `printapihosturl` |             | `string`                                                                 | `undefined` |
+| `redirecturi`     | `redirecturi`     |             | `string`                                                                 | `undefined` |
+| `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "violet"` | `'cyan'`    |
 
 ## Methods
 
@@ -43,7 +44,6 @@ graph TD;
   ezp-printing --> ezp-icon-button
   ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
-  ezp-auth --> ezp-icon
   ezp-auth --> ezp-label
   ezp-auth --> ezp-text-button
   ezp-progress --> ezp-label
@@ -59,8 +59,8 @@ graph TD;
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> ezp-label
-  ezp-stepper --> ezp-label
   ezp-stepper --> ezp-icon
+  ezp-stepper --> ezp-label
   ezp-user-menu --> ezp-backdrop
   ezp-user-menu --> ezp-label
   ezp-user-menu --> ezp-icon-button
