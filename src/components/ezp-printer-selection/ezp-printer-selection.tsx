@@ -340,7 +340,7 @@ export class EzpPrinterSelection {
                           title: i18next.t('printer_selection.color_grayscale'),
                           meta: '',
                           type: 'color',
-                        }
+                        },
                       ]
                 }
                 preSelected={this.previouslySelectedProperties.color}

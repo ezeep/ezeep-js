@@ -6,6 +6,7 @@
 
 | Property          | Attribute         | Description | Type                                                                     | Default     |
 | ----------------- | ----------------- | ----------- | ------------------------------------------------------------------------ | ----------- |
+| `appearance`      | `appearance`      |             | `"dark" \| "light" \| "system"`                                          | `'system'`  |
 | `authapihosturl`  | `authapihosturl`  |             | `string`                                                                 | `undefined` |
 | `clientid`        | `clientid`        |             | `string`                                                                 | `undefined` |
 | `custom`          | `custom`          |             | `boolean`                                                                | `undefined` |

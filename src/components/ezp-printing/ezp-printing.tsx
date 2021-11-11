@@ -3,7 +3,7 @@ import authStore, { sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
 import config from '../../shared/config.json'
-import { ThemeTypes } from './../../shared/types'
+import { ThemeTypes, AppearanceTypes } from './../../shared/types'
 
 @Component({
   tag: 'ezp-printing',
@@ -21,6 +21,7 @@ export class EzpPrinting {
   @Prop() authapihosturl: string
   @Prop() printapihosturl: string
   @Prop() theme: ThemeTypes = 'cyan'
+  @Prop() appearance: AppearanceTypes = 'system'
 
   /**
    *
@@ -103,6 +104,7 @@ export class EzpPrinting {
   componentWillLoad() {
     authStore.state.redirectUri = this.redirecturi
     userStore.state.theme = this.theme
+    userStore.state.appearance = this.appearance
 
     if (this.authapihosturl) {
       authStore.state.authApiHostUrl = this.authapihosturl
@@ -128,7 +130,7 @@ export class EzpPrinting {
 
   render() {
     return (
-      <Host class={userStore.state.theme}>
+      <Host class={`${userStore.state.theme} ${userStore.state.appearance}`}>
         {this.authOpen ? (
           <ezp-auth
             clientID={this.clientid}

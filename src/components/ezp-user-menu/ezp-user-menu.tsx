@@ -1,7 +1,7 @@
 import { Component, Host, Prop, Event, Element, EventEmitter, Watch, h } from '@stencil/core'
 import authStore from '../../services/auth'
 import userStore from '../../services/user'
-import { IconNameTypes, ThemeTypes } from '../../shared/types'
+import { IconNameTypes, ThemeTypes, AppearanceTypes } from '../../shared/types'
 
 @Component({
   tag: 'ezp-user-menu',
@@ -26,6 +26,11 @@ export class EzpUserMenu {
     },
   ]
   private themes = ['pink', 'red', 'orange', 'green', 'cyan', 'blue', 'violet']
+  private appearances = [
+    { title: 'System', name: 'system' },
+    { title: 'Light', name: 'light' },
+    { title: 'Dark', name: 'dark' },
+  ]
 
   @Prop() name: string = 'John Doe'
   @Prop({ mutable: true }) open: boolean = false
@@ -75,6 +80,10 @@ export class EzpUserMenu {
     userStore.state.theme = theme as ThemeTypes
   }
 
+  private handleAppearance = (appearance) => {
+    userStore.state.appearance = appearance as AppearanceTypes
+  }
+
   /**
    *
    * Render method
@@ -119,7 +128,7 @@ export class EzpUserMenu {
           </a>
         </div>
         <div id="theme">
-          <ezp-label text="Color Theme:" />
+          <ezp-label text="Color Theme:" weight="strong" />
           <div id="swatches">
             {this.themes.map((theme) => (
               <button
@@ -129,6 +138,20 @@ export class EzpUserMenu {
                 onClick={() => this.handleTheme(theme)}
               >
                 <span class="dot" />
+              </button>
+            ))}
+          </div>
+        </div>
+        <div id="appearance">
+          <ezp-label text="Appearance:" weight="strong" />
+          <div id="tabs">
+            {this.appearances.map((appearance) => (
+              <button
+                class={`tab ${appearance.name === userStore.state.appearance ? 'selected' : ''}`}
+                onClick={() => this.handleAppearance(appearance.name)}
+              >
+                <ezp-icon name={appearance.name as IconNameTypes} />
+                <ezp-label text={appearance.title} level="tertiary" weight="strong" />
               </button>
             ))}
           </div>

@@ -4,10 +4,10 @@
 
 ## Properties
 
-| Property            | Attribute | Description    | Type                                                                                                                                                                                           | Default     |
-| ------------------- | --------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `name` _(required)_ | `name`    | Description... | `"account" \| "checkmark" \| "close" \| "color" \| "copies" \| "duplex" \| "expand" \| "help" \| "logout" \| "menu" \| "minus" \| "orientation" \| "plus" \| "printer" \| "quality" \| "size"` | `undefined` |
-| `size`              | `size`    | Description... | `"large" \| "normal"`                                                                                                                                                                          | `'normal'`  |
+| Property            | Attribute | Description    | Type                                                                                                                                                                                                                            | Default     |
+| ------------------- | --------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `name` _(required)_ | `name`    | Description... | `"account" \| "checkmark" \| "close" \| "color" \| "copies" \| "dark" \| "duplex" \| "expand" \| "help" \| "light" \| "logout" \| "menu" \| "minus" \| "orientation" \| "plus" \| "printer" \| "quality" \| "size" \| "system"` | `undefined` |
+| `size`              | `size`    | Description... | `"large" \| "normal"`                                                                                                                                                                                                           | `'normal'`  |
 
 ## Dependencies
 
