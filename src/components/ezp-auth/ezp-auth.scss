@@ -13,6 +13,8 @@
  */
 
 :host {
+  --color-theme-solid: var(--color-theme-cyan-solid);
+
   align-content: center;
   background: var(--color-overlay);
   display: grid;
