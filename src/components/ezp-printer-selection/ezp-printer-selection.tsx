@@ -60,7 +60,7 @@ export class EzpPrinterSelection {
     paper: '',
     paperid: '',
     color: '',
-    duplex: '',
+    duplex: false,
     duplexmode: '',
     orientation: '',
     copies: '',
@@ -70,7 +70,7 @@ export class EzpPrinterSelection {
     paper: '',
     paperid: '',
     color: '',
-    duplex: '',
+    duplex: false,
     duplexmode: '',
     orientation: '',
     copies: '',
@@ -225,12 +225,17 @@ export class EzpPrinterSelection {
         this.previouslySelectedProperties.paperid = eventDetails.id
         break
       case 'quality':
-        this.selectedProperties.resolution = eventDetails.id
-        this.previouslySelectedProperties.resolution = eventDetails.id
+        this.selectedProperties.resolution = eventDetails.title
+        this.previouslySelectedProperties.resolution = eventDetails.title
         break
       case 'duplex':
-        this.selectedProperties.duplexmode = eventDetails.title
-        this.previouslySelectedProperties.duplexmode = eventDetails.title
+        if (eventDetails.title === 'None') {
+           this.selectedProperties.duplex = false
+        } else {
+          this.selectedProperties.duplex = true
+        }       
+        this.selectedProperties.duplexmode = eventDetails.id
+        this.previouslySelectedProperties.duplexmode = eventDetails.id
         break
       default:
         break
