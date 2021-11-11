@@ -20,7 +20,6 @@
   --duration: var(--duration-3);
   --host-transition: z-index 0s var(--duration);
   --host-z-index: 3;
-  --icon-color: var(--color-theme-solid);
   --indicator-opacity: 0;
   --indicator-transform: translateX(var(--spacing-3));
   --indicator-transition: opacity var(--duration) var(--easing-out-quart),
@@ -157,7 +156,7 @@
 
 #icon {
   align-self: center;
-  color: var(--icon-color);
+  color: var(--icon-color, var(--color-foreground-secondary));
   grid-area: icon;
   margin: calc(var(--spacing-2) * -1) 0;
 }

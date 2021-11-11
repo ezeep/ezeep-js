@@ -202,22 +202,26 @@ export class EzpSelect {
             <ezp-icon id="accessory" name="expand" />
           </div>
           <div id="list" ref={(element) => (this.list = element)}>
-            {this.options.map((option) => (
-              <div
-                class={`option ${option.id === this.selected.id ? 'is-selected' : ''} ${
-                  option.meta !== '' ? 'has-meta' : ''
-                } `}
-                onClick={() => this.select(option.id)}
-              >
-                <ezp-icon name="checkmark" class="indicator" />
-                <div class="details">
-                  <ezp-label class="title" ellipsis text={option.title} />
-                  {option.meta !== '' ? (
-                    <ezp-label level="tertiary" class="meta" text={option.meta} />
-                  ) : null}
-                </div>
-              </div>
-            ))}
+            {this.options.map((option) => {
+              if (option.title !== '') {
+                return (
+                  <div
+                    class={`option ${option.id === this.selected.id ? 'is-selected' : ''} ${
+                      option.meta !== '' ? 'has-meta' : ''
+                    } `}
+                    onClick={() => this.select(option.id)}
+                  >
+                    <ezp-icon name="checkmark" class="indicator" />
+                    <div class="details">
+                      <ezp-label class="title" ellipsis text={option.title} />
+                      {option.meta !== '' ? (
+                        <ezp-label level="tertiary" class="meta" text={option.meta} ellipsis />
+                      ) : null}
+                    </div>
+                  </div>
+                )
+              }
+            })}
           </div>
         </div>
       </Host>

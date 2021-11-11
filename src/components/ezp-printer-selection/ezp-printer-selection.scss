@@ -13,10 +13,6 @@
  */
 
 :host {
-  --dialog-separator-position: 0 0 0 var(--hairline-width-positive);
-  --footer-separator-position: 0 var(--hairline-width-negative) 0 0;
-  --header-separator-position: 0 var(--hairline-width-positive) 0 0;
-
   align-content: center;
   background: var(--color-overlay);
   display: grid;
@@ -31,7 +27,7 @@
   @include global.media-appearance('dark') {
     --content-boxShadow: inset var(--hairline-width-positive) 0 0 0 var(--hairline-color),
       inset var(--hairline-width-negative) 0 0 0 var(--hairline-color);
-    --dialog-separator-position: inset 0 0 0 var(--hairline-width-positive);
+    --container-separator-position: inset 0 0 0 var(--hairline-width-positive);
     --footer-separator-position: inset 0 var(--hairline-width-positive) 0 0;
     --header-separator-position: inset 0 var(--hairline-width-negative) 0 0;
   }
@@ -40,7 +36,8 @@
 #container {
   background: var(--color-surface-tertiary);
   border-radius: 6px;
-  box-shadow: var(--dialog-separator-position) var(--hairline-color),
+  box-shadow: var(--container-separator-position, 0 0 0 var(--hairline-width-positive))
+      var(--hairline-color),
     0 var(--spacing-3) var(--spacing-4) 0 var(--color-shadow),
     0 var(--spacing-4) var(--spacing-5) 0 var(--color-shadow),
     0 var(--spacing-5) var(--spacing-6) 0 var(--color-shadow),
@@ -50,7 +47,8 @@
 }
 
 #header {
-  box-shadow: var(--header-separator-position) var(--hairline-color);
+  box-shadow: var(--header-separator-position, 0 var(--hairline-width-positive) 0 0)
+    var(--hairline-color);
   color: var(--color-foreground-primary);
   display: grid;
   grid-column-gap: var(--spacing-1);
@@ -76,7 +74,8 @@
 }
 
 #footer {
-  box-shadow: var(--footer-separator-position) var(--hairline-color);
+  box-shadow: var(--footer-separator-position, 0 var(--hairline-width-negative) 0 0)
+    var(--hairline-color);
   display: grid;
   grid-column-gap: var(--spacing-2);
   grid-template-columns: repeat(2, 1fr);

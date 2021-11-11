@@ -138,6 +138,10 @@ export namespace Components {
         /**
           * Description...
          */
+        "icon": IconNameTypes;
+        /**
+          * Description...
+         */
         "label": string;
         /**
           * Description...
@@ -410,6 +414,10 @@ declare namespace LocalJSX {
         "toggleFlow"?: SelectFlowTypes;
     }
     interface EzpStepper {
+        /**
+          * Description...
+         */
+        "icon"?: IconNameTypes;
         /**
           * Description...
          */

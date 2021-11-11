@@ -16,12 +16,12 @@ export class EzpUserMenu {
   private links = [
     {
       title: 'Manage Account',
-      icon: 'user',
+      icon: 'account',
       href: 'https://app.ezeep.com',
     },
     {
       title: 'Help & Support',
-      icon: 'question',
+      icon: 'help',
       href: 'https://support.ezeep.com',
     },
   ]
@@ -105,7 +105,7 @@ export class EzpUserMenu {
       <Host class={this.open ? 'is-open' : ''}>
         <div id="header">
           <ezp-label ellipsis id="name" weight="strong" text={this.name} />
-          <ezp-icon-button id="close" level="quaternary" icon="cross" onClick={this.handleClose} />
+          <ezp-icon-button id="close" level="tertiary" icon="close" onClick={this.handleClose} />
         </div>
         <div id="links">
           {this.links.map((link) => (
@@ -115,7 +115,7 @@ export class EzpUserMenu {
             </a>
           ))}
           <a class="link" onClick={this.logOut}>
-            <ezp-icon class="link__icon" name="off"></ezp-icon>
+            <ezp-icon class="link__icon" name="logout" />
             <ezp-label text="Logout" />
           </a>
         </div>
@@ -134,7 +134,6 @@ export class EzpUserMenu {
             ))}
           </div>
         </div>
-        <div class="blubb" />
       </Host>
     )
   }

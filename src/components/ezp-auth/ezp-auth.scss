@@ -13,9 +13,6 @@
  */
 
 :host {
-  --dialog-radius: 6px;
-  --dialog-separator-position: 0 0 0 var(--hairline-width-positive);
-
   align-content: center;
   background: var(--color-overlay);
   display: grid;
@@ -34,8 +31,9 @@
 
 #dialog {
   background: var(--color-surface-tertiary);
-  border-radius: var(--dialog-radius);
-  box-shadow: var(--dialog-separator-position) var(--hairline-color),
+  border-radius: 6px;
+  box-shadow: var(--dialog-separator-position, 0 0 0 var(--hairline-width-positive))
+      var(--hairline-color),
     0 var(--spacing-1) var(--spacing-2) 0 var(--color-shadow),
     0 var(--spacing-2) var(--spacing-3) 0 var(--color-shadow),
     0 var(--spacing-3) var(--spacing-4) 0 var(--color-shadow),
@@ -67,4 +65,8 @@
 
 #button {
   min-width: 144px;
+}
+
+#logo {
+  fill: var(--color-theme-solid);
 }

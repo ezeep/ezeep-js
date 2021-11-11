@@ -100,10 +100,23 @@ export class EzpAuth {
       <Host>
         <div id="dialog">
           <div id="header">
-            <ezp-icon-button onClick={this.handleCancel} icon="cross" level="tertiary" />
+            <ezp-icon-button onClick={this.handleCancel} icon="close" level="tertiary" />
           </div>
           <div id="content">
-            <ezp-icon id="icon" name="rocket" size="large" />
+            <svg
+              id="logo"
+              width="90"
+              height="90"
+              viewBox="0 0 90 90"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M25.9211 72.1296L39.0613 43.8488L2.96326 7.63391L63.3276 47.3892L32.2619 24.5431L27.6516 11.4525L45.7004 29.5597L52.34 15.2706L89.3723 20.998L63.0241 20.7521L59.0129 29.385L52.4587 15.6081L63.7497 47.6674L25.7826 72.4275L20.8033 83.1445L16.7582 63.3739L30.0161 58.9423L25.9211 72.1296Z"
+              />
+            </svg>
+
             <ezp-label level="primary" weight="heavy" text={i18next.t('login_page.get_started')} />
             <ezp-label text={i18next.t('login_page.description')} />
             <ezp-text-button

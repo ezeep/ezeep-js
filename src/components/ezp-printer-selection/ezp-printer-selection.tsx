@@ -248,30 +248,20 @@ export class EzpPrinterSelection {
     initi18n()
     this.loading = true
     this.getPropertiesFromLocalStorage()
-
     this.getUserInfo()
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
+
     await this.printService
       .getPrinterList(authStore.state.accessToken)
       .then((printers: Printer[]) => {
         this.printers = printers
       })
+
     await this.printService
       .getAllPrinterProperties(authStore.state.accessToken)
       .then((printerConfig: PrinterConfig[]) => {
         this.printerConfig = printerConfig[0]
       })
-    console.log(this.printerConfig)
-    console.log('resolutions/quality')
-    console.log(this.printerConfig.Resolutions.map((option) => option))
-    console.log(
-      this.printerConfig.Resolutions.map((option, index) => ({
-        id: index,
-        title: option,
-        meta: '',
-        type: 'quality',
-      }))
-    )
 
     this.loading = false
   }
@@ -325,6 +315,7 @@ export class EzpPrinterSelection {
             <div id="options">
               <ezp-select
                 label={i18next.t('printer_selection.color')}
+                icon="color"
                 placeholder={i18next.t('printer_selection.select_color')}
                 toggleFlow="horizontal"
                 options={
@@ -350,6 +341,7 @@ export class EzpPrinterSelection {
               />
               <ezp-select
                 label={i18next.t('printer_selection.orientation')}
+                icon="orientation"
                 placeholder={i18next.t('printer_selection.select_orientation')}
                 toggleFlow="horizontal"
                 options={this.printerConfig.OrientationsSupported.map((orientation, index) => ({
@@ -362,6 +354,7 @@ export class EzpPrinterSelection {
               />
               <ezp-select
                 label={i18next.t('printer_selection.size')}
+                icon="size"
                 placeholder={i18next.t('printer_selection.select_size')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
@@ -375,6 +368,7 @@ export class EzpPrinterSelection {
               />
               <ezp-select
                 label={i18next.t('printer_selection.quality')}
+                icon="quality"
                 toggleFlow="horizontal"
                 options={this.printerConfig.Resolutions.map((option, index) => ({
                   id: index,
@@ -384,13 +378,14 @@ export class EzpPrinterSelection {
                 }))}
                 preSelected={
                   !this.previouslySelectedProperties.resolution
-                    ? 'Normal'
+                    ? this.printerConfig.Resolutions[0]
                     : this.previouslySelectedProperties.resolution
                 }
               />
               {this.printerConfig.DuplexSupported ? (
                 <ezp-select
                   label={i18next.t('printer_selection.duplex')}
+                  icon="duplex"
                   toggleFlow="horizontal"
                   options={this.duplexOptions.map((option) => ({
                     id: option.id,
@@ -406,7 +401,7 @@ export class EzpPrinterSelection {
                 />
               ) : null}
             </div>
-            <ezp-stepper label="Copies" max={10} />
+            <ezp-stepper label="Copies" max={10} icon="copies" />
           </div>
           <div id="footer">
             <ezp-text-button

@@ -221,13 +221,13 @@ export class EzpSelect {
 
 export declare interface EzpStepper extends Components.EzpStepper {}
 @ProxyCmp({
-  inputs: ['label', 'max', 'min'],
+  inputs: ['icon', 'label', 'max', 'min'],
 })
 @Component({
   selector: 'ezp-stepper',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
-  inputs: ['label', 'max', 'min'],
+  inputs: ['icon', 'label', 'max', 'min'],
   outputs: ['stepperChanged'],
 })
 export class EzpStepper {

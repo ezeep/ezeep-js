@@ -5,9 +5,7 @@
  */
 
 :host {
-  --host-animation-name: host-in;
-
-  animation: var(--host-animation-name) var(--duration-3) forwards var(--easing-out-quart);
+  animation: var(--host-animation-name, host-in) var(--duration-3) forwards var(--easing-out-quart);
   background: var(--color-overlay);
   border-radius: 6px;
   display: block;

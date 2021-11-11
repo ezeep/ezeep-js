@@ -27,7 +27,6 @@
 
 - [ezp-progress](../ezp-progress)
 - [ezp-icon-button](../ezp-icon-button)
-- [ezp-icon](../ezp-icon)
 - [ezp-label](../ezp-label)
 - [ezp-text-button](../ezp-text-button)
 
@@ -37,7 +36,6 @@
 graph TD;
   ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
-  ezp-auth --> ezp-icon
   ezp-auth --> ezp-label
   ezp-auth --> ezp-text-button
   ezp-progress --> ezp-label

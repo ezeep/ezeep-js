@@ -53,7 +53,7 @@ export class EzpIconButton {
     return (
       <Host class={`${this.level}`}>
         <TagType id="button" {...attributes}>
-          <ezp-icon name={this.icon}></ezp-icon>
+          <ezp-icon name={this.icon} />
         </TagType>
       </Host>
     )
