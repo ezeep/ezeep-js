@@ -29,7 +29,6 @@ export class EzpUserMenu {
 
   @Prop() name: string = 'John Doe'
   @Prop({ mutable: true }) open: boolean = false
-  @Prop({ mutable: true }) theme: ThemeTypes = 'cyan'
 
   /**
    *
@@ -73,7 +72,7 @@ export class EzpUserMenu {
   }
 
   private handleTheme = (theme) => {
-    userStore.state.theme = theme
+    userStore.state.theme = theme as ThemeTypes
   }
 
   /**

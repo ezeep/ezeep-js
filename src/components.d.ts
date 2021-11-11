@@ -97,6 +97,7 @@ export namespace Components {
         "open": () => Promise<void>;
         "printapihosturl": string;
         "redirecturi": string;
+        "theme": ThemeTypes;
     }
     interface EzpProgress {
         /**
@@ -181,7 +182,6 @@ export namespace Components {
     interface EzpUserMenu {
         "name": string;
         "open": boolean;
-        "theme": ThemeTypes;
     }
 }
 declare global {
@@ -371,6 +371,7 @@ declare namespace LocalJSX {
         "hidelogin"?: boolean;
         "printapihosturl"?: string;
         "redirecturi"?: string;
+        "theme"?: ThemeTypes;
     }
     interface EzpProgress {
         /**
@@ -469,7 +470,6 @@ declare namespace LocalJSX {
          */
         "onUserMenuClosure"?: (event: CustomEvent<any>) => void;
         "open"?: boolean;
-        "theme"?: ThemeTypes;
     }
     interface IntrinsicElements {
         "ezp-auth": EzpAuth;

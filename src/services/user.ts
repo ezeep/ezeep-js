@@ -1,6 +1,5 @@
 import { createStore } from '@stencil/store'
 import authStore from './auth'
-import { ThemeTypes } from './../shared/types'
 
 export class EzpUserService {
   getUserInfo() {
@@ -18,7 +17,7 @@ export class EzpUserService {
 
 const userStore = createStore({
   user: null,
-  theme: 'cyan' as ThemeTypes,
+  theme: '',
 })
 
 export default userStore

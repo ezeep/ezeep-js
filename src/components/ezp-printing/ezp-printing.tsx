@@ -3,6 +3,7 @@ import authStore, { sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
 import config from '../../shared/config.json'
+import { ThemeTypes } from './../../shared/types'
 
 @Component({
   tag: 'ezp-printing',
@@ -19,6 +20,7 @@ export class EzpPrinting {
   @Prop() hidelogin: boolean
   @Prop() authapihosturl: string
   @Prop() printapihosturl: string
+  @Prop() theme: ThemeTypes = 'cyan'
 
   /**
    *
@@ -100,6 +102,7 @@ export class EzpPrinting {
 
   componentWillLoad() {
     authStore.state.redirectUri = this.redirecturi
+    userStore.state.theme = this.theme
 
     if (this.authapihosturl) {
       authStore.state.authApiHostUrl = this.authapihosturl
