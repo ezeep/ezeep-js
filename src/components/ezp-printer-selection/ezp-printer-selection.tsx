@@ -327,17 +327,17 @@ export class EzpPrinterSelection {
                           meta: '',
                           type: 'color',
                         },
-                      ]
-                    : [
                         {
                           id: 0,
                           title: i18next.t('printer_selection.color_grayscale'),
                           meta: '',
                           type: 'color',
                         },
+                      ]
+                    : [
                         {
-                          id: 1,
-                          title: i18next.t('printer_selection.color_color'),
+                          id: 0,
+                          title: i18next.t('printer_selection.color_grayscale'),
                           meta: '',
                           type: 'color',
                         }
