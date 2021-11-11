@@ -4,6 +4,7 @@
  *
  */
 
+@use 'sass:map';
 @use './../../shared/global';
 
 /**
@@ -30,14 +31,33 @@
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: none;
 
-  @include global.color-declaration('light');
   @include global.duration-declaration;
   @include global.spacing-declaration;
   @include global.easing-declaration;
   @include global.hairline-width-declaration;
   @include global.hairline-color-declaration;
-  @include global.media-appearance('dark') {
-    @include global.color-declaration('dark');
+  @include global.color-declaration('light');
+  @include global.color-declaration('dark');
+
+  @at-root {
+    &,
+    #{&}(.light) {
+      @each $name in global.getColorNames() {
+        --color-#{$name}: var(--color-#{$name}-light);
+      }
+    }
+
+    #{&}(.dark) {
+      @each $name in global.getColorNames() {
+        --color-#{$name}: var(--color-#{$name}-dark);
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @each $name in global.getColorNames() {
+      --color-#{$name}: var(--color-#{$name}-dark);
+    }
   }
 
   @at-root {

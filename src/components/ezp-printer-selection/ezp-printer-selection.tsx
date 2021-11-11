@@ -230,10 +230,10 @@ export class EzpPrinterSelection {
         break
       case 'duplex':
         if (eventDetails.title === 'None') {
-           this.selectedProperties.duplex = false
+          this.selectedProperties.duplex = false
         } else {
           this.selectedProperties.duplex = true
-        }       
+        }
         this.selectedProperties.duplexmode = eventDetails.id
         this.previouslySelectedProperties.duplexmode = eventDetails.id
         break

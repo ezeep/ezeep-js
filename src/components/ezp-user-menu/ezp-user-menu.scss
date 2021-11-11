@@ -170,7 +170,6 @@
 
 #tabs {
   display: grid;
-  gap: var(--spacing-1);
   grid-template: auto / repeat(3, 1fr);
   margin: 0 calc(var(--spacing-2) * -1);
 }
@@ -182,7 +181,7 @@
   appearance: none;
   background: var(--tab-background, transparent);
   border: 0;
-  border-radius: 3px;
+  border-radius: 14px;
   color: var(--tab-color, var(--color-foreground-secondary));
   cursor: var(--tab-cursor, pointer);
   display: flex;
