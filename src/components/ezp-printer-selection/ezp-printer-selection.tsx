@@ -335,6 +335,12 @@ export class EzpPrinterSelection {
                           meta: '',
                           type: 'color',
                         },
+                        {
+                          id: 1,
+                          title: i18next.t('printer_selection.color_color'),
+                          meta: '',
+                          type: 'color',
+                        }
                       ]
                 }
                 preSelected={this.previouslySelectedProperties.color}
