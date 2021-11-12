@@ -48,6 +48,12 @@ export class EzpPrintService {
           const authService = new EzpAuthorizationService(this.redirectURI, this.clientID)
           authService.refreshTokens()
         }
+
+        if (response.status === 412) {
+          // printbyfileid
+          // const fileID = response.json().then(res => res.fileid)
+          // this.printByFileID(authStore.state.accessToken, fileID,)
+        }
         // Modify the reponse object
         return response
       },
@@ -123,6 +129,32 @@ export class EzpPrintService {
       },
       body: JSON.stringify({
         fileurl: fileUrl,
+        type: fileType,
+        printerid: printerID,
+        ...(filename && { alias: filename }),
+        ...(printAndDelete && { printanddelete: printAndDelete }),
+        properties,
+      }),
+    }).then((response) => response.json())
+  }
+
+  printByFileID(
+    accessToken: string,
+    fileID: string,
+    fileType: string,
+    printerID: string,
+    properties: PrinterProperties,
+    filename?: string,
+    printAndDelete?: boolean
+  ) {
+    return fetch(`https://${this.printingApi}/sfapi/Print/`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fileid: fileID,
         type: fileType,
         printerid: printerID,
         ...(filename && { alias: filename }),
