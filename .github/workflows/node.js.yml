@@ -110,7 +110,7 @@ jobs:
           name: ng-directives.zip
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
           
-    - name: Install and build angular library
+    - name: build angular library and publish
       run: |
         cd ezeep-js-angular
         npm install -g @angular/cli
@@ -119,17 +119,11 @@ jobs:
         npm install
         cd ../..
         ng build ngx-ezeep-js
-  
-  publish-angular-component:
-    environment: Production
-    needs: build-ng
-    runs-on: ubuntu-latest
-    steps:
-    - name: checkout ngx-ezeep-js branch
-      run: | 
-        cd ezeep-js-angular/dist/ngx-ezeep-js
-        pwd
-      # npm publish 
+        cd dist/ngx-ezeep-js
+        npm publish --access public
+      env: 
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
  
   cdn-upload-npm:
     environment: Production
