@@ -51,8 +51,7 @@ export class EzpPrintService {
 
         if (response.status === 412) {
           // printbyfileid
-          // const fileID = response.json().then(res => res.fileid)
-          // this.printByFileID(authStore.state.accessToken, fileID,)
+          // const fileID = response.json().then(data => data.fileid)
         }
         // Modify the reponse object
         return response
