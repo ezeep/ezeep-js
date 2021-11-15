@@ -21,6 +21,7 @@ export class EzpPrinting {
   @Prop() authapihosturl: string
   @Prop() printapihosturl: string
   @Prop() theme: ThemeTypes = 'cyan'
+  @Prop() fileid: string
 
   /**
    *
@@ -142,6 +143,7 @@ export class EzpPrinting {
             filename={this.filename}
             fileurl={this.fileurl}
             filetype={this.filetype}
+            fileid={this.fileid}
           />
         ) : this.custom ? (
           <slot></slot>
