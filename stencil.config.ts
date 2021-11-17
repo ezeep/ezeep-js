@@ -37,6 +37,7 @@ export const config: Config = {
       copy: [{ src: 'data' }],
     },
   ],
+  // needs to be commented out for build on github actions to work
 //   devServer: {
 //     address: process.env.DEV_SERVER_ADDRESS,
 //     port: parseInt(process.env.DEV_SERVER_PORT),
