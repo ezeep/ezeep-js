@@ -93,6 +93,13 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     
     steps:
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        registry-url: "${{ env.NPM_REGISTRY }}"
+        cache: 'npm'
+    
     - name: Checkout angular branch
       uses: actions/checkout@v2
       with:
