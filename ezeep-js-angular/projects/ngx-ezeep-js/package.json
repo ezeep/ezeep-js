@@ -1,5 +1,5 @@
 {
-  "name": "ngx-ezeep-js",
+  "name": "@ezeep/ngx-ezeep-js",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^12.2.0",
