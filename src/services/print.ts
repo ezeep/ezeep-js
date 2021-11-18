@@ -48,11 +48,6 @@ export class EzpPrintService {
           const authService = new EzpAuthorizationService(this.redirectURI, this.clientID)
           authService.refreshTokens()
         }
-
-        if (response.status === 412) {
-          // printbyfileid
-          // const fileID = response.json().then(data => data.fileid)
-        }
         // Modify the reponse object
         return response
       },
@@ -134,7 +129,7 @@ export class EzpPrintService {
         ...(printAndDelete && { printanddelete: printAndDelete }),
         properties,
       }),
-    }).then((response) => response.json())
+    })
   }
 
   printByFileID(
@@ -160,7 +155,7 @@ export class EzpPrintService {
         ...(printAndDelete && { printanddelete: printAndDelete }),
         properties,
       }),
-    }).then((response) => response.json())
+    })
   }
 
   getPrintStatus = () => {
@@ -180,6 +175,12 @@ const printStore = createStore({
   jobID: '',
   printFinished: false,
   printApiHostUrl: '',
+  printerProperties: {},
+  fileID: '',
+  fileUrl: '',
+  fileType: '',
+  printerID: '',
+  fileName: ''
 })
 
 export default printStore

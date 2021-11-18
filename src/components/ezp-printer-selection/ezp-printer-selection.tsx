@@ -128,7 +128,30 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = () => {
+
+    const validateData = (data) => {
+      if (data.jobstatus === 0) {
+        this.printInProgress = false
+        return true
+      }
+      return false
+    }
+    const POLL_INTERVAL = 2000
+
     this.printInProgress = true
+    
+    // we have to initialse this obj with empty strings to display the select component
+    // but don't want to send any attributes with empty strings to the API
+    removeEmptyStrings(this.selectedProperties)
+    
+    // put it in store for further use
+    printStore.state.fileUrl = this.fileurl
+    printStore.state.fileID = this.fileid
+    printStore.state.fileType = this.filetype
+    printStore.state.printerID = this.selectedPrinter.id
+    printStore.state.printerProperties = this.selectedProperties
+    printStore.state.fileName = this.filename
+
     if (this.fileurl) {
       this.printService
       .printFileByUrl(
@@ -136,22 +159,26 @@ export class EzpPrinterSelection {
         this.fileurl,
         this.filetype,
         this.selectedPrinter.id,
-        // we have to initialse this obj with empty strings to display the select component
-        // but don't want to send any attributes with empty strings to the API
-        removeEmptyStrings(this.selectedProperties),
+        this.selectedProperties,
         this.filename
       )
+      .then((response) => {
+        if (response.status === 412) {
+          response.json().then(data => this.fileid = data.fileid)
+          this.printService.printByFileID( 
+            authStore.state.accessToken,
+            this.fileid,
+            this.filetype,
+            this.selectedPrinter.id,
+            this.selectedProperties,
+            this.filename).finally(() => this.printInProgress = false)
+        } else {
+          return response.json()
+        }
+      })
       .then((data) => {
         if (data.jobid) {
           printStore.state.jobID = data.jobid
-          const POLL_INTERVAL = 2000
-          const validateData = (data) => {
-            if (data.jobstatus === 0) {
-              this.printInProgress = false
-              return true
-            }
-            return false
-          }
           poll({
             fn: this.printService.getPrintStatus,
             validate: validateData,
@@ -177,21 +204,13 @@ export class EzpPrinterSelection {
         this.fileid,
         this.filetype,
         this.selectedPrinter.id,
-        // we have to initialse this obj with empty strings to display the select component
-        // but don't want to send any attributes with empty strings to the API
-        removeEmptyStrings(this.selectedProperties),
+        this.selectedProperties,
         this.filename
-      ).then((data) => {
+      )
+      .then((response) => response.json())
+      .then((data) => {
         if (data.jobid) {
           printStore.state.jobID = data.jobid
-          const POLL_INTERVAL = 2000
-          const validateData = (data) => {
-            if (data.jobstatus === 0) {
-              this.printInProgress = false
-              return true
-            }
-            return false
-          }
           poll({
             fn: this.printService.getPrintStatus,
             validate: validateData,
