@@ -152,10 +152,11 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Upload artifact to blob storage
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.27.1
-        inlineScript: |
+      #uses: azure/CLI@v1
+      #with:
+      #  azcliversion: 2.27.1
+      #  inlineScript: |
+      run: |
           azenv='${{ secrets.AZURE_ENVIRONMENT }}'
           account=$(jq -crM .storage.account <<< $azenv)
           container=$(jq -crM .storage.container <<< $azenv)
@@ -237,4 +238,6 @@ jobs:
     - name: Azure CLI logout
       run: |
         az logout
+        az cache purge
+        az account clear
       if: always()
