@@ -138,6 +138,7 @@
     --dot-boxShadowSize: 10px;
     --swatch-background: var(--swatch-theme-translucent);
     --swatch-cursor: normal;
+
     > .dot {
       animation: dot-bounce var(--duration-2) ease-in-out;
     }
