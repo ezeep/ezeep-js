@@ -8,11 +8,6 @@
       "root": "projects/ngx-ezeep-js",
       "sourceRoot": "projects/ngx-ezeep-js/src",
       "prefix": "lib",
-      "assets": [ {
-        "glob": "**/*", 
-        "input": "./node_modules/@ezeep/ezeep-js/dist/ezeep/assets",
-        "output": "/assets/"
-        }],
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
