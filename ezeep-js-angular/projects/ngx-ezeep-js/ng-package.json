@@ -1,6 +1,7 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/ngx-ezeep-js",
+  "assets": ["./node_modules/@ezeep/ezeep-js/dist/ezeep/assets"],
   "lib": {
     "entryFile": "src/public-api.ts"
   },
