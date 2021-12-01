@@ -1,1 +1,0 @@
-const t=async()=>{const t=new FontFace("Inter","url(https://rsms.me/inter/font-files/Inter-roman.var.woff2)",{style:"normal",weight:"400 600"});t.load().then((()=>{document.fonts.add(t)}))};export{t as g}
