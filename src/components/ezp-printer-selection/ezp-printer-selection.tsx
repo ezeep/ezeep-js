@@ -276,7 +276,7 @@ export class EzpPrinterSelection {
    * Render method
    *
    */
-
+ 
   render() {
     return this.loading ? (
       <ezp-progress status={i18next.t('printer_selection.loading')}></ezp-progress>
