@@ -127,7 +127,7 @@ jobs:
         cd projects/ngx-ezeep-js
         npm install
         cd ../..
-        ng build ngx-ezeep-js
+        ng build ngx-ezeep-js --prod
         cd dist/ngx-ezeep-js
         npm publish --access public
       env: 
