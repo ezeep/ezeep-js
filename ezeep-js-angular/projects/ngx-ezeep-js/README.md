@@ -58,7 +58,7 @@ export class AppModule { }
     ...
     ```
 
-3. Add the **ezp-printing** tag to your html source.
+4. Add the **ezp-printing** tag to your html source.
 
 ```html
 <ezp-printing></ezp-printing>
