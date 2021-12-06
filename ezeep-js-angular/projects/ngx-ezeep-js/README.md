@@ -32,6 +32,32 @@ import { AppComponent } from './app.component';
 })
 export class AppModule { }
 ```
+
+3. The package comes with assets, to use them, do the following:
+
+    3.1 In the angluar.json file of your project, add this:
+
+    ```json
+    ...
+    "assets": [
+      {
+        "glob": "**/*",
+        "input": "./node_modules/@ezeep/ezeep-js/dist/ezeep/assets",
+        "output": "./assets/"
+      }
+    ],
+    ...
+    ```
+    3.2 Additionally, you need to tell stencil where to find the assets, so add this to your main.ts file
+
+    ```typescript
+    ...
+    import { setAssetPath } from '@stencil/core'
+    ...
+    setAssetPath(location.origin)
+    ...
+    ```
+
 3. Add the **ezp-printing** tag to your html source.
 
 ```html
