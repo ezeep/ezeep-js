@@ -93,6 +93,39 @@ To get started, you can use the default ezeep print button within your angular a
 </ezp-printing>
 ```
 
+### Example with a custom button
+
+Add the custom attribute to the **ezeep-printing** tag:
+
+**component.html**
+```html
+<ezp-printing
+  clientid="your-client-id"
+  redirecturi="https://your-site.com/"
+  fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+  filename="dummypdf"
+  filetype="pdf"
+  custom
+>
+  <button (click)="onClick()">My custom button</button>
+</ezp-printing>
+```
+Call the **open** function on the element:
+
+**component.ts**
+```typescript
+export class AppComponent implements OnInit {
+  ezpPrinting: any; 
+  
+  ngOnInit() {
+    this.ezpPrinting = document.querySelector('ezp-printing');
+  }
+  
+  onClick() {
+    this.ezpPrinting.open();
+  }
+}
+```
 ## Code scaffolding
 
 Run `ng generate component component-name --project ngx-ezeep-js` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngx-ezeep-js`.
