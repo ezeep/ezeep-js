@@ -77,6 +77,7 @@ There are multiple required and optional attributes the ezp-printing element nee
 | hidelogin       | If set to true, no additional info popup is shown before the user authentication.                        | boolean | No       |
 | authapihosturl  | Overrides the default URL of the authentication API.                                                     | string  | No       |
 | printapihosturl | Overrides the default URL of the printing API.                                                           | string  | No       |
+| theme           | The overall color theme. Possible colors are pink, red, orange, green, cyan, blue and violet.            | string  | No       |
 
 ### Example
 
