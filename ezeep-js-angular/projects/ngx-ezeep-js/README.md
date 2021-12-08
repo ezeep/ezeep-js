@@ -2,6 +2,20 @@
 
 This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.0.
 
+## Overview
+
+The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.ezeep.com/) to easily offer printing capabilities to any web application. Integrate a printing feature to your web application with just a few steps.
+
+## Integration Guide
+
+### Getting started
+
+1. Sign up for an ezeep Blue account. This creates an **administrator account** and a new **ezeep organization**.
+   [Sign up here](https://www.ezeep.com/blue/)
+
+2. Register your web application to receive your **Client-ID**. Contact the ezeep team at <helpdesk@ezeep.com> and provide the **Redirect Uri** of your web application. This Uri must host the ezeep.js component.
+
+
 ## Integration in your Angular App
 Important: You need to set up your server with https!
 
