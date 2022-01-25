@@ -155,7 +155,27 @@ export class EzpPrintService {
         ...(printAndDelete && { printanddelete: printAndDelete }),
         properties,
       }),
-    })
+    }).then(response => response.json())
+  }
+
+  prepareFileUpload(accessToken: string) {
+    return fetch(`https://${this.printingApi}/sfapi/PrepareUpload/`,{
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + accessToken
+      }
+    }).then(response => response.json())
+  }
+
+  uploadFile(sasURI: string, formData: FormData) {
+    return fetch(`${sasURI}`, {
+      method: 'PUT',
+      headers: {
+        'x-ms-blob-type': 'BlockBlob',
+        'Content-Type:': 'multipart/form-data' // try and not set it, see if it does it automatically
+      },
+      body: formData
+    }).then(response => response.json())
   }
 
   getPrintStatus = () => {
