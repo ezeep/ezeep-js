@@ -22,7 +22,7 @@ Important: You need to set up your server with https!
 1. Inside your Angular App, install the package via npm:
 
 ```bash
-npm install @ezeep/ezeep-js
+npm install @ezeep/ngx-ezeep-js
 ```
 2. Import the EzeepJSAngularModule in the module of your choice (e.g. app module)
 
