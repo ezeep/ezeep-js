@@ -5,6 +5,7 @@ import { sass } from '@stencil/sass'
 import replacePlugin from '@rollup/plugin-replace'
 import { angularOutputTarget } from '@stencil/angular-output-target'
 import { reactOutputTarget } from '@stencil/react-output-target'
+import nodePolyfills from 'rollup-plugin-node-polyfills'
 import fs from 'fs'
 
 export const config: Config = {
@@ -47,11 +48,12 @@ export const config: Config = {
   },
   rollupPlugins: {
     after: [
+      nodePolyfills(),
       replacePlugin({
         preventAssignment: true,
         delimiters: ['<%', '%>'],
       }),
     ],
   },
-  buildEs5: true,
+  buildEs5: "prod",
 }

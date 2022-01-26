@@ -526,6 +526,10 @@ export class EzpPrinterSelection {
     }
   }
 
+  handleFiles(files: FileList){
+    console.log(files)
+  }
+
   /**
    *
    * Lifecycle methods
@@ -698,6 +702,9 @@ export class EzpPrinterSelection {
               ) : null}
             </div>
             <ezp-stepper label="Copies" max={10} icon="copies" />
+          </div>
+          <div>
+            <input type="file" onChange={ (e: Event & {target: HTMLInputElement} ) => this.handleFiles(e.target.files)} />
           </div>
           <div id="footer">
             <ezp-text-button
