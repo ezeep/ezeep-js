@@ -30,6 +30,7 @@
     "format": "npm run stylelint && npm run prettier"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.8.0",
     "@stencil/core": "^2.8.1",
     "fetch-intercept": "^2.4.0",
     "i18next": "21.2.4",

@@ -2,6 +2,7 @@ import { createStore } from '@stencil/store'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
 import { /* PrinterProperties, */ PrinterConfig, PrinterProperties } from '../shared/types'
+import { BlobServiceClient } from '@azure/storage-blob'
 export class EzpPrintService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
@@ -155,16 +156,16 @@ export class EzpPrintService {
         ...(printAndDelete && { printanddelete: printAndDelete }),
         properties,
       }),
-    }).then(response => response.json())
+    }).then((response) => response.json())
   }
 
   prepareFileUpload(accessToken: string) {
-    return fetch(`https://${this.printingApi}/sfapi/PrepareUpload/`,{
+    return fetch(`https://${this.printingApi}/sfapi/PrepareUpload/`, {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer ' + accessToken
-      }
-    }).then(response => response.json())
+        Authorization: 'Bearer ' + accessToken,
+      },
+    }).then((response) => response.json())
   }
 
   uploadFile(sasURI: string, formData: FormData) {
@@ -172,10 +173,30 @@ export class EzpPrintService {
       method: 'PUT',
       headers: {
         'x-ms-blob-type': 'BlockBlob',
-        'Content-Type:': 'multipart/form-data' // try and not set it, see if it does it automatically
+        'Content-Type:': 'multipart/form-data', // try and not set it, see if it does it automatically
       },
-      body: formData
-    }).then(response => response.json())
+      body: formData,
+    }).then((response) => response.json())
+  }
+
+  async uploadBlobFiles(sasUri: string, files: FileList) {
+    const blobServiceClient = new BlobServiceClient(sasUri)
+
+    const containerClient = blobServiceClient.getContainerClient('ezeep-js-print')
+
+    try {
+      const promises = []
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index]
+        const blockBlobCLient = containerClient.getBlockBlobClient(file.name)
+        promises.push(blockBlobCLient.uploadData(file))
+      }
+
+      await Promise.all(promises)
+      alert('Done')
+    } catch (error) {
+      alert(error.message)
+    }
   }
 
   getPrintStatus = () => {
@@ -200,7 +221,7 @@ const printStore = createStore({
   fileUrl: '',
   fileType: '',
   printerID: '',
-  fileName: ''
+  fileName: '',
 })
 
 export default printStore
