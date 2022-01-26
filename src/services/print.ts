@@ -179,23 +179,27 @@ export class EzpPrintService {
     }).then((response) => response.json())
   }
 
-  async uploadBlobFiles(sasUri: string, files: FileList) {
+  uploadBlobFiles(sasUri: string, files: FileList) {
     const blobServiceClient = new BlobServiceClient(sasUri)
-
     const containerClient = blobServiceClient.getContainerClient('ezeep-js-print')
+    let progress = 0
 
     try {
-      const promises = []
       for (let index = 0; index < files.length; index++) {
         const file = files[index]
         const blockBlobCLient = containerClient.getBlockBlobClient(file.name)
-        promises.push(blockBlobCLient.uploadData(file))
+
+        return blockBlobCLient.uploadData(file, {
+          onProgress: (e) => {
+            progress = (e.loadedBytes / file.size) * 100
+            console.log(progress)
+          },
+          blobHTTPHeaders: { blobContentType: file.type },
+        })
       }
 
-      await Promise.all(promises)
-      alert('Done')
     } catch (error) {
-      alert(error.message)
+      console.log(error.message)
     }
   }
 

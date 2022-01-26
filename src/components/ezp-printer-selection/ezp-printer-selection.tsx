@@ -353,11 +353,11 @@ export class EzpPrinterSelection {
     const POLL_INTERVAL = 2000
 
     this.printInProgress = true
-    
+
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
     removeEmptyStrings(this.selectedProperties)
-    
+
     // put it in store for further use
     printStore.state.fileUrl = this.fileurl
     printStore.state.fileID = this.fileid
@@ -379,7 +379,7 @@ export class EzpPrinterSelection {
       .then((response) => {
         if (response.status === 412) {
           response.json().then(data => this.fileid = data.fileid)
-          this.printService.printByFileID( 
+          this.printService.printByFileID(
             authStore.state.accessToken,
             this.fileid,
             this.filetype,
@@ -445,7 +445,7 @@ export class EzpPrinterSelection {
         this.printInProgress = false
       })
     }
-    
+
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
     localStorage.setItem('printer', JSON.stringify(this.selectedPrinter))
     localStorage.setItem(
@@ -517,7 +517,7 @@ export class EzpPrinterSelection {
            this.selectedProperties.duplex = false
         } else {
           this.selectedProperties.duplex = true
-        }       
+        }
         this.selectedProperties.duplexmode = eventDetails.id
         this.previouslySelectedProperties.duplexmode = eventDetails.id
         break
