@@ -126,6 +126,12 @@ $themes: ('blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet');
   @return math.div(($lineHeight - $boxHeight), 2);
 }
 
+@function getColorNames() {
+  $names: map.merge(map.get($colors, 'light'), map.get($colors, 'dark'));
+
+  @return map.keys($names);
+}
+
 /**
  *
  * Mixins
@@ -158,12 +164,12 @@ $themes: ('blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet');
 
 @mixin color-declaration($appearance) {
   @each $name, $value in map.get($colors, $appearance) {
-    --color-#{$name}: #{$value};
+    --color-#{$name}-#{$appearance}: #{$value};
   }
 
   @supports (color: color(display-p3 1 1 1)) {
     @each $name, $value in map.get($colors, $appearance) {
-      --color-#{$name}: #{get-color-display-p3($value)};
+      --color-#{$name}-#{$appearance}: #{get-color-display-p3($value)};
     }
   }
 }

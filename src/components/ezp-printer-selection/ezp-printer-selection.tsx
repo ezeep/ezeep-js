@@ -514,10 +514,10 @@ export class EzpPrinterSelection {
         break
       case 'duplex':
         if (eventDetails.title === 'None') {
-           this.selectedProperties.duplex = false
+          this.selectedProperties.duplex = false
         } else {
           this.selectedProperties.duplex = true
-        }       
+        }
         this.selectedProperties.duplexmode = eventDetails.id
         this.previouslySelectedProperties.duplexmode = eventDetails.id
         break
@@ -630,7 +630,7 @@ export class EzpPrinterSelection {
                           title: i18next.t('printer_selection.color_grayscale'),
                           meta: '',
                           type: 'color',
-                        }
+                        },
                       ]
                 }
                 preSelected={this.previouslySelectedProperties.color}

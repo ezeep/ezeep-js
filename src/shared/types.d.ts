@@ -6,9 +6,11 @@ export type IconNameTypes =
   | 'close'
   | 'color'
   | 'copies'
+  | 'dark'
   | 'duplex'
   | 'expand'
   | 'help'
+  | 'light'
   | 'logout'
   | 'menu'
   | 'minus'
@@ -17,6 +19,7 @@ export type IconNameTypes =
   | 'printer'
   | 'quality'
   | 'size'
+  | 'system'
 export type IconSizeTypes = 'normal' | 'large'
 export type PrintOrganizationType = { id: number; name: string; printers: PrintPrinterType[] }
 export type PrintPrinterType = { id: number; name: string; location: string }
@@ -34,6 +37,7 @@ export type TextButtonTypeTypes = 'button'
 export type LabelLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type WeightTypes = 'soft' | 'strong' | 'heavy'
 export type ThemeTypes = 'pink' | 'red' | 'orange' | 'green' | 'cyan' | 'blue' | 'violet'
+export type AppearanceTypes = 'system' | 'light' | 'dark'
 
 export interface PrinterProperties {
   paper?: string
