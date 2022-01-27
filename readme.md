@@ -19,6 +19,8 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 
 #### Important: You need to set up your server with https!
 
+#### Angular: See instructions on how to setup ezeep.js with Angular [here](https://github.com/ezeep/ezeep-js/tree/ngx-ezeep-js/ezeep-js-angular).
+
 1. Include ezeep.js to your web app by the following options:
 
 Use **script** tags in your html source:
