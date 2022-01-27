@@ -36,19 +36,18 @@
 #container {
   background: var(--color-surface-tertiary);
   border-radius: 6px;
-  box-shadow: var(--container-separator-position, 0 0 0 var(--hairline-width-positive))
-      var(--hairline-color),
-    0 var(--spacing-3) var(--spacing-4) 0 var(--color-shadow),
-    0 var(--spacing-4) var(--spacing-5) 0 var(--color-shadow),
-    0 var(--spacing-5) var(--spacing-6) 0 var(--color-shadow),
-    0 var(--spacing-6) var(--spacing-7) 0 var(--color-shadow),
-    0 var(--spacing-7) var(--spacing-8) 0 var(--color-shadow);
+  // box-shadow: var(--container-separator-position, 0 0 0 var(--hairline-width-positive))
+  //     var(--hairline-color),
+  //   0 var(--spacing-3) var(--spacing-4) 0 var(--color-shadow),
+  //   0 var(--spacing-4) var(--spacing-5) 0 var(--color-shadow),
+  //   0 var(--spacing-5) var(--spacing-6) 0 var(--color-shadow),
+  //   0 var(--spacing-6) var(--spacing-7) 0 var(--color-shadow),
+  //   0 var(--spacing-7) var(--spacing-8) 0 var(--color-shadow);
   position: relative;
 }
 
 #header {
-  box-shadow: var(--header-separator-position, 0 var(--hairline-width-positive) 0 0)
-    var(--hairline-color);
+  box-shadow: inset 0 var(--hairline-width-negative) 0 0 var(--hairline-color);
   color: var(--color-foreground-primary);
   display: grid;
   grid-column-gap: var(--spacing-1);
@@ -74,8 +73,7 @@
 }
 
 #footer {
-  box-shadow: var(--footer-separator-position, 0 var(--hairline-width-negative) 0 0)
-    var(--hairline-color);
+  box-shadow: inset 0 var(--hairline-width-positive) 0 0 var(--hairline-color);
   display: grid;
   grid-column-gap: var(--spacing-2);
   grid-template-columns: repeat(2, 1fr);

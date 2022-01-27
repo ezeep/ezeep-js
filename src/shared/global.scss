@@ -46,8 +46,8 @@ $colors: (
     'foreground-primary': rgba(0 0 0 / 94%),
     'foreground-secondary': rgba(99 99 99 / 90%),
     'foreground-tertiary': rgba(99 99 99 / 58%),
-    'outline-primary': rgba(119 119 119 / 16%),
-    'outline-secondary': rgba(119 119 119 / 26%),
+    'outline-primary': rgb(226 226 226),
+    'outline-secondary': rgb(209 209 209),
     'overlay': rgba(0 0 0 / 26%),
     'shadow': rgba(0 0 0 / 6%),
   ),
@@ -76,8 +76,8 @@ $colors: (
     'foreground-primary': rgba(255 255 255 / 94%),
     'foreground-secondary': rgba(139 139 139 / 90%),
     'foreground-tertiary': rgba(139 139 139 / 58%),
-    'outline-primary': rgba(119 119 119 / 26%),
-    'outline-secondary': rgba(119 119 119 / 32%),
+    'outline-primary': rgb(62 62 62),
+    'outline-secondary': rgb(75 75 75),
     'overlay': rgba(0 0 0 / 68%),
     'shadow': rgba(0 0 0 / 10%),
   ),
@@ -126,6 +126,12 @@ $themes: ('blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet');
   @return math.div(($lineHeight - $boxHeight), 2);
 }
 
+@function getColorNames() {
+  $names: map.merge(map.get($colors, 'light'), map.get($colors, 'dark'));
+
+  @return map.keys($names);
+}
+
 /**
  *
  * Mixins
@@ -158,12 +164,12 @@ $themes: ('blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet');
 
 @mixin color-declaration($appearance) {
   @each $name, $value in map.get($colors, $appearance) {
-    --color-#{$name}: #{$value};
+    --color-#{$name}-#{$appearance}: #{$value};
   }
 
   @supports (color: color(display-p3 1 1 1)) {
     @each $name, $value in map.get($colors, $appearance) {
-      --color-#{$name}: #{get-color-display-p3($value)};
+      --color-#{$name}-#{$appearance}: #{get-color-display-p3($value)};
     }
   }
 }
