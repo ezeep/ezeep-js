@@ -40,6 +40,7 @@ export class EzpPrinterSelection {
   @Prop() filename: string
   @Prop() fileurl: string
   @Prop() filetype: string
+  @Prop() fileid: string
 
   /**
    *
@@ -53,12 +54,13 @@ export class EzpPrinterSelection {
   @State() userName: string
   @State() printers: Printer[]
   @State() selectedPrinter: Printer = { id: '', location: '', name: '' }
-  @State() printerConfig: PrinterConfig
+  @State() printerConfig: PrinterConfig[]
+  @State() selectedPrinterConfig: PrinterConfig
   // needs to be initialised with empty strings
   @State() selectedProperties: PrinterProperties = {
     paper: '',
     paperid: '',
-    color: '',
+    color: false,
     duplex: false,
     duplexmode: '',
     orientation: '',
@@ -68,7 +70,7 @@ export class EzpPrinterSelection {
   @State() previouslySelectedProperties: PrinterProperties = {
     paper: '',
     paperid: '',
-    color: '',
+    color: false,
     duplex: false,
     duplexmode: '',
     orientation: '',
@@ -126,29 +128,57 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = () => {
+
+    const validateData = (data) => {
+      if (data.jobstatus === 0) {
+        this.printInProgress = false
+        return true
+      }
+      return false
+    }
+    const POLL_INTERVAL = 2000
+
     this.printInProgress = true
-    this.printService
+
+    // we have to initialse this obj with empty strings to display the select component
+    // but don't want to send any attributes with empty strings to the API
+    removeEmptyStrings(this.selectedProperties)
+
+    // put it in store for further use
+    printStore.state.fileUrl = this.fileurl
+    printStore.state.fileID = this.fileid
+    printStore.state.fileType = this.filetype
+    printStore.state.printerID = this.selectedPrinter.id
+    printStore.state.printerProperties = this.selectedProperties
+    printStore.state.fileName = this.filename
+
+    if (this.fileurl) {
+      this.printService
       .printFileByUrl(
         authStore.state.accessToken,
         this.fileurl,
         this.filetype,
         this.selectedPrinter.id,
-        // we have to initialse this obj with empty strings to display the select component
-        // but don't want to send any attributes with empty strings to the API
-        removeEmptyStrings(this.selectedProperties),
+        this.selectedProperties,
         this.filename
       )
+      .then((response) => {
+        if (response.status === 412) {
+          response.json().then(data => this.fileid = data.fileid)
+          this.printService.printByFileID(
+            authStore.state.accessToken,
+            this.fileid,
+            this.filetype,
+            this.selectedPrinter.id,
+            this.selectedProperties,
+            this.filename).finally(() => this.printInProgress = false)
+        } else {
+          return response.json()
+        }
+      })
       .then((data) => {
         if (data.jobid) {
           printStore.state.jobID = data.jobid
-          const POLL_INTERVAL = 2000
-          const validateData = (data) => {
-            if (data.jobstatus === 0) {
-              this.printInProgress = false
-              return true
-            }
-            return false
-          }
           poll({
             fn: this.printService.getPrintStatus,
             validate: validateData,
@@ -164,6 +194,44 @@ export class EzpPrinterSelection {
           this.printInProgress = false
         }
       })
+      .catch(error => {
+        console.log(error)
+        this.printInProgress = false
+      })
+    } else if (this.fileid) {
+      this.printService.printByFileID(
+        authStore.state.accessToken,
+        this.fileid,
+        this.filetype,
+        this.selectedPrinter.id,
+        this.selectedProperties,
+        this.filename
+      )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.jobid) {
+          printStore.state.jobID = data.jobid
+          poll({
+            fn: this.printService.getPrintStatus,
+            validate: validateData,
+            interval: POLL_INTERVAL,
+            maxAttempts: 10,
+          })
+            .then(data)
+            .catch((err) => {
+              console.warn(err)
+              this.printInProgress = false
+            })
+        } else {
+          this.printInProgress = false
+        }
+      })
+      .catch(error => {
+        console.log(error)
+        this.printInProgress = false
+      })
+    }
+
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
     localStorage.setItem('printer', JSON.stringify(this.selectedPrinter))
     localStorage.setItem(
@@ -203,11 +271,14 @@ export class EzpPrinterSelection {
     })
   }
 
-  private setSelectedProperties(eventDetails: { type: string; id: string; title: string }) {
+  private async setSelectedProperties(eventDetails: { type: string; id: string; title: string }) {
     switch (eventDetails.type) {
       case 'printer':
         this.selectedPrinter.id = eventDetails.id
         this.selectedPrinter.name = eventDetails.title
+        await this.printService.getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id).then(data => this.selectedPrinterConfig = data[0])
+        console.log('selected printer config:')
+        console.log(this.selectedPrinterConfig)
         break
       case 'color':
         this.selectedProperties.color = !!eventDetails.id
@@ -264,7 +335,8 @@ export class EzpPrinterSelection {
     await this.printService
       .getAllPrinterProperties(authStore.state.accessToken)
       .then((printerConfig: PrinterConfig[]) => {
-        this.printerConfig = printerConfig[0]
+        this.printerConfig = printerConfig
+        console.log(this.printerConfig)
       })
 
     this.loading = false
@@ -323,7 +395,7 @@ export class EzpPrinterSelection {
                 placeholder={i18next.t('printer_selection.select_color')}
                 toggleFlow="horizontal"
                 options={
-                  this.printerConfig.Color
+                  this.selectedPrinterConfig.Color
                     ? [
                         {
                           id: 1,
@@ -354,7 +426,7 @@ export class EzpPrinterSelection {
                 icon="orientation"
                 placeholder={i18next.t('printer_selection.select_orientation')}
                 toggleFlow="horizontal"
-                options={this.printerConfig.OrientationsSupported.map((orientation, index) => ({
+                options={this.selectedPrinterConfig.OrientationsSupported.map((orientation, index) => ({
                   id: index,
                   title: i18next.t(`printer_selection.orientation_${orientation}`),
                   meta: '',
@@ -368,7 +440,7 @@ export class EzpPrinterSelection {
                 placeholder={i18next.t('printer_selection.select_size')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
-                options={this.printerConfig.PaperFormats.map((format) => ({
+                options={this.selectedPrinterConfig.PaperFormats.map((format) => ({
                   id: format.Id,
                   title: format.Name,
                   meta: `${format.XRes} x ${format.YRes}`,
@@ -380,7 +452,7 @@ export class EzpPrinterSelection {
                 label={i18next.t('printer_selection.quality')}
                 icon="quality"
                 toggleFlow="horizontal"
-                options={this.printerConfig.Resolutions.map((option, index) => ({
+                options={this.selectedPrinterConfig.Resolutions.map((option, index) => ({
                   id: index,
                   title: option,
                   meta: '',
@@ -388,11 +460,11 @@ export class EzpPrinterSelection {
                 }))}
                 preSelected={
                   !this.previouslySelectedProperties.resolution
-                    ? this.printerConfig.Resolutions[0]
+                    ? this.selectedPrinterConfig.Resolutions[0]
                     : this.previouslySelectedProperties.resolution
                 }
               />
-              {this.printerConfig.DuplexSupported ? (
+              {this.selectedPrinterConfig.DuplexSupported ? (
                 <ezp-select
                   label={i18next.t('printer_selection.duplex')}
                   icon="duplex"

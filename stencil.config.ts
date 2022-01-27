@@ -54,5 +54,5 @@ export const config: Config = {
       }),
     ],
   },
-  buildEs5: true,
+  buildEs5: "prod",
 }
