@@ -180,6 +180,7 @@ export class EzpPrintService {
   }
 
   async uploadBlobFiles(sasUri: string, files: FileList) {
+    printStore.state.uploadProgress = 0
     const pipeline = newPipeline(new AnonymousCredential(), {
       retryOptions: { maxTries: 4 },
       userAgentOptions: { userAgentPrefix: 'AdvancedSample V1.0.0' }, // Customized telemetry string
@@ -204,7 +205,6 @@ export class EzpPrintService {
       })
       console.log(response._response.status)
     }
-    //printStore.state.uploadProgress = 0
   }
 
   getPrintStatus = () => {
