@@ -18,6 +18,7 @@ export class EzpUserService {
 const userStore = createStore({
   user: null,
   theme: '',
+  appearance: '',
 })
 
 export default userStore

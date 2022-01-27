@@ -4,14 +4,14 @@
 
 ## Properties
 
-| Property            | Attribute  | Description    | Type                                                                                                                                                                                           | Default     |
-| ------------------- | ---------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `blank`             | `blank`    | Description... | `boolean`                                                                                                                                                                                      | `false`     |
-| `disabled`          | `disabled` | Description... | `boolean`                                                                                                                                                                                      | `false`     |
-| `href`              | `href`     | Description... | `string`                                                                                                                                                                                       | `undefined` |
-| `icon` _(required)_ | `icon`     | Description... | `"account" \| "checkmark" \| "close" \| "color" \| "copies" \| "duplex" \| "expand" \| "help" \| "logout" \| "menu" \| "minus" \| "orientation" \| "plus" \| "printer" \| "quality" \| "size"` | `undefined` |
-| `level`             | `level`    | Description... | `"primary" \| "quaternary" \| "secondary" \| "tertiary"`                                                                                                                                       | `'primary'` |
-| `type`              | `type`     | Description... | `"button"`                                                                                                                                                                                     | `undefined` |
+| Property            | Attribute  | Description    | Type                                                                                                                                                                                                                            | Default     |
+| ------------------- | ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `blank`             | `blank`    | Description... | `boolean`                                                                                                                                                                                                                       | `false`     |
+| `disabled`          | `disabled` | Description... | `boolean`                                                                                                                                                                                                                       | `false`     |
+| `href`              | `href`     | Description... | `string`                                                                                                                                                                                                                        | `undefined` |
+| `icon` _(required)_ | `icon`     | Description... | `"account" \| "checkmark" \| "close" \| "color" \| "copies" \| "dark" \| "duplex" \| "expand" \| "help" \| "light" \| "logout" \| "menu" \| "minus" \| "orientation" \| "plus" \| "printer" \| "quality" \| "size" \| "system"` | `undefined` |
+| `level`             | `level`    | Description... | `"primary" \| "quaternary" \| "secondary" \| "tertiary"`                                                                                                                                                                        | `'primary'` |
+| `type`              | `type`     | Description... | `"button"`                                                                                                                                                                                                                      | `undefined` |
 
 ## Dependencies
 

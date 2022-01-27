@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, WeightTypes } from "./shared/types";
+import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, WeightTypes } from "./shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -85,6 +85,7 @@ export namespace Components {
         "redirectURI": string;
     }
     interface EzpPrinting {
+        "appearance": AppearanceTypes;
         "authapihosturl": string;
         "clientid": string;
         "custom": boolean;
@@ -365,6 +366,7 @@ declare namespace LocalJSX {
         "redirectURI"?: string;
     }
     interface EzpPrinting {
+        "appearance"?: AppearanceTypes;
         "authapihosturl"?: string;
         "clientid"?: string;
         "custom"?: boolean;

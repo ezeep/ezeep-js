@@ -9,9 +9,9 @@
   display: block;
   display: grid;
   grid-template: var(--host-gridTemplate) / var(--host-gridTemplate);
-  height: var(--host-size);
+  height: var(--icon-height, var(--host-size));
   justify-content: center;
-  width: var(--host-size);
+  width: var(--icon-width, var(--host-size));
 
   @at-root {
     #{&}(.normal) {

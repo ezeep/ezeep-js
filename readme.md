@@ -17,7 +17,9 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 
 ### Usage
 
-Important: You need to set up your server with https!
+#### Important: You need to set up your server with https!
+
+#### Angular: See instructions on how to setup ezeep.js with Angular [here](https://github.com/ezeep/ezeep-js/tree/ngx-ezeep-js/ezeep-js-angular).
 
 1. Include ezeep.js to your web app by the following options:
 
@@ -59,6 +61,7 @@ There are multiple required and optional attributes the ezp-printing element nee
 | hidelogin       | If set to true, no additional info popup is shown before the user authentication.                        | boolean | No       |
 | authapihosturl  | Overrides the default URL of the authentication API.                                                     | string  | No       |
 | printapihosturl | Overrides the default URL of the printing API.                                                           | string  | No       |
+| theme           | The overall color theme. Possible colors are pink, red, orange, green, cyan, blue and violet.            | string  | No       |
 
 ### Example
 
@@ -141,7 +144,30 @@ If you want to bind the printing process to a custom html element, you can use t
 
 Make sure you follow the [GitHub flow](https://guides.github.com/introduction/flow/) if you want to contribute. Clone and create a branch for your contribution. When finished, create a pull request for the main branch.
 
-Important: You need to set up your development server with https!
+#### Important: You need to set up your development server with https!
+
+The stencil.config is already set up to do exactly this in your development environment.
+
+You'll need a certificate and key for this aswell as a .env file placed at the root of the project.
+
+To generate a self signed certificate execute the following command:
+
+```bash
+openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out certificate.pem
+```
+
+and follow the steps to generate a key.pem and certificate.pem.
+
+In your .env file specify the following variables:
+
+```.env
+DEV_SERVER_ADDRESS="your-server-address.com"
+DEV_SERVER_PORT= portnumber
+```
+
+Additionally, you need to uncomment the "devServer" option in the stencil config file.
+
+#### Make sure to comment out the "devServer" option before pushing to the repository!
 
 Clone this repository to a new directory:
 

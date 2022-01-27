@@ -91,8 +91,9 @@ jobs:
       matrix:
         node-version: [14.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-    
+  
     steps:
+  
     - name: Checkout angular branch
       uses: actions/checkout@v2
       with:
@@ -109,8 +110,16 @@ jobs:
       with:
           name: ng-directives.zip
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
-          
-    - name: Install and build angular library
+   
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        registry-url: "${{ env.NPM_REGISTRY }}"
+        cache: 'npm'
+        cache-dependency-path: 'ezeep-js-angular/projects/ngx-ezeep-js'
+              
+    - name: build angular library and publish
       run: |
         cd ezeep-js-angular
         npm install -g @angular/cli
@@ -118,18 +127,12 @@ jobs:
         cd projects/ngx-ezeep-js
         npm install
         cd ../..
-        ng build ngx-ezeep-js
-  
-  publish-angular-component:
-    environment: Production
-    needs: build-ng
-    runs-on: ubuntu-latest
-    steps:
-    - name: checkout ngx-ezeep-js branch
-      run: | 
-        cd ezeep-js-angular/dist/ngx-ezeep-js
-        pwd
-      # npm publish 
+        ng build ngx-ezeep-js --prod
+        cd dist/ngx-ezeep-js
+        npm publish --access public
+      env: 
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
  
   cdn-upload-npm:
     environment: Production
@@ -149,10 +152,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Upload artifact to blob storage
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.27.1
-        inlineScript: |
+      run: |
           azenv='${{ secrets.AZURE_ENVIRONMENT }}'
           account=$(jq -crM .storage.account <<< $azenv)
           container=$(jq -crM .storage.container <<< $azenv)
@@ -165,10 +165,7 @@ jobs:
             -o none
 
     - name: Update Url redirect
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.27.1
-        inlineScript: |
+      run: |
           azenv='${{ secrets.AZURE_ENVIRONMENT }}'
           resourceGroup=$(jq -crM .resourceGroup <<< $azenv)
           profile=$(jq -crM .cdn.profileName <<< $azenv)
@@ -213,10 +210,7 @@ jobs:
           done
 
     - name: Purge CDN endpoint
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.27.1
-        inlineScript: |
+      run: |
            azenv='${{ secrets.AZURE_ENVIRONMENT }}'
            resourceGroup=$(jq -crM .resourceGroup <<< $azenv)
            profile=$(jq -crM .cdn.profileName <<< $azenv)
@@ -234,4 +228,6 @@ jobs:
     - name: Azure CLI logout
       run: |
         az logout
+        az cache purge
+        az account clear
       if: always()
