@@ -61,7 +61,6 @@ There are multiple required and optional attributes the ezp-printing element nee
 | printapihosturl | Overrides the default URL of the printing API.                                                           | string  | No       |
 | theme           | The overall color theme. Possible colors are pink, red, orange, green, cyan, blue and violet.            | string  | No       |
 
-
 ### Example
 
 To get started, you can use the default ezeep print button within your web app:
@@ -147,7 +146,6 @@ Make sure you follow the [GitHub flow](https://guides.github.com/introduction/fl
 
 The stencil.config is already set up to do exactly this in your development environment.
 
-
 You'll need a certificate and key for this aswell as a .env file placed at the root of the project.
 
 To generate a self signed certificate execute the following command:
@@ -155,10 +153,11 @@ To generate a self signed certificate execute the following command:
 ```bash
 openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out certificate.pem
 ```
+
 and follow the steps to generate a key.pem and certificate.pem.
 
+In your .env file specify the following variables:
 
-In your .env file specify the following variables: 
 ```.env
 DEV_SERVER_ADDRESS="your-server-address.com"
 DEV_SERVER_PORT= portnumber
