@@ -2,7 +2,7 @@ import { createStore } from '@stencil/store'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
 import { /* PrinterProperties, */ PrinterConfig, PrinterProperties } from '../shared/types'
-import { BlobServiceClient } from '@azure/storage-blob'
+import { AnonymousCredential, BlockBlobClient, newPipeline } from '@azure/storage-blob'
 export class EzpPrintService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
@@ -179,27 +179,31 @@ export class EzpPrintService {
     }).then((response) => response.json())
   }
 
-  uploadBlobFiles(sasUri: string, files: FileList) {
-    const blobServiceClient = new BlobServiceClient(sasUri)
-    const containerClient = blobServiceClient.getContainerClient('ezeep-js-print')
-    let progress = 0
+  async uploadBlobFiles(sasUri: string, files: FileList) {
+    const pipeline = newPipeline(new AnonymousCredential(), {
+      retryOptions: { maxTries: 4 },
+      userAgentOptions: { userAgentPrefix: 'AdvancedSample V1.0.0' }, // Customized telemetry string
+      keepAliveOptions: {
+        // Keep alive is enabled by default, disable keep alive by setting false
+        enable: false,
+      },
+    })
 
-    try {
-      for (let index = 0; index < files.length; index++) {
-        const file = files[index]
-        const blockBlobCLient = containerClient.getBlockBlobClient(file.name)
-
-        return blockBlobCLient.uploadData(file, {
-          onProgress: (e) => {
-            progress = (e.loadedBytes / file.size) * 100
-            console.log(progress)
-          },
-          blobHTTPHeaders: { blobContentType: file.type },
-        })
-      }
-
-    } catch (error) {
-      console.log(error.message)
+    const client = new BlockBlobClient(sasUri, pipeline)
+    // upload
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index]
+      const response = await client.uploadData(file, {
+        blockSize: 4 * 1024 * 1024, //4mb blocksize
+        concurrency: 20,
+        onProgress: (e) => {
+          let progress = (100 * e.loadedBytes) / file.size
+          console.log(e)
+          console.log(progress)
+        },
+        blobHTTPHeaders: { blobContentType: file.type },
+      })
+      console.log(response._response.status)
     }
   }
 

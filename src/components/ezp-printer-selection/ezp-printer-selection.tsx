@@ -14,7 +14,7 @@ import options from '../../data/options.json'
 })
 export class EzpPrinterSelection {
   // private user: PrintUserType
-
+  private sasUri = ''
   private printService: EzpPrintService
   private duplexOptions = [
     {
@@ -40,7 +40,7 @@ export class EzpPrinterSelection {
   @Prop() filename: string
   @Prop() fileurl: string
   @Prop() filetype: string
-  @Prop() fileid: string
+  @Prop({ mutable: true }) fileid: string
 
   /**
    *
@@ -56,219 +56,188 @@ export class EzpPrinterSelection {
   @State() selectedPrinter: Printer = { id: '', location: '', name: '' }
   @State() printerConfig: PrinterConfig[]
   @State() selectedPrinterConfig: PrinterConfig = {
-    "Collate": true,
-    "Color": true,
-    "Driver": "TP Output Gateway",
-    "DuplexMode": 1,
-    "DuplexSupported": true,
-    "Id": "f0c0f30c-e9ff-4e11-9181-2417fabeb23f",
-    "Location": "",
-    "MediaSupported": [
-        "Auto",
-        "Letter",
-        "Legal",
-        "Executive",
-        "A4",
-        "A5",
-        "B5 (JIS)",
-        "Umschlag 10",
-        "Umschlag DL",
-        "Umschlag C5",
-        "Umschlag C6",
-        "Umschlag Monarch",
-        "Jap. Postkarte",
-        "A6",
-        "JIS Chou Nr. 2 119x277 mm",
-        "4x6Zoll",
-        "5x7 Zoll",
-        "8x10Zoll",
-        "Ofuku hagaki",
-        "10x15 cm",
-        "13x18 cm",
-        "Karteikarte 3 x 5\"",
-        "Karteikarte 4x6 Zoll"
+    Collate: true,
+    Color: true,
+    Driver: 'TP Output Gateway',
+    DuplexMode: 1,
+    DuplexSupported: true,
+    Id: 'f0c0f30c-e9ff-4e11-9181-2417fabeb23f',
+    Location: '',
+    MediaSupported: [
+      'Auto',
+      'Letter',
+      'Legal',
+      'Executive',
+      'A4',
+      'A5',
+      'B5 (JIS)',
+      'Umschlag 10',
+      'Umschlag DL',
+      'Umschlag C5',
+      'Umschlag C6',
+      'Umschlag Monarch',
+      'Jap. Postkarte',
+      'A6',
+      'JIS Chou Nr. 2 119x277 mm',
+      '4x6Zoll',
+      '5x7 Zoll',
+      '8x10Zoll',
+      'Ofuku hagaki',
+      '10x15 cm',
+      '13x18 cm',
+      'Karteikarte 3 x 5"',
+      'Karteikarte 4x6 Zoll',
     ],
-    "MediaSupportedId": [
-        0,
-        1,
-        5,
-        7,
-        9,
-        11,
-        13,
-        20,
-        27,
-        28,
-        31,
-        37,
-        43,
-        70,
-        119,
-        120,
-        121,
-        122,
-        123,
-        124,
-        125,
-        126,
-        127
+    MediaSupportedId: [
+      0, 1, 5, 7, 9, 11, 13, 20, 27, 28, 31, 37, 43, 70, 119, 120, 121, 122, 123, 124, 125, 126,
+      127,
     ],
-    "Name": "HP DeskJet 3630 series",
-    "OrientationsSupported": [
-        "portrait",
-        "landscape"
+    Name: 'HP DeskJet 3630 series',
+    OrientationsSupported: ['portrait', 'landscape'],
+    OrientationsSupportedId: [1, 2],
+    PaperFormats: [
+      {
+        Id: 0,
+        Name: 'Auto',
+        XRes: 0,
+        YRes: 0,
+      },
+      {
+        Id: 1,
+        Name: 'Letter',
+        XRes: 2159,
+        YRes: 2794,
+      },
+      {
+        Id: 5,
+        Name: 'Legal',
+        XRes: 2159,
+        YRes: 3556,
+      },
+      {
+        Id: 7,
+        Name: 'Executive',
+        XRes: 1841,
+        YRes: 2667,
+      },
+      {
+        Id: 9,
+        Name: 'A4',
+        XRes: 2100,
+        YRes: 2970,
+      },
+      {
+        Id: 11,
+        Name: 'A5',
+        XRes: 1480,
+        YRes: 2100,
+      },
+      {
+        Id: 13,
+        Name: 'B5 (JIS)',
+        XRes: 1820,
+        YRes: 2570,
+      },
+      {
+        Id: 20,
+        Name: 'Umschlag 10',
+        XRes: 1047,
+        YRes: 2413,
+      },
+      {
+        Id: 27,
+        Name: 'Umschlag DL',
+        XRes: 1100,
+        YRes: 2200,
+      },
+      {
+        Id: 28,
+        Name: 'Umschlag C5',
+        XRes: 1620,
+        YRes: 2290,
+      },
+      {
+        Id: 31,
+        Name: 'Umschlag C6',
+        XRes: 1140,
+        YRes: 1620,
+      },
+      {
+        Id: 37,
+        Name: 'Umschlag Monarch',
+        XRes: 984,
+        YRes: 1905,
+      },
+      {
+        Id: 43,
+        Name: 'Jap. Postkarte',
+        XRes: 1000,
+        YRes: 1480,
+      },
+      {
+        Id: 70,
+        Name: 'A6',
+        XRes: 1050,
+        YRes: 1480,
+      },
+      {
+        Id: 119,
+        Name: 'JIS Chou Nr. 2 119x277 mm',
+        XRes: 1109,
+        YRes: 1460,
+      },
+      {
+        Id: 120,
+        Name: '4x6Zoll',
+        XRes: 1016,
+        YRes: 1524,
+      },
+      {
+        Id: 121,
+        Name: '5x7 Zoll',
+        XRes: 1270,
+        YRes: 1778,
+      },
+      {
+        Id: 122,
+        Name: '8x10Zoll',
+        XRes: 2032,
+        YRes: 2540,
+      },
+      {
+        Id: 123,
+        Name: 'Ofuku hagaki',
+        XRes: 2000,
+        YRes: 1479,
+      },
+      {
+        Id: 124,
+        Name: '10x15 cm',
+        XRes: 1016,
+        YRes: 1524,
+      },
+      {
+        Id: 125,
+        Name: '13x18 cm',
+        XRes: 1270,
+        YRes: 1778,
+      },
+      {
+        Id: 126,
+        Name: 'Karteikarte 3 x 5"',
+        XRes: 762,
+        YRes: 1270,
+      },
+      {
+        Id: 127,
+        Name: 'Karteikarte 4x6 Zoll',
+        XRes: 1016,
+        YRes: 1524,
+      },
     ],
-    "OrientationsSupportedId": [
-        1,
-        2
-    ],
-    "PaperFormats": [
-        {
-            "Id": 0,
-            "Name": "Auto",
-            "XRes": 0,
-            "YRes": 0
-        },
-        {
-            "Id": 1,
-            "Name": "Letter",
-            "XRes": 2159,
-            "YRes": 2794
-        },
-        {
-            "Id": 5,
-            "Name": "Legal",
-            "XRes": 2159,
-            "YRes": 3556
-        },
-        {
-            "Id": 7,
-            "Name": "Executive",
-            "XRes": 1841,
-            "YRes": 2667
-        },
-        {
-            "Id": 9,
-            "Name": "A4",
-            "XRes": 2100,
-            "YRes": 2970
-        },
-        {
-            "Id": 11,
-            "Name": "A5",
-            "XRes": 1480,
-            "YRes": 2100
-        },
-        {
-            "Id": 13,
-            "Name": "B5 (JIS)",
-            "XRes": 1820,
-            "YRes": 2570
-        },
-        {
-            "Id": 20,
-            "Name": "Umschlag 10",
-            "XRes": 1047,
-            "YRes": 2413
-        },
-        {
-            "Id": 27,
-            "Name": "Umschlag DL",
-            "XRes": 1100,
-            "YRes": 2200
-        },
-        {
-            "Id": 28,
-            "Name": "Umschlag C5",
-            "XRes": 1620,
-            "YRes": 2290
-        },
-        {
-            "Id": 31,
-            "Name": "Umschlag C6",
-            "XRes": 1140,
-            "YRes": 1620
-        },
-        {
-            "Id": 37,
-            "Name": "Umschlag Monarch",
-            "XRes": 984,
-            "YRes": 1905
-        },
-        {
-            "Id": 43,
-            "Name": "Jap. Postkarte",
-            "XRes": 1000,
-            "YRes": 1480
-        },
-        {
-            "Id": 70,
-            "Name": "A6",
-            "XRes": 1050,
-            "YRes": 1480
-        },
-        {
-            "Id": 119,
-            "Name": "JIS Chou Nr. 2 119x277 mm",
-            "XRes": 1109,
-            "YRes": 1460
-        },
-        {
-            "Id": 120,
-            "Name": "4x6Zoll",
-            "XRes": 1016,
-            "YRes": 1524
-        },
-        {
-            "Id": 121,
-            "Name": "5x7 Zoll",
-            "XRes": 1270,
-            "YRes": 1778
-        },
-        {
-            "Id": 122,
-            "Name": "8x10Zoll",
-            "XRes": 2032,
-            "YRes": 2540
-        },
-        {
-            "Id": 123,
-            "Name": "Ofuku hagaki",
-            "XRes": 2000,
-            "YRes": 1479
-        },
-        {
-            "Id": 124,
-            "Name": "10x15 cm",
-            "XRes": 1016,
-            "YRes": 1524
-        },
-        {
-            "Id": 125,
-            "Name": "13x18 cm",
-            "XRes": 1270,
-            "YRes": 1778
-        },
-        {
-            "Id": 126,
-            "Name": "Karteikarte 3 x 5\"",
-            "XRes": 762,
-            "YRes": 1270
-        },
-        {
-            "Id": 127,
-            "Name": "Karteikarte 4x6 Zoll",
-            "XRes": 1016,
-            "YRes": 1524
-        }
-    ],
-    "Resolutions": [
-        "Auto",
-        "600",
-        "1200"
-    ],
-    "TPUID": 1
-}
+    Resolutions: ['Auto', '600', '1200'],
+    TPUID: 1,
+  }
   // needs to be initialised with empty strings
   @State() selectedProperties: PrinterProperties = {
     paper: '',
@@ -341,7 +310,6 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = () => {
-
     const validateData = (data) => {
       if (data.jobstatus === 0) {
         this.printInProgress = false
@@ -367,82 +335,86 @@ export class EzpPrinterSelection {
 
     if (this.fileurl) {
       this.printService
-      .printFileByUrl(
-        authStore.state.accessToken,
-        this.fileurl,
-        this.filetype,
-        this.selectedPrinter.id,
-        this.selectedProperties,
-        this.filename
-      )
-      .then((response) => {
-        if (response.status === 412) {
-          response.json().then(data => this.fileid = data.fileid)
-          this.printService.printByFileID(
-            authStore.state.accessToken,
-            this.fileid,
-            this.filetype,
-            this.selectedPrinter.id,
-            this.selectedProperties,
-            this.filename).finally(() => this.printInProgress = false)
-        } else {
-          return response.json()
-        }
-      })
-      .then((data) => {
-        if (data.jobid) {
-          printStore.state.jobID = data.jobid
-          poll({
-            fn: this.printService.getPrintStatus,
-            validate: validateData,
-            interval: POLL_INTERVAL,
-            maxAttempts: 10,
-          })
-            .then(data)
-            .catch((err) => {
-              console.warn(err)
-              this.printInProgress = false
+        .printFileByUrl(
+          authStore.state.accessToken,
+          this.fileurl,
+          this.filetype,
+          this.selectedPrinter.id,
+          this.selectedProperties,
+          this.filename
+        )
+        .then((response) => {
+          if (response.status === 412) {
+            response.json().then((data) => (this.fileid = data.fileid))
+            this.printService
+              .printByFileID(
+                authStore.state.accessToken,
+                this.fileid,
+                this.filetype,
+                this.selectedPrinter.id,
+                this.selectedProperties,
+                this.filename
+              )
+              .finally(() => (this.printInProgress = false))
+          } else {
+            return response.json()
+          }
+        })
+        .then((data) => {
+          if (data.jobid) {
+            printStore.state.jobID = data.jobid
+            poll({
+              fn: this.printService.getPrintStatus,
+              validate: validateData,
+              interval: POLL_INTERVAL,
+              maxAttempts: 10,
             })
-        } else {
+              .then(data)
+              .catch((err) => {
+                console.warn(err)
+                this.printInProgress = false
+              })
+          } else {
+            this.printInProgress = false
+          }
+        })
+        .catch((error) => {
+          console.log(error)
           this.printInProgress = false
-        }
-      })
-      .catch(error => {
-        console.log(error)
-        this.printInProgress = false
-      })
+        })
     } else if (this.fileid) {
-      this.printService.printByFileID(
-        authStore.state.accessToken,
-        this.fileid,
-        this.filetype,
-        this.selectedPrinter.id,
-        this.selectedProperties,
-        this.filename
-      )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.jobid) {
-          printStore.state.jobID = data.jobid
-          poll({
-            fn: this.printService.getPrintStatus,
-            validate: validateData,
-            interval: POLL_INTERVAL,
-            maxAttempts: 10,
-          })
-            .then(data)
-            .catch((err) => {
-              console.warn(err)
-              this.printInProgress = false
+      this.printService
+        .printByFileID(
+          authStore.state.accessToken,
+          this.fileid,
+          this.filetype,
+          this.selectedPrinter.id,
+          this.selectedProperties,
+          this.filename
+        )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.jobid) {
+            printStore.state.jobID = data.jobid
+            poll({
+              fn: this.printService.getPrintStatus,
+              validate: validateData,
+              interval: POLL_INTERVAL,
+              maxAttempts: 10,
             })
-        } else {
+              .then(data)
+              .catch((err) => {
+                console.warn(err)
+                this.printInProgress = false
+              })
+          } else {
+            this.printInProgress = false
+          }
+        })
+        .catch((error) => {
+          console.log(error)
           this.printInProgress = false
-        }
-      })
-      .catch(error => {
-        console.log(error)
-        this.printInProgress = false
-      })
+        })
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
@@ -489,7 +461,9 @@ export class EzpPrinterSelection {
       case 'printer':
         this.selectedPrinter.id = eventDetails.id
         this.selectedPrinter.name = eventDetails.title
-        await this.printService.getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id).then(data => this.selectedPrinterConfig = data[0])
+        await this.printService
+          .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
+          .then((data) => (this.selectedPrinterConfig = data[0]))
         console.log('selected printer config:')
         console.log(this.selectedPrinterConfig)
         break
@@ -525,8 +499,18 @@ export class EzpPrinterSelection {
     }
   }
 
-  handleFiles(files: FileList){
+  handleFiles(files: FileList) {
     console.log(files)
+    this.printService.prepareFileUpload(authStore.state.accessToken).then((res) => {
+      this.fileid = res.fileid
+      this.sasUri = res.sasUri
+      console.log(res)
+      console.log(this.fileid);
+      console.log(this.sasUri)
+      this.printService.uploadBlobFiles(this.sasUri, files).then(res => {
+        console.log(res);
+      })
+    })
   }
 
   /**
@@ -643,12 +627,14 @@ export class EzpPrinterSelection {
                 icon="orientation"
                 placeholder={i18next.t('printer_selection.select_orientation')}
                 toggleFlow="horizontal"
-                options={this.selectedPrinterConfig.OrientationsSupported.map((orientation, index) => ({
-                  id: index,
-                  title: i18next.t(`printer_selection.orientation_${orientation}`),
-                  meta: '',
-                  type: 'orientation',
-                }))}
+                options={this.selectedPrinterConfig.OrientationsSupported.map(
+                  (orientation, index) => ({
+                    id: index,
+                    title: i18next.t(`printer_selection.orientation_${orientation}`),
+                    meta: '',
+                    type: 'orientation',
+                  })
+                )}
                 preSelected={this.previouslySelectedProperties.orientation}
               />
               <ezp-select
@@ -703,7 +689,12 @@ export class EzpPrinterSelection {
             <ezp-stepper label="Copies" max={10} icon="copies" />
           </div>
           <div>
-            <input type="file" onChange={ (e: Event & {target: HTMLInputElement} ) => this.handleFiles(e.target.files)} />
+            <input
+              type="file"
+              onChange={(e: Event & { target: HTMLInputElement }) =>
+                this.handleFiles(e.target.files)
+              }
+            />
           </div>
           <div id="footer">
             <ezp-text-button
