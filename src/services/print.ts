@@ -198,13 +198,13 @@ export class EzpPrintService {
         concurrency: 20,
         onProgress: (e) => {
           let progress = (100 * e.loadedBytes) / file.size
-          console.log(e)
-          console.log(progress)
+          printStore.state.uploadProgress = progress
         },
         blobHTTPHeaders: { blobContentType: file.type },
       })
       console.log(response._response.status)
     }
+    //printStore.state.uploadProgress = 0
   }
 
   getPrintStatus = () => {
@@ -230,6 +230,7 @@ const printStore = createStore({
   fileType: '',
   printerID: '',
   fileName: '',
+  uploadProgress: 0
 })
 
 export default printStore

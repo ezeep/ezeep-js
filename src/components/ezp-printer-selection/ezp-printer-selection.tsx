@@ -507,9 +507,7 @@ export class EzpPrinterSelection {
       console.log(res)
       console.log(this.fileid);
       console.log(this.sasUri)
-      this.printService.uploadBlobFiles(this.sasUri, files).then(res => {
-        console.log(res);
-      })
+      this.printService.uploadBlobFiles(this.sasUri, files)
     })
   }
 
@@ -695,6 +693,7 @@ export class EzpPrinterSelection {
                 this.handleFiles(e.target.files)
               }
             />
+            <progress value={printStore.state.uploadProgress}></progress>
           </div>
           <div id="footer">
             <ezp-text-button
