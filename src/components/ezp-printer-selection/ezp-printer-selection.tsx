@@ -47,7 +47,6 @@ export class EzpPrinterSelection {
    * States
    *
    */
-
   @State() loading: boolean = true
   @State() options = options
   @State() printInProgress: boolean = false
