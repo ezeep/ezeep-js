@@ -686,15 +686,6 @@ export class EzpPrinterSelection {
             </div>
             <ezp-stepper label="Copies" max={10} icon="copies" />
           </div>
-          <div>
-            <input
-              type="file"
-              onChange={(e: Event & { target: HTMLInputElement }) =>
-                this.handleFiles(e.target.files)
-              }
-            />
-            <progress value={printStore.state.uploadProgress}></progress>
-          </div>
           <div id="footer">
             <ezp-text-button
               type="button"
