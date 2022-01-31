@@ -26,6 +26,10 @@ export namespace Components {
         /**
           * Description...
          */
+        "framed": boolean;
+        /**
+          * Description...
+         */
         "name": IconNameTypes;
         /**
           * Description...
@@ -324,6 +328,10 @@ declare namespace LocalJSX {
         "visible"?: boolean;
     }
     interface EzpIcon {
+        /**
+          * Description...
+         */
+        "framed"?: boolean;
         /**
           * Description...
          */

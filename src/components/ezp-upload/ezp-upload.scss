@@ -33,11 +33,13 @@
 }
 
 #header {
+  --icon-fill: var(--color-theme-solid);
+
   align-items: center;
   display: flex;
   filter: blur(var(--header-blur, 0));
   flex-direction: column;
-  gap: var(--spacing-4);
+  gap: var(--spacing-5);
   opacity: var(--header-opacity, 1);
   text-align: center;
   transition: filter var(--duration-3) var(--easing-out-quart),

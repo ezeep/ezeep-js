@@ -20,7 +20,11 @@ export type IconNameTypes =
   | 'quality'
   | 'size'
   | 'system'
-export type IconSizeTypes = 'normal' | 'large'
+  | 'drag-drop'
+  | 'checkmark-alt'
+  | 'question-mark'
+  | 'exclamation-mark'
+export type IconSizeTypes = 'normal' | 'large' | 'huge'
 export type PrintOrganizationType = { id: number; name: string; printers: PrintPrinterType[] }
 export type PrintPrinterType = { id: number; name: string; location: string }
 export type PrintUserType = {

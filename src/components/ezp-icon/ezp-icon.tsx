@@ -22,6 +22,9 @@ export class EzpIcon {
   /** Description... */
   @Prop() size: IconSizeTypes = 'normal'
 
+  /** Description... */
+  @Prop() framed: boolean = false
+
   /**
    *
    * Lifecycle methods
@@ -45,7 +48,7 @@ export class EzpIcon {
 
   render() {
     return (
-      <Host class={this.size}>
+      <Host class={`${this.size} ${this.framed ? 'framed' : ''}`}>
         <div id="glyph" innerHTML={this.glyph} />
       </Host>
     )
