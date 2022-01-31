@@ -27,6 +27,13 @@
   "button_actions": {
     "login": "Anmelden",
     "print": "Drucken",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "close": "Schließen"
+  },
+  "upload": {
+    "description": "Ziehe dein Dokument hierhin, um es auf einem beliebigen ezeep-Drucker auszudrucken.",
+    "meta_leading": "Oder",
+    "meta_select": "wähle eine Datei",
+    "meta_trailing": "von deinem Computer."
   }
 }

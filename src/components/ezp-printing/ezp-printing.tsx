@@ -3,7 +3,7 @@ import authStore, { sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
 import config from '../../shared/config.json'
-import { ThemeTypes, AppearanceTypes } from './../../shared/types'
+import { ThemeTypes, AppearanceTypes, TriggerTypes, AlertType } from './../../shared/types'
 
 @Component({
   tag: 'ezp-printing',
@@ -13,7 +13,7 @@ import { ThemeTypes, AppearanceTypes } from './../../shared/types'
 export class EzpPrinting {
   @Prop() clientid: string
   @Prop() redirecturi: string
-  @Prop() filename: string
+  @Prop({ mutable: true }) filename: string
   @Prop() fileurl: string
   @Prop() filetype: string
   @Prop() custom: boolean
@@ -23,6 +23,7 @@ export class EzpPrinting {
   @Prop() theme: ThemeTypes = 'cyan'
   @Prop() fileid: string
   @Prop() appearance: AppearanceTypes = 'system'
+  @Prop() trigger: TriggerTypes
 
   /**
    *
@@ -33,6 +34,11 @@ export class EzpPrinting {
   /** Description... */
   @State() printOpen: boolean = false
   @State() authOpen: boolean = false
+  @State() alert: AlertType = {
+    open: false,
+    heading: '',
+    description: '',
+  }
 
   /**
    *
@@ -66,6 +72,30 @@ export class EzpPrinting {
   @Listen('printShow')
   listenPrintShow() {
     this.printOpen = true
+  }
+
+  @Listen('uploadValid')
+  listenUploadValid(event: CustomEvent) {
+    this.filename = event.detail.name
+    this.printOpen = true
+  }
+
+  @Listen('uploadInvalid')
+  listenUploadInvalid(event: CustomEvent) {
+    this.alert = {
+      open: true,
+      heading: event.detail.heading,
+      description: event.detail.description,
+    }
+  }
+
+  @Listen('alertClose')
+  listenAlertClose() {
+    this.alert = {
+      open: false,
+      heading: '',
+      description: '',
+    }
   }
 
   /**
@@ -147,8 +177,10 @@ export class EzpPrinting {
             filetype={this.filetype}
             fileid={this.fileid}
           />
-        ) : this.custom ? (
+        ) : this.trigger === 'custom' ? (
           <slot></slot>
+        ) : this.trigger === 'upload' ? (
+          <ezp-upload />
         ) : (
           <ezp-icon-button
             id="print-trigger"
@@ -157,6 +189,9 @@ export class EzpPrinting {
             type="button"
             onClick={() => this.open()}
           ></ezp-icon-button>
+        )}
+        {this.alert.open && (
+          <ezp-alert heading={this.alert.heading} description={this.alert.description} />
         )}
       </Host>
     )

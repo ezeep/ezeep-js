@@ -5,8 +5,15 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, WeightTypes } from "./shared/types";
+import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TriggerTypes, WeightTypes } from "./shared/types";
 export namespace Components {
+    interface EzpAlert {
+        "description": string;
+        /**
+          * Properties
+         */
+        "heading": string;
+    }
     interface EzpAuth {
         "clientID": string;
         "hidelogin": boolean;
@@ -101,6 +108,7 @@ export namespace Components {
         "printapihosturl": string;
         "redirecturi": string;
         "theme": ThemeTypes;
+        "trigger": TriggerTypes;
     }
     interface EzpProgress {
         /**
@@ -182,12 +190,20 @@ export namespace Components {
          */
         "type": TextButtonTypeTypes;
     }
+    interface EzpUpload {
+    }
     interface EzpUserMenu {
         "name": string;
         "open": boolean;
     }
 }
 declare global {
+    interface HTMLEzpAlertElement extends Components.EzpAlert, HTMLStencilElement {
+    }
+    var HTMLEzpAlertElement: {
+        prototype: HTMLEzpAlertElement;
+        new (): HTMLEzpAlertElement;
+    };
     interface HTMLEzpAuthElement extends Components.EzpAuth, HTMLStencilElement {
     }
     var HTMLEzpAuthElement: {
@@ -254,6 +270,12 @@ declare global {
         prototype: HTMLEzpTextButtonElement;
         new (): HTMLEzpTextButtonElement;
     };
+    interface HTMLEzpUploadElement extends Components.EzpUpload, HTMLStencilElement {
+    }
+    var HTMLEzpUploadElement: {
+        prototype: HTMLEzpUploadElement;
+        new (): HTMLEzpUploadElement;
+    };
     interface HTMLEzpUserMenuElement extends Components.EzpUserMenu, HTMLStencilElement {
     }
     var HTMLEzpUserMenuElement: {
@@ -261,6 +283,7 @@ declare global {
         new (): HTMLEzpUserMenuElement;
     };
     interface HTMLElementTagNameMap {
+        "ezp-alert": HTMLEzpAlertElement;
         "ezp-auth": HTMLEzpAuthElement;
         "ezp-backdrop": HTMLEzpBackdropElement;
         "ezp-icon": HTMLEzpIconElement;
@@ -272,10 +295,22 @@ declare global {
         "ezp-select": HTMLEzpSelectElement;
         "ezp-stepper": HTMLEzpStepperElement;
         "ezp-text-button": HTMLEzpTextButtonElement;
+        "ezp-upload": HTMLEzpUploadElement;
         "ezp-user-menu": HTMLEzpUserMenuElement;
     }
 }
 declare namespace LocalJSX {
+    interface EzpAlert {
+        "description"?: string;
+        /**
+          * Properties
+         */
+        "heading"?: string;
+        /**
+          * Events
+         */
+        "onAlertClose"?: (event: CustomEvent<any>) => void;
+    }
     interface EzpAuth {
         "clientID"?: string;
         "hidelogin"?: boolean;
@@ -378,6 +413,7 @@ declare namespace LocalJSX {
         "printapihosturl"?: string;
         "redirecturi"?: string;
         "theme"?: ThemeTypes;
+        "trigger"?: TriggerTypes;
     }
     interface EzpProgress {
         /**
@@ -468,6 +504,13 @@ declare namespace LocalJSX {
          */
         "type"?: TextButtonTypeTypes;
     }
+    interface EzpUpload {
+        "onUploadInvalid"?: (event: CustomEvent<any>) => void;
+        /**
+          * Events
+         */
+        "onUploadValid"?: (event: CustomEvent<any>) => void;
+    }
     interface EzpUserMenu {
         "name"?: string;
         "onLogoutEmitter"?: (event: CustomEvent<any>) => void;
@@ -478,6 +521,7 @@ declare namespace LocalJSX {
         "open"?: boolean;
     }
     interface IntrinsicElements {
+        "ezp-alert": EzpAlert;
         "ezp-auth": EzpAuth;
         "ezp-backdrop": EzpBackdrop;
         "ezp-icon": EzpIcon;
@@ -489,6 +533,7 @@ declare namespace LocalJSX {
         "ezp-select": EzpSelect;
         "ezp-stepper": EzpStepper;
         "ezp-text-button": EzpTextButton;
+        "ezp-upload": EzpUpload;
         "ezp-user-menu": EzpUserMenu;
     }
 }
@@ -496,6 +541,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "ezp-alert": LocalJSX.EzpAlert & JSXBase.HTMLAttributes<HTMLEzpAlertElement>;
             "ezp-auth": LocalJSX.EzpAuth & JSXBase.HTMLAttributes<HTMLEzpAuthElement>;
             "ezp-backdrop": LocalJSX.EzpBackdrop & JSXBase.HTMLAttributes<HTMLEzpBackdropElement>;
             "ezp-icon": LocalJSX.EzpIcon & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
@@ -507,6 +553,7 @@ declare module "@stencil/core" {
             "ezp-select": LocalJSX.EzpSelect & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
             "ezp-stepper": LocalJSX.EzpStepper & JSXBase.HTMLAttributes<HTMLEzpStepperElement>;
             "ezp-text-button": LocalJSX.EzpTextButton & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
+            "ezp-upload": LocalJSX.EzpUpload & JSXBase.HTMLAttributes<HTMLEzpUploadElement>;
             "ezp-user-menu": LocalJSX.EzpUserMenu & JSXBase.HTMLAttributes<HTMLEzpUserMenuElement>;
         }
     }

@@ -27,6 +27,13 @@
   "button_actions": {
     "login": "Sign In",
     "print": "Print",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "close": "Close"
+  },
+  "upload": {
+    "description": "Drag your document here to print on any ezeep printer.",
+    "meta_leading": "Or",
+    "meta_select": "select a file",
+    "meta_trailing": "from your computer."
   }
 }

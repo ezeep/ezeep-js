@@ -1,0 +1,72 @@
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  align-content: center;
+  background: var(--host-background, transparent);
+  border: 1px dashed var(--host-border-color, var(--color-foreground-tertiary));
+  border-radius: 3px;
+  display: grid;
+  grid-template: auto / minmax(auto, 256px);
+  height: var(--ezp-upload-height, auto);
+  justify-content: center;
+  padding: var(--spacing-3);
+  position: relative;
+  transition: background-color var(--duration-3) var(--easing-out-quart),
+    border-color var(--duration-3) var(--easing-out-quart);
+  width: var(--ezp-upload-width, auto);
+
+  @at-root {
+    #{&}(.dragging) {
+      --host-background: var(--color-theme-translucent);
+      --host-border-color: var(--color-theme-translucent);
+      --header-blur: 16px;
+      --header-opacity: 0.42;
+    }
+  }
+}
+
+#box {
+}
+
+#header {
+  align-items: center;
+  display: flex;
+  filter: blur(var(--header-blur, 0));
+  flex-direction: column;
+  gap: var(--spacing-4);
+  opacity: var(--header-opacity, 1);
+  text-align: center;
+  transition: filter var(--duration-3) var(--easing-out-quart),
+    opacity var(--duration-3) var(--easing-out-quart);
+}
+
+#meta {
+  display: flex;
+  gap: 3px;
+}
+
+#select {
+  color: var(--color-theme-solid);
+  cursor: pointer;
+  opacity: var(--select-opacity, 1);
+  text-decoration: underline;
+
+  @media (hover: hover) {
+    &:hover {
+      --select-opacity: 0.58;
+    }
+  }
+}
+
+#input {
+  appearance: none;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 0;
+}
