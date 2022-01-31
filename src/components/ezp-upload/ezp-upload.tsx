@@ -117,6 +117,7 @@ export class EzpUpload {
       <Host class={{ dragging: this.dragging }}>
         <div id="box">
           <div id="header">
+            <ezp-icon name="drag-drop" size="huge" framed />
             <ezp-label weight="strong" text={i18next.t('upload.description')} />
             <div id="meta">
               <ezp-label level="tertiary" text={i18next.t('upload.meta_leading')} />

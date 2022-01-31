@@ -6,29 +6,45 @@
 
 :host {
   align-content: center;
-  display: block;
   display: grid;
   grid-template: var(--host-gridTemplate) / var(--host-gridTemplate);
   height: var(--icon-height, var(--host-size));
   justify-content: center;
   width: var(--icon-width, var(--host-size));
+  background: var(--host-background, transparent);
+  border-radius: var(--host-borderRadius, 0);
+  padding: var(--host-padding, 0);
 
   @at-root {
+    #{&}(.framed) {
+      --host-background: var(--color-shade-primary);
+      --host-borderRadius: 50%;
+      --host-padding: var(--host-frame);
+    }
+
     #{&}(.normal) {
       --host-size: 18px;
-      --host-gridTemplate: 22px;
+      --host-gridTemplate: 24px;
+      --host-frame: var(--spacing-3);
     }
 
     #{&}(.large) {
       --host-size: 36px;
-      --host-gridTemplate: 44px;
+      --host-gridTemplate: 48px;
+      --host-frame: var(--spacing-4);
+    }
+
+    #{&}(.huge) {
+      --host-size: 54px;
+      --host-gridTemplate: 72px;
+      --host-frame: var(--spacing-5);
     }
   }
 }
 
 svg {
   display: block;
-  fill: currentColor;
+  fill: var(--icon-fill, currentColor);
   height: 100%;
   width: 100%;
 }
