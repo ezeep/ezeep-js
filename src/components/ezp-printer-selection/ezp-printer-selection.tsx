@@ -16,6 +16,7 @@ import fileTypes from './../../data/file-types.json'
 export class EzpPrinterSelection {
   // private user: PrintUserType
   private sasUri = ''
+  private fileExtension = ''
   private printService: EzpPrintService
   private duplexOptions = [
     {
@@ -378,7 +379,6 @@ export class EzpPrinterSelection {
               .catch((err) => {
                 console.warn(err)
                 this.printInProgress = false
-
               })
           } else {
             this.printInProgress = false
@@ -487,12 +487,11 @@ export class EzpPrinterSelection {
         .printByFileID(
           authStore.state.accessToken,
           this.fileid,
-          this.filetype,
+          this.fileExtension,
           this.selectedPrinter.id,
           this.selectedProperties,
           this.filename
         )
-        .then((response) => response.json())
         .then((data) => {
           if (data.jobid) {
             printStore.state.jobID = data.jobid
@@ -520,8 +519,9 @@ export class EzpPrinterSelection {
 
   private validateFileType = async (name: string): Promise<boolean> => {
     const extension = name.split('.').pop()
+    this.fileExtension = extension
 
-    return fileTypes.includes(`.${extension}`)
+    return printStore.state.supportedFileExtensions.toString().includes(`${extension}`)
   }
 
   /**
@@ -537,6 +537,12 @@ export class EzpPrinterSelection {
     this.getPropertiesFromLocalStorage()
     this.getUserInfo()
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
+
+    await (await this.printService.getConfig(authStore.state.accessToken))
+      .json()
+      .then((response) => {
+        printStore.state.supportedFileExtensions = response.System.FILEEXT
+      })
 
     await this.printService
       .getPrinterList(authStore.state.accessToken)

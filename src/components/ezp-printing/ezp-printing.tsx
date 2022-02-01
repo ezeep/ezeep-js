@@ -74,7 +74,8 @@ export class EzpPrinting {
   @Listen('uploadFile')
   async listenUploadFile(event: CustomEvent) {
     this.filename = event.detail[0].name
-    this.printOpen = true
+    this.file = event.detail[0]
+    this.open()
   }
 
   /**
@@ -106,7 +107,14 @@ export class EzpPrinting {
       authStore.state.isAuthorized = !!localStorage.getItem('isAuthorized')
       this.authOpen = !authStore.state.isAuthorized
     }
-    printService.getConfig(authStore.state.accessToken).catch(() => {
+    printService.getConfig(authStore.state.accessToken).then((response) => {
+      if (response.ok) {
+        authStore.state.isAuthorized = true
+      }
+      if (!response.ok) {
+        throw new Error('http status ' + response.status)
+      }
+    }).catch(() => {
       authStore.state.isAuthorized = false
     })
   }

@@ -68,20 +68,12 @@ export class EzpPrintService {
     }).then((response) => response.json())
   }
 
-  getConfig(accessToken: string) {
+  async getConfig(accessToken: string) {
     return fetch(`https://${this.printingApi}/sfapi/GetConfiguration/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
       },
-    }).then((response) => {
-      if (response.ok) {
-        authStore.state.isAuthorized = true
-      }
-      if (!response.ok) {
-        throw new Error('http status ' + response.status)
-      }
-      return response.json()
     })
   }
 
@@ -152,9 +144,9 @@ export class EzpPrintService {
         fileid: fileID,
         type: fileType,
         printerid: printerID,
-        ...(filename && { alias: filename }),
-        ...(printAndDelete && { printanddelete: printAndDelete }),
-        properties,
+        // ...(filename && { alias: filename }),
+        // ...(printAndDelete && { printanddelete: printAndDelete }),
+        // properties,
       }),
     }).then((response) => response.json())
   }
@@ -234,6 +226,7 @@ const printStore = createStore({
   printerID: '',
   fileName: '',
   uploadProgress: 0,
+  supportedFileExtensions: ''
 })
 
 export default printStore
