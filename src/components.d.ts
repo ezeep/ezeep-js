@@ -118,6 +118,14 @@ export namespace Components {
         /**
           * Status...
          */
+        "icon"?: IconNameTypes;
+        /**
+          * Status...
+         */
+        "processing": boolean;
+        /**
+          * Status...
+         */
         "status": string;
     }
     interface EzpSelect {
@@ -189,6 +197,10 @@ export namespace Components {
           * Description...
          */
         "level": TextButtonLevelTypes;
+        /**
+          * Description...
+         */
+        "small": boolean;
         /**
           * Description...
          */
@@ -427,6 +439,14 @@ declare namespace LocalJSX {
         /**
           * Status...
          */
+        "icon"?: IconNameTypes;
+        /**
+          * Status...
+         */
+        "processing"?: boolean;
+        /**
+          * Status...
+         */
         "status"?: string;
     }
     interface EzpSelect {
@@ -507,6 +527,10 @@ declare namespace LocalJSX {
           * Description...
          */
         "level"?: TextButtonLevelTypes;
+        /**
+          * Description...
+         */
+        "small"?: boolean;
         /**
           * Description...
          */

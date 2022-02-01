@@ -8,7 +8,10 @@
     "loading": "Lade Drucker…",
     "print": "Drucken",
     "printer": "Drucker",
-    "print_in_progress": "Drucke…",
+    "print_in_progress": "Drucke Dokument.",
+    "print_success": "Dokument gedruckt.",
+    "print_failed": "Drucken fehlgeschlagen.",
+    "file_type_not_supported": "Dateityp nicht unterstützt.",
     "color": "Farbe",
     "orientation": "Ausrichtung",
     "size": "Papierformat",
@@ -28,7 +31,8 @@
     "login": "Anmelden",
     "print": "Drucken",
     "cancel": "Abbrechen",
-    "close": "Schließen"
+    "close": "Schließen",
+    "retry": "Wiederholen"
   },
   "upload": {
     "description": "Ziehe dein Dokument hierhin, um es auf einem beliebigen ezeep-Drucker auszudrucken.",

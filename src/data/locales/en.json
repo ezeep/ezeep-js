@@ -6,7 +6,10 @@
   },
   "printer_selection": {
     "loading": "Loading printers…",
-    "print_in_progress": "Printing…",
+    "print_in_progress": "Printing document.",
+    "print_success": "Document printed.",
+    "print_failed": "Document failed to print.",
+    "file_type_not_supported": "File type not supported.",
     "print": "Print",
     "printer": "Printer",
     "color": "Color",
@@ -28,7 +31,8 @@
     "login": "Sign In",
     "print": "Print",
     "cancel": "Cancel",
-    "close": "Close"
+    "close": "Close",
+    "retry": "Retry"
   },
   "upload": {
     "description": "Drag your document here to print on any ezeep printer.",

@@ -1,4 +1,5 @@
 import { Component, Host, Prop, h } from '@stencil/core'
+import { IconNameTypes } from '../../shared/types'
 
 @Component({
   tag: 'ezp-progress',
@@ -13,7 +14,13 @@ export class EzpProgress {
    */
 
   /** Status... */
-  @Prop() status: string = 'Status...'
+  @Prop() status: string = 'Status'
+
+  /** Status... */
+  @Prop() processing: boolean = false
+
+  /** Status... */
+  @Prop() icon?: IconNameTypes
 
   /**
    *
@@ -25,11 +32,18 @@ export class EzpProgress {
     return (
       <Host>
         <div id="box">
-          <svg id="indicator" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-            <circle id="track" cx="22" cy="22" r="16" />
-            <circle id="value" cx="22" cy="22" r="16" />
-          </svg>
+          {this.processing ? (
+            <svg id="indicator" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+              <circle id="track" cx="21" cy="21" r="18" />
+              <circle id="value" cx="21" cy="21" r="18" />
+            </svg>
+          ) : this.icon ? (
+            <ezp-icon name={this.icon} framed />
+          ) : null}
           <ezp-label id="status" level="tertiary" weight="strong" text={this.status} />
+          <div id="footer">
+            <slot />
+          </div>
         </div>
       </Host>
     )

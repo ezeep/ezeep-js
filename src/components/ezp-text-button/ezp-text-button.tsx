@@ -1,5 +1,5 @@
 import { Component, Host, Prop, h } from '@stencil/core'
-import { TextButtonLevelTypes, TextButtonTypeTypes } from '../../shared/types'
+import { TextButtonLevelTypes, TextButtonTypeTypes, LabelLevelTypes } from '../../shared/types'
 
 @Component({
   tag: 'ezp-text-button',
@@ -31,6 +31,9 @@ export class EzpTextButton {
   /** Description... */
   @Prop() type: TextButtonTypeTypes
 
+  /** Description... */
+  @Prop() small: boolean = false
+
   /**
    *
    * Render method
@@ -53,7 +56,7 @@ export class EzpTextButton {
     return (
       <Host class={`${this.level}`}>
         <TagType class="button" {...attributes}>
-          <ezp-label weight="heavy" text={this.label} />
+          <ezp-label weight="heavy" text={this.label} level={this.small ? 'tertiary' : 'secondary'} />
         </TagType>
       </Host>
     )

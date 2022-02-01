@@ -50,6 +50,9 @@ export class EzpPrinterSelection {
   @State() loading: boolean = true
   @State() options = options
   @State() printInProgress: boolean = false
+  @State() printSuccess: boolean = false
+  @State() printFailed: boolean = false
+  @State() notSupported: boolean = false
   @State() userMenuOpen: boolean = false
   @State() userName: string
   @State() printers: Printer[]
@@ -549,13 +552,30 @@ export class EzpPrinterSelection {
 
   render() {
     return this.loading ? (
-      <ezp-progress status={i18next.t('printer_selection.loading')}></ezp-progress>
+      <ezp-progress processing status={i18next.t('printer_selection.loading')} />
     ) : (
-      <Host exportparts="test: hello">
-        {this.printInProgress ? (
-          <ezp-progress status={i18next.t('printer_selection.print_in_progress')}></ezp-progress>
-        ) : null}
+      <Host>
         <div id="container" data-backdrop-surface>
+          {this.printInProgress ? (
+            <ezp-progress processing status={i18next.t('printer_selection.print_in_progress')}>
+              <ezp-text-button level="secondary" small label={i18next.t('button_actions.cancel')} />
+            </ezp-progress>
+          ) : this.printSuccess ? (
+            <ezp-progress icon="checkmark-alt" status={i18next.t('printer_selection.print_success')}>
+              <ezp-text-button level="primary" small label={i18next.t('button_actions.close')} />
+            </ezp-progress>
+          ) : this.printFailed ? (
+            <ezp-progress icon="exclamation-mark" status={i18next.t('printer_selection.print_failed')}>
+              <ezp-text-button level="secondary" small label={i18next.t('button_actions.close')} />
+              <ezp-text-button level="primary" small label={i18next.t('button_actions.retry')} />
+            </ezp-progress>
+          ) : this.notSupported ? (
+            <ezp-progress icon="exclamation-mark" status={i18next.t('printer_selection.file_type_not_supported')}>
+              <ezp-text-button level="secondary" small label={i18next.t('button_actions.close')} />
+              <ezp-text-button level="primary" small label={i18next.t('button_actions.retry')} />
+            </ezp-progress>
+          ) : null }
+
           <div id="header">
             <ezp-label weight="heavy" text={i18next.t('printer_selection.print') + ':'} />
             <ezp-label text={this.filename} />
@@ -685,15 +705,6 @@ export class EzpPrinterSelection {
               ) : null}
             </div>
             <ezp-stepper label="Copies" max={10} icon="copies" />
-          </div>
-          <div>
-            <input
-              type="file"
-              onChange={(e: Event & { target: HTMLInputElement }) =>
-                this.handleFiles(e.target.files)
-              }
-            />
-            <progress value={printStore.state.uploadProgress}></progress>
           </div>
           <div id="footer">
             <ezp-text-button
