@@ -508,7 +508,7 @@ export class EzpPrinterSelection {
       this.fileid = res.fileid
       this.sasUri = res.sasUri
       console.log(res)
-      console.log(this.fileid);
+      console.log(this.fileid)
       console.log(this.sasUri)
       this.printService.uploadBlobFiles(this.sasUri, files)
     })
@@ -561,20 +561,29 @@ export class EzpPrinterSelection {
               <ezp-text-button level="secondary" small label={i18next.t('button_actions.cancel')} />
             </ezp-progress>
           ) : this.printSuccess ? (
-            <ezp-progress icon="checkmark-alt" status={i18next.t('printer_selection.print_success')}>
+            <ezp-progress
+              icon="checkmark-alt"
+              status={i18next.t('printer_selection.print_success')}
+            >
               <ezp-text-button level="primary" small label={i18next.t('button_actions.close')} />
             </ezp-progress>
           ) : this.printFailed ? (
-            <ezp-progress icon="exclamation-mark" status={i18next.t('printer_selection.print_failed')}>
+            <ezp-progress
+              icon="exclamation-mark"
+              status={i18next.t('printer_selection.print_failed')}
+            >
               <ezp-text-button level="secondary" small label={i18next.t('button_actions.close')} />
               <ezp-text-button level="primary" small label={i18next.t('button_actions.retry')} />
             </ezp-progress>
           ) : this.notSupported ? (
-            <ezp-progress icon="exclamation-mark" status={i18next.t('printer_selection.file_type_not_supported')}>
+            <ezp-progress
+              icon="exclamation-mark"
+              status={i18next.t('printer_selection.file_type_not_supported')}
+            >
               <ezp-text-button level="secondary" small label={i18next.t('button_actions.close')} />
               <ezp-text-button level="primary" small label={i18next.t('button_actions.retry')} />
             </ezp-progress>
-          ) : null }
+          ) : null}
 
           <div id="header">
             <ezp-label weight="heavy" text={i18next.t('printer_selection.print') + ':'} />

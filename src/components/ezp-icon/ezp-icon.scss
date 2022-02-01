@@ -6,14 +6,14 @@
 
 :host {
   align-content: center;
+  background: var(--host-background, transparent);
+  border-radius: var(--host-borderRadius, 0);
   display: grid;
   grid-template: var(--host-gridTemplate) / var(--host-gridTemplate);
   height: var(--icon-height, var(--host-size));
   justify-content: center;
-  width: var(--icon-width, var(--host-size));
-  background: var(--host-background, transparent);
-  border-radius: var(--host-borderRadius, 0);
   padding: var(--host-padding, 0);
+  width: var(--icon-width, var(--host-size));
 
   @at-root {
     #{&}(.framed) {

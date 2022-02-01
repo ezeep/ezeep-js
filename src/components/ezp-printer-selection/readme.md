@@ -7,6 +7,7 @@
 | Property      | Attribute        | Description | Type     | Default     |
 | ------------- | ---------------- | ----------- | -------- | ----------- |
 | `clientID`    | `client-i-d`     | Properties  | `string` | `undefined` |
+| `fileid`      | `fileid`         |             | `string` | `undefined` |
 | `filename`    | `filename`       |             | `string` | `undefined` |
 | `filetype`    | `filetype`       |             | `string` | `undefined` |
 | `fileurl`     | `fileurl`        |             | `string` | `undefined` |
@@ -28,11 +29,11 @@
 ### Depends on
 
 - [ezp-progress](../ezp-progress)
+- [ezp-text-button](../ezp-text-button)
 - [ezp-label](../ezp-label)
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-select](../ezp-select)
 - [ezp-stepper](../ezp-stepper)
-- [ezp-text-button](../ezp-text-button)
 - [ezp-user-menu](../ezp-user-menu)
 
 ### Graph
@@ -40,20 +41,21 @@
 ```mermaid
 graph TD;
   ezp-printer-selection --> ezp-progress
+  ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-stepper
-  ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
+  ezp-progress --> ezp-icon
   ezp-progress --> ezp-label
+  ezp-text-button --> ezp-label
   ezp-icon-button --> ezp-icon
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> ezp-label
   ezp-stepper --> ezp-icon
   ezp-stepper --> ezp-label
-  ezp-text-button --> ezp-label
   ezp-user-menu --> ezp-backdrop
   ezp-user-menu --> ezp-label
   ezp-user-menu --> ezp-icon-button

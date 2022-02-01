@@ -56,7 +56,11 @@ export class EzpTextButton {
     return (
       <Host class={`${this.level}`}>
         <TagType class="button" {...attributes}>
-          <ezp-label weight="heavy" text={this.label} level={this.small ? 'tertiary' : 'secondary'} />
+          <ezp-label
+            weight="heavy"
+            text={this.label}
+            level={this.small ? 'tertiary' : 'secondary'}
+          />
         </TagType>
       </Host>
     )

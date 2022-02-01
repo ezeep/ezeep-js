@@ -38,6 +38,7 @@ graph TD;
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-label
   ezp-auth --> ezp-text-button
+  ezp-progress --> ezp-icon
   ezp-progress --> ezp-label
   ezp-icon-button --> ezp-icon
   ezp-text-button --> ezp-label

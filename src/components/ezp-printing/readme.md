@@ -10,6 +10,7 @@
 | `authapihosturl`  | `authapihosturl`  |             | `string`                                                                 | `undefined` |
 | `clientid`        | `clientid`        |             | `string`                                                                 | `undefined` |
 | `custom`          | `custom`          |             | `boolean`                                                                | `undefined` |
+| `fileid`          | `fileid`          |             | `string`                                                                 | `undefined` |
 | `filename`        | `filename`        |             | `string`                                                                 | `undefined` |
 | `filetype`        | `filetype`        |             | `string`                                                                 | `undefined` |
 | `fileurl`         | `fileurl`         |             | `string`                                                                 | `undefined` |
@@ -17,6 +18,7 @@
 | `printapihosturl` | `printapihosturl` |             | `string`                                                                 | `undefined` |
 | `redirecturi`     | `redirecturi`     |             | `string`                                                                 | `undefined` |
 | `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "violet"` | `'cyan'`    |
+| `trigger`         | `trigger`         |             | `"custom" \| "upload"`                                                   | `undefined` |
 
 ## Methods
 
@@ -34,7 +36,9 @@ Type: `Promise<void>`
 
 - [ezp-auth](../ezp-auth)
 - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-upload](../ezp-upload)
 - [ezp-icon-button](../ezp-icon-button)
+- [ezp-alert](../ezp-alert)
 
 ### Graph
 
@@ -42,20 +46,23 @@ Type: `Promise<void>`
 graph TD;
   ezp-printing --> ezp-auth
   ezp-printing --> ezp-printer-selection
+  ezp-printing --> ezp-upload
   ezp-printing --> ezp-icon-button
+  ezp-printing --> ezp-alert
   ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-label
   ezp-auth --> ezp-text-button
+  ezp-progress --> ezp-icon
   ezp-progress --> ezp-label
   ezp-icon-button --> ezp-icon
   ezp-text-button --> ezp-label
   ezp-printer-selection --> ezp-progress
+  ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-stepper
-  ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
@@ -66,6 +73,11 @@ graph TD;
   ezp-user-menu --> ezp-label
   ezp-user-menu --> ezp-icon-button
   ezp-user-menu --> ezp-icon
+  ezp-upload --> ezp-icon
+  ezp-upload --> ezp-label
+  ezp-alert --> ezp-icon-button
+  ezp-alert --> ezp-label
+  ezp-alert --> ezp-text-button
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -2,33 +2,32 @@
 
 <!-- Auto Generated Below -->
 
-## Properties
-
-| Property  | Attribute | Description | Type      | Default |
-| --------- | --------- | ----------- | --------- | ------- |
-| `visible` | `visible` |             | `boolean` | `true`  |
-
 ## Events
 
-| Event               | Description | Type               |
-| ------------------- | ----------- | ------------------ |
-| `backdropHideEnd`   |             | `CustomEvent<any>` |
-| `backdropHideStart` |             | `CustomEvent<any>` |
+| Event           | Description | Type               |
+| --------------- | ----------- | ------------------ |
+| `uploadInvalid` |             | `CustomEvent<any>` |
+| `uploadValid`   | Events      | `CustomEvent<any>` |
 
 ## Dependencies
 
 ### Used by
 
-- [ezp-select](../ezp-select)
-- [ezp-user-menu](../ezp-user-menu)
+- [ezp-printing](../ezp-printing)
+
+### Depends on
+
+- [ezp-icon](../ezp-icon)
+- [ezp-label](../ezp-label)
 
 ### Graph
 
 ```mermaid
 graph TD;
-  ezp-select --> ezp-backdrop
-  ezp-user-menu --> ezp-backdrop
-  style ezp-backdrop fill:#f9f,stroke:#333,stroke-width:4px
+  ezp-upload --> ezp-icon
+  ezp-upload --> ezp-label
+  ezp-printing --> ezp-upload
+  style ezp-upload fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ---

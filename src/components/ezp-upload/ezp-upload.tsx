@@ -61,9 +61,7 @@ export class EzpUpload {
     const file = event.dataTransfer.files[0]
 
     await this.validateFileType(file.name).then((valid) =>
-      valid
-        ? this.uploadValid.emit(file)
-        : this.throwInvalidFileType()
+      valid ? this.uploadValid.emit(file) : this.throwInvalidFileType()
     )
   }
 
@@ -77,9 +75,7 @@ export class EzpUpload {
     const file = this.input.files[0]
 
     await this.validateFileType(file.name).then((valid) =>
-      valid
-        ? this.uploadValid.emit(file)
-        : this.throwInvalidFileType()
+      valid ? this.uploadValid.emit(file) : this.throwInvalidFileType()
     )
   }
 
