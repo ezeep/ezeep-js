@@ -4,10 +4,9 @@
 
 ## Events
 
-| Event           | Description | Type               |
-| --------------- | ----------- | ------------------ |
-| `uploadInvalid` |             | `CustomEvent<any>` |
-| `uploadValid`   | Events      | `CustomEvent<any>` |
+| Event        | Description | Type               |
+| ------------ | ----------- | ------------------ |
+| `uploadFile` | Events      | `CustomEvent<any>` |
 
 ## Dependencies
 

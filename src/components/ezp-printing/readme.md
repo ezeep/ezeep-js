@@ -38,7 +38,6 @@ Type: `Promise<void>`
 - [ezp-printer-selection](../ezp-printer-selection)
 - [ezp-upload](../ezp-upload)
 - [ezp-icon-button](../ezp-icon-button)
-- [ezp-alert](../ezp-alert)
 
 ### Graph
 
@@ -48,7 +47,6 @@ graph TD;
   ezp-printing --> ezp-printer-selection
   ezp-printing --> ezp-upload
   ezp-printing --> ezp-icon-button
-  ezp-printing --> ezp-alert
   ezp-auth --> ezp-progress
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-label
@@ -75,9 +73,6 @@ graph TD;
   ezp-user-menu --> ezp-icon
   ezp-upload --> ezp-icon
   ezp-upload --> ezp-label
-  ezp-alert --> ezp-icon-button
-  ezp-alert --> ezp-label
-  ezp-alert --> ezp-text-button
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

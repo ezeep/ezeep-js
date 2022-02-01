@@ -25,8 +25,7 @@ export class EzpUpload {
    *
    */
 
-  @Event() uploadValid: EventEmitter
-  @Event() uploadInvalid: EventEmitter
+  @Event() uploadFile: EventEmitter
 
   /**
    *
@@ -52,17 +51,12 @@ export class EzpUpload {
   }
 
   @Listen('drop', { passive: false })
-  async handleDrop(event: DragEvent) {
+  handleDrop(event: DragEvent) {
     event.stopPropagation()
     event.preventDefault()
 
     this.dragging = false
-
-    const file = event.dataTransfer.files[0]
-
-    await this.validateFileType(file.name).then((valid) =>
-      valid ? this.uploadValid.emit(file) : this.throwInvalidFileType()
-    )
+    this.uploadFile.emit(event.dataTransfer.files)
   }
 
   /**
@@ -71,25 +65,8 @@ export class EzpUpload {
    *
    */
 
-  private handleInput = async () => {
-    const file = this.input.files[0]
-
-    await this.validateFileType(file.name).then((valid) =>
-      valid ? this.uploadValid.emit(file) : this.throwInvalidFileType()
-    )
-  }
-
-  private validateFileType = async (name: string): Promise<boolean> => {
-    const extension = name.split('.').pop()
-
-    return fileTypes.includes(`.${extension}`)
-  }
-
-  private throwInvalidFileType = () => {
-    this.uploadInvalid.emit({
-      heading: 'File type not supported',
-      description: 'Stet clita kasd gubergren, no sea takimata sanctus est.',
-    })
+  private handleInput = () => {
+    this.uploadFile.emit(this.input.files)
   }
 
   /**

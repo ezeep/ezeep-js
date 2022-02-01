@@ -6,6 +6,7 @@ import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { initi18n, poll, removeEmptyStrings } from '../../utils/utils'
 import options from '../../data/options.json'
+import fileTypes from './../../data/file-types.json'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -37,7 +38,7 @@ export class EzpPrinterSelection {
    */
   @Prop() clientID: string
   @Prop() redirectURI: string
-  @Prop() filename: string
+  @Prop({ mutable: true }) filename: string
   @Prop() fileurl: string
   @Prop() filetype: string
   @Prop({ mutable: true }) fileid: string
@@ -514,6 +515,12 @@ export class EzpPrinterSelection {
     })
   }
 
+  private validateFileType = async (name: string): Promise<boolean> => {
+    const extension = name.split('.').pop()
+
+    return fileTypes.includes(`.${extension}`)
+  }
+
   /**
    *
    * Lifecycle methods
@@ -540,6 +547,10 @@ export class EzpPrinterSelection {
         this.printerConfig = printerConfig
         console.log(this.printerConfig)
       })
+
+    await this.validateFileType(this.filename).then(
+      (valid) => (this.notSupported = !valid ? true : false)
+    )
 
     this.loading = false
   }
@@ -586,8 +597,11 @@ export class EzpPrinterSelection {
           ) : null}
 
           <div id="header">
-            <ezp-label weight="heavy" text={i18next.t('printer_selection.print') + ':'} />
-            <ezp-label text={this.filename} />
+            <ezp-label
+              weight="heavy"
+              text={i18next.t('printer_selection.print') + `${!this.notSupported ? ':' : ''}`}
+            />
+            <ezp-label text={!this.notSupported ? this.filename : ''} />
             <ezp-icon-button
               level="tertiary"
               icon="menu"

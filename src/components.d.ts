@@ -537,11 +537,10 @@ declare namespace LocalJSX {
         "type"?: TextButtonTypeTypes;
     }
     interface EzpUpload {
-        "onUploadInvalid"?: (event: CustomEvent<any>) => void;
         /**
           * Events
          */
-        "onUploadValid"?: (event: CustomEvent<any>) => void;
+        "onUploadFile"?: (event: CustomEvent<any>) => void;
     }
     interface EzpUserMenu {
         "name"?: string;

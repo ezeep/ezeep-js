@@ -3,7 +3,7 @@ import authStore, { sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
 import config from '../../shared/config.json'
-import { ThemeTypes, AppearanceTypes, TriggerTypes, AlertType } from './../../shared/types'
+import { ThemeTypes, AppearanceTypes, TriggerTypes } from './../../shared/types'
 
 @Component({
   tag: 'ezp-printing',
@@ -34,11 +34,6 @@ export class EzpPrinting {
   /** Description... */
   @State() printOpen: boolean = false
   @State() authOpen: boolean = false
-  @State() alert: AlertType = {
-    open: false,
-    heading: '',
-    description: '',
-  }
 
   /**
    *
@@ -74,29 +69,10 @@ export class EzpPrinting {
     this.printOpen = true
   }
 
-  @Listen('uploadValid')
-  listenUploadValid(event: CustomEvent) {
-    this.filename = event.detail.name
-    this.open()
-  }
-
-  @Listen('uploadInvalid')
-  listenUploadInvalid(event: CustomEvent) {
-    this.alert = {
-      open: true,
-      heading: event.detail.heading,
-      description: event.detail.description,
-    }
-    this.open()
-  }
-
-  @Listen('alertClose')
-  listenAlertClose() {
-    this.alert = {
-      open: false,
-      heading: '',
-      description: '',
-    }
+  @Listen('uploadFile')
+  async listenUploadFile(event: CustomEvent) {
+    this.filename = event.detail[0].name
+    this.printOpen = true
   }
 
   /**
@@ -190,9 +166,6 @@ export class EzpPrinting {
             type="button"
             onClick={() => this.open()}
           ></ezp-icon-button>
-        )}
-        {this.alert.open && (
-          <ezp-alert heading={this.alert.heading} description={this.alert.description} />
         )}
       </Host>
     )

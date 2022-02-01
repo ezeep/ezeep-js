@@ -17,10 +17,6 @@
 
 ## Dependencies
 
-### Used by
-
-- [ezp-printing](../ezp-printing)
-
 ### Depends on
 
 - [ezp-icon-button](../ezp-icon-button)
@@ -36,7 +32,6 @@ graph TD;
   ezp-alert --> ezp-text-button
   ezp-icon-button --> ezp-icon
   ezp-text-button --> ezp-label
-  ezp-printing --> ezp-alert
   style ezp-alert fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
