@@ -179,7 +179,7 @@ export class EzpPrintService {
     }).then((response) => response.json())
   }
 
-  async uploadBlobFiles(sasUri: string, files: FileList) {
+  async uploadBlobFiles(sasUri: string, file: File) {
     printStore.state.uploadProgress = 0
     const pipeline = newPipeline(new AnonymousCredential(), {
       retryOptions: { maxTries: 4 },
@@ -192,19 +192,22 @@ export class EzpPrintService {
 
     const client = new BlockBlobClient(sasUri, pipeline)
     // upload
-    for (let index = 0; index < files.length; index++) {
-      const file = files[index]
-      const response = await client.uploadData(file, {
-        blockSize: 4 * 1024 * 1024, //4mb blocksize
-        concurrency: 20,
-        onProgress: (e) => {
-          let progress = (100 * e.loadedBytes) / file.size
-          printStore.state.uploadProgress = progress
-        },
-        blobHTTPHeaders: { blobContentType: file.type },
-      })
-      console.log(response._response.status)
-    }
+    // for (let index = 0; index < files.length; index++) {
+    //   const file = files[index]
+
+    //   console.log(response._response.status)
+    // }
+    const response = await client.uploadData(file, {
+      blockSize: 4 * 1024 * 1024, //4mb blocksize
+      concurrency: 20,
+      onProgress: (e) => {
+        let progress = (100 * e.loadedBytes) / file.size
+        printStore.state.uploadProgress = progress
+      },
+      blobHTTPHeaders: { blobContentType: file.type },
+    })
+
+    return response
   }
 
   getPrintStatus = () => {

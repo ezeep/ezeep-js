@@ -89,6 +89,7 @@ export namespace Components {
           * Properties
          */
         "clientID": string;
+        "file": File;
         "fileid": string;
         "filename": string;
         "filetype": string;
@@ -406,6 +407,7 @@ declare namespace LocalJSX {
           * Properties
          */
         "clientID"?: string;
+        "file"?: File;
         "fileid"?: string;
         "filename"?: string;
         "filetype"?: string;
@@ -414,10 +416,12 @@ declare namespace LocalJSX {
           * Description...
          */
         "onPrintCancel"?: (event: CustomEvent<MouseEvent>) => void;
+        "onPrintFailed"?: (event: CustomEvent<any>) => void;
         /**
           * Description...
          */
         "onPrintSubmit"?: (event: CustomEvent<MouseEvent>) => void;
+        "onPrintSuccess"?: (event: CustomEvent<any>) => void;
         "redirectURI"?: string;
     }
     interface EzpPrinting {

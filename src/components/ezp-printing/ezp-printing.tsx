@@ -11,6 +11,8 @@ import { ThemeTypes, AppearanceTypes, TriggerTypes, AlertType } from './../../sh
   shadow: true,
 })
 export class EzpPrinting {
+
+  private file: File
   @Prop() clientid: string
   @Prop() redirecturi: string
   @Prop({ mutable: true }) filename: string
@@ -77,6 +79,7 @@ export class EzpPrinting {
   @Listen('uploadValid')
   listenUploadValid(event: CustomEvent) {
     this.filename = event.detail.name
+    this.file = event.detail
     this.open()
   }
 
@@ -177,6 +180,7 @@ export class EzpPrinting {
             fileurl={this.fileurl}
             filetype={this.filetype}
             fileid={this.fileid}
+            file={this.file}
           />
         ) : this.trigger === 'custom' ? (
           <slot></slot>
