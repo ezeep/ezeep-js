@@ -1,7 +1,6 @@
 import { Component, Host, Listen, Event, EventEmitter, State, h } from '@stencil/core'
 import { initi18n } from '../../utils/utils'
 import i18next from 'i18next'
-import fileTypes from './../../data/file-types.json'
 
 @Component({
   tag: 'ezp-upload',
@@ -105,7 +104,6 @@ export class EzpUpload {
                 type="file"
                 name="input"
                 id="input"
-                accept={fileTypes.join(',')}
                 ref={(input) => (this.input = input)}
                 onInput={this.handleInput}
               />
