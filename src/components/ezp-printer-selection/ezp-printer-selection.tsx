@@ -329,8 +329,7 @@ export class EzpPrinterSelection {
 
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
-    removeEmptyStrings(this.selectedProperties)
-
+    this.selectedProperties = removeEmptyStrings(this.selectedProperties)
     // put it in store for further use
     printStore.state.fileUrl = this.fileurl
     printStore.state.fileID = this.fileid
