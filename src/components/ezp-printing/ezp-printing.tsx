@@ -11,7 +11,6 @@ import { ThemeTypes, AppearanceTypes, TriggerTypes } from './../../shared/types'
   shadow: true,
 })
 export class EzpPrinting {
-
   private file: File
   @Prop() clientid: string
   @Prop() redirecturi: string
@@ -72,7 +71,7 @@ export class EzpPrinting {
   }
 
   @Listen('uploadFile')
-  async listenUploadFile(event: CustomEvent) {
+  listenUploadFile(event: CustomEvent) {
     this.filename = event.detail[0].name
     this.printOpen = true
   }
