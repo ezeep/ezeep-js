@@ -275,8 +275,6 @@ export class EzpPrinterSelection {
   /** Description... */
   @Event() printSubmit: EventEmitter<MouseEvent>
 
-  @Event() printSuccess: EventEmitter
-  @Event() printFailed: EventEmitter
   /**
    *
    * Listeners
@@ -379,17 +377,15 @@ export class EzpPrinterSelection {
               .catch((err) => {
                 console.warn(err)
                 this.printInProgress = false
-                this.printFailed.emit()
+
               })
           } else {
             this.printInProgress = false
-            this.printFailed.emit()
           }
         })
         .catch((error) => {
           console.log(error)
           this.printInProgress = false
-          this.printFailed.emit()
         })
     }
 
