@@ -166,9 +166,6 @@ If you want to bind the printing process to a custom html element, you can use t
     <ezp-printing
       clientid="oWuvEAndErO3kKCqzaWBOAs2PhOuAbD7MZYWQ9yJ"
       redirecturi="https://develop.dev.azdev.ezeep.com:3333"
-      filename="dummypdf"
-      fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-      filetype="pdf"
       theme="blue"
       appearance="system"
       trigger="upload"
