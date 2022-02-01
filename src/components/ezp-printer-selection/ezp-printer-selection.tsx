@@ -6,7 +6,6 @@ import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { initi18n, poll, removeEmptyStrings } from '../../utils/utils'
 import options from '../../data/options.json'
-import fileTypes from './../../data/file-types.json'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -41,7 +40,7 @@ export class EzpPrinterSelection {
   @Prop() redirectURI: string
   @Prop({ mutable: true }) filename: string
   @Prop() fileurl: string
-  @Prop() filetype: string
+  @Prop({ mutable: true }) filetype: string
   @Prop({ mutable: true }) fileid: string
   @Prop() file: File
 
@@ -316,6 +315,7 @@ export class EzpPrinterSelection {
 
   private validateData = (data) => {
     if (data.jobstatus === 0) {
+      this.printSuccess = true
       this.printInProgress = false
       return true
     }
@@ -360,7 +360,6 @@ export class EzpPrinterSelection {
                 this.selectedProperties,
                 this.filename
               )
-              .finally(() => (this.printInProgress = false))
           } else {
             return response.json()
           }
@@ -374,24 +373,22 @@ export class EzpPrinterSelection {
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
             })
-              .then(data)
+              .then(() => this.printSuccess = true)
               .catch((err) => {
                 console.warn(err)
-                this.printInProgress = false
               })
           } else {
-            this.printInProgress = false
+            this.printFailed = true
           }
         })
         .catch((error) => {
           console.log(error)
-          this.printInProgress = false
+          this.printFailed = true
         })
     }
 
     if (this.file) {
       await this.handleFiles(this.file)
-      this.printInProgress = false
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
@@ -500,20 +497,25 @@ export class EzpPrinterSelection {
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
             })
-              .then(data)
+              .then(() => this.printSuccess = true)
               .catch((err) => {
-                console.warn(err)
-                this.printInProgress = false
+                console.log(err)
+                this.printFailed = true
               })
           } else {
-            this.printInProgress = false
+            this.printFailed = true
           }
         })
         .catch((error) => {
           console.log(error)
-          this.printInProgress = false
+          this.printFailed = true
         })
     }
+  }
+
+  private handleFileNotSupported() {
+    this.notSupported = false
+    this.handleCancel()
   }
 
   private validateFileType = async (name: string): Promise<boolean> => {
@@ -583,14 +585,14 @@ export class EzpPrinterSelection {
               icon="checkmark-alt"
               status={i18next.t('printer_selection.print_success')}
             >
-              <ezp-text-button level="primary" small label={i18next.t('button_actions.close')} />
+              <ezp-text-button onClick={()=> this.printSuccess = false} level="primary" small label={i18next.t('button_actions.close')} />
             </ezp-progress>
           ) : this.printFailed ? (
             <ezp-progress
               icon="exclamation-mark"
               status={i18next.t('printer_selection.print_failed')}
             >
-              <ezp-text-button level="secondary" small label={i18next.t('button_actions.close')} />
+              <ezp-text-button onClick={()=> this.printFailed = false} level="secondary" small label={i18next.t('button_actions.close')} />
               <ezp-text-button level="primary" small label={i18next.t('button_actions.retry')} />
             </ezp-progress>
           ) : this.notSupported ? (
@@ -598,7 +600,7 @@ export class EzpPrinterSelection {
               icon="exclamation-mark"
               status={i18next.t('printer_selection.file_type_not_supported')}
             >
-              <ezp-text-button level="secondary" small label={i18next.t('button_actions.close')} />
+              <ezp-text-button onClick={() => this.handleFileNotSupported()} level="secondary" small label={i18next.t('button_actions.close')} />
               <ezp-text-button level="primary" small label={i18next.t('button_actions.retry')} />
             </ezp-progress>
           ) : null}
