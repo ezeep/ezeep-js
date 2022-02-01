@@ -77,7 +77,7 @@ export class EzpPrinting {
   @Listen('uploadValid')
   listenUploadValid(event: CustomEvent) {
     this.filename = event.detail.name
-    this.printOpen = true
+    this.open()
   }
 
   @Listen('uploadInvalid')
@@ -87,6 +87,7 @@ export class EzpPrinting {
       heading: event.detail.heading,
       description: event.detail.description,
     }
+    this.open()
   }
 
   @Listen('alertClose')
