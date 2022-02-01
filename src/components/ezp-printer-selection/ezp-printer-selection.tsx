@@ -42,6 +42,7 @@ export class EzpPrinterSelection {
   @Prop() fileurl: string
   @Prop() filetype: string
   @Prop({ mutable: true }) fileid: string
+  @Prop() file: File
 
   /**
    *
@@ -312,17 +313,17 @@ export class EzpPrinterSelection {
     this.printCancel.emit()
   }
 
-  /** Description... */
-  private handlePrint = () => {
-    const validateData = (data) => {
-      if (data.jobstatus === 0) {
-        this.printInProgress = false
-        return true
-      }
-      return false
+  private validateData = (data) => {
+    if (data.jobstatus === 0) {
+      this.printInProgress = false
+      return true
     }
-    const POLL_INTERVAL = 2000
+    return false
+  }
+  private POLL_INTERVAL = 2000
 
+  /** Description... */
+  private handlePrint = async () => {
     this.printInProgress = true
 
     // we have to initialse this obj with empty strings to display the select component
@@ -369,47 +370,15 @@ export class EzpPrinterSelection {
             printStore.state.jobID = data.jobid
             poll({
               fn: this.printService.getPrintStatus,
-              validate: validateData,
-              interval: POLL_INTERVAL,
+              validate: this.validateData,
+              interval: this.POLL_INTERVAL,
               maxAttempts: 10,
             })
               .then(data)
               .catch((err) => {
                 console.warn(err)
                 this.printInProgress = false
-              })
-          } else {
-            this.printInProgress = false
-          }
-        })
-        .catch((error) => {
-          console.log(error)
-          this.printInProgress = false
-        })
-    } else if (this.fileid) {
-      this.printService
-        .printByFileID(
-          authStore.state.accessToken,
-          this.fileid,
-          this.filetype,
-          this.selectedPrinter.id,
-          this.selectedProperties,
-          this.filename
-        )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.jobid) {
-            printStore.state.jobID = data.jobid
-            poll({
-              fn: this.printService.getPrintStatus,
-              validate: validateData,
-              interval: POLL_INTERVAL,
-              maxAttempts: 10,
-            })
-              .then(data)
-              .catch((err) => {
-                console.warn(err)
-                this.printInProgress = false
+
               })
           } else {
             this.printInProgress = false
@@ -421,13 +390,17 @@ export class EzpPrinterSelection {
         })
     }
 
+    if (this.file) {
+      await this.handleFiles(this.file)
+      this.printInProgress = false
+    }
+
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
     localStorage.setItem('printer', JSON.stringify(this.selectedPrinter))
     localStorage.setItem(
       'previouslySelectedProperties',
       JSON.stringify(this.previouslySelectedProperties)
     )
-    // this.printSubmit.emit()
   }
 
   private handleUserMenu = () => {
@@ -468,8 +441,6 @@ export class EzpPrinterSelection {
         await this.printService
           .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
           .then((data) => (this.selectedPrinterConfig = data[0]))
-        console.log('selected printer config:')
-        console.log(this.selectedPrinterConfig)
         break
       case 'color':
         this.selectedProperties.color = !!eventDetails.id
@@ -503,16 +474,48 @@ export class EzpPrinterSelection {
     }
   }
 
-  handleFiles(files: FileList) {
-    console.log(files)
-    this.printService.prepareFileUpload(authStore.state.accessToken).then((res) => {
-      this.fileid = res.fileid
-      this.sasUri = res.sasUri
-      console.log(res)
-      console.log(this.fileid)
-      console.log(this.sasUri)
-      this.printService.uploadBlobFiles(this.sasUri, files)
-    })
+  async handleFiles(file: File) {
+    const response = await this.printService.prepareFileUpload(authStore.state.accessToken)
+
+    this.fileid = response.fileid
+    this.sasUri = response.sasUri
+    this.filetype = file.type
+
+    const res = await this.printService.uploadBlobFiles(this.sasUri, file)
+    if (res._response.status === 201) {
+      this.printService
+        .printByFileID(
+          authStore.state.accessToken,
+          this.fileid,
+          this.filetype,
+          this.selectedPrinter.id,
+          this.selectedProperties,
+          this.filename
+        )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.jobid) {
+            printStore.state.jobID = data.jobid
+            poll({
+              fn: this.printService.getPrintStatus,
+              validate: this.validateData,
+              interval: this.POLL_INTERVAL,
+              maxAttempts: 10,
+            })
+              .then(data)
+              .catch((err) => {
+                console.warn(err)
+                this.printInProgress = false
+              })
+          } else {
+            this.printInProgress = false
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+          this.printInProgress = false
+        })
+    }
   }
 
   private validateFileType = async (name: string): Promise<boolean> => {
@@ -545,7 +548,6 @@ export class EzpPrinterSelection {
       .getAllPrinterProperties(authStore.state.accessToken)
       .then((printerConfig: PrinterConfig[]) => {
         this.printerConfig = printerConfig
-        console.log(this.printerConfig)
       })
 
     await this.validateFileType(this.filename).then(

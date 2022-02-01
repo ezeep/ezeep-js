@@ -11,6 +11,8 @@ import { ThemeTypes, AppearanceTypes, TriggerTypes } from './../../shared/types'
   shadow: true,
 })
 export class EzpPrinting {
+
+  private file: File
   @Prop() clientid: string
   @Prop() redirecturi: string
   @Prop({ mutable: true }) filename: string
@@ -153,6 +155,7 @@ export class EzpPrinting {
             fileurl={this.fileurl}
             filetype={this.filetype}
             fileid={this.fileid}
+            file={this.file}
           />
         ) : this.trigger === 'custom' ? (
           <slot></slot>
