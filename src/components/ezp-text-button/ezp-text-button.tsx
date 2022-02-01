@@ -1,5 +1,5 @@
 import { Component, Host, Prop, h } from '@stencil/core'
-import { TextButtonLevelTypes, TextButtonTypeTypes, LabelLevelTypes } from '../../shared/types'
+import { TextButtonLevelTypes, TextButtonTypeTypes } from '../../shared/types'
 
 @Component({
   tag: 'ezp-text-button',
