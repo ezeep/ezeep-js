@@ -325,6 +325,7 @@ export class EzpPrinterSelection {
     } else if (event.detail === 'print-failed') {
       this.printFailed = false
       this.printProcessing = true
+      this.handlePrint()
     }
   }
 
@@ -617,7 +618,7 @@ export class EzpPrinterSelection {
             <ezp-status
               icon="checkmark-alt"
               description={i18next.t('printer_selection.print_success')}
-              instance="print-sucess"
+              instance="print-success"
               close
             />
           ) : this.printFailed ? (
