@@ -13,7 +13,6 @@ import options from '../../data/options.json'
   shadow: true,
 })
 export class EzpPrinterSelection {
-  // private user: PrintUserType
   private sasUri = ''
   private fileExtension = ''
   private printService: EzpPrintService
@@ -538,16 +537,11 @@ export class EzpPrinterSelection {
     }
   }
 
-  // private handleFileNotSupported() {
-  //   this.notSupported = false
-  //   this.handleCancel()
-  // }
-
   private validateFileType = async (name: string): Promise<boolean> => {
     const extension = name.split('.').pop()
     this.fileExtension = extension
 
-    return printStore.state.supportedFileExtensions.toString().includes(`${extension}`)
+    return printStore.state.supportedFileExtensions.includes(`${extension}`)
   }
 
   /**
