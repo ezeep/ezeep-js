@@ -6,6 +6,7 @@ import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { initi18n, poll, removeEmptyStrings } from '../../utils/utils'
 import options from '../../data/options.json'
+import { BlobUploadCommonResponse } from '@azure/storage-blob'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -500,8 +501,14 @@ export class EzpPrinterSelection {
     this.fileid = response.fileid
     this.sasUri = response.sasUri
     this.filetype = file.type
+    let res: BlobUploadCommonResponse
+    try {
+      res = await this.printService.uploadBlobFiles(this.sasUri, file)
+    } catch (error) {
+      this.printProcessing = false
+      this.printFailed = true
+    }
 
-    const res = await this.printService.uploadBlobFiles(this.sasUri, file)
     if (res._response.status === 201) {
       this.printService
         .printByFileID(
