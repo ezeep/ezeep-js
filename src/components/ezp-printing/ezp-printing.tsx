@@ -60,13 +60,8 @@ export class EzpPrinting {
     this.authOpen = false
   }
 
-  @Listen('authShow')
-  listenAuthShow() {
-    this.authOpen = true
-  }
-
-  @Listen('printShow')
-  listenPrintShow() {
+  @Listen('authSuccess')
+  listenAuthSuccess() {
     this.printOpen = true
   }
 

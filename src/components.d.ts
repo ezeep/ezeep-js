@@ -323,7 +323,7 @@ declare namespace LocalJSX {
         "clientID"?: string;
         "hidelogin"?: boolean;
         "onAuthCancel"?: (event: CustomEvent<MouseEvent>) => void;
-        "onPrintShow"?: (event: CustomEvent<any>) => void;
+        "onAuthSuccess"?: (event: CustomEvent<any>) => void;
         "redirectURI"?: string;
     }
     interface EzpBackdrop {

@@ -12,10 +12,10 @@
 
 ## Events
 
-| Event        | Description | Type                      |
-| ------------ | ----------- | ------------------------- |
-| `authCancel` |             | `CustomEvent<MouseEvent>` |
-| `printShow`  |             | `CustomEvent<any>`        |
+| Event         | Description | Type                      |
+| ------------- | ----------- | ------------------------- |
+| `authCancel`  |             | `CustomEvent<MouseEvent>` |
+| `authSuccess` |             | `CustomEvent<any>`        |
 
 ## Dependencies
 

@@ -18,7 +18,7 @@ export class EzpAuth {
   @State() accessToken: string
 
   @Event() authCancel: EventEmitter<MouseEvent>
-  @Event() printShow: EventEmitter
+  @Event() authSuccess: EventEmitter
 
   @Listen('dialogAction')
   listenDialogAction() {
@@ -81,7 +81,7 @@ export class EzpAuth {
     this.auth.code = event.data
     this.auth.getAccessToken().finally(() => {
       this.authCancel.emit()
-      this.printShow.emit()
+      this.authSuccess.emit()
     })
   }
 
