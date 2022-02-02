@@ -39,14 +39,14 @@ export const config: Config = {
     },
   ],
   // needs to be commented out for build on github actions to work
-    devServer: {
-      address: process.env.DEV_SERVER_ADDRESS,
-      port: parseInt(process.env.DEV_SERVER_PORT),
-      https: {
-        cert: fs.readFileSync('certificate.pem', 'utf-8'),
-        key: fs.readFileSync('key.pem', 'utf-8'),
-      },
-    },
+  // devServer: {
+  //   address: process.env.DEV_SERVER_ADDRESS,
+  //   port: parseInt(process.env.DEV_SERVER_PORT),
+  //   https: {
+  //     cert: fs.readFileSync('certificate.pem', 'utf-8'),
+  //     key: fs.readFileSync('key.pem', 'utf-8'),
+  //   },
+  // },
   rollupPlugins: {
     after: [
       nodePolyfills(),
