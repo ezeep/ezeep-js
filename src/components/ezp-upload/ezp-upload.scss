@@ -10,7 +10,7 @@
   border: 1px dashed var(--host-border-color, var(--color-foreground-tertiary));
   border-radius: 3px;
   display: grid;
-  grid-template: auto / minmax(auto, 256px);
+  grid-template: auto / minmax(auto, 280px);
   height: var(--ezp-upload-height, auto);
   justify-content: center;
   padding: var(--spacing-3);
