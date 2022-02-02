@@ -4,6 +4,8 @@ import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
 import config from '../../shared/config.json'
 import { ThemeTypes, AppearanceTypes, TriggerTypes } from './../../shared/types'
+import i18next from 'i18next'
+import { initi18n } from '../../utils/utils'
 
 @Component({
   tag: 'ezp-printing',
@@ -35,6 +37,7 @@ export class EzpPrinting {
   /** Description... */
   @State() printOpen: boolean = false
   @State() authOpen: boolean = false
+  @State() noDocumentOpen: boolean = false
 
   /**
    *
@@ -62,7 +65,11 @@ export class EzpPrinting {
 
   @Listen('authSuccess')
   listenAuthSuccess() {
-    this.printOpen = true
+    if (this.filename) {
+      this.printOpen = true
+    } else {
+      this.noDocumentOpen = true
+    }
   }
 
   @Listen('uploadFile')
@@ -70,6 +77,20 @@ export class EzpPrinting {
     this.filename = event.detail[0].name
     this.file = event.detail[0]
     this.open()
+  }
+
+  @Listen('dialogClose')
+  listenDialogClose(event: CustomEvent) {
+    if (event.detail === 'no-document-selected') {
+      this.noDocumentOpen = false
+    }
+  }
+
+  @Listen('dialogAction')
+  listenDialogAction(event: CustomEvent) {
+    if (event.detail === 'no-document-selected') {
+      this.noDocumentOpen = false
+    }
   }
 
   /**
@@ -81,7 +102,11 @@ export class EzpPrinting {
   @Method()
   async open() {
     if (authStore.state.isAuthorized) {
-      this.printOpen = true
+      if (this.filename) {
+        this.printOpen = true
+      } else {
+        this.noDocumentOpen = true
+      }
     } else {
       this.authOpen = true
     }
@@ -133,6 +158,7 @@ export class EzpPrinting {
       printStore.state.printApiHostUrl = config.printingApiHostUrl
     }
 
+    initi18n()
     sendCodeToParentWindow()
     this.checkAuth()
   }
@@ -161,6 +187,14 @@ export class EzpPrinting {
             filetype={this.filetype}
             fileid={this.fileid}
             file={this.file}
+          />
+        ) : this.noDocumentOpen ? (
+          <ezp-dialog
+            heading={i18next.t('no_document_dialog.heading')}
+            description={i18next.t('no_document_dialog.description')}
+            action={i18next.t('no_document_dialog.action')}
+            iconName="exclamation-mark"
+            instance="no-document-selected"
           />
         ) : this.trigger === 'custom' ? (
           <slot></slot>

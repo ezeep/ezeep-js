@@ -1,8 +1,13 @@
 {
-  "login_page": {
-    "get_started": "Print with ezeep Blue",
-    "login": "Sign in",
-    "description": "Sign in with your ezeep Blue account to print."
+  "login_dialog": {
+    "heading": "Print with ezeep Blue",
+    "description": "Sign in with your ezeep Blue account to print.",
+    "action": "Sign in"
+  },
+  "no_document_dialog": {
+    "heading": "No document selected",
+    "description": "At vero eos et accusam et justo duo dolores et ea rebum.",
+    "action": "Got it"
   },
   "printer_selection": {
     "loading": "Loading printers…",

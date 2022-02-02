@@ -25,6 +25,7 @@ export namespace Components {
         "iconFramed": boolean;
         "iconName"?: IconNameTypes;
         "iconSize": IconSizeTypes;
+        "instance": string;
     }
     interface EzpIcon {
         /**
@@ -341,6 +342,7 @@ declare namespace LocalJSX {
         "iconFramed"?: boolean;
         "iconName"?: IconNameTypes;
         "iconSize"?: IconSizeTypes;
+        "instance"?: string;
         "onDialogAction"?: (event: CustomEvent<any>) => void;
         /**
           * Events
