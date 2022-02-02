@@ -30,6 +30,7 @@ export class EzpDialog {
   @Prop() iconName?: IconNameTypes
   @Prop() iconSize: IconSizeTypes = 'large'
   @Prop() iconFramed: boolean = true
+  @Prop() instance: string
 
   /**
    *
@@ -48,11 +49,11 @@ export class EzpDialog {
    */
 
   private handleClose = () => {
-    this.dialogClose.emit()
+    this.dialogClose.emit(this.instance)
   }
 
   private handleAction = () => {
-    this.dialogAction.emit()
+    this.dialogAction.emit(this.instance)
   }
 
   /**

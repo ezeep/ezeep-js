@@ -1,8 +1,13 @@
 {
-  "login_page": {
-    "get_started": "Drucken mit ezeep Blue",
-    "login": "Anmelden",
-    "description": "Melde dich mit deinem ezeep Blue-Konto an, um zu drucken."
+  "login_dialog": {
+    "heading": "Drucken mit ezeep Blue",
+    "description": "Melde dich mit deinem ezeep Blue-Konto an, um zu drucken.",
+    "action": "Anmelden"
+  },
+  "no_document_dialog": {
+    "heading": "Kein Dokument ausgewählt",
+    "description": "At vero eos et accusam et justo duo dolores et ea rebum.",
+    "action": "Alles klar"
   },
   "printer_selection": {
     "loading": "Lade Drucker…",

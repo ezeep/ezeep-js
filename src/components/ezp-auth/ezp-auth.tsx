@@ -101,16 +101,17 @@ export class EzpAuth {
 
   render() {
     return this.hidelogin ? (
-      <ezp-status description={i18next.t('login_page.login')}></ezp-status>
+      <ezp-status description={i18next.t('login_dialog.action')}></ezp-status>
     ) : (
       <Host>
         <ezp-dialog
-          heading={i18next.t('login_page.get_started')}
-          description={i18next.t('login_page.description')}
-          action={i18next.t('login_page.login')}
+          heading={i18next.t('login_dialog.heading')}
+          description={i18next.t('login_dialog.description')}
+          action={i18next.t('login_dialog.action')}
           iconName="logo"
           iconSize="huge"
           iconFramed={false}
+          instance="login"
         />
       </Host>
     )

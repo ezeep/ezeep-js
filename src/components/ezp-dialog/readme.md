@@ -12,6 +12,7 @@
 | `iconFramed`  | `icon-framed` |             | `boolean`                                                                                                                                                                                                                                                                                                            | `true`                              |
 | `iconName`    | `icon-name`   |             | `"account" \| "checkmark" \| "close" \| "color" \| "copies" \| "dark" \| "duplex" \| "expand" \| "help" \| "light" \| "logout" \| "menu" \| "minus" \| "orientation" \| "plus" \| "printer" \| "quality" \| "size" \| "system" \| "drag-drop" \| "checkmark-alt" \| "question-mark" \| "exclamation-mark" \| "logo"` | `undefined`                         |
 | `iconSize`    | `icon-size`   |             | `"huge" \| "large" \| "normal"`                                                                                                                                                                                                                                                                                      | `'large'`                           |
+| `instance`    | `instance`    |             | `string`                                                                                                                                                                                                                                                                                                             | `undefined`                         |
 
 ## Events
 
@@ -25,6 +26,7 @@
 ### Used by
 
 - [ezp-auth](../ezp-auth)
+- [ezp-printing](../ezp-printing)
 
 ### Depends on
 
@@ -44,6 +46,7 @@ graph TD;
   ezp-icon-button --> ezp-icon
   ezp-text-button --> ezp-label
   ezp-auth --> ezp-dialog
+  ezp-printing --> ezp-dialog
   style ezp-dialog fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

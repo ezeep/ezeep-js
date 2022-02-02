@@ -36,6 +36,7 @@ Type: `Promise<void>`
 
 - [ezp-auth](../ezp-auth)
 - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-dialog](../ezp-dialog)
 - [ezp-upload](../ezp-upload)
 - [ezp-icon-button](../ezp-icon-button)
 
@@ -45,6 +46,7 @@ Type: `Promise<void>`
 graph TD;
   ezp-printing --> ezp-auth
   ezp-printing --> ezp-printer-selection
+  ezp-printing --> ezp-dialog
   ezp-printing --> ezp-upload
   ezp-printing --> ezp-icon-button
   ezp-auth --> ezp-status
