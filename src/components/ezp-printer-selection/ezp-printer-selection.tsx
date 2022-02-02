@@ -590,9 +590,11 @@ export class EzpPrinterSelection {
         this.printerConfig = printerConfig
       })
 
-    await this.validateFileType(this.filename).then((valid) => {
-      this.notSupported = !valid ? true : false
-    })
+    if (this.file) {
+      await this.validateFileType(this.filename).then((valid) => {
+        this.notSupported = !valid ? true : false
+      })
+    }
 
     this.loading = false
   }
