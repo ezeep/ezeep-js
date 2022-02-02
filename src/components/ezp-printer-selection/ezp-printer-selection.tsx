@@ -6,7 +6,6 @@ import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { initi18n, poll, removeEmptyStrings } from '../../utils/utils'
 import options from '../../data/options.json'
-import fileTypes from './../../data/file-types.json'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -52,10 +51,11 @@ export class EzpPrinterSelection {
    */
   @State() loading: boolean = true
   @State() options = options
-  @State() printInProgress: boolean = false
+  @State() printProcessing: boolean = false
   @State() printSuccess: boolean = false
   @State() printFailed: boolean = false
   @State() notSupported: boolean = false
+  @State() progressOpen: boolean = false
   @State() userMenuOpen: boolean = false
   @State() userName: string
   @State() printers: Printer[]
@@ -303,6 +303,32 @@ export class EzpPrinterSelection {
     this.printCancel.emit()
   }
 
+  @Listen('progressCancel')
+  listenProgressCancel(event: CustomEvent) {
+    if (event.detail === 'print-processing') {
+      this.printProcessing = false
+    }
+  }
+
+  @Listen('progressClose')
+  listenProgressClose(event: CustomEvent) {
+    if (event.detail === 'print-success') {
+      this.printSuccess = false
+    } else if (event.detail === 'print-failed') {
+      this.printFailed = false
+    }
+  }
+
+  @Listen('progressRetry')
+  listenProgressRetry(event: CustomEvent) {
+    if (event.detail === 'not-supported') {
+      this.printCancel.emit()
+    } else if (event.detail === 'print-failed') {
+      this.printFailed = false
+      this.printProcessing = true
+    }
+  }
+
   /**
    *
    * Private methods
@@ -316,7 +342,7 @@ export class EzpPrinterSelection {
 
   private validateData = (data) => {
     if (data.jobstatus === 0) {
-      this.printInProgress = false
+      this.printProcessing = false
       return true
     }
     return false
@@ -325,7 +351,7 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = async () => {
-    this.printInProgress = true
+    this.printProcessing = true
 
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
@@ -361,7 +387,7 @@ export class EzpPrinterSelection {
                 this.selectedProperties,
                 this.filename
               )
-              .finally(() => (this.printInProgress = false))
+              .finally(() => (this.printProcessing = false))
           } else {
             return response.json()
           }
@@ -378,21 +404,21 @@ export class EzpPrinterSelection {
               .then(data)
               .catch((err) => {
                 console.warn(err)
-                this.printInProgress = false
+                this.printProcessing = false
               })
           } else {
-            this.printInProgress = false
+            this.printProcessing = false
           }
         })
         .catch((error) => {
           console.log(error)
-          this.printInProgress = false
+          this.printProcessing = false
         })
     }
 
     if (this.file) {
       await this.handleFiles(this.file)
-      this.printInProgress = false
+      this.printProcessing = false
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
@@ -504,15 +530,15 @@ export class EzpPrinterSelection {
               .then(data)
               .catch((err) => {
                 console.warn(err)
-                this.printInProgress = false
+                this.printProcessing = false
               })
           } else {
-            this.printInProgress = false
+            this.printProcessing = false
           }
         })
         .catch((error) => {
           console.log(error)
-          this.printInProgress = false
+          this.printProcessing = false
         })
     }
   }
@@ -556,9 +582,10 @@ export class EzpPrinterSelection {
         this.printerConfig = printerConfig
       })
 
-    await this.validateFileType(this.filename).then(
-      (valid) => (this.notSupported = !valid ? true : false)
-    )
+    await this.validateFileType(this.filename).then((valid) => {
+      this.notSupported = !valid ? true : false
+      this.progressOpen = !valid ? true : false
+    })
 
     this.loading = false
   }
@@ -571,37 +598,39 @@ export class EzpPrinterSelection {
 
   render() {
     return this.loading ? (
-      <ezp-progress processing status={i18next.t('printer_selection.loading')} />
+      <ezp-progress processing status={i18next.t('printer_selection.loading')} instance="loading" />
     ) : (
       <Host>
         <div id="container" data-backdrop-surface>
-          {this.printInProgress ? (
-            <ezp-progress processing status={i18next.t('printer_selection.print_in_progress')}>
-              <ezp-text-button level="secondary" small label={i18next.t('button_actions.cancel')} />
-            </ezp-progress>
+          {this.printProcessing ? (
+            <ezp-progress
+              processing
+              status={i18next.t('printer_selection.print_processing')}
+              instance="print-processing"
+              cancel
+            />
           ) : this.printSuccess ? (
             <ezp-progress
               icon="checkmark-alt"
               status={i18next.t('printer_selection.print_success')}
-            >
-              <ezp-text-button level="primary" small label={i18next.t('button_actions.close')} />
-            </ezp-progress>
+              instance="print-sucess"
+              close
+            />
           ) : this.printFailed ? (
             <ezp-progress
               icon="exclamation-mark"
               status={i18next.t('printer_selection.print_failed')}
-            >
-              <ezp-text-button level="secondary" small label={i18next.t('button_actions.close')} />
-              <ezp-text-button level="primary" small label={i18next.t('button_actions.retry')} />
-            </ezp-progress>
+              instance="print-failed"
+              close
+              retry
+            />
           ) : this.notSupported ? (
             <ezp-progress
               icon="exclamation-mark"
-              status={i18next.t('printer_selection.file_type_not_supported')}
-            >
-              <ezp-text-button level="secondary" small label={i18next.t('button_actions.close')} />
-              <ezp-text-button level="primary" small label={i18next.t('button_actions.retry')} />
-            </ezp-progress>
+              status={i18next.t('printer_selection.not_supported')}
+              instance="not-supported"
+              retry
+            />
           ) : null}
 
           <div id="header">

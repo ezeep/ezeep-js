@@ -226,7 +226,7 @@ const printStore = createStore({
   printerID: '',
   fileName: '',
   uploadProgress: 0,
-  supportedFileExtensions: ''
+  supportedFileExtensions: '',
 })
 
 export default printStore

@@ -116,16 +116,14 @@ export namespace Components {
         "trigger": TriggerTypes;
     }
     interface EzpProgress {
-        /**
-          * Status...
-         */
+        "cancel"?: string | boolean;
+        "close"?: string | boolean;
         "icon"?: IconNameTypes;
-        /**
-          * Status...
-         */
+        "instance": string;
         "processing": boolean;
+        "retry"?: string | boolean;
         /**
-          * Status...
+          * Properties
          */
         "status": string;
     }
@@ -438,16 +436,20 @@ declare namespace LocalJSX {
         "trigger"?: TriggerTypes;
     }
     interface EzpProgress {
-        /**
-          * Status...
-         */
+        "cancel"?: string | boolean;
+        "close"?: string | boolean;
         "icon"?: IconNameTypes;
+        "instance"?: string;
         /**
-          * Status...
+          * Events
          */
+        "onProgressCancel"?: (event: CustomEvent<any>) => void;
+        "onProgressClose"?: (event: CustomEvent<any>) => void;
+        "onProgressRetry"?: (event: CustomEvent<any>) => void;
         "processing"?: boolean;
+        "retry"?: string | boolean;
         /**
-          * Status...
+          * Properties
          */
         "status"?: string;
     }

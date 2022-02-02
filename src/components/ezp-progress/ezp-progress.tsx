@@ -1,5 +1,7 @@
-import { Component, Host, Prop, h } from '@stencil/core'
+import { Component, Host, Prop, Event, EventEmitter, h } from '@stencil/core'
 import { IconNameTypes } from '../../shared/types'
+import { initi18n } from '../../utils/utils'
+import i18next from 'i18next'
 
 @Component({
   tag: 'ezp-progress',
@@ -13,14 +15,51 @@ export class EzpProgress {
    *
    */
 
-  /** Status... */
   @Prop() status: string = 'Status'
-
-  /** Status... */
   @Prop() processing: boolean = false
-
-  /** Status... */
+  @Prop() instance: string
   @Prop() icon?: IconNameTypes
+  @Prop() cancel?: string | boolean
+  @Prop() close?: string | boolean
+  @Prop() retry?: string | boolean
+
+  /**
+   *
+   * Events
+   *
+   */
+
+  @Event() progressCancel: EventEmitter
+  @Event() progressClose: EventEmitter
+  @Event() progressRetry: EventEmitter
+
+  /**
+   *
+   * Private methods
+   *
+   */
+
+  private handleCancel = () => {
+    this.progressCancel.emit(this.instance)
+  }
+
+  private handleClose = () => {
+    this.progressClose.emit(this.instance)
+  }
+
+  private handleRetry = () => {
+    this.progressRetry.emit(this.instance)
+  }
+
+  /**
+   *
+   * Lifecycle methods
+   *
+   */
+
+  componentWillLoad() {
+    initi18n()
+  }
 
   /**
    *
@@ -42,6 +81,36 @@ export class EzpProgress {
           ) : null}
           <ezp-label id="status" level="tertiary" weight="strong" text={this.status} />
           <div id="footer">
+            {this.cancel && (
+              <ezp-text-button
+                level="secondary"
+                small
+                onClick={this.handleCancel}
+                label={
+                  typeof this.cancel === 'string' ? this.cancel : i18next.t('button_actions.cancel')
+                }
+              />
+            )}
+            {this.close && (
+              <ezp-text-button
+                level={this.retry ? 'secondary' : 'primary'}
+                small
+                onClick={this.handleClose}
+                label={
+                  typeof this.close === 'string' ? this.close : i18next.t('button_actions.close')
+                }
+              />
+            )}
+            {this.retry && (
+              <ezp-text-button
+                level="primary"
+                small
+                onClick={this.handleRetry}
+                label={
+                  typeof this.retry === 'string' ? this.retry : i18next.t('button_actions.retry')
+                }
+              />
+            )}
             <slot />
           </div>
         </div>

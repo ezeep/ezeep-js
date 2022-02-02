@@ -6,10 +6,10 @@
   },
   "printer_selection": {
     "loading": "Loading printers…",
-    "print_in_progress": "Printing document.",
+    "print_processing": "Printing document.",
     "print_success": "Document printed.",
     "print_failed": "Document failed to print.",
-    "file_type_not_supported": "File type not supported.",
+    "not_supported": "File type not supported.",
     "print": "Print",
     "printer": "Printer",
     "color": "Color",

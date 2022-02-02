@@ -106,16 +106,19 @@ export class EzpPrinting {
       authStore.state.isAuthorized = !!localStorage.getItem('isAuthorized')
       this.authOpen = !authStore.state.isAuthorized
     }
-    printService.getConfig(authStore.state.accessToken).then((response) => {
-      if (response.ok) {
-        authStore.state.isAuthorized = true
-      }
-      if (!response.ok) {
-        throw new Error('http status ' + response.status)
-      }
-    }).catch(() => {
-      authStore.state.isAuthorized = false
-    })
+    printService
+      .getConfig(authStore.state.accessToken)
+      .then((response) => {
+        if (response.ok) {
+          authStore.state.isAuthorized = true
+        }
+        if (!response.ok) {
+          throw new Error('http status ' + response.status)
+        }
+      })
+      .catch(() => {
+        authStore.state.isAuthorized = false
+      })
   }
 
   componentWillLoad() {
