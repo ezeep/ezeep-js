@@ -95,7 +95,7 @@ export class EzpAuth {
 
   render() {
     return this.hidelogin ? (
-      <ezp-progress status={i18next.t('login_page.login')}></ezp-progress>
+      <ezp-status description={i18next.t('login_page.login')}></ezp-status>
     ) : (
       <Host>
         <div id="dialog">

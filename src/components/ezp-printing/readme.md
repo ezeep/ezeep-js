@@ -47,16 +47,16 @@ graph TD;
   ezp-printing --> ezp-printer-selection
   ezp-printing --> ezp-upload
   ezp-printing --> ezp-icon-button
-  ezp-auth --> ezp-progress
+  ezp-auth --> ezp-status
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-label
   ezp-auth --> ezp-text-button
-  ezp-progress --> ezp-icon
-  ezp-progress --> ezp-label
-  ezp-progress --> ezp-text-button
+  ezp-status --> ezp-icon
+  ezp-status --> ezp-label
+  ezp-status --> ezp-text-button
   ezp-text-button --> ezp-label
   ezp-icon-button --> ezp-icon
-  ezp-printer-selection --> ezp-progress
+  ezp-printer-selection --> ezp-status
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select

@@ -302,15 +302,15 @@ export class EzpPrinterSelection {
     this.printCancel.emit()
   }
 
-  @Listen('progressCancel')
-  listenProgressCancel(event: CustomEvent) {
+  @Listen('statusCancel')
+  listenStatusCancel(event: CustomEvent) {
     if (event.detail === 'print-processing') {
       this.printProcessing = false
     }
   }
 
-  @Listen('progressClose')
-  listenProgressClose(event: CustomEvent) {
+  @Listen('statusClose')
+  listenStatusClose(event: CustomEvent) {
     if (event.detail === 'print-success') {
       this.printSuccess = false
     } else if (event.detail === 'print-failed') {
@@ -318,8 +318,8 @@ export class EzpPrinterSelection {
     }
   }
 
-  @Listen('progressRetry')
-  listenProgressRetry(event: CustomEvent) {
+  @Listen('statusRetry')
+  listenStatusRetry(event: CustomEvent) {
     if (event.detail === 'not-supported') {
       this.printCancel.emit()
     } else if (event.detail === 'print-failed') {
@@ -597,36 +597,40 @@ export class EzpPrinterSelection {
 
   render() {
     return this.loading ? (
-      <ezp-progress processing status={i18next.t('printer_selection.loading')} instance="loading" />
+      <ezp-status
+        processing
+        description={i18next.t('printer_selection.loading')}
+        instance="loading"
+      />
     ) : (
       <Host>
         <div id="container" data-backdrop-surface>
           {this.printProcessing ? (
-            <ezp-progress
+            <ezp-status
               processing
-              status={i18next.t('printer_selection.print_processing')}
+              description={i18next.t('printer_selection.print_processing')}
               instance="print-processing"
               cancel
             />
           ) : this.printSuccess ? (
-            <ezp-progress
+            <ezp-status
               icon="checkmark-alt"
-              status={i18next.t('printer_selection.print_success')}
+              description={i18next.t('printer_selection.print_success')}
               instance="print-sucess"
               close
             />
           ) : this.printFailed ? (
-            <ezp-progress
+            <ezp-status
               icon="exclamation-mark"
-              status={i18next.t('printer_selection.print_failed')}
+              description={i18next.t('printer_selection.print_failed')}
               instance="print-failed"
               close
               retry
             />
           ) : this.notSupported ? (
-            <ezp-progress
+            <ezp-status
               icon="exclamation-mark"
-              status={i18next.t('printer_selection.not_supported')}
+              description={i18next.t('printer_selection.not_supported')}
               instance="not-supported"
               retry
             />

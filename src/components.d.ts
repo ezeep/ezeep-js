@@ -115,18 +115,6 @@ export namespace Components {
         "theme": ThemeTypes;
         "trigger": TriggerTypes;
     }
-    interface EzpProgress {
-        "cancel"?: string | boolean;
-        "close"?: string | boolean;
-        "icon"?: IconNameTypes;
-        "instance": string;
-        "processing": boolean;
-        "retry"?: string | boolean;
-        /**
-          * Properties
-         */
-        "status": string;
-    }
     interface EzpSelect {
         /**
           * Description...
@@ -156,6 +144,18 @@ export namespace Components {
           * Description...
          */
         "toggleFlow": SelectFlowTypes;
+    }
+    interface EzpStatus {
+        "cancel"?: string | boolean;
+        "close"?: string | boolean;
+        /**
+          * Properties
+         */
+        "description": string;
+        "icon"?: IconNameTypes;
+        "instance": string;
+        "processing": boolean;
+        "retry"?: string | boolean;
     }
     interface EzpStepper {
         /**
@@ -261,17 +261,17 @@ declare global {
         prototype: HTMLEzpPrintingElement;
         new (): HTMLEzpPrintingElement;
     };
-    interface HTMLEzpProgressElement extends Components.EzpProgress, HTMLStencilElement {
-    }
-    var HTMLEzpProgressElement: {
-        prototype: HTMLEzpProgressElement;
-        new (): HTMLEzpProgressElement;
-    };
     interface HTMLEzpSelectElement extends Components.EzpSelect, HTMLStencilElement {
     }
     var HTMLEzpSelectElement: {
         prototype: HTMLEzpSelectElement;
         new (): HTMLEzpSelectElement;
+    };
+    interface HTMLEzpStatusElement extends Components.EzpStatus, HTMLStencilElement {
+    }
+    var HTMLEzpStatusElement: {
+        prototype: HTMLEzpStatusElement;
+        new (): HTMLEzpStatusElement;
     };
     interface HTMLEzpStepperElement extends Components.EzpStepper, HTMLStencilElement {
     }
@@ -306,8 +306,8 @@ declare global {
         "ezp-label": HTMLEzpLabelElement;
         "ezp-printer-selection": HTMLEzpPrinterSelectionElement;
         "ezp-printing": HTMLEzpPrintingElement;
-        "ezp-progress": HTMLEzpProgressElement;
         "ezp-select": HTMLEzpSelectElement;
+        "ezp-status": HTMLEzpStatusElement;
         "ezp-stepper": HTMLEzpStepperElement;
         "ezp-text-button": HTMLEzpTextButtonElement;
         "ezp-upload": HTMLEzpUploadElement;
@@ -435,24 +435,6 @@ declare namespace LocalJSX {
         "theme"?: ThemeTypes;
         "trigger"?: TriggerTypes;
     }
-    interface EzpProgress {
-        "cancel"?: string | boolean;
-        "close"?: string | boolean;
-        "icon"?: IconNameTypes;
-        "instance"?: string;
-        /**
-          * Events
-         */
-        "onProgressCancel"?: (event: CustomEvent<any>) => void;
-        "onProgressClose"?: (event: CustomEvent<any>) => void;
-        "onProgressRetry"?: (event: CustomEvent<any>) => void;
-        "processing"?: boolean;
-        "retry"?: string | boolean;
-        /**
-          * Properties
-         */
-        "status"?: string;
-    }
     interface EzpSelect {
         /**
           * Description...
@@ -487,6 +469,24 @@ declare namespace LocalJSX {
           * Description...
          */
         "toggleFlow"?: SelectFlowTypes;
+    }
+    interface EzpStatus {
+        "cancel"?: string | boolean;
+        "close"?: string | boolean;
+        /**
+          * Properties
+         */
+        "description"?: string;
+        "icon"?: IconNameTypes;
+        "instance"?: string;
+        /**
+          * Events
+         */
+        "onStatusCancel"?: (event: CustomEvent<any>) => void;
+        "onStatusClose"?: (event: CustomEvent<any>) => void;
+        "onStatusRetry"?: (event: CustomEvent<any>) => void;
+        "processing"?: boolean;
+        "retry"?: string | boolean;
     }
     interface EzpStepper {
         /**
@@ -564,8 +564,8 @@ declare namespace LocalJSX {
         "ezp-label": EzpLabel;
         "ezp-printer-selection": EzpPrinterSelection;
         "ezp-printing": EzpPrinting;
-        "ezp-progress": EzpProgress;
         "ezp-select": EzpSelect;
+        "ezp-status": EzpStatus;
         "ezp-stepper": EzpStepper;
         "ezp-text-button": EzpTextButton;
         "ezp-upload": EzpUpload;
@@ -584,8 +584,8 @@ declare module "@stencil/core" {
             "ezp-label": LocalJSX.EzpLabel & JSXBase.HTMLAttributes<HTMLEzpLabelElement>;
             "ezp-printer-selection": LocalJSX.EzpPrinterSelection & JSXBase.HTMLAttributes<HTMLEzpPrinterSelectionElement>;
             "ezp-printing": LocalJSX.EzpPrinting & JSXBase.HTMLAttributes<HTMLEzpPrintingElement>;
-            "ezp-progress": LocalJSX.EzpProgress & JSXBase.HTMLAttributes<HTMLEzpProgressElement>;
             "ezp-select": LocalJSX.EzpSelect & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
+            "ezp-status": LocalJSX.EzpStatus & JSXBase.HTMLAttributes<HTMLEzpStatusElement>;
             "ezp-stepper": LocalJSX.EzpStepper & JSXBase.HTMLAttributes<HTMLEzpStepperElement>;
             "ezp-text-button": LocalJSX.EzpTextButton & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
             "ezp-upload": LocalJSX.EzpUpload & JSXBase.HTMLAttributes<HTMLEzpUploadElement>;

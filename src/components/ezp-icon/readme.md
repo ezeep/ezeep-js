@@ -15,8 +15,8 @@
 ### Used by
 
 - [ezp-icon-button](../ezp-icon-button)
-- [ezp-progress](../ezp-progress)
 - [ezp-select](../ezp-select)
+- [ezp-status](../ezp-status)
 - [ezp-stepper](../ezp-stepper)
 - [ezp-upload](../ezp-upload)
 - [ezp-user-menu](../ezp-user-menu)
@@ -26,8 +26,8 @@
 ```mermaid
 graph TD;
   ezp-icon-button --> ezp-icon
-  ezp-progress --> ezp-icon
   ezp-select --> ezp-icon
+  ezp-status --> ezp-icon
   ezp-stepper --> ezp-icon
   ezp-upload --> ezp-icon
   ezp-user-menu --> ezp-icon

@@ -4,18 +4,18 @@ import { initi18n } from '../../utils/utils'
 import i18next from 'i18next'
 
 @Component({
-  tag: 'ezp-progress',
-  styleUrl: 'ezp-progress.scss',
+  tag: 'ezp-status',
+  styleUrl: 'ezp-status.scss',
   shadow: true,
 })
-export class EzpProgress {
+export class EzpStatus {
   /**
    *
    * Properties
    *
    */
 
-  @Prop() status: string = 'Status'
+  @Prop() description: string = 'Description'
   @Prop() processing: boolean = false
   @Prop() instance: string
   @Prop() icon?: IconNameTypes
@@ -29,9 +29,9 @@ export class EzpProgress {
    *
    */
 
-  @Event() progressCancel: EventEmitter
-  @Event() progressClose: EventEmitter
-  @Event() progressRetry: EventEmitter
+  @Event() statusCancel: EventEmitter
+  @Event() statusClose: EventEmitter
+  @Event() statusRetry: EventEmitter
 
   /**
    *
@@ -40,15 +40,15 @@ export class EzpProgress {
    */
 
   private handleCancel = () => {
-    this.progressCancel.emit(this.instance)
+    this.statusCancel.emit(this.instance)
   }
 
   private handleClose = () => {
-    this.progressClose.emit(this.instance)
+    this.statusClose.emit(this.instance)
   }
 
   private handleRetry = () => {
-    this.progressRetry.emit(this.instance)
+    this.statusRetry.emit(this.instance)
   }
 
   /**
@@ -79,7 +79,7 @@ export class EzpProgress {
           ) : this.icon ? (
             <ezp-icon name={this.icon} framed />
           ) : null}
-          <ezp-label id="status" level="tertiary" weight="strong" text={this.status} />
+          <ezp-label id="description" level="tertiary" weight="strong" text={this.description} />
           <div id="footer">
             {this.cancel && (
               <ezp-text-button

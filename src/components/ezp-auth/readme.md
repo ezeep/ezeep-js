@@ -25,7 +25,7 @@
 
 ### Depends on
 
-- [ezp-progress](../ezp-progress)
+- [ezp-status](../ezp-status)
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-label](../ezp-label)
 - [ezp-text-button](../ezp-text-button)
@@ -34,13 +34,13 @@
 
 ```mermaid
 graph TD;
-  ezp-auth --> ezp-progress
+  ezp-auth --> ezp-status
   ezp-auth --> ezp-icon-button
   ezp-auth --> ezp-label
   ezp-auth --> ezp-text-button
-  ezp-progress --> ezp-icon
-  ezp-progress --> ezp-label
-  ezp-progress --> ezp-text-button
+  ezp-status --> ezp-icon
+  ezp-status --> ezp-label
+  ezp-status --> ezp-text-button
   ezp-text-button --> ezp-label
   ezp-icon-button --> ezp-icon
   ezp-printing --> ezp-auth

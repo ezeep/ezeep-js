@@ -29,7 +29,7 @@
 
 ### Depends on
 
-- [ezp-progress](../ezp-progress)
+- [ezp-status](../ezp-status)
 - [ezp-label](../ezp-label)
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-select](../ezp-select)
@@ -41,16 +41,16 @@
 
 ```mermaid
 graph TD;
-  ezp-printer-selection --> ezp-progress
+  ezp-printer-selection --> ezp-status
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-stepper
   ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
-  ezp-progress --> ezp-icon
-  ezp-progress --> ezp-label
-  ezp-progress --> ezp-text-button
+  ezp-status --> ezp-icon
+  ezp-status --> ezp-label
+  ezp-status --> ezp-text-button
   ezp-text-button --> ezp-label
   ezp-icon-button --> ezp-icon
   ezp-select --> ezp-backdrop
