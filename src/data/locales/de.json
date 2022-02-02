@@ -31,7 +31,7 @@
     "orientation_portrait": "Hochformat",
     "orientation_landscape": "Querformat",
     "unknown_location": "Unbekannter Standort",
-    "no_printers_available": "Keine Drucker verfügbar"
+    "no_printers": "Keine Drucker verfügbar"
   },
   "button_actions": {
     "login": "Anmelden",

@@ -65,6 +65,7 @@ export class EzpPrinterSelection {
   @State() printSuccess: boolean = false
   @State() printFailed: boolean = false
   @State() notSupported: boolean = false
+  @State() noPrinters: boolean = false
   @State() userMenuOpen: boolean = false
   @State() userName: string
   @State() printers: Printer[]
@@ -326,8 +327,8 @@ export class EzpPrinterSelection {
     } else if (event.detail === 'print-failed') {
       this.printProcessing = false
       this.printFailed = false
-    } else if (event.detail === 'no-printers-available') {
-      this.printCancel.emit()
+    } else if (event.detail === 'no-printers') {
+      this.noPrinters = false
     }
   }
 
@@ -594,6 +595,10 @@ export class EzpPrinterSelection {
       .getPrinterList(authStore.state.accessToken)
       .then((printers: Printer[]) => {
         this.printers = printers
+
+        if (!(this.printers.length > 0)) {
+          this.noPrinters = true
+        }
       })
 
     await this.printService
@@ -655,11 +660,11 @@ export class EzpPrinterSelection {
               instance="not-supported"
               retry
             />
-          ) : !(this.printers.length > 0) ? (
+          ) : this.noPrinters ? (
             <ezp-status
               icon="exclamation-mark"
-              description={i18next.t('printer_selection.no_printers_available')}
-              instance="no-printers-available"
+              description={i18next.t('printer_selection.no_printers')}
+              instance="no-printers"
               close
             />
           ) : null}
@@ -686,7 +691,7 @@ export class EzpPrinterSelection {
                 placeholder={
                   this.printers.length > 0
                     ? i18next.t('printer_selection.select_printer')
-                    : i18next.t('printer_selection.no_printers_available')
+                    : i18next.t('printer_selection.no_printers')
                 }
                 toggleFlow="vertical"
                 optionFlow="vertical"
@@ -700,7 +705,7 @@ export class EzpPrinterSelection {
                   type: 'printer',
                 }))}
                 preSelected={this.selectedPrinter.name}
-                disabled={!(this.printers.length > 0) ? true : false}
+                disabled={!(this.printers.length > 0)}
               />
             </div>
             {this.printers.length > 0 && (
@@ -737,7 +742,6 @@ export class EzpPrinterSelection {
                           ]
                     }
                     preSelected={this.previouslySelectedProperties.color}
-                    disabled={!this.selectedPrinterConfig.Color}
                   />
                   <ezp-select
                     label={i18next.t('printer_selection.orientation')}

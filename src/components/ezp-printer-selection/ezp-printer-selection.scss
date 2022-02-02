@@ -66,9 +66,9 @@
 #content {
   background: var(--color-surface-secondary);
   box-shadow: var(--content-boxShadow, none);
-  display: grid;
-  grid-row-gap: var(--spacing-2);
-  grid-template-rows: repeat(2, auto);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
   padding: var(--spacing-2);
 }
 
