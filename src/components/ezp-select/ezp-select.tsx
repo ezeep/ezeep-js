@@ -50,6 +50,9 @@ export class EzpSelect {
   /** Description... */
   @Prop() toggleFlow: SelectFlowTypes = 'horizontal'
 
+  /** Description... */
+  @Prop() disabled: boolean = false
+
   /**
    *
    * States
@@ -185,13 +188,14 @@ export class EzpSelect {
       this.icon ? 'has-icon' : '',
       `toggle-${this.toggleFlow}`,
       this.optionFlow ? `option-${this.optionFlow}` : '',
+      this.disabled ? 'disabled' : '',
     ]
     const labelLevel = this.toggleFlow === 'horizontal' ? 'secondary' : 'tertiary'
 
     return (
       <Host class={hostClasses.join(' ')}>
         <div id="wrap">
-          <div id="toggle" onClick={() => this.toggle()}>
+          <div id="toggle" onClick={() => !this.disabled && this.toggle()}>
             {this.icon ? <ezp-icon id="icon" name={this.icon} /> : null}
             <ezp-label id="label" noWrap level={labelLevel} text={this.label} />
             <ezp-label

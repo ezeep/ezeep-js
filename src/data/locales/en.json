@@ -30,7 +30,8 @@
     "color_grayscale": "Grayscale",
     "orientation_portrait": "Portrait",
     "orientation_landscape": "Landscape",
-    "unknown_location": "Unknown location"
+    "unknown_location": "Unknown location",
+    "no_printers_available": "No printers available"
   },
   "button_actions": {
     "login": "Sign In",

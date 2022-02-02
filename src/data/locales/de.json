@@ -30,7 +30,8 @@
     "color_grayscale": "Graustufen",
     "orientation_portrait": "Hochformat",
     "orientation_landscape": "Querformat",
-    "unknown_location": "Unbekannter Standort"
+    "unknown_location": "Unbekannter Standort",
+    "no_printers_available": "Keine Drucker verfügbar"
   },
   "button_actions": {
     "login": "Anmelden",

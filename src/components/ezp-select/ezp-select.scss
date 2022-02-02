@@ -114,6 +114,15 @@
       --label-color: var(--color-theme-solid);
       --wrap-radius: 3px;
     }
+
+    #{&}(.disabled) {
+      --accessory-color: var(--color-foreground-tertiary);
+      --icon-color: var(--color-foreground-tertiary);
+      --label-color: var(--color-foreground-tertiary);
+      --toggle-background-hover: transparent;
+      --toggle-cursor: not-allowed;
+      --value-color: var(--color-foreground-tertiary);
+    }
   }
 
   @include global.media-appearance('dark') {
@@ -139,8 +148,9 @@
 }
 
 #toggle {
+  background: var(--toggle-background, transparent);
   box-sizing: border-box;
-  cursor: pointer;
+  cursor: var(--toggle-cursor, pointer);
   display: grid;
   gap: var(--spacing-2) var(--spacing-3);
   grid-template-areas: var(--toggle-areas);
@@ -150,7 +160,7 @@
   padding: var(--spacing-3);
 
   &:hover {
-    background: var(--color-shade-primary);
+    --toggle-background: var(--toggle-background-hover, var(--color-shade-primary));
   }
 }
 
@@ -169,7 +179,7 @@
 
 #value {
   align-self: var(--value-align);
-  color: var(--color-foreground-primary);
+  color: var(--value-color, var(--color-foreground-primary));
   grid-area: value;
 }
 

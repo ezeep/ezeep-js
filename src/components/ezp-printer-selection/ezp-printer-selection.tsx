@@ -316,6 +316,8 @@ export class EzpPrinterSelection {
     } else if (event.detail === 'print-failed') {
       this.printProcessing = false
       this.printFailed = false
+    } else if (event.detail === 'no-printers-available') {
+      this.printCancel.emit()
     }
   }
 
@@ -643,6 +645,13 @@ export class EzpPrinterSelection {
               instance="not-supported"
               retry
             />
+          ) : !(this.printers.length > 0) ? (
+            <ezp-status
+              icon="exclamation-mark"
+              description={i18next.t('printer_selection.no_printers_available')}
+              instance="no-printers-available"
+              close
+            />
           ) : null}
 
           <div id="header">
@@ -664,7 +673,11 @@ export class EzpPrinterSelection {
               <ezp-select
                 label={i18next.t('printer_selection.printer')}
                 icon="printer"
-                placeholder={i18next.t('printer_selection.select_printer')}
+                placeholder={
+                  this.printers.length > 0
+                    ? i18next.t('printer_selection.select_printer')
+                    : i18next.t('printer_selection.no_printers_available')
+                }
                 toggleFlow="vertical"
                 optionFlow="vertical"
                 options={this.printers.map((printer) => ({
@@ -677,6 +690,7 @@ export class EzpPrinterSelection {
                   type: 'printer',
                 }))}
                 preSelected={this.selectedPrinter.name}
+                disabled={!(this.printers.length > 0) ? true : false}
               />
             </div>
             <div id="options">

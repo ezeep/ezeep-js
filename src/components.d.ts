@@ -124,6 +124,10 @@ export namespace Components {
         /**
           * Description...
          */
+        "disabled": boolean;
+        /**
+          * Description...
+         */
         "icon": IconNameTypes;
         /**
           * Description...
@@ -447,6 +451,10 @@ declare namespace LocalJSX {
         "trigger"?: TriggerTypes;
     }
     interface EzpSelect {
+        /**
+          * Description...
+         */
+        "disabled"?: boolean;
         /**
           * Description...
          */
