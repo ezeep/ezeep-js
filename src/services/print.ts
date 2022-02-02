@@ -144,9 +144,9 @@ export class EzpPrintService {
         fileid: fileID,
         type: fileType,
         printerid: printerID,
-        // ...(filename && { alias: filename }),
-        // ...(printAndDelete && { printanddelete: printAndDelete }),
-        // properties,
+        ...(filename && { alias: filename }),
+        ...(printAndDelete && { printanddelete: printAndDelete }),
+        properties,
       }),
     }).then((response) => response.json())
   }

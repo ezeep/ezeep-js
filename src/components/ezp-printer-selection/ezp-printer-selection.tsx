@@ -40,7 +40,7 @@ export class EzpPrinterSelection {
   @Prop() redirectURI: string
   @Prop({ mutable: true }) filename: string
   @Prop() fileurl: string
-  @Prop() filetype: string
+  @Prop({ mutable: true }) filetype: string
   @Prop({ mutable: true }) fileid: string
   @Prop() file: File
 
@@ -342,7 +342,8 @@ export class EzpPrinterSelection {
 
   private validateData = (data) => {
     if (data.jobstatus === 0) {
-      this.printProcessing = false
+      this.printSuccess = true
+      this.printInProgress = false
       return true
     }
     return false
@@ -355,8 +356,7 @@ export class EzpPrinterSelection {
 
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
-    removeEmptyStrings(this.selectedProperties)
-
+    this.selectedProperties = removeEmptyStrings(this.selectedProperties)
     // put it in store for further use
     printStore.state.fileUrl = this.fileurl
     printStore.state.fileID = this.fileid
@@ -387,7 +387,6 @@ export class EzpPrinterSelection {
                 this.selectedProperties,
                 this.filename
               )
-              .finally(() => (this.printProcessing = false))
           } else {
             return response.json()
           }
@@ -401,24 +400,22 @@ export class EzpPrinterSelection {
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
             })
-              .then(data)
+              .then(() => this.printSuccess = true)
               .catch((err) => {
                 console.warn(err)
-                this.printProcessing = false
               })
           } else {
-            this.printProcessing = false
+            this.printFailed = true
           }
         })
         .catch((error) => {
           console.log(error)
-          this.printProcessing = false
+          this.printFailed = true
         })
     }
 
     if (this.file) {
       await this.handleFiles(this.file)
-      this.printProcessing = false
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
@@ -527,20 +524,25 @@ export class EzpPrinterSelection {
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
             })
-              .then(data)
+              .then(() => this.printSuccess = true)
               .catch((err) => {
-                console.warn(err)
-                this.printProcessing = false
+                console.log(err)
+                this.printFailed = true
               })
           } else {
-            this.printProcessing = false
+            this.printFailed = true
           }
         })
         .catch((error) => {
           console.log(error)
-          this.printProcessing = false
+          this.printFailed = true
         })
     }
+  }
+
+  private handleFileNotSupported() {
+    this.notSupported = false
+    this.handleCancel()
   }
 
   private validateFileType = async (name: string): Promise<boolean> => {
