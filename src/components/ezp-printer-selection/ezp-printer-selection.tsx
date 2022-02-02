@@ -314,6 +314,7 @@ export class EzpPrinterSelection {
     if (event.detail === 'print-success') {
       this.printSuccess = false
     } else if (event.detail === 'print-failed') {
+      this.printProcessing = false
       this.printFailed = false
     }
   }
@@ -324,7 +325,7 @@ export class EzpPrinterSelection {
       this.printCancel.emit()
     } else if (event.detail === 'print-failed') {
       this.printFailed = false
-      this.printProcessing = true
+      this.printProcessing = false
       this.handlePrint()
     }
   }
@@ -535,13 +536,18 @@ export class EzpPrinterSelection {
                 this.printFailed = true
               })
           } else {
+            this.printProcessing = false
             this.printFailed = true
           }
         })
         .catch((error) => {
           console.log(error)
+          this.printProcessing = false
           this.printFailed = true
         })
+    } else {
+      this.printProcessing = false
+      this.printFailed = true
     }
   }
 
@@ -612,7 +618,6 @@ export class EzpPrinterSelection {
               processing
               description={i18next.t('printer_selection.print_processing')}
               instance="print-processing"
-              cancel
             />
           ) : this.printSuccess ? (
             <ezp-status
@@ -779,6 +784,7 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.cancel')}
             />
             <ezp-text-button
+              disabled= {this.selectedPrinter.id === ''}
               type="button"
               onClick={this.handlePrint}
               label={i18next.t('button_actions.print')}
