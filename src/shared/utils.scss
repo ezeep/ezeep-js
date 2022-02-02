@@ -1,0 +1,10 @@
+/// Media query for dark system appearance.
+///
+/// @since 1.0.0
+///
+/// @output CSS media query
+@mixin mediaDarkMode {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+}

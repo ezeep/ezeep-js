@@ -4,16 +4,17 @@
 
 ## Properties
 
-| Property            | Attribute | Description    | Type                                                                                                                                                                                                                                                                                                       | Default     |
-| ------------------- | --------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `framed`            | `framed`  | Description... | `boolean`                                                                                                                                                                                                                                                                                                  | `false`     |
-| `name` _(required)_ | `name`    | Description... | `"account" \| "checkmark" \| "close" \| "color" \| "copies" \| "dark" \| "duplex" \| "expand" \| "help" \| "light" \| "logout" \| "menu" \| "minus" \| "orientation" \| "plus" \| "printer" \| "quality" \| "size" \| "system" \| "drag-drop" \| "checkmark-alt" \| "question-mark" \| "exclamation-mark"` | `undefined` |
-| `size`              | `size`    | Description... | `"huge" \| "large" \| "normal"`                                                                                                                                                                                                                                                                            | `'normal'`  |
+| Property            | Attribute | Description    | Type                                                                                                                                                                                                                                                                                                                 | Default     |
+| ------------------- | --------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `framed`            | `framed`  | Description... | `boolean`                                                                                                                                                                                                                                                                                                            | `false`     |
+| `name` _(required)_ | `name`    | Description... | `"account" \| "checkmark" \| "close" \| "color" \| "copies" \| "dark" \| "duplex" \| "expand" \| "help" \| "light" \| "logout" \| "menu" \| "minus" \| "orientation" \| "plus" \| "printer" \| "quality" \| "size" \| "system" \| "drag-drop" \| "checkmark-alt" \| "question-mark" \| "exclamation-mark" \| "logo"` | `undefined` |
+| `size`              | `size`    | Description... | `"huge" \| "large" \| "normal"`                                                                                                                                                                                                                                                                                      | `'normal'`  |
 
 ## Dependencies
 
 ### Used by
 
+- [ezp-dialog](../ezp-dialog)
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-select](../ezp-select)
 - [ezp-status](../ezp-status)
@@ -25,6 +26,7 @@
 
 ```mermaid
 graph TD;
+  ezp-dialog --> ezp-icon
   ezp-icon-button --> ezp-icon
   ezp-select --> ezp-icon
   ezp-status --> ezp-icon

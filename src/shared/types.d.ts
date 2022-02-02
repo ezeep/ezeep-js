@@ -24,6 +24,7 @@ export type IconNameTypes =
   | 'checkmark-alt'
   | 'question-mark'
   | 'exclamation-mark'
+  | 'logo'
 export type IconSizeTypes = 'normal' | 'large' | 'huge'
 export type PrintOrganizationType = { id: number; name: string; printers: PrintPrinterType[] }
 export type PrintPrinterType = { id: number; name: string; location: string }

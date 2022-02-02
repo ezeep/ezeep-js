@@ -7,13 +7,6 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TriggerTypes, WeightTypes } from "./shared/types";
 export namespace Components {
-    interface EzpAlert {
-        "description": string;
-        /**
-          * Properties
-         */
-        "heading": string;
-    }
     interface EzpAuth {
         "clientID": string;
         "hidelogin": boolean;
@@ -21,6 +14,17 @@ export namespace Components {
     }
     interface EzpBackdrop {
         "visible": boolean;
+    }
+    interface EzpDialog {
+        "action": string;
+        "description": string;
+        /**
+          * Properties
+         */
+        "heading": string;
+        "iconFramed": boolean;
+        "iconName"?: IconNameTypes;
+        "iconSize": IconSizeTypes;
     }
     interface EzpIcon {
         /**
@@ -213,12 +217,6 @@ export namespace Components {
     }
 }
 declare global {
-    interface HTMLEzpAlertElement extends Components.EzpAlert, HTMLStencilElement {
-    }
-    var HTMLEzpAlertElement: {
-        prototype: HTMLEzpAlertElement;
-        new (): HTMLEzpAlertElement;
-    };
     interface HTMLEzpAuthElement extends Components.EzpAuth, HTMLStencilElement {
     }
     var HTMLEzpAuthElement: {
@@ -230,6 +228,12 @@ declare global {
     var HTMLEzpBackdropElement: {
         prototype: HTMLEzpBackdropElement;
         new (): HTMLEzpBackdropElement;
+    };
+    interface HTMLEzpDialogElement extends Components.EzpDialog, HTMLStencilElement {
+    }
+    var HTMLEzpDialogElement: {
+        prototype: HTMLEzpDialogElement;
+        new (): HTMLEzpDialogElement;
     };
     interface HTMLEzpIconElement extends Components.EzpIcon, HTMLStencilElement {
     }
@@ -298,9 +302,9 @@ declare global {
         new (): HTMLEzpUserMenuElement;
     };
     interface HTMLElementTagNameMap {
-        "ezp-alert": HTMLEzpAlertElement;
         "ezp-auth": HTMLEzpAuthElement;
         "ezp-backdrop": HTMLEzpBackdropElement;
+        "ezp-dialog": HTMLEzpDialogElement;
         "ezp-icon": HTMLEzpIconElement;
         "ezp-icon-button": HTMLEzpIconButtonElement;
         "ezp-label": HTMLEzpLabelElement;
@@ -315,17 +319,6 @@ declare global {
     }
 }
 declare namespace LocalJSX {
-    interface EzpAlert {
-        "description"?: string;
-        /**
-          * Properties
-         */
-        "heading"?: string;
-        /**
-          * Events
-         */
-        "onAlertClose"?: (event: CustomEvent<any>) => void;
-    }
     interface EzpAuth {
         "clientID"?: string;
         "hidelogin"?: boolean;
@@ -337,6 +330,22 @@ declare namespace LocalJSX {
         "onBackdropHideEnd"?: (event: CustomEvent<any>) => void;
         "onBackdropHideStart"?: (event: CustomEvent<any>) => void;
         "visible"?: boolean;
+    }
+    interface EzpDialog {
+        "action"?: string;
+        "description"?: string;
+        /**
+          * Properties
+         */
+        "heading"?: string;
+        "iconFramed"?: boolean;
+        "iconName"?: IconNameTypes;
+        "iconSize"?: IconSizeTypes;
+        "onDialogAction"?: (event: CustomEvent<any>) => void;
+        /**
+          * Events
+         */
+        "onDialogClose"?: (event: CustomEvent<any>) => void;
     }
     interface EzpIcon {
         /**
@@ -556,9 +565,9 @@ declare namespace LocalJSX {
         "open"?: boolean;
     }
     interface IntrinsicElements {
-        "ezp-alert": EzpAlert;
         "ezp-auth": EzpAuth;
         "ezp-backdrop": EzpBackdrop;
+        "ezp-dialog": EzpDialog;
         "ezp-icon": EzpIcon;
         "ezp-icon-button": EzpIconButton;
         "ezp-label": EzpLabel;
@@ -576,9 +585,9 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "ezp-alert": LocalJSX.EzpAlert & JSXBase.HTMLAttributes<HTMLEzpAlertElement>;
             "ezp-auth": LocalJSX.EzpAuth & JSXBase.HTMLAttributes<HTMLEzpAuthElement>;
             "ezp-backdrop": LocalJSX.EzpBackdrop & JSXBase.HTMLAttributes<HTMLEzpBackdropElement>;
+            "ezp-dialog": LocalJSX.EzpDialog & JSXBase.HTMLAttributes<HTMLEzpDialogElement>;
             "ezp-icon": LocalJSX.EzpIcon & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
             "ezp-icon-button": LocalJSX.EzpIconButton & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
             "ezp-label": LocalJSX.EzpLabel & JSXBase.HTMLAttributes<HTMLEzpLabelElement>;

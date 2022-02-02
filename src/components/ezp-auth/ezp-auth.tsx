@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, State, Event, EventEmitter } from '@stencil/core'
+import { Component, Host, h, Prop, State, Event, EventEmitter, Listen } from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
 import i18next from 'i18next'
@@ -19,6 +19,16 @@ export class EzpAuth {
 
   @Event() authCancel: EventEmitter<MouseEvent>
   @Event() printShow: EventEmitter
+
+  @Listen('dialogAction')
+  listenDialogAction() {
+    this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
+  }
+
+  @Listen('dialogClose')
+  listenDialogClose() {
+    this.authCancel.emit()
+  }
 
   windowObjectReference = null
   previousUrl = null
@@ -55,7 +65,7 @@ export class EzpAuth {
     if (this.hidelogin) {
       let checkClosedTimer = setInterval(() => {
         if (this.windowObjectReference.closed) {
-          this.handleCancel()
+          this.authCancel.emit()
           clearInterval(checkClosedTimer)
         }
       }, 500)
@@ -73,10 +83,6 @@ export class EzpAuth {
       this.authCancel.emit()
       this.printShow.emit()
     })
-  }
-
-  handleCancel = () => {
-    this.authCancel.emit()
   }
 
   async componentWillLoad() {
@@ -98,36 +104,14 @@ export class EzpAuth {
       <ezp-status description={i18next.t('login_page.login')}></ezp-status>
     ) : (
       <Host>
-        <div id="dialog">
-          <div id="header">
-            <ezp-icon-button onClick={this.handleCancel} icon="close" level="tertiary" />
-          </div>
-          <div id="content">
-            <svg
-              id="logo"
-              width="90"
-              height="90"
-              viewBox="0 0 90 90"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M25.9211 72.1296L39.0613 43.8488L2.96326 7.63391L63.3276 47.3892L32.2619 24.5431L27.6516 11.4525L45.7004 29.5597L52.34 15.2706L89.3723 20.998L63.0241 20.7521L59.0129 29.385L52.4587 15.6081L63.7497 47.6674L25.7826 72.4275L20.8033 83.1445L16.7582 63.3739L30.0161 58.9423L25.9211 72.1296Z"
-              />
-            </svg>
-
-            <ezp-label level="primary" weight="heavy" text={i18next.t('login_page.get_started')} />
-            <ezp-label text={i18next.t('login_page.description')} />
-            <ezp-text-button
-              label={i18next.t('login_page.login')}
-              id="button"
-              onClick={() => {
-                this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
-              }}
-            />
-          </div>
-        </div>
+        <ezp-dialog
+          heading={i18next.t('login_page.get_started')}
+          description={i18next.t('login_page.description')}
+          action={i18next.t('login_page.login')}
+          iconName="logo"
+          iconSize="huge"
+          iconFramed={false}
+        />
       </Host>
     )
   }

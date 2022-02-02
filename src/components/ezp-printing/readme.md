@@ -48,13 +48,15 @@ graph TD;
   ezp-printing --> ezp-upload
   ezp-printing --> ezp-icon-button
   ezp-auth --> ezp-status
-  ezp-auth --> ezp-icon-button
-  ezp-auth --> ezp-label
-  ezp-auth --> ezp-text-button
+  ezp-auth --> ezp-dialog
   ezp-status --> ezp-icon
   ezp-status --> ezp-label
   ezp-status --> ezp-text-button
   ezp-text-button --> ezp-label
+  ezp-dialog --> ezp-icon-button
+  ezp-dialog --> ezp-icon
+  ezp-dialog --> ezp-label
+  ezp-dialog --> ezp-text-button
   ezp-icon-button --> ezp-icon
   ezp-printer-selection --> ezp-status
   ezp-printer-selection --> ezp-label

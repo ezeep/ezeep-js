@@ -16,8 +16,7 @@
 
 ### Used by
 
-- [ezp-alert](../ezp-alert)
-- [ezp-auth](../ezp-auth)
+- [ezp-dialog](../ezp-dialog)
 - [ezp-printer-selection](../ezp-printer-selection)
 - [ezp-select](../ezp-select)
 - [ezp-status](../ezp-status)
@@ -30,8 +29,7 @@
 
 ```mermaid
 graph TD;
-  ezp-alert --> ezp-label
-  ezp-auth --> ezp-label
+  ezp-dialog --> ezp-label
   ezp-printer-selection --> ezp-label
   ezp-select --> ezp-label
   ezp-status --> ezp-label

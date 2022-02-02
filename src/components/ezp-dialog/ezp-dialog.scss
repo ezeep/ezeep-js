@@ -1,0 +1,66 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './../../shared/utils';
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  --icon-fill: var(--color-theme-solid);
+
+  align-content: center;
+  background: var(--color-overlay);
+  display: grid;
+  grid-template: auto / minmax(auto, 280px);
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+
+  @include utils.mediaDarkMode {
+    --box-outline-position: inset 0 0 0 1px;
+  }
+}
+
+#box {
+  background: var(--color-surface-tertiary);
+  border-radius: 6px;
+  box-shadow: var(--box-outline-position, 0 0 0 1px) var(--color-outline);
+}
+
+#header {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--spacing-2) var(--spacing-3);
+}
+
+#body {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  padding: 0 var(--spacing-5);
+  text-align: center;
+}
+
+#text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+#footer {
+  display: grid;
+  grid-template: auto / minmax(144px, auto);
+  justify-content: center;
+  padding: var(--spacing-5);
+}
