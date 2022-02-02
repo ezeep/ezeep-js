@@ -6,6 +6,7 @@ import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { initi18n, poll, removeEmptyStrings } from '../../utils/utils'
 import options from '../../data/options.json'
+import { BlobUploadCommonResponse } from '@azure/storage-blob'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -13,7 +14,6 @@ import options from '../../data/options.json'
   shadow: true,
 })
 export class EzpPrinterSelection {
-  // private user: PrintUserType
   private sasUri = ''
   private fileExtension = ''
   private printService: EzpPrintService
@@ -325,6 +325,7 @@ export class EzpPrinterSelection {
     } else if (event.detail === 'print-failed') {
       this.printFailed = false
       this.printProcessing = true
+      this.handlePrint()
     }
   }
 
@@ -501,8 +502,14 @@ export class EzpPrinterSelection {
     this.fileid = response.fileid
     this.sasUri = response.sasUri
     this.filetype = file.type
+    let res: BlobUploadCommonResponse
+    try {
+      res = await this.printService.uploadBlobFiles(this.sasUri, file)
+    } catch (error) {
+      this.printProcessing = false
+      this.printFailed = true
+    }
 
-    const res = await this.printService.uploadBlobFiles(this.sasUri, file)
     if (res._response.status === 201) {
       this.printService
         .printByFileID(
@@ -538,16 +545,11 @@ export class EzpPrinterSelection {
     }
   }
 
-  // private handleFileNotSupported() {
-  //   this.notSupported = false
-  //   this.handleCancel()
-  // }
-
   private validateFileType = async (name: string): Promise<boolean> => {
     const extension = name.split('.').pop()
     this.fileExtension = extension
 
-    return printStore.state.supportedFileExtensions.toString().includes(`${extension}`)
+    return printStore.state.supportedFileExtensions.includes(`${extension}`)
   }
 
   /**
@@ -616,7 +618,7 @@ export class EzpPrinterSelection {
             <ezp-status
               icon="checkmark-alt"
               description={i18next.t('printer_selection.print_success')}
-              instance="print-sucess"
+              instance="print-success"
               close
             />
           ) : this.printFailed ? (
