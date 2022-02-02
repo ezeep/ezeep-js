@@ -784,7 +784,7 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.cancel')}
             />
             <ezp-text-button
-              disabled= {this.selectedPrinter.id === ''}
+              disabled={this.selectedPrinter.id === ''}
               type="button"
               onClick={this.handlePrint}
               label={i18next.t('button_actions.print')}

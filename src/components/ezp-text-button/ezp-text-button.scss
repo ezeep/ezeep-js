@@ -37,7 +37,7 @@
   }
 }
 
-.button {
+#button {
   align-items: center;
   appearance: none;
   background: var(--button-background, var(--button-background-init));
@@ -75,4 +75,8 @@
     --button-color: var(--button-color-disabled);
     --button-cursor: not-allowed;
   }
+}
+
+#label {
+  pointer-events: none;
 }
