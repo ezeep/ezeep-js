@@ -590,9 +590,11 @@ export class EzpPrinterSelection {
         this.printerConfig = printerConfig
       })
 
-    await this.validateFileType(this.filename).then((valid) => {
-      this.notSupported = !valid ? true : false
-    })
+    if (this.file) {
+      await this.validateFileType(this.filename).then((valid) => {
+        this.notSupported = !valid ? true : false
+      })
+    }
 
     this.loading = false
   }
@@ -784,7 +786,7 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.cancel')}
             />
             <ezp-text-button
-              disabled= {this.selectedPrinter.id === ''}
+              disabled={this.selectedPrinter.id === ''}
               type="button"
               onClick={this.handlePrint}
               label={i18next.t('button_actions.print')}
