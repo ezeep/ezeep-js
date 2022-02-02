@@ -53,14 +53,15 @@ graph TD;
   ezp-auth --> ezp-text-button
   ezp-progress --> ezp-icon
   ezp-progress --> ezp-label
-  ezp-icon-button --> ezp-icon
+  ezp-progress --> ezp-text-button
   ezp-text-button --> ezp-label
+  ezp-icon-button --> ezp-icon
   ezp-printer-selection --> ezp-progress
-  ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-stepper
+  ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon

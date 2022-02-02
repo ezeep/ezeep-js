@@ -21,6 +21,7 @@
 - [ezp-alert](../ezp-alert)
 - [ezp-auth](../ezp-auth)
 - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-progress](../ezp-progress)
 
 ### Depends on
 
@@ -34,6 +35,7 @@ graph TD;
   ezp-alert --> ezp-text-button
   ezp-auth --> ezp-text-button
   ezp-printer-selection --> ezp-text-button
+  ezp-progress --> ezp-text-button
   style ezp-text-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

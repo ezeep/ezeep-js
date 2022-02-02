@@ -55,7 +55,6 @@ export class EzpPrinterSelection {
   @State() printSuccess: boolean = false
   @State() printFailed: boolean = false
   @State() notSupported: boolean = false
-  @State() progressOpen: boolean = false
   @State() userMenuOpen: boolean = false
   @State() userName: string
   @State() printers: Printer[]
@@ -343,7 +342,7 @@ export class EzpPrinterSelection {
   private validateData = (data) => {
     if (data.jobstatus === 0) {
       this.printSuccess = true
-      this.printInProgress = false
+      this.printProcessing = false
       return true
     }
     return false
@@ -378,15 +377,14 @@ export class EzpPrinterSelection {
         .then((response) => {
           if (response.status === 412) {
             response.json().then((data) => (this.fileid = data.fileid))
-            this.printService
-              .printByFileID(
-                authStore.state.accessToken,
-                this.fileid,
-                this.filetype,
-                this.selectedPrinter.id,
-                this.selectedProperties,
-                this.filename
-              )
+            this.printService.printByFileID(
+              authStore.state.accessToken,
+              this.fileid,
+              this.filetype,
+              this.selectedPrinter.id,
+              this.selectedProperties,
+              this.filename
+            )
           } else {
             return response.json()
           }
@@ -400,7 +398,7 @@ export class EzpPrinterSelection {
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
             })
-              .then(() => this.printSuccess = true)
+              .then(() => (this.printSuccess = true))
               .catch((err) => {
                 console.warn(err)
               })
@@ -524,7 +522,7 @@ export class EzpPrinterSelection {
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
             })
-              .then(() => this.printSuccess = true)
+              .then(() => (this.printSuccess = true))
               .catch((err) => {
                 console.log(err)
                 this.printFailed = true
@@ -540,10 +538,10 @@ export class EzpPrinterSelection {
     }
   }
 
-  private handleFileNotSupported() {
-    this.notSupported = false
-    this.handleCancel()
-  }
+  // private handleFileNotSupported() {
+  //   this.notSupported = false
+  //   this.handleCancel()
+  // }
 
   private validateFileType = async (name: string): Promise<boolean> => {
     const extension = name.split('.').pop()
@@ -586,7 +584,6 @@ export class EzpPrinterSelection {
 
     await this.validateFileType(this.filename).then((valid) => {
       this.notSupported = !valid ? true : false
-      this.progressOpen = !valid ? true : false
     })
 
     this.loading = false

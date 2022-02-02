@@ -40,8 +40,9 @@ graph TD;
   ezp-auth --> ezp-text-button
   ezp-progress --> ezp-icon
   ezp-progress --> ezp-label
-  ezp-icon-button --> ezp-icon
+  ezp-progress --> ezp-text-button
   ezp-text-button --> ezp-label
+  ezp-icon-button --> ezp-icon
   ezp-printing --> ezp-auth
   style ezp-auth fill:#f9f,stroke:#333,stroke-width:4px
 ```
