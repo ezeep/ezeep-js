@@ -193,7 +193,7 @@ export class EzpPrinting {
             heading={i18next.t('no_document_dialog.heading')}
             description={i18next.t('no_document_dialog.description')}
             action={i18next.t('no_document_dialog.action')}
-            iconName="exclamation-mark"
+            iconName="question-mark"
             instance="no-document-selected"
           />
         ) : this.trigger === 'custom' ? (
