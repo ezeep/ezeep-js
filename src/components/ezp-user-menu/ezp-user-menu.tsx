@@ -92,8 +92,6 @@ export class EzpUserMenu {
    */
 
   componentWillLoad() {
-    console.log('hide logout in user menu:')
-    console.log(this.hidelogout)
     this.container = this.component.closest('[data-backdrop-surface]')
 
     this.backdrop.addEventListener('backdropHideStart', () => {
