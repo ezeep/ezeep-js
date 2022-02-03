@@ -63,7 +63,7 @@ export class EzpSelect {
   @State() expanded: boolean = false
 
   /** Description... */
-  @State() selected: SelectOptionType = { id: 0, title: '', meta: '' }
+  @State() selected: SelectOptionType = { id: false, title: '', meta: '' }
 
   /**
    *
@@ -122,11 +122,18 @@ export class EzpSelect {
    */
 
   private toggle = () => {
+    this.containerHeight = this.container.clientHeight - this.spacing * 2
+    this.listHeight = this.list.scrollHeight
+    this.wrapTop = this.component.offsetTop
+    this.wrapHeight = this.toggleHeight + this.listHeight
+    this.expandCover = this.wrapHeight > this.containerHeight
+    this.expandRise = this.wrapHeight > this.containerHeight - this.wrapTop
+    this.wrapDiff = this.containerHeight - this.wrapHeight - this.wrapTop
     this.expanded = !this.expanded
     this.selectToggle.emit(this.expanded)
   }
 
-  private select = (id: number | string) => {
+  private select = (id: number | string | boolean) => {
     const delay = this.selected.id === id ? 0 : this.duration * 1000
 
     this.selected = this.options.find((option) => option.id === id)
@@ -134,6 +141,16 @@ export class EzpSelect {
     window.setTimeout(() => {
       this.toggle()
     }, delay)
+  }
+
+  private preSelect = () => {
+    this.selected = this.options.find((option) =>
+      typeof this.preSelected === 'number'
+        ? option.id === this.preSelected
+        : typeof this.preSelected === 'string'
+        ? option.title === this.preSelected
+        : null
+    )
   }
 
   /**
@@ -154,11 +171,7 @@ export class EzpSelect {
     })
 
     if (this.preSelected) {
-      this.selected = this.options.find((option) =>
-        typeof this.preSelected === 'number'
-          ? option.id === this.preSelected
-          : option.title === this.preSelected
-      )
+      this.preSelect()
     }
   }
 
@@ -167,13 +180,12 @@ export class EzpSelect {
 
     this.toggleHeight = parseInt(styles.getPropertyValue('--toggle-height'))
     this.duration = parseFloat(styles.getPropertyValue('--duration'))
-    this.containerHeight = this.container.clientHeight - this.spacing * 2
-    this.listHeight = this.list.scrollHeight
-    this.wrapTop = this.component.offsetTop
-    this.wrapHeight = this.toggleHeight + this.listHeight
-    this.expandCover = this.wrapHeight > this.containerHeight
-    this.expandRise = this.wrapHeight > this.containerHeight - this.wrapTop
-    this.wrapDiff = this.containerHeight - this.wrapHeight - this.wrapTop
+  }
+
+  componentWillUpdate() {
+    if (!this.selected.id && this.preSelected) {
+      this.preSelect()
+    }
   }
 
   /**

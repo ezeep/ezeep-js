@@ -26,6 +26,8 @@
     "select_color": "Select a color",
     "select_orientation": "Select an orientation",
     "select_size": "Select a paper size",
+    "select_quality": "Select a quality",
+    "select_duplex": "Select a duplex option",
     "color_color": "Color",
     "color_grayscale": "Grayscale",
     "orientation_portrait": "Portrait",

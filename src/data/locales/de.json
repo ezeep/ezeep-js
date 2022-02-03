@@ -26,6 +26,8 @@
     "select_color": "Wähle eine Farbe",
     "select_size": "Wähle ein Papierformat",
     "select_orientation": "Wähle eine Ausrichtung",
+    "select_quality": "Wähle eine Qualität",
+    "select_duplex": "Wähle eine Duplex-Option",
     "color_color": "Farbe",
     "color_grayscale": "Graustufen",
     "orientation_portrait": "Hochformat",

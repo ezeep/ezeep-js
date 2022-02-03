@@ -73,7 +73,7 @@
   &:disabled {
     --button-background: var(--button-background-disabled);
     --button-color: var(--button-color-disabled);
-    --button-cursor: not-allowed;
+    --button-cursor: default;
   }
 }
 

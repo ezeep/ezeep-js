@@ -36,7 +36,12 @@ export type PrintUserType = {
   organizations: PrintOrganizationType[]
 }
 export type SelectFlowTypes = 'vertical' | 'horizontal'
-export type SelectOptionType = { id: number | string; title: string; meta: string; type?: string }
+export type SelectOptionType = {
+  id: number | string | boolean
+  title: string
+  meta: string
+  type?: string
+}
 export type TextButtonLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type TextButtonTypeTypes = 'button'
 export type LabelLevelTypes = 'primary' | 'secondary' | 'tertiary'
