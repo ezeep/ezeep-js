@@ -21,6 +21,7 @@ export class EzpPrinting {
   @Prop() filetype: string
   @Prop() custom: boolean
   @Prop() hidelogin: boolean
+  @Prop() hidelogout: boolean
   @Prop() authapihosturl: string
   @Prop() printapihosturl: string
   @Prop() theme: ThemeTypes = 'cyan'

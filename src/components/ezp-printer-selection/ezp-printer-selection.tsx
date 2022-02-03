@@ -43,6 +43,7 @@ export class EzpPrinterSelection {
   @Prop({ mutable: true }) filetype: string
   @Prop({ mutable: true }) fileid: string
   @Prop() file: File
+  @Prop() hidelogout: boolean
 
   /**
    *
