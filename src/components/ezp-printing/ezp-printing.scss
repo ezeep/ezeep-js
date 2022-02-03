@@ -14,23 +14,12 @@
  */
 
 :host {
-  // Temp
-  // --ezp-upload-width: calc(80vw);
-  // --ezp-upload-height: calc(80vh);
-
-  align-content: center;
-  background: var(--color-surface-primary);
-  color: var(--color-foreground-primary);
-  display: grid;
   font-family: 'Inter', sans-serif;
   font-feature-settings: 'calt', 'liga', 'ss03', 'zero', 'cv05', 'cv10';
   font-kerning: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  grid-template: auto / auto;
-  justify-content: center;
   margin: 0;
-  min-height: 100vh;
   -webkit-tap-highlight-color: transparent;
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: none;

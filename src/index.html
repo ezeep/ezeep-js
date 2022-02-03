@@ -7,20 +7,39 @@
     <script type="module" src="/build/ezeep.esm.js"></script>
     <script nomodule src="/build/ezeep.js"></script>
     <style>
+      html {
+        height: 100%;
+      }
+
       body {
+        --ezp-upload-height: 80vh;
+        --ezp-upload-width: 80vw;
+
+        align-content: center;
+        background: var(--ezp-body-background, white);
+        color: var(--ezp-body-color, rgba(0, 0, 0, 0.94));
+        display: grid;
+        grid-template: auto / auto;
+        justify-content: center;
         margin: 0;
-        --ezp-upload-width: calc(80vw);
-        --ezp-upload-height: calc(80vh);
+        min-height: 100%;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          --ezp-body-background: black;
+          --ezp-body-color: rgba(255, 255, 255, 0.94);
+        }
       }
 
       .customButton {
         background-color: DodgerBlue;
-        border: none;
         border-radius: 6px;
+        border: none;
         color: white;
-        padding: 12px 16px;
-        font-size: 16px;
         cursor: pointer;
+        font-size: 16px;
+        padding: 12px 16px;
       }
 
       .customButton:hover {
