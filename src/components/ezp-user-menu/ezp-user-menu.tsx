@@ -92,6 +92,8 @@ export class EzpUserMenu {
    */
 
   componentWillLoad() {
+    console.log('hide logout in user menu:')
+    console.log(this.hidelogout)
     this.container = this.component.closest('[data-backdrop-surface]')
 
     this.backdrop.addEventListener('backdropHideStart', () => {
@@ -123,7 +125,7 @@ export class EzpUserMenu {
               <ezp-label text={link.title} />
             </a>
           ))}
-          {this.hidelogout && (<a class="link" onClick={this.logOut}>
+          {!this.hidelogout && (<a class="link" onClick={this.logOut}>
             <ezp-icon class="link__icon" name="logout" />
             <ezp-label text="Logout" />
           </a>)}

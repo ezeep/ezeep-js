@@ -1,4 +1,14 @@
-import { Component, Host, Listen, Event, EventEmitter, State, h, Prop } from '@stencil/core'
+import {
+  Component,
+  Host,
+  Listen,
+  Event,
+  EventEmitter,
+  State,
+  h,
+  Prop,
+  Fragment,
+} from '@stencil/core'
 import i18next from 'i18next'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
@@ -58,6 +68,7 @@ export class EzpPrinterSelection {
   @State() notSupported: boolean = false
   @State() noPrinters: boolean = false
   @State() userMenuOpen: boolean = false
+  @State() printStopped: boolean = false
   @State() userName: string
   @State() printers: Printer[]
   @State() selectedPrinter: Printer
@@ -133,7 +144,9 @@ export class EzpPrinterSelection {
   @Listen('statusCancel')
   listenStatusCancel(event: CustomEvent) {
     if (event.detail === 'print-processing') {
+      this.printStopped = true
       this.printProcessing = false
+      window.stop()
     }
   }
 
@@ -236,11 +249,9 @@ export class EzpPrinterSelection {
               validate: this.validateData,
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
+            }).catch((err) => {
+              console.warn(err)
             })
-              .then(() => (this.printSuccess = true))
-              .catch((err) => {
-                console.warn(err)
-              })
           } else {
             this.printFailed = true
           }
@@ -261,6 +272,8 @@ export class EzpPrinterSelection {
       'previouslySelectedProperties',
       JSON.stringify(this.previouslySelectedProperties)
     )
+
+    this.printStopped = false
   }
 
   private handleUserMenu = () => {
@@ -366,24 +379,19 @@ export class EzpPrinterSelection {
               validate: this.validateData,
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
+            }).catch((err) => {
+              console.log(err)
+              this.printFailed = true
             })
-              .then(() => (this.printSuccess = true))
-              .catch((err) => {
-                console.log(err)
-                this.printFailed = true
-              })
           } else {
-            this.printProcessing = false
             this.printFailed = true
           }
         })
         .catch((error) => {
           console.log(error)
-          this.printProcessing = false
           this.printFailed = true
         })
     } else {
-      this.printProcessing = false
       this.printFailed = true
     }
   }
@@ -456,44 +464,47 @@ export class EzpPrinterSelection {
     ) : (
       <Host>
         <div id="container" data-backdrop-surface>
-          {this.printProcessing ? (
-            <ezp-status
-              processing
-              description={i18next.t('printer_selection.print_processing')}
-              instance="print-processing"
-              cancel
-            />
-          ) : this.printSuccess ? (
-            <ezp-status
-              icon="checkmark-alt"
-              description={i18next.t('printer_selection.print_success')}
-              instance="print-success"
-              close
-            />
-          ) : this.printFailed ? (
-            <ezp-status
-              icon="exclamation-mark"
-              description={i18next.t('printer_selection.print_failed')}
-              instance="print-failed"
-              close
-              retry
-            />
-          ) : this.notSupported ? (
-            <ezp-status
-              icon="exclamation-mark"
-              description={i18next.t('printer_selection.not_supported')}
-              instance="not-supported"
-              retry
-            />
-          ) : this.noPrinters ? (
-            <ezp-status
-              icon="exclamation-mark"
-              description={i18next.t('printer_selection.no_printers')}
-              instance="no-printers"
-              close
-            />
-          ) : null}
-
+          {!this.printStopped && (
+            <>
+              {this.printProcessing ? (
+                <ezp-status
+                  processing
+                  description={i18next.t('printer_selection.print_processing')}
+                  instance="print-processing"
+                  cancel
+                />
+              ) : this.printSuccess ? (
+                <ezp-status
+                  icon="checkmark-alt"
+                  description={i18next.t('printer_selection.print_success')}
+                  instance="print-success"
+                  close
+                />
+              ) : this.printFailed ? (
+                <ezp-status
+                  icon="exclamation-mark"
+                  description={i18next.t('printer_selection.print_failed')}
+                  instance="print-failed"
+                  close
+                  retry
+                />
+              ) : this.notSupported ? (
+                <ezp-status
+                  icon="exclamation-mark"
+                  description={i18next.t('printer_selection.not_supported')}
+                  instance="not-supported"
+                  retry
+                />
+              ) : this.noPrinters ? (
+                <ezp-status
+                  icon="exclamation-mark"
+                  description={i18next.t('printer_selection.no_printers')}
+                  instance="no-printers"
+                  close
+                />
+              ) : null}
+            </>
+          )}
           <div id="header">
             <ezp-label
               weight="heavy"
@@ -675,7 +686,7 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.print')}
             />
           </div>
-          <ezp-user-menu open={this.userMenuOpen} name={this.userName} />
+          <ezp-user-menu hidelogout={this.hidelogout} open={this.userMenuOpen} name={this.userName} />
         </div>
       </Host>
     )

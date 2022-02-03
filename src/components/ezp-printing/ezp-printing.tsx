@@ -188,6 +188,7 @@ export class EzpPrinting {
             filetype={this.filetype}
             fileid={this.fileid}
             file={this.file}
+            hidelogout={this.hidelogout}
           />
         ) : this.noDocumentOpen ? (
           <ezp-dialog
