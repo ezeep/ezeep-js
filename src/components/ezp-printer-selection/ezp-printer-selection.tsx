@@ -63,6 +63,8 @@ export class EzpPrinterSelection {
   @State() loading: boolean = true
   @State() options = options
   @State() printProcessing: boolean = false
+  @State() uploading: boolean = false
+  @State() preparingUpload: boolean = false
   @State() printSuccess: boolean = false
   @State() printFailed: boolean = false
   @State() notSupported: boolean = false
@@ -347,25 +349,30 @@ export class EzpPrinterSelection {
   }
 
   async handleFiles(file: File) {
+    this.preparingUpload = true
     const response = await this.printService.prepareFileUpload(authStore.state.accessToken)
+    this.preparingUpload = false
 
     this.fileid = response.fileid
     this.sasUri = response.sasUri
-    this.filetype = file.type
+    this.filetype = this.fileExtension
     let res: BlobUploadCommonResponse
+
+    this.uploading = true
     try {
       res = await this.printService.uploadBlobFiles(this.sasUri, file)
     } catch (error) {
       this.printProcessing = false
       this.printFailed = true
     }
+    this.uploading = false
 
     if (res._response.status === 201) {
       this.printService
         .printByFileID(
           authStore.state.accessToken,
           this.fileid,
-          this.fileExtension,
+          this.filetype,
           this.selectedPrinter.id,
           this.selectedProperties,
           this.filename
@@ -468,7 +475,13 @@ export class EzpPrinterSelection {
               {this.printProcessing ? (
                 <ezp-status
                   processing
-                  description={i18next.t('printer_selection.print_processing')}
+                  description={
+                    this.preparingUpload
+                      ? i18next.t('printer_selection.prepare_upload')
+                      : this.uploading
+                      ? i18next.t('printer_selection.uploading')
+                      : i18next.t('printer_selection.print_processing')
+                  }
                   instance="print-processing"
                   cancel
                 />
@@ -685,7 +698,11 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.print')}
             />
           </div>
-          <ezp-user-menu hidelogout={this.hidelogout} open={this.userMenuOpen} name={this.userName} />
+          <ezp-user-menu
+            hidelogout={this.hidelogout}
+            open={this.userMenuOpen}
+            name={this.userName}
+          />
         </div>
       </Host>
     )
