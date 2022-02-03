@@ -460,6 +460,7 @@ export class EzpPrinterSelection {
               processing
               description={i18next.t('printer_selection.print_processing')}
               instance="print-processing"
+              cancel
             />
           ) : this.printSuccess ? (
             <ezp-status
