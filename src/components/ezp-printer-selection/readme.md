@@ -4,15 +4,16 @@
 
 ## Properties
 
-| Property      | Attribute        | Description | Type     | Default     |
-| ------------- | ---------------- | ----------- | -------- | ----------- |
-| `clientID`    | `client-i-d`     | Properties  | `string` | `undefined` |
-| `file`        | --               |             | `File`   | `undefined` |
-| `fileid`      | `fileid`         |             | `string` | `undefined` |
-| `filename`    | `filename`       |             | `string` | `undefined` |
-| `filetype`    | `filetype`       |             | `string` | `undefined` |
-| `fileurl`     | `fileurl`        |             | `string` | `undefined` |
-| `redirectURI` | `redirect-u-r-i` |             | `string` | `undefined` |
+| Property      | Attribute        | Description | Type      | Default     |
+| ------------- | ---------------- | ----------- | --------- | ----------- |
+| `clientID`    | `client-i-d`     | Properties  | `string`  | `undefined` |
+| `file`        | --               |             | `File`    | `undefined` |
+| `fileid`      | `fileid`         |             | `string`  | `undefined` |
+| `filename`    | `filename`       |             | `string`  | `undefined` |
+| `filetype`    | `filetype`       |             | `string`  | `undefined` |
+| `fileurl`     | `fileurl`        |             | `string`  | `undefined` |
+| `hidelogout`  | `hidelogout`     |             | `boolean` | `undefined` |
+| `redirectURI` | `redirect-u-r-i` |             | `string`  | `undefined` |
 
 ## Events
 

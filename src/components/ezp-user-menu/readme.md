@@ -4,10 +4,11 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type      | Default      |
-| -------- | --------- | ----------- | --------- | ------------ |
-| `name`   | `name`    |             | `string`  | `'John Doe'` |
-| `open`   | `open`    |             | `boolean` | `false`      |
+| Property     | Attribute    | Description | Type      | Default      |
+| ------------ | ------------ | ----------- | --------- | ------------ |
+| `hidelogout` | `hidelogout` |             | `boolean` | `undefined`  |
+| `name`       | `name`       |             | `string`  | `'John Doe'` |
+| `open`       | `open`       |             | `boolean` | `false`      |
 
 ## Events
 

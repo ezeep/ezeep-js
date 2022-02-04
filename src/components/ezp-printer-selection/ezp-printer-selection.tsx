@@ -469,7 +469,7 @@ export class EzpPrinterSelection {
       />
     ) : (
       <Host>
-        <div id="container" data-backdrop-surface>
+        <div id="box" data-backdrop-surface>
           {!this.printStopped && (
             <>
               {this.printProcessing ? (

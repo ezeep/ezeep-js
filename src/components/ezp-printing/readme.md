@@ -15,6 +15,7 @@
 | `filetype`        | `filetype`        |             | `string`                                                                 | `undefined` |
 | `fileurl`         | `fileurl`         |             | `string`                                                                 | `undefined` |
 | `hidelogin`       | `hidelogin`       |             | `boolean`                                                                | `undefined` |
+| `hidelogout`      | `hidelogout`      |             | `boolean`                                                                | `undefined` |
 | `printapihosturl` | `printapihosturl` |             | `string`                                                                 | `undefined` |
 | `redirecturi`     | `redirecturi`     |             | `string`                                                                 | `undefined` |
 | `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "violet"` | `'cyan'`    |
