@@ -47,5 +47,15 @@
     "meta_leading": "Oder",
     "meta_select": "wähle eine Datei",
     "meta_trailing": "von deinem Computer."
+  },
+  "user_menu": {
+    "theme": "Farbschema",
+    "appearance": "Erscheinungsbild",
+    "system": "System",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "account": "Account verwalten",
+    "help": "Hilfe & Support",
+    "logout": "Ausloggen"
   }
 }
