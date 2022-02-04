@@ -1,0 +1,49 @@
+:host {
+  --ezp-icon-fill: var(--ezp-color-theme-solid);
+
+  align-content: center;
+  background: var(--ezp-color-overlay-primary);
+  display: grid;
+  grid-template: auto / minmax(auto, 280px);
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+#box {
+  background: var(--ezp-color-surface-tertiary);
+  border-radius: 6px;
+  box-shadow: var(--ezp-dialog-box-boxShadow, 0 0 0 1px var(--ezp-color-overlay-secondary));
+}
+
+#header {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--ezp-spacing-2) var(--ezp-spacing-3);
+}
+
+#body {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ezp-spacing-5);
+  padding: 0 var(--ezp-spacing-5);
+  text-align: center;
+}
+
+#text {
+  color: var(--ezp-color-foreground-primary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ezp-spacing-4);
+}
+
+#footer {
+  display: grid;
+  grid-template: auto / minmax(144px, auto);
+  justify-content: center;
+  padding: var(--ezp-spacing-5);
+}

@@ -16,24 +16,26 @@
 
 ### Used by
 
-- [ezp-auth](../ezp-auth)
+- [ezp-dialog](../ezp-dialog)
 - [ezp-printer-selection](../ezp-printer-selection)
-- [ezp-progress](../ezp-progress)
 - [ezp-select](../ezp-select)
+- [ezp-status](../ezp-status)
 - [ezp-stepper](../ezp-stepper)
 - [ezp-text-button](../ezp-text-button)
+- [ezp-upload](../ezp-upload)
 - [ezp-user-menu](../ezp-user-menu)
 
 ### Graph
 
 ```mermaid
 graph TD;
-  ezp-auth --> ezp-label
+  ezp-dialog --> ezp-label
   ezp-printer-selection --> ezp-label
-  ezp-progress --> ezp-label
   ezp-select --> ezp-label
+  ezp-status --> ezp-label
   ezp-stepper --> ezp-label
   ezp-text-button --> ezp-label
+  ezp-upload --> ezp-label
   ezp-user-menu --> ezp-label
   style ezp-label fill:#f9f,stroke:#333,stroke-width:4px
 ```

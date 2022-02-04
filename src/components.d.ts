@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, WeightTypes } from "./shared/types";
+import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TriggerTypes, WeightTypes } from "./shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -15,7 +15,23 @@ export namespace Components {
     interface EzpBackdrop {
         "visible": boolean;
     }
+    interface EzpDialog {
+        "action": string;
+        "description": string;
+        /**
+          * Properties
+         */
+        "heading": string;
+        "iconFramed": boolean;
+        "iconName"?: IconNameTypes;
+        "iconSize": IconSizeTypes;
+        "instance": string;
+    }
     interface EzpIcon {
+        /**
+          * Description...
+         */
+        "framed": boolean;
         /**
           * Description...
          */
@@ -78,10 +94,12 @@ export namespace Components {
           * Properties
          */
         "clientID": string;
+        "file": File;
         "fileid": string;
         "filename": string;
         "filetype": string;
         "fileurl": string;
+        "hidemenu": boolean;
         "redirectURI": string;
     }
     interface EzpPrinting {
@@ -94,6 +112,7 @@ export namespace Components {
         "filetype": string;
         "fileurl": string;
         "hidelogin": boolean;
+        "hidemenu": boolean;
         /**
           * Public methods
          */
@@ -101,14 +120,13 @@ export namespace Components {
         "printapihosturl": string;
         "redirecturi": string;
         "theme": ThemeTypes;
-    }
-    interface EzpProgress {
-        /**
-          * Status...
-         */
-        "status": string;
+        "trigger": TriggerTypes;
     }
     interface EzpSelect {
+        /**
+          * Description...
+         */
+        "disabled": boolean;
         /**
           * Description...
          */
@@ -137,6 +155,18 @@ export namespace Components {
           * Description...
          */
         "toggleFlow": SelectFlowTypes;
+    }
+    interface EzpStatus {
+        "cancel"?: string | boolean;
+        "close"?: string | boolean;
+        /**
+          * Properties
+         */
+        "description": string;
+        "icon"?: IconNameTypes;
+        "instance": string;
+        "processing": boolean;
+        "retry"?: string | boolean;
     }
     interface EzpStepper {
         /**
@@ -180,7 +210,13 @@ export namespace Components {
         /**
           * Description...
          */
+        "small": boolean;
+        /**
+          * Description...
+         */
         "type": TextButtonTypeTypes;
+    }
+    interface EzpUpload {
     }
     interface EzpUserMenu {
         "name": string;
@@ -199,6 +235,12 @@ declare global {
     var HTMLEzpBackdropElement: {
         prototype: HTMLEzpBackdropElement;
         new (): HTMLEzpBackdropElement;
+    };
+    interface HTMLEzpDialogElement extends Components.EzpDialog, HTMLStencilElement {
+    }
+    var HTMLEzpDialogElement: {
+        prototype: HTMLEzpDialogElement;
+        new (): HTMLEzpDialogElement;
     };
     interface HTMLEzpIconElement extends Components.EzpIcon, HTMLStencilElement {
     }
@@ -230,17 +272,17 @@ declare global {
         prototype: HTMLEzpPrintingElement;
         new (): HTMLEzpPrintingElement;
     };
-    interface HTMLEzpProgressElement extends Components.EzpProgress, HTMLStencilElement {
-    }
-    var HTMLEzpProgressElement: {
-        prototype: HTMLEzpProgressElement;
-        new (): HTMLEzpProgressElement;
-    };
     interface HTMLEzpSelectElement extends Components.EzpSelect, HTMLStencilElement {
     }
     var HTMLEzpSelectElement: {
         prototype: HTMLEzpSelectElement;
         new (): HTMLEzpSelectElement;
+    };
+    interface HTMLEzpStatusElement extends Components.EzpStatus, HTMLStencilElement {
+    }
+    var HTMLEzpStatusElement: {
+        prototype: HTMLEzpStatusElement;
+        new (): HTMLEzpStatusElement;
     };
     interface HTMLEzpStepperElement extends Components.EzpStepper, HTMLStencilElement {
     }
@@ -254,6 +296,12 @@ declare global {
         prototype: HTMLEzpTextButtonElement;
         new (): HTMLEzpTextButtonElement;
     };
+    interface HTMLEzpUploadElement extends Components.EzpUpload, HTMLStencilElement {
+    }
+    var HTMLEzpUploadElement: {
+        prototype: HTMLEzpUploadElement;
+        new (): HTMLEzpUploadElement;
+    };
     interface HTMLEzpUserMenuElement extends Components.EzpUserMenu, HTMLStencilElement {
     }
     var HTMLEzpUserMenuElement: {
@@ -263,15 +311,17 @@ declare global {
     interface HTMLElementTagNameMap {
         "ezp-auth": HTMLEzpAuthElement;
         "ezp-backdrop": HTMLEzpBackdropElement;
+        "ezp-dialog": HTMLEzpDialogElement;
         "ezp-icon": HTMLEzpIconElement;
         "ezp-icon-button": HTMLEzpIconButtonElement;
         "ezp-label": HTMLEzpLabelElement;
         "ezp-printer-selection": HTMLEzpPrinterSelectionElement;
         "ezp-printing": HTMLEzpPrintingElement;
-        "ezp-progress": HTMLEzpProgressElement;
         "ezp-select": HTMLEzpSelectElement;
+        "ezp-status": HTMLEzpStatusElement;
         "ezp-stepper": HTMLEzpStepperElement;
         "ezp-text-button": HTMLEzpTextButtonElement;
+        "ezp-upload": HTMLEzpUploadElement;
         "ezp-user-menu": HTMLEzpUserMenuElement;
     }
 }
@@ -280,7 +330,7 @@ declare namespace LocalJSX {
         "clientID"?: string;
         "hidelogin"?: boolean;
         "onAuthCancel"?: (event: CustomEvent<MouseEvent>) => void;
-        "onPrintShow"?: (event: CustomEvent<any>) => void;
+        "onAuthSuccess"?: (event: CustomEvent<any>) => void;
         "redirectURI"?: string;
     }
     interface EzpBackdrop {
@@ -288,7 +338,28 @@ declare namespace LocalJSX {
         "onBackdropHideStart"?: (event: CustomEvent<any>) => void;
         "visible"?: boolean;
     }
+    interface EzpDialog {
+        "action"?: string;
+        "description"?: string;
+        /**
+          * Properties
+         */
+        "heading"?: string;
+        "iconFramed"?: boolean;
+        "iconName"?: IconNameTypes;
+        "iconSize"?: IconSizeTypes;
+        "instance"?: string;
+        "onDialogAction"?: (event: CustomEvent<any>) => void;
+        /**
+          * Events
+         */
+        "onDialogClose"?: (event: CustomEvent<any>) => void;
+    }
     interface EzpIcon {
+        /**
+          * Description...
+         */
+        "framed"?: boolean;
         /**
           * Description...
          */
@@ -351,10 +422,12 @@ declare namespace LocalJSX {
           * Properties
          */
         "clientID"?: string;
+        "file"?: File;
         "fileid"?: string;
         "filename"?: string;
         "filetype"?: string;
         "fileurl"?: string;
+        "hidemenu"?: boolean;
         /**
           * Description...
          */
@@ -375,17 +448,17 @@ declare namespace LocalJSX {
         "filetype"?: string;
         "fileurl"?: string;
         "hidelogin"?: boolean;
+        "hidemenu"?: boolean;
         "printapihosturl"?: string;
         "redirecturi"?: string;
         "theme"?: ThemeTypes;
-    }
-    interface EzpProgress {
-        /**
-          * Status...
-         */
-        "status"?: string;
+        "trigger"?: TriggerTypes;
     }
     interface EzpSelect {
+        /**
+          * Description...
+         */
+        "disabled"?: boolean;
         /**
           * Description...
          */
@@ -419,6 +492,24 @@ declare namespace LocalJSX {
           * Description...
          */
         "toggleFlow"?: SelectFlowTypes;
+    }
+    interface EzpStatus {
+        "cancel"?: string | boolean;
+        "close"?: string | boolean;
+        /**
+          * Properties
+         */
+        "description"?: string;
+        "icon"?: IconNameTypes;
+        "instance"?: string;
+        /**
+          * Events
+         */
+        "onStatusCancel"?: (event: CustomEvent<any>) => void;
+        "onStatusClose"?: (event: CustomEvent<any>) => void;
+        "onStatusRetry"?: (event: CustomEvent<any>) => void;
+        "processing"?: boolean;
+        "retry"?: string | boolean;
     }
     interface EzpStepper {
         /**
@@ -466,7 +557,17 @@ declare namespace LocalJSX {
         /**
           * Description...
          */
+        "small"?: boolean;
+        /**
+          * Description...
+         */
         "type"?: TextButtonTypeTypes;
+    }
+    interface EzpUpload {
+        /**
+          * Events
+         */
+        "onUploadFile"?: (event: CustomEvent<any>) => void;
     }
     interface EzpUserMenu {
         "name"?: string;
@@ -480,15 +581,17 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "ezp-auth": EzpAuth;
         "ezp-backdrop": EzpBackdrop;
+        "ezp-dialog": EzpDialog;
         "ezp-icon": EzpIcon;
         "ezp-icon-button": EzpIconButton;
         "ezp-label": EzpLabel;
         "ezp-printer-selection": EzpPrinterSelection;
         "ezp-printing": EzpPrinting;
-        "ezp-progress": EzpProgress;
         "ezp-select": EzpSelect;
+        "ezp-status": EzpStatus;
         "ezp-stepper": EzpStepper;
         "ezp-text-button": EzpTextButton;
+        "ezp-upload": EzpUpload;
         "ezp-user-menu": EzpUserMenu;
     }
 }
@@ -498,15 +601,17 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "ezp-auth": LocalJSX.EzpAuth & JSXBase.HTMLAttributes<HTMLEzpAuthElement>;
             "ezp-backdrop": LocalJSX.EzpBackdrop & JSXBase.HTMLAttributes<HTMLEzpBackdropElement>;
+            "ezp-dialog": LocalJSX.EzpDialog & JSXBase.HTMLAttributes<HTMLEzpDialogElement>;
             "ezp-icon": LocalJSX.EzpIcon & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
             "ezp-icon-button": LocalJSX.EzpIconButton & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
             "ezp-label": LocalJSX.EzpLabel & JSXBase.HTMLAttributes<HTMLEzpLabelElement>;
             "ezp-printer-selection": LocalJSX.EzpPrinterSelection & JSXBase.HTMLAttributes<HTMLEzpPrinterSelectionElement>;
             "ezp-printing": LocalJSX.EzpPrinting & JSXBase.HTMLAttributes<HTMLEzpPrintingElement>;
-            "ezp-progress": LocalJSX.EzpProgress & JSXBase.HTMLAttributes<HTMLEzpProgressElement>;
             "ezp-select": LocalJSX.EzpSelect & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
+            "ezp-status": LocalJSX.EzpStatus & JSXBase.HTMLAttributes<HTMLEzpStatusElement>;
             "ezp-stepper": LocalJSX.EzpStepper & JSXBase.HTMLAttributes<HTMLEzpStepperElement>;
             "ezp-text-button": LocalJSX.EzpTextButton & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
+            "ezp-upload": LocalJSX.EzpUpload & JSXBase.HTMLAttributes<HTMLEzpUploadElement>;
             "ezp-user-menu": LocalJSX.EzpUserMenu & JSXBase.HTMLAttributes<HTMLEzpUserMenuElement>;
         }
     }

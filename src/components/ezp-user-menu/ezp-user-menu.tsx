@@ -2,6 +2,8 @@ import { Component, Host, Prop, Event, Element, EventEmitter, Watch, h } from '@
 import authStore from '../../services/auth'
 import userStore from '../../services/user'
 import { IconNameTypes, ThemeTypes, AppearanceTypes } from '../../shared/types'
+import { initi18n } from '../../utils/utils'
+import i18next from 'i18next'
 
 @Component({
   tag: 'ezp-user-menu',
@@ -15,21 +17,21 @@ export class EzpUserMenu {
   private backdrop: HTMLEzpBackdropElement = document.createElement('ezp-backdrop')
   private links = [
     {
-      title: 'Manage Account',
+      title: i18next.t('user_menu.account'),
       icon: 'account',
       href: 'https://app.ezeep.com',
     },
     {
-      title: 'Help & Support',
+      title: i18next.t('user_menu.help'),
       icon: 'help',
       href: 'https://support.ezeep.com',
     },
   ]
   private themes = ['pink', 'red', 'orange', 'green', 'cyan', 'blue', 'violet']
   private appearances = [
-    { title: 'System', name: 'system' },
-    { title: 'Light', name: 'light' },
-    { title: 'Dark', name: 'dark' },
+    { title: i18next.t('user_menu.system'), name: 'system' },
+    { title: i18next.t('user_menu.light'), name: 'light' },
+    { title: i18next.t('user_menu.dark'), name: 'dark' },
   ]
 
   @Prop() name: string = 'John Doe'
@@ -76,12 +78,12 @@ export class EzpUserMenu {
     this.logoutEmitter.emit()
   }
 
-  private handleTheme = (theme) => {
-    userStore.state.theme = theme as ThemeTypes
+  private handleTheme = (theme: ThemeTypes) => {
+    userStore.state.theme = theme
   }
 
-  private handleAppearance = (appearance) => {
-    userStore.state.appearance = appearance as AppearanceTypes
+  private handleAppearance = (appearance: AppearanceTypes) => {
+    userStore.state.appearance = appearance
   }
 
   /**
@@ -91,6 +93,8 @@ export class EzpUserMenu {
    */
 
   componentWillLoad() {
+    initi18n()
+
     this.container = this.component.closest('[data-backdrop-surface]')
 
     this.backdrop.addEventListener('backdropHideStart', () => {
@@ -112,7 +116,7 @@ export class EzpUserMenu {
     return (
       <Host class={this.open ? 'is-open' : ''}>
         <div id="header">
-          <ezp-label ellipsis id="name" weight="strong" text={this.name} />
+          <ezp-label ellipsis id="name" weight="heavy" text={this.name} />
           <ezp-icon-button id="close" level="tertiary" icon="close" onClick={this.handleClose} />
         </div>
         <div id="links">
@@ -124,18 +128,18 @@ export class EzpUserMenu {
           ))}
           <a class="link" onClick={this.logOut}>
             <ezp-icon class="link__icon" name="logout" />
-            <ezp-label text="Logout" />
+            <ezp-label text={i18next.t('user_menu.logout')} />
           </a>
         </div>
         <div id="theme">
-          <ezp-label text="Color Theme:" weight="strong" />
+          <ezp-label class="caption" text={`${i18next.t('user_menu.theme')}:`} weight="heavy" />
           <div id="swatches">
             {this.themes.map((theme) => (
               <button
                 class={`swatch swatch--${theme} ${
                   theme === userStore.state.theme ? 'selected' : ''
                 }`}
-                onClick={() => this.handleTheme(theme)}
+                onClick={() => this.handleTheme(theme as ThemeTypes)}
               >
                 <span class="dot" />
               </button>
@@ -143,12 +147,16 @@ export class EzpUserMenu {
           </div>
         </div>
         <div id="appearance">
-          <ezp-label text="Appearance:" weight="strong" />
+          <ezp-label
+            class="caption"
+            text={`${i18next.t('user_menu.appearance')}:`}
+            weight="heavy"
+          />
           <div id="tabs">
             {this.appearances.map((appearance) => (
               <button
                 class={`tab ${appearance.name === userStore.state.appearance ? 'selected' : ''}`}
-                onClick={() => this.handleAppearance(appearance.name)}
+                onClick={() => this.handleAppearance(appearance.name as AppearanceTypes)}
               >
                 <ezp-icon name={appearance.name as IconNameTypes} />
                 <ezp-label text={appearance.title} level="tertiary" weight="strong" />

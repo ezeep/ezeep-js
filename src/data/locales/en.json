@@ -1,32 +1,63 @@
 {
-  "login_page": {
-    "get_started": "Print with ezeep Blue",
-    "login": "Sign in",
-    "description": "Sign in with your ezeep Blue account to print."
-  },
-  "printer_selection": {
-    "loading": "Loading printers…",
-    "print_in_progress": "Printing…",
-    "print": "Print",
-    "printer": "Printer",
-    "color": "Color",
-    "orientation": "Orientation",
-    "size": "Paper format",
-    "duplex": "Duplex",
-    "quality": "Quality",
-    "select_printer": "Select a printer",
-    "select_color": "Select a color",
-    "select_orientation": "Select an orientation",
-    "select_size": "Select a paper size",
-    "color_color": "Color",
-    "color_grayscale": "Grayscale",
-    "orientation_portrait": "Portrait",
-    "orientation_landscape": "Landscape",
-    "unknown_location": "Unknown location"
-  },
-  "button_actions": {
-    "login": "Sign In",
-    "print": "Print",
-    "cancel": "Cancel"
-  }
+    "login_dialog": {
+        "heading": "Print with ezeep Blue",
+        "description": "Sign in with your ezeep Blue account to print.",
+        "action": "Sign in"
+    },
+    "no_document_dialog": {
+        "heading": "No file selected",
+        "description": "Select a file first to print.",
+        "action": "OK"
+    },
+    "printer_selection": {
+        "loading": "Loading My Printers…",
+        "print_processing": "Printing…",
+        "print_success": "Successfully printed.",
+        "print_failed": "Print failed",
+        "not_supported": "The selected file type is not supported.",
+        "prepare_upload": "Preparing…",
+        "uploading": "Uploading…",
+        "print": "Print",
+        "printer": "Printer",
+        "color": "Color",
+        "orientation": "Orientation",
+        "size": "Paper Size",
+        "duplex": "Double-sided",
+        "quality": "Print Quality",
+        "select_printer": "Select a printer",
+        "select_color": "Select Color/Grayscale",
+        "select_orientation": "Select Orientation",
+        "select_size": "Select Paper Size",
+        "select_quality": "Select Print Quality",
+        "select_duplex": "Select Double-sided",
+        "color_color": "Color",
+        "color_grayscale": "Grayscale",
+        "orientation_portrait": "Portrait",
+        "orientation_landscape": "Landscape",
+        "unknown_location": "Unknown location",
+        "no_printers": "No printers found."
+    },
+    "button_actions": {
+        "login": "Sign In",
+        "print": "Print",
+        "cancel": "Cancel",
+        "close": "Close",
+        "retry": "Retry"
+    },
+    "upload": {
+        "description": "Drop a file here into the browser ",
+        "meta_leading": "or",
+        "meta_select": "select a file",
+        "meta_trailing": "to print with ezeep Blue."
+    },
+    "user_menu": {
+        "theme": "Color theme",
+        "appearance": "Appearance",
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark",
+        "account": "Manage account",
+        "help": "Help & support",
+        "logout": "Logout"
+    }
 }

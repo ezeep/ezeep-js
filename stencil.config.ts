@@ -5,6 +5,7 @@ import { sass } from '@stencil/sass'
 import replacePlugin from '@rollup/plugin-replace'
 import { angularOutputTarget } from '@stencil/angular-output-target'
 import { reactOutputTarget } from '@stencil/react-output-target'
+import nodePolyfills from 'rollup-plugin-node-polyfills'
 import fs from 'fs'
 
 export const config: Config = {
@@ -38,21 +39,22 @@ export const config: Config = {
     },
   ],
   // needs to be commented out for build on github actions to work
-  //   devServer: {
-  //     address: process.env.DEV_SERVER_ADDRESS,
-  //     port: parseInt(process.env.DEV_SERVER_PORT),
-  //     https: {
-  //       cert: fs.readFileSync('certificate.pem', 'utf-8'),
-  //       key: fs.readFileSync('key.pem', 'utf-8'),
-  //     },
+  // devServer: {
+  //   address: process.env.DEV_SERVER_ADDRESS,
+  //   port: parseInt(process.env.DEV_SERVER_PORT),
+  //   https: {
+  //     cert: fs.readFileSync('certificate.pem', 'utf-8'),
+  //     key: fs.readFileSync('key.pem', 'utf-8'),
   //   },
+  // },
   rollupPlugins: {
     after: [
+      nodePolyfills(),
       replacePlugin({
         preventAssignment: true,
         delimiters: ['<%', '%>'],
       }),
     ],
   },
-  buildEs5: "prod",
+  buildEs5: 'prod',
 }

@@ -1,0 +1,97 @@
+/**
+ *
+ * Modules
+ *
+ */
+
+@use './../../shared/global';
+
+/**
+ *
+ * Rules
+ *
+ */
+
+:host {
+  align-items: center;
+  background: var(--ezp-color-overlay-primary);
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  padding: var(--ezp-spacing-6);
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+
+  @include global.media-appearance('dark') {
+    --box-separator-position: inset 0 0 0 var(--hairline-width-positive);
+  }
+}
+
+#box {
+  --ezp-icon-fill: var(--ezp-color-theme-solid);
+
+  align-items: center;
+  background: var(--ezp-color-surface-tertiary);
+  border-radius: 3px;
+  box-shadow: var(--ezp-status-box-boxShadowPosition, 0 0 0 1px) var(--ezp-color-outline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ezp-spacing-4);
+  padding: var(--ezp-spacing-4) var(--ezp-spacing-5);
+}
+
+#indicator {
+  animation: rotate var(--ezp-duration-6) linear infinite;
+  display: block;
+  height: 42px;
+  transform: rotate(0);
+  width: 42px;
+}
+
+#track {
+  fill: none;
+  stroke: var(--ezp-color-outline);
+  stroke-width: 4px;
+}
+
+#value {
+  animation: offset var(--ezp-duration-6) linear alternate infinite;
+  fill: none;
+  stroke: var(--ezp-color-theme-solid);
+  stroke-dasharray: 110;
+  stroke-dashoffset: 110;
+  stroke-linecap: round;
+  stroke-width: 4px;
+}
+
+#description {
+  color: var(--ezp-color-foreground-primary);
+}
+
+#footer {
+  display: flex;
+  gap: var(--ezp-spacing-2);
+}
+
+/**
+ *
+ * Keyframes
+ *
+ */
+
+@keyframes offset {
+  100% {
+    stroke-dashoffset: 55;
+  }
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}

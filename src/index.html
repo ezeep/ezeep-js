@@ -7,18 +7,37 @@
     <script type="module" src="/build/ezeep.esm.js"></script>
     <script nomodule src="/build/ezeep.js"></script>
     <style>
+      html {
+        height: 100%;
+      }
+
       body {
+        --ezp-upload-height: 80vh;
+        --ezp-upload-width: 80vw;
+
+        align-content: center;
+        background: var(--ezp-body-background, white);
+        display: grid;
+        grid-template: auto / auto;
+        justify-content: center;
         margin: 0;
+        min-height: 100%;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          --ezp-body-background: black;
+        }
       }
 
       .customButton {
         background-color: DodgerBlue;
-        border: none;
         border-radius: 6px;
+        border: none;
         color: white;
-        padding: 12px 16px;
-        font-size: 16px;
         cursor: pointer;
+        font-size: 16px;
+        padding: 12px 16px;
       }
 
       .customButton:hover {
@@ -32,18 +51,19 @@
       clientid="oWuvEAndErO3kKCqzaWBOAs2PhOuAbD7MZYWQ9yJ"
       redirecturi="https://develop.dev.azdev.ezeep.com:3333"
       filename="dummypdf"
-      fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       filetype="pdf"
       theme="blue"
       appearance="system"
+      trigger="file"
     >
-      <!-- <button class="customButton">My custom styled print button</button> -->
+      <!-- <button class="customButton">My custom styled print button</button>
+      fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"-->
     </ezp-printing>
     <script>
-      /*     
+      /*
       const ezpPrinting = document.querySelector('ezp-printing')
       const button = document.querySelector('button')
-    
+
       button.onclick = async () => await ezpPrinting.open() */
     </script>
   </body>

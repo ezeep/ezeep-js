@@ -20,7 +20,12 @@ export type IconNameTypes =
   | 'quality'
   | 'size'
   | 'system'
-export type IconSizeTypes = 'normal' | 'large'
+  | 'drag-drop'
+  | 'checkmark-alt'
+  | 'question-mark'
+  | 'exclamation-mark'
+  | 'logo'
+export type IconSizeTypes = 'normal' | 'large' | 'huge'
 export type PrintOrganizationType = { id: number; name: string; printers: PrintPrinterType[] }
 export type PrintPrinterType = { id: number; name: string; location: string }
 export type PrintUserType = {
@@ -31,14 +36,21 @@ export type PrintUserType = {
   organizations: PrintOrganizationType[]
 }
 export type SelectFlowTypes = 'vertical' | 'horizontal'
-export type SelectOptionType = { id: number | string; title: string; meta: string; type?: string }
+export type SelectOptionType = {
+  id: number | string | boolean
+  title: string
+  meta: string
+  type?: string
+}
 export type TextButtonLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type TextButtonTypeTypes = 'button'
 export type LabelLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type WeightTypes = 'soft' | 'strong' | 'heavy'
 export type ThemeTypes = 'pink' | 'red' | 'orange' | 'green' | 'cyan' | 'blue' | 'violet'
 export type AppearanceTypes = 'system' | 'light' | 'dark'
-
+export type TriggerTypes = 'custom' | 'file' | 'button'
+export type AlertType = { open: boolean; heading: string; description: string }
+export type SystemAppearanceTypes = 'light' | 'dark'
 export interface PrinterProperties {
   paper?: string
   paperid?: number | string

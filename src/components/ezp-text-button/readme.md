@@ -11,14 +11,16 @@
 | `href`     | `href`     | Description... | `string`                                 | `undefined` |
 | `label`    | `label`    | Description... | `string`                                 | `undefined` |
 | `level`    | `level`    | Description... | `"primary" \| "secondary" \| "tertiary"` | `'primary'` |
+| `small`    | `small`    | Description... | `boolean`                                | `false`     |
 | `type`     | `type`     | Description... | `"button"`                               | `undefined` |
 
 ## Dependencies
 
 ### Used by
 
-- [ezp-auth](../ezp-auth)
+- [ezp-dialog](../ezp-dialog)
 - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-status](../ezp-status)
 
 ### Depends on
 
@@ -29,8 +31,9 @@
 ```mermaid
 graph TD;
   ezp-text-button --> ezp-label
-  ezp-auth --> ezp-text-button
+  ezp-dialog --> ezp-text-button
   ezp-printer-selection --> ezp-text-button
+  ezp-status --> ezp-text-button
   style ezp-text-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

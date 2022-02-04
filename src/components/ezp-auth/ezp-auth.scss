@@ -1,74 +1,12 @@
 /**
  *
- * Modules
- *
- */
-
-@use './../../shared/global';
-
-/**
- *
  * Rules
  *
  */
 
 :host {
-  --color-theme-solid: var(--color-theme-cyan-solid);
+  --ezp-color-theme-solid: var(--ezp-color-cyan-solid);
+  --ezp-color-theme-translucent: var(--ezp-color-cyan-translucent);
 
-  align-content: center;
-  background: var(--color-overlay);
-  display: grid;
-  grid-template: auto / 280px;
-  height: 100%;
-  justify-content: center;
-  left: 0;
-  position: fixed;
-  top: 0;
-  width: 100%;
-
-  @include global.media-appearance('dark') {
-    --dialog-separator-position: inset 0 0 0 var(--hairline-width-positive);
-  }
-}
-
-#dialog {
-  background: var(--color-surface-tertiary);
-  border-radius: 6px;
-  box-shadow: var(--dialog-separator-position, 0 0 0 var(--hairline-width-positive))
-      var(--hairline-color),
-    0 var(--spacing-1) var(--spacing-2) 0 var(--color-shadow),
-    0 var(--spacing-2) var(--spacing-3) 0 var(--color-shadow),
-    0 var(--spacing-3) var(--spacing-4) 0 var(--color-shadow),
-    0 var(--spacing-4) var(--spacing-5) 0 var(--color-shadow),
-    0 var(--spacing-5) var(--spacing-6) 0 var(--color-shadow);
-}
-
-#header {
-  display: grid;
-  grid-template-columns: auto;
-  justify-content: end;
-  padding: var(--spacing-2);
-}
-
-#content {
-  color: var(--color-foreground-primary);
-  display: grid;
-  grid-row-gap: var(--spacing-4);
-  grid-template-rows: repeat(4, auto);
-  justify-content: center;
-  justify-items: center;
-  padding: 0 var(--spacing-4) var(--spacing-4);
-  text-align: center;
-}
-
-#icon {
-  color: var(--color-theme-solid);
-}
-
-#button {
-  min-width: 144px;
-}
-
-#logo {
-  fill: var(--color-theme-solid);
+  display: block;
 }

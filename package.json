@@ -30,6 +30,7 @@
     "format": "npm run stylelint && npm run prettier"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.8.0",
     "@stencil/core": "^2.11.0",
     "fetch-intercept": "^2.4.0",
     "i18next": "21.2.4",
@@ -46,6 +47,7 @@
     "dotenv": "^10.0.0",
     "prettier": "^2.4.1",
     "rollup": "2.58.0",
+    "rollup-plugin-node-polyfills": "^0.2.1",
     "stylelint": "^13.13.1",
     "stylelint-config-prettier": "^8.0.2",
     "stylelint-order": "^4.1.0",
@@ -55,7 +57,15 @@
     "printWidth": 100,
     "semi": false,
     "singleQuote": true,
-    "htmlWhitespaceSensitivity": "strict"
+    "htmlWhitespaceSensitivity": "strict",
+    "overrides": [
+      {
+        "files": "src/data/locales/*.json",
+        "options": {
+          "tabWidth": 4
+        }
+      }
+    ]
   },
   "stylelint": {
     "extends": [

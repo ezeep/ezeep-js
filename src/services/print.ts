@@ -2,6 +2,7 @@ import { createStore } from '@stencil/store'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
 import { /* PrinterProperties, */ PrinterConfig, PrinterProperties } from '../shared/types'
+import { AnonymousCredential, BlockBlobClient, newPipeline } from '@azure/storage-blob'
 export class EzpPrintService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
@@ -67,20 +68,12 @@ export class EzpPrintService {
     }).then((response) => response.json())
   }
 
-  getConfig(accessToken: string) {
+  async getConfig(accessToken: string) {
     return fetch(`https://${this.printingApi}/sfapi/GetConfiguration/`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken,
       },
-    }).then((response) => {
-      if (response.ok) {
-        authStore.state.isAuthorized = true
-      }
-      if (!response.ok) {
-        throw new Error('http status ' + response.status)
-      }
-      return response.json()
     })
   }
 
@@ -155,7 +148,58 @@ export class EzpPrintService {
         ...(printAndDelete && { printanddelete: printAndDelete }),
         properties,
       }),
+    }).then((response) => response.json())
+  }
+
+  prepareFileUpload(accessToken: string) {
+    return fetch(`https://${this.printingApi}/sfapi/PrepareUpload/`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+      },
+    }).then((response) => response.json())
+  }
+
+  uploadFile(sasURI: string, formData: FormData) {
+    return fetch(`${sasURI}`, {
+      method: 'PUT',
+      headers: {
+        'x-ms-blob-type': 'BlockBlob',
+        'Content-Type:': 'multipart/form-data', // try and not set it, see if it does it automatically
+      },
+      body: formData,
+    }).then((response) => response.json())
+  }
+
+  async uploadBlobFiles(sasUri: string, file: File) {
+    printStore.state.uploadProgress = 0
+    const pipeline = newPipeline(new AnonymousCredential(), {
+      retryOptions: { maxTries: 4 },
+      userAgentOptions: { userAgentPrefix: 'AdvancedSample V1.0.0' }, // Customized telemetry string
+      keepAliveOptions: {
+        // Keep alive is enabled by default, disable keep alive by setting false
+        enable: false,
+      },
     })
+
+    const client = new BlockBlobClient(sasUri, pipeline)
+    // upload
+    // for (let index = 0; index < files.length; index++) {
+    //   const file = files[index]
+
+    //   console.log(response._response.status)
+    // }
+    const response = await client.uploadData(file, {
+      blockSize: 4 * 1024 * 1024, //4mb blocksize
+      concurrency: 20,
+      onProgress: (e) => {
+        let progress = (100 * e.loadedBytes) / file.size
+        printStore.state.uploadProgress = progress
+      },
+      blobHTTPHeaders: { blobContentType: file.type },
+    })
+
+    return response
   }
 
   getPrintStatus = () => {
@@ -180,7 +224,9 @@ const printStore = createStore({
   fileUrl: '',
   fileType: '',
   printerID: '',
-  fileName: ''
+  fileName: '',
+  uploadProgress: 0,
+  supportedFileExtensions: '',
 })
 
 export default printStore

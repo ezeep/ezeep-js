@@ -5,8 +5,9 @@
  */
 
 :host {
-  animation: var(--host-animation-name, host-in) var(--duration-3) forwards var(--easing-out-quart);
-  background: var(--color-overlay);
+  animation: var(--ezp-backdrop-animation-name, host-in) var(--ezp-duration-3) forwards
+    var(--ezp-easing-out-quart);
+  background: var(--ezp-color-overlay-primary);
   border-radius: 6px;
   display: block;
   height: 100%;
@@ -19,7 +20,7 @@
 
   @at-root {
     #{&}(.hide) {
-      --host-animation-name: host-out;
+      --ezp-backdrop-animation-name: host-out;
     }
   }
 

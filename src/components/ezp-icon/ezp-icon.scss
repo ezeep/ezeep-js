@@ -6,29 +6,45 @@
 
 :host {
   align-content: center;
-  display: block;
+  background: var(--ezp-icon-background, transparent);
+  border-radius: var(--ezp-icon-borderRadius, 0);
   display: grid;
-  grid-template: var(--host-gridTemplate) / var(--host-gridTemplate);
-  height: var(--icon-height, var(--host-size));
+  grid-template: var(--ezp-icon-gridTemplate) / var(--ezp-icon-gridTemplate);
+  height: var(--ezp-icon-height, var(--ezp-icon-size));
   justify-content: center;
-  width: var(--icon-width, var(--host-size));
+  padding: var(--ezp-icon-padding, 0);
+  width: var(--ezp-icon-width, var(--ezp-icon-size));
 
   @at-root {
+    #{&}(.framed) {
+      --ezp-icon-background: var(--ezp-color-shade-primary);
+      --ezp-icon-borderRadius: 50%;
+      --ezp-icon-padding: var(--ezp-icon-frame);
+    }
+
     #{&}(.normal) {
-      --host-size: 18px;
-      --host-gridTemplate: 22px;
+      --ezp-icon-size: 18px;
+      --ezp-icon-gridTemplate: 24px;
+      --ezp-icon-frame: var(--ezp-spacing-3);
     }
 
     #{&}(.large) {
-      --host-size: 36px;
-      --host-gridTemplate: 44px;
+      --ezp-icon-size: 36px;
+      --ezp-icon-gridTemplate: 48px;
+      --ezp-icon-frame: var(--ezp-spacing-4);
+    }
+
+    #{&}(.huge) {
+      --ezp-icon-size: 54px;
+      --ezp-icon-gridTemplate: 72px;
+      --ezp-icon-frame: var(--ezp-spacing-5);
     }
   }
 }
 
 svg {
   display: block;
-  fill: currentColor;
+  fill: var(--ezp-icon-fill, currentColor);
   height: 100%;
   width: 100%;
 }

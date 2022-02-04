@@ -50,6 +50,9 @@ export class EzpSelect {
   /** Description... */
   @Prop() toggleFlow: SelectFlowTypes = 'horizontal'
 
+  /** Description... */
+  @Prop() disabled: boolean = false
+
   /**
    *
    * States
@@ -60,7 +63,7 @@ export class EzpSelect {
   @State() expanded: boolean = false
 
   /** Description... */
-  @State() selected: SelectOptionType = { id: 0, title: '', meta: '' }
+  @State() selected: SelectOptionType = { id: false, title: '', meta: '' }
 
   /**
    *
@@ -81,25 +84,25 @@ export class EzpSelect {
   watchExpanded() {
     if (this.expandCover) {
       this.component.style.setProperty(
-        '--list-height',
+        '--ezp-select-list-height',
         this.expanded ? `${this.containerHeight - this.toggleHeight}px` : '0px'
       )
       this.component.style.setProperty(
-        '--wrap-translate-y',
+        '--ezp-select-wrap-translateY',
         this.expanded ? `${this.wrapTop * -1 + this.spacing}px` : '0px'
       )
     } else if (this.expandRise) {
       this.component.style.setProperty(
-        '--list-height',
+        '--ezp-select-list-height',
         this.expanded ? `${this.listHeight}px` : '0px'
       )
       this.component.style.setProperty(
-        '--wrap-translate-y',
+        '--ezp-select-wrap-translateY',
         this.expanded ? `${this.wrapDiff + this.spacing}px` : '0px'
       )
     } else {
       this.component.style.setProperty(
-        '--list-height',
+        '--ezp-select-list-height',
         this.expanded ? `${this.listHeight}px` : '0px'
       )
     }
@@ -119,11 +122,18 @@ export class EzpSelect {
    */
 
   private toggle = () => {
+    this.containerHeight = this.container.clientHeight - this.spacing * 2
+    this.listHeight = this.list.scrollHeight
+    this.wrapTop = this.component.offsetTop
+    this.wrapHeight = this.toggleHeight + this.listHeight
+    this.expandCover = this.wrapHeight > this.containerHeight
+    this.expandRise = this.wrapHeight > this.containerHeight - this.wrapTop
+    this.wrapDiff = this.containerHeight - this.wrapHeight - this.wrapTop
     this.expanded = !this.expanded
     this.selectToggle.emit(this.expanded)
   }
 
-  private select = (id: number | string) => {
+  private select = (id: number | string | boolean) => {
     const delay = this.selected.id === id ? 0 : this.duration * 1000
 
     this.selected = this.options.find((option) => option.id === id)
@@ -131,6 +141,16 @@ export class EzpSelect {
     window.setTimeout(() => {
       this.toggle()
     }, delay)
+  }
+
+  private preSelect = () => {
+    this.selected = this.options.find((option) =>
+      typeof this.preSelected === 'number'
+        ? option.id === this.preSelected
+        : typeof this.preSelected === 'string'
+        ? option.title === this.preSelected
+        : null
+    )
   }
 
   /**
@@ -151,26 +171,21 @@ export class EzpSelect {
     })
 
     if (this.preSelected) {
-      this.selected = this.options.find((option) =>
-        typeof this.preSelected === 'number'
-          ? option.id === this.preSelected
-          : option.title === this.preSelected
-      )
+      this.preSelect()
     }
   }
 
   componentDidLoad() {
     const styles = getComputedStyle(this.component)
 
-    this.toggleHeight = parseInt(styles.getPropertyValue('--toggle-height'))
-    this.duration = parseFloat(styles.getPropertyValue('--duration'))
-    this.containerHeight = this.container.clientHeight - this.spacing * 2
-    this.listHeight = this.list.scrollHeight
-    this.wrapTop = this.component.offsetTop
-    this.wrapHeight = this.toggleHeight + this.listHeight
-    this.expandCover = this.wrapHeight > this.containerHeight
-    this.expandRise = this.wrapHeight > this.containerHeight - this.wrapTop
-    this.wrapDiff = this.containerHeight - this.wrapHeight - this.wrapTop
+    this.toggleHeight = parseInt(styles.getPropertyValue('--ezp-select-toggle-height'))
+    this.duration = parseFloat(styles.getPropertyValue('--ezp-select-duration'))
+  }
+
+  componentWillUpdate() {
+    if (!this.selected.id && this.preSelected) {
+      this.preSelect()
+    }
   }
 
   /**
@@ -185,13 +200,14 @@ export class EzpSelect {
       this.icon ? 'has-icon' : '',
       `toggle-${this.toggleFlow}`,
       this.optionFlow ? `option-${this.optionFlow}` : '',
+      this.disabled ? 'disabled' : '',
     ]
     const labelLevel = this.toggleFlow === 'horizontal' ? 'secondary' : 'tertiary'
 
     return (
       <Host class={hostClasses.join(' ')}>
         <div id="wrap">
-          <div id="toggle" onClick={() => this.toggle()}>
+          <div id="toggle" onClick={() => !this.disabled && this.toggle()}>
             {this.icon ? <ezp-icon id="icon" name={this.icon} /> : null}
             <ezp-label id="label" noWrap level={labelLevel} text={this.label} />
             <ezp-label

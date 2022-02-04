@@ -27,7 +27,6 @@ Use **script** tags in your html source:
 
 ```html
 <!-- use latest version -->
-
 <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
 <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
 
@@ -50,20 +49,21 @@ npm install @ezeep/ezeep-js
 
 There are multiple required and optional attributes the ezp-printing element needs in order to provide the print functionality.
 
-| Attribute       | Description                                                                                              | Type    | Required |
-| --------------- | -------------------------------------------------------------------------------------------------------- | ------- | -------- |
-| **clientid**    | Your registered Client-ID (see above).                                                                   | string  | Yes      |
-| **redirecturi** | Your registered Redirect Uri (see above).                                                                | string  | Yes      |
-| **fileurl**     | A url pointing to a file that should be printed. E.g. https://your-site.com/myfile.pdf                   | string  | Yes      |
-| custom          | Needs to be set to true, if a custom html element instead of the ezp-printing tag is used (e.g. button). | boolean | No       |
-| filename        | The name of the file that is printed.                                                                    | string  | No       |
-| filetype        | The type of the file that is printed.                                                                    | string  | No       |
-| hidelogin       | If set to true, no additional info popup is shown before the user authentication.                        | boolean | No       |
-| authapihosturl  | Overrides the default URL of the authentication API.                                                     | string  | No       |
-| printapihosturl | Overrides the default URL of the printing API.                                                           | string  | No       |
-| theme           | The overall color theme. Possible colors are pink, red, orange, green, cyan, blue and violet.            | string  | No       |
+| Attribute       | Description                                                                                                                                                                                                                                             | Type    | Required                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------- |
+| **clientid**    | Your registered Client-ID (see above).                                                                                                                                                                                                                  | string  | Yes                                                  |
+| **redirecturi** | Your registered Redirect Uri (see above).                                                                                                                                                                                                               | string  | Yes                                                  |
+| **trigger**     | _button_: renders a print button that opens the print dialog upon clicking it<br />_custom_: renders no element, but allows create a custom element or trigger to open the print dialog<br />_file_: renders a an area to allow drag and drop of a file | string  | Yes                                                  |
+| **fileurl**     | A url pointing to a file that should be printed. E.g. https://your-site.com/myfile.pdf                                                                                                                                                                  | string  | Required, if trigger is set to _button_ or _custom_. |
+| filename        | The name of the file that is printed.                                                                                                                                                                                                                   | string  | No. Only used for trigger _button_ and _custom_.     |
+| filetype        | The type of the file that is printed.                                                                                                                                                                                                                   | string  | No. Only used for trigger _button_ and _custom_.     |
+| hidelogin       | If set to true, no additional info popup is shown before the user authentication.                                                                                                                                                                       | boolean | No                                                   |
+| hidemenu      | If set to true, the menu is not shown.                                                                                                                                                                                                         | boolean | No                                                   |
+| authapihosturl  | Overrides the default URL of the authentication API.                                                                                                                                                                                                    | string  | No                                                   |
+| printapihosturl | Overrides the default URL of the printing API.                                                                                                                                                                                                          | string  | No                                                   |
+| theme           | The overall color theme. Possible colors are pink, red, orange, green, cyan, blue and violet.                                                                                                                                                           | string  | No                                                   |
 
-### Example
+### Example with button trigger
 
 To get started, you can use the default ezeep print button within your web app:
 
@@ -81,6 +81,7 @@ To get started, you can use the default ezeep print button within your web app:
     <ezp-printing
       clientid="your-client-id"
       redirecturi="https://your-site.com/"
+      trigger="button"
       fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       filename="dummypdf"
       filetype="pdf"
@@ -90,7 +91,7 @@ To get started, you can use the default ezeep print button within your web app:
 </html>
 ```
 
-### Example with a custom button
+### Example with custom trigger
 
 If you want to bind the printing process to a custom html element, you can use this example:
 
@@ -123,10 +124,10 @@ If you want to bind the printing process to a custom html element, you can use t
     <ezp-printing
       clientid="your-own-client-id"
       redirecturi="https://your-site.com/"
+      trigger="custom"
       filename="dummypdf"
       fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       filetype="pdf"
-      custom
     >
       <button class="customButton">My custom styled print button</button>
     </ezp-printing>
@@ -136,6 +137,41 @@ If you want to bind the printing process to a custom html element, you can use t
 
       button.onclick = async () => await ezpPrinting.open()
     </script>
+  </body>
+</html>
+```
+
+### Example with file trigger (Drag&Drop)
+
+```html
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/libs/js/esm/ezeep.js"></script>
+    <title>ezeep-js</title>
+    <style>
+      /*
+      you can set the width and height of the upload field, for example like this:
+      (if no width or height is set, it defaults to "auto")
+      */
+      :root {
+        --ezp-upload-width: calc(80vw);
+        --ezp-upload-height: calc(80vh);
+      }
+    </style>
+  </head>
+  <body>
+    <ezp-printing
+      clientid="oWuvEAndErO3kKCqzaWBOAs2PhOuAbD7MZYWQ9yJ"
+      redirecturi="https://develop.dev.azdev.ezeep.com:3333"
+      trigger="file"
+      theme="blue"
+      appearance="system"
+    >
+    </ezp-printing>
   </body>
 </html>
 ```

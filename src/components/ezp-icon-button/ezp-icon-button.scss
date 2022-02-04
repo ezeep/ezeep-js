@@ -9,37 +9,37 @@
 
   @at-root {
     #{&}(.primary) {
-      --button-background-disabled: var(--color-shade-primary);
-      --button-background-init: var(--color-theme-solid);
-      --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-on-theme);
-      --button-opacity-active: 0.74;
-      --button-opacity-hover: 0.84;
+      --ezp-iconButton-background-disabled: var(--ezp-color-shade-primary);
+      --ezp-iconButton-background-init: var(--ezp-color-theme-solid);
+      --ezp-iconButton-color-disabled: var(--ezp-color-foreground-tertiary);
+      --ezp-iconButton-color-init: var(--ezp-color-on-theme);
+      --ezp-iconButton-opacity-active: 0.74;
+      --ezp-iconButton-opacity-hover: 0.84;
     }
 
     #{&}(.secondary) {
-      --button-background-active: var(--color-shade-tertiary);
-      --button-background-disabled: var(--color-shade-primary);
-      --button-background-hover: var(--color-shade-secondary);
-      --button-background-init: var(--color-shade-primary);
-      --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-theme-solid);
+      --ezp-iconButton-background-active: var(--ezp-color-shade-tertiary);
+      --ezp-iconButton-background-disabled: var(--ezp-color-shade-primary);
+      --ezp-iconButton-background-hover: var(--ezp-color-shade-secondary);
+      --ezp-iconButton-background-init: var(--ezp-color-shade-primary);
+      --ezp-iconButton-color-disabled: var(--ezp-color-foreground-tertiary);
+      --ezp-iconButton-color-init: var(--ezp-color-theme-solid);
     }
 
     #{&}(.tertiary) {
-      --button-background-active: var(--color-shade-secondary);
-      --button-background-hover: var(--color-shade-primary);
-      --button-background-init: transparent;
-      --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-theme-solid);
+      --ezp-iconButton-background-active: var(--ezp-color-shade-secondary);
+      --ezp-iconButton-background-hover: var(--ezp-color-shade-primary);
+      --ezp-iconButton-background-init: transparent;
+      --ezp-iconButton-color-disabled: var(--ezp-color-foreground-tertiary);
+      --ezp-iconButton-color-init: var(--ezp-color-theme-solid);
     }
 
     #{&}(.quaternary) {
-      --button-background-init: transparent;
-      --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-theme-solid);
-      --button-opacity-active: 0.58;
-      --button-opacity-hover: 0.74;
+      --ezp-iconButton-background-init: transparent;
+      --ezp-iconButton-color-disabled: var(--ezp-color-foreground-tertiary);
+      --ezp-iconButton-color-init: var(--ezp-color-theme-solid);
+      --ezp-iconButton-opacity-active: 0.58;
+      --ezp-iconButton-opacity-hover: 0.74;
     }
   }
 }
@@ -47,36 +47,45 @@
 #button {
   align-items: center;
   appearance: none;
-  background: var(--button-background, var(--button-background-init));
+  background: var(--ezp-iconButton-background, var(--ezp-iconButton-background-init));
   border: 0;
   border-radius: 3px;
   box-shadow: none;
-  color: var(--button-color, var(--button-color-init));
-  cursor: var(--button-cursor, pointer);
+  color: var(--ezp-iconButton-color, var(--ezp-iconButton-color-init));
+  cursor: var(--ezp-iconButton-cursor, pointer);
   display: flex;
   justify-content: center;
   margin: 0;
-  opacity: var(--button-opacity, 1);
+  opacity: var(--ezp-iconButton-opacity, 1);
   outline: none;
-  padding: var(--spacing-2);
+  padding: var(--ezp-spacing-2);
 
   &:not(:disabled) {
     @media (hover: hover) {
       &:hover {
-        --button-background: var(--button-background-hover, var(--button-background-init));
-        --button-opacity: var(--button-opacity-hover, 1);
+        --ezp-iconButton-background: var(
+          --ezp-iconButton-background-hover,
+          var(--ezp-iconButton-background-init)
+        );
+        --ezp-iconButton-opacity: var(--ezp-iconButton-opacity-hover, 1);
       }
 
       &:active {
-        --button-background: var(--button-background-active, var(--button-background-init));
-        --button-opacity: var(--button-opacity-active, 1);
+        --ezp-iconButton-background: var(
+          --ezp-iconButton-background-active,
+          var(--ezp-iconButton-background-init)
+        );
+        --ezp-iconButton-opacity: var(--ezp-iconButton-opacity-active, 1);
       }
     }
   }
 
   &:disabled {
-    --button-background: var(--button-background-disabled, var(--button-background-init));
-    --button-color: var(--button-color-disabled);
-    --button-cursor: not-allowed;
+    --ezp-iconButton-background: var(
+      --ezp-iconButton-background-disabled,
+      var(--ezp-iconButton-background-init)
+    );
+    --ezp-iconButton-color: var(--ezp-iconButton-color-disabled);
+    --ezp-iconButton-cursor: default;
   }
 }

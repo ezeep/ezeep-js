@@ -1,32 +1,63 @@
 {
-  "login_page": {
-    "get_started": "Drucken mit ezeep Blue",
-    "login": "Anmelden",
-    "description": "Melde dich mit deinem ezeep Blue-Konto an, um zu drucken."
-  },
-  "printer_selection": {
-    "loading": "Lade Drucker…",
-    "print": "Drucken",
-    "printer": "Drucker",
-    "print_in_progress": "Drucke…",
-    "color": "Farbe",
-    "orientation": "Ausrichtung",
-    "size": "Papierformat",
-    "duplex": "Duplex",
-    "quality": "Qualität",
-    "select_printer": "Wähle einen Drucker",
-    "select_color": "Wähle eine Farbe",
-    "select_size": "Wähle ein Papierformat",
-    "select_orientation": "Wähle eine Ausrichtung",
-    "color_color": "Farbe",
-    "color_grayscale": "Graustufen",
-    "orientation_portrait": "Hochformat",
-    "orientation_landscape": "Querformat",
-    "unknown_location": "Unbekannter Standort"
-  },
-  "button_actions": {
-    "login": "Anmelden",
-    "print": "Drucken",
-    "cancel": "Abbrechen"
-  }
+    "login_dialog": {
+        "heading": "Drucke mit ezeep Blue",
+        "description": "Melde dich mit deinem ezeep Blue-Konto an, um zu drucken.",
+        "action": "Anmelden"
+    },
+    "no_document_dialog": {
+        "heading": "Keine Datei ausgewählt",
+        "description": "Wähle zunächst eine Datei zum Drucken aus.",
+        "action": "OK"
+    },
+    "printer_selection": {
+        "loading": "Lade meine Drucker…",
+        "print": "Drucken",
+        "printer": "Drucker",
+        "print_processing": "Drucken…",
+        "print_success": "Erfolgreich gedruckt.",
+        "print_failed": "Druck fehlgeschlagen",
+        "not_supported": "Der ausgewählte Dateityp wird nicht unterstützt.",
+        "color": "Farbe",
+        "orientation": "Ausrichtung",
+        "size": "Papierformat",
+        "duplex": "Beidseitig",
+        "quality": "Druckqualität",
+        "select_printer": "Wähle einen Drucker",
+        "select_color": "Wähle Farbe/Graustufen",
+        "select_size": "Wähle Papierformat",
+        "select_orientation": "Wähle Ausrichtung",
+        "select_quality": "Wähle Druckqualität",
+        "select_duplex": "Wähle Beidseitig",
+        "color_color": "Farbe",
+        "color_grayscale": "Graustufen",
+        "orientation_portrait": "Hochformat",
+        "orientation_landscape": "Querformat",
+        "unknown_location": "Unbekannter Standort",
+        "no_printers": "Keine Drucker gefunden.",
+        "prepare_upload": "Vorbereiten…",
+        "uploading": "Hochladen…"
+    },
+    "button_actions": {
+        "login": "Anmelden",
+        "print": "Drucken",
+        "cancel": "Abbrechen",
+        "close": "Schließen",
+        "retry": "Wiederholen"
+    },
+    "upload": {
+        "description": "Ziehe eine Datei hier in den Browser ",
+        "meta_leading": "oder",
+        "meta_select": "wähle eine Datei aus",
+        "meta_trailing": "um mit ezeep Blue zu drucken."
+    },
+    "user_menu": {
+        "theme": "Farbschema",
+        "appearance": "Erscheinungsbild",
+        "system": "System",
+        "light": "Hell",
+        "dark": "Dunkel",
+        "account": "Account verwalten",
+        "help": "Hilfe & Support",
+        "logout": "Ausloggen"
+    }
 }
