@@ -49,5 +49,15 @@
         "meta_leading": "or",
         "meta_select": "select a file",
         "meta_trailing": "to print with ezeep Blue."
+    },
+    "user_menu": {
+        "theme": "Color theme",
+        "appearance": "Appearance",
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark",
+        "account": "Manage account",
+        "help": "Help & support",
+        "logout": "Logout"
     }
 }

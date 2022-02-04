@@ -57,7 +57,15 @@
     "printWidth": 100,
     "semi": false,
     "singleQuote": true,
-    "htmlWhitespaceSensitivity": "strict"
+    "htmlWhitespaceSensitivity": "strict",
+    "overrides": [
+      {
+        "files": "src/data/locales/*.json",
+        "options": {
+          "tabWidth": 4
+        }
+      }
+    ]
   },
   "stylelint": {
     "extends": [

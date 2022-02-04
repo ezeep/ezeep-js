@@ -49,5 +49,15 @@
         "meta_leading": "oder",
         "meta_select": "wähle eine Datei aus",
         "meta_trailing": "um mit ezeep Blue zu drucken."
+    },
+    "user_menu": {
+        "theme": "Farbschema",
+        "appearance": "Erscheinungsbild",
+        "system": "System",
+        "light": "Hell",
+        "dark": "Dunkel",
+        "account": "Account verwalten",
+        "help": "Hilfe & Support",
+        "logout": "Ausloggen"
     }
 }
