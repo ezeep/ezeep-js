@@ -27,8 +27,6 @@
   @include global.duration-declaration;
   @include global.spacing-declaration;
   @include global.easing-declaration;
-  @include global.hairline-width-declaration;
-  @include global.hairline-color-declaration;
   @include global.color-declaration('light');
   @include global.color-declaration('dark');
 
@@ -36,28 +34,52 @@
     &,
     #{&}(.light) {
       @each $name in global.getColorNames() {
-        --color-#{$name}: var(--color-#{$name}-light);
+        --ezp-color-#{$name}: var(--ezp-color-#{$name}-light);
       }
     }
 
     #{&}(.dark) {
       @each $name in global.getColorNames() {
-        --color-#{$name}: var(--color-#{$name}-dark);
+        --ezp-color-#{$name}: var(--ezp-color-#{$name}-dark);
+
+        --ezp-userMenu-boxShadowPosition: inset 0 0 0 1px;
+        --ezp-userMenu-header-boxShadowPosition: inset 0 -1px 0 0;
+        --ezp-userMenu-theme-boxShadowPosition: inset 0 -1px 0 0;
+        --ezp-userMenu-links-boxShadowPosition: inset 0 -1px 0 0;
+
+        --ezp-printerSelection-body-boxShadow: inset 1px 0 0 0 var(--ezp-color-outline),
+          inset -1px 0 0 0 var(--ezp-color-outline);
+        --ezp-printerSelection-footer-boxShadowPosition: inset 0 0 0 1px;
+        --ezp-printerSelection-header-boxShadowPosition: inset 0 0 0 1px;
+
+        --ezp-stepper-boxShadowPosition: inset 0 0 0 1px;
       }
     }
   }
 
   @media (prefers-color-scheme: dark) {
     @each $name in global.getColorNames() {
-      --color-#{$name}: var(--color-#{$name}-dark);
+      --ezp-color-#{$name}: var(--ezp-color-#{$name}-dark);
+
+      --ezp-userMenu-boxShadowPosition: inset 0 0 0 1px;
+      --ezp-userMenu-header-boxShadowPosition: inset 0 -1px 0 0;
+      --ezp-userMenu-theme-boxShadowPosition: inset 0 -1px 0 0;
+      --ezp-userMenu-links-boxShadowPosition: inset 0 -1px 0 0;
+
+      --ezp-printerSelection-body-boxShadow: inset 1px 0 0 0 var(--ezp-color-outline),
+        inset -1px 0 0 0 var(--ezp-color-outline);
+      --ezp-printerSelection-footer-boxShadowPosition: inset 0 0 0 1px;
+      --ezp-printerSelection-header-boxShadowPosition: inset 0 0 0 1px;
+
+      --ezp-stepper-boxShadowPosition: inset 0 0 0 1px;
     }
   }
 
   @at-root {
     @each $theme in global.$themes {
       #{&}(.#{$theme}) {
-        --color-theme-solid: var(--color-theme-#{$theme}-solid);
-        --color-theme-translucent: var(--color-theme-#{$theme}-translucent);
+        --ezp-color-theme-solid: var(--ezp-color-theme-#{$theme}-solid);
+        --ezp-color-theme-translucent: var(--ezp-color-theme-#{$theme}-translucent);
       }
     }
   }

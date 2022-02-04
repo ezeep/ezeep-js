@@ -10,14 +10,14 @@
   border-radius: var(--host-borderRadius, 0);
   display: grid;
   grid-template: var(--host-gridTemplate) / var(--host-gridTemplate);
-  height: var(--icon-height, var(--host-size));
+  height: var(--ezp-icon-height, var(--host-size));
   justify-content: center;
   padding: var(--host-padding, 0);
-  width: var(--icon-width, var(--host-size));
+  width: var(--ezp-icon-width, var(--host-size));
 
   @at-root {
     #{&}(.framed) {
-      --host-background: var(--color-shade-primary);
+      --host-background: var(--ezp-color-shade-primary);
       --host-borderRadius: 50%;
       --host-padding: var(--host-frame);
     }
@@ -25,26 +25,26 @@
     #{&}(.normal) {
       --host-size: 18px;
       --host-gridTemplate: 24px;
-      --host-frame: var(--spacing-3);
+      --host-frame: var(--ezp-spacing-3);
     }
 
     #{&}(.large) {
       --host-size: 36px;
       --host-gridTemplate: 48px;
-      --host-frame: var(--spacing-4);
+      --host-frame: var(--ezp-spacing-4);
     }
 
     #{&}(.huge) {
       --host-size: 54px;
       --host-gridTemplate: 72px;
-      --host-frame: var(--spacing-5);
+      --host-frame: var(--ezp-spacing-5);
     }
   }
 }
 
 svg {
   display: block;
-  fill: var(--icon-fill, currentColor);
+  fill: var(--ezp-icon-fill, currentColor);
   height: 100%;
   width: 100%;
 }

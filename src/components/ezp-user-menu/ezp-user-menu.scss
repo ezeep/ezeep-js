@@ -13,201 +13,204 @@
  */
 
 :host {
-  background: var(--color-surface-tertiary);
+  background: var(--ezp-color-surface-tertiary);
   border-radius: 6px;
-  box-shadow: var(--host-separator-position, 0 0 0 var(--hairline-width-positive))
-    var(--hairline-color);
+  box-shadow: var(--ezp-userMenu-boxShadowPosition, 0 0 0 1px) var(--ezp-color-outline);
   display: block;
-  // left: var(--spacing-7);
-  opacity: var(--host-opacity, 0);
+  opacity: var(--ezp-userMenu-opacity, 0);
   position: absolute;
   right: 0;
   top: 0;
-  transform: scale(var(--host-scale, 0.94, 0.94));
+  transform: scale(var(--ezp-userMenu-scale, 0.94, 0.94));
   transform-origin: right top;
   transition: var(
-    --host-transition,
-    opacity var(--duration-3) var(--easing-out-quart),
-    transform var(--duration-3) var(--easing-out-quart),
-    visibility 0s var(--duration-3)
+    --ezp-userMenu-transition,
+    opacity var(--ezp-duration-3) var(--ezp-easing-out-quart),
+    transform var(--ezp-duration-3) var(--ezp-easing-out-quart),
+    visibility 0s var(--ezp-duration-3)
   );
-  visibility: var(--host-visibility, hidden);
+  visibility: var(--ezp-userMenu-visibility, hidden);
   z-index: 5;
 
   @at-root {
     #{&}(.is-open) {
-      --host-opacity: 1;
-      --host-scale: 1, 1;
-      --host-transition: opacity var(--duration-3) var(--easing-out-quart),
-        transform var(--duration-3) var(--easing-out-quart), visibility 0s 0s;
-      --host-visibility: visible;
+      --ezp-userMenu-opacity: 1;
+      --ezp-userMenu-scale: 1, 1;
+      --ezp-userMenu-transition: opacity var(--ezp-duration-3) var(--ezp-easing-out-quart),
+        transform var(--ezp-duration-3) var(--ezp-easing-out-quart), visibility 0s 0s;
+      --ezp-userMenu-visibility: visible;
     }
   }
 
   @include global.media-appearance('dark') {
-    --host-separator-position: inset 0 0 0 var(--hairline-width-positive);
+    --ezp-userMenu-separator-position: inset 0 0 0 var(--hairline-width-positive);
   }
 }
 
 #header {
   align-items: center;
-  box-shadow: 0 var(--hairline-width-positive) 0 0 var(--hairline-color);
+  box-shadow: var(--ezp-userMenu-header-boxShadowPosition, 0 1px 0 0) var(--ezp-color-outline);
   box-shadow: 0;
   display: grid;
   grid-template: auto / 1fr auto;
-  padding: var(--spacing-4) var(--spacing-3) var(--spacing-4) var(--spacing-4);
+  padding: var(--ezp-spacing-4) var(--ezp-spacing-3) var(--ezp-spacing-4) var(--ezp-spacing-4);
 }
 
 #name {
-  color: var(--color-foreground-primary);
+  color: var(--ezp-color-foreground-primary);
 }
 
 #close {
-  margin: calc(var(--spacing-3) * -1) 0;
+  margin: calc(var(--ezp-spacing-3) * -1) 0;
 }
 
 #links {
+  box-shadow: var(--ezp-userMenu-links-boxShadowPosition, 0 1px 0 0) var(--ezp-color-outline);
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-2);
+  padding: var(--ezp-spacing-2);
 }
 
 .link {
   align-items: center;
-  background: var(--link-background, transparent);
+  background: var(--ezp-userMenu-link-background, transparent);
   border-radius: 3px;
-  color: var(--color-foreground-primary);
+  color: var(--ezp-color-foreground-primary);
   cursor: pointer;
   display: grid;
-  gap: var(--spacing-3);
+  gap: var(--ezp-spacing-3);
   grid-template: auto / auto 1fr;
-  padding: var(--spacing-3);
+  padding: var(--ezp-spacing-3);
   text-decoration: none;
 
   &:hover {
-    --link-background: var(--color-shade-primary);
+    --ezp-userMenu-link-background: var(--ezp-color-shade-primary);
   }
 
   &__icon {
-    color: var(--color-theme-solid);
-    margin: calc(var(--spacing-2) * -1) 0;
+    color: var(--ezp-color-theme-solid);
+    margin: calc(var(--ezp-spacing-2) * -1) 0;
   }
 }
 
+.caption {
+  color: var(--ezp-color-foreground-primary);
+}
+
 #theme {
-  box-shadow: inset 0 var(--hairline-width-positive) 0 0 var(--hairline-color);
+  box-shadow: var(--ezp-userMenu-theme-boxShadowPosition, 0 1px 0 0) var(--ezp-color-outline);
   display: grid;
-  gap: var(--spacing-3);
+  gap: var(--ezp-spacing-3);
   grid-template: repeat(2, auto) / 1fr;
-  padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
+  padding: var(--ezp-spacing-4) var(--ezp-spacing-4) var(--ezp-spacing-3);
 }
 
 #swatches {
   display: flex;
-  margin: 0 calc(var(--spacing-2) * -1);
+  margin: 0 calc(var(--ezp-spacing-2) * -1);
 }
 
 .swatch {
   align-items: center;
   appearance: none;
-  background: var(--swatch-background, transparent);
+  background: var(--ezp-userMenu-swatch-background, transparent);
   border: 0;
   border-radius: 50%;
-  color: var(--swatch-color);
-  cursor: var(--swatch-cursor, pointer);
+  color: var(--ezp-userMenu-swatch-color);
+  cursor: var(--ezp-userMenu-swatch-cursor, pointer);
   display: flex;
   justify-content: center;
   margin: 0;
-  opacity: var(--swatch-opacity, 1);
+  opacity: var(--ezp-userMenu-swatch-opacity, 1);
   outline: none;
-  padding: var(--spacing-2);
+  padding: var(--ezp-spacing-2);
 
   &:not(.selected) {
     @media (hover: hover) {
       &:hover {
-        --swatch-background: var(--swatch-theme-translucent);
+        --ezp-userMenu-swatch-background: var(--ezp-userMenu-swatch-theme-translucent);
       }
 
       &:active {
-        --swatch-opacity: 0.74;
+        --ezp-userMenu-swatch-opacity: 0.74;
       }
     }
   }
 
   &.selected {
-    --dot-boxShadowSize: 10px;
-    --swatch-background: var(--swatch-theme-translucent);
-    --swatch-cursor: normal;
+    --ezp-userMenu-dot-boxShadowSize: 10px;
+    --ezp-userMenu-swatch-background: var(--ezp-userMenu-swatch-theme-translucent);
+    --ezp-userMenu-swatch-cursor: normal;
 
     > .dot {
-      animation: dot-bounce var(--duration-2) ease-in-out;
+      animation: dot-bounce var(--ezp-duration-2) ease-in-out;
     }
   }
 
   @each $theme in global.$themes {
     &--#{$theme} {
-      --swatch-theme-solid: var(--color-theme-#{$theme}-solid);
-      --swatch-theme-translucent: var(--color-theme-#{$theme}-translucent);
+      --ezp-userMenu-swatch-theme-solid: var(--ezp-color-theme-#{$theme}-solid);
+      --ezp-userMenu-swatch-theme-translucent: var(--ezp-color-theme-#{$theme}-translucent);
     }
   }
 }
 
 .dot {
-  background: var(--dot-background, transparent);
+  background: var(--ezp-userMenu-dot-background, transparent);
   border-radius: 50%;
-  box-shadow: inset 0 0 0 var(--dot-boxShadowSize, 4px) var(--swatch-theme-solid);
+  box-shadow: inset 0 0 0 var(--ezp-userMenu-dot-boxShadowSize, 4px)
+    var(--ezp-userMenu-swatch-theme-solid);
   height: 18px;
-  transition: box-shadow var(--duration-2);
+  transition: box-shadow var(--ezp-duration-2);
   width: 18px;
 }
 
 #appearance {
-  box-shadow: inset 0 var(--hairline-width-positive) 0 0 var(--hairline-color);
   display: grid;
-  gap: var(--spacing-3);
+  gap: var(--ezp-spacing-3);
   grid-template: repeat(2, auto) / 1fr;
-  padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
+  padding: var(--ezp-spacing-4) var(--ezp-spacing-4) var(--ezp-spacing-3);
 }
 
 #tabs {
   display: grid;
   grid-template: auto / repeat(3, 1fr);
-  margin: 0 calc(var(--spacing-2) * -1);
+  margin: 0 calc(var(--ezp-spacing-2) * -1);
 }
 
 .tab {
-  --icon-height: 8px;
+  --ezp-icon-height: 8px;
 
   align-items: center;
   appearance: none;
-  background: var(--tab-background, transparent);
+  background: var(--ezp-userMenu-tab-background, transparent);
   border: 0;
   border-radius: 14px;
-  color: var(--tab-color, var(--color-foreground-secondary));
-  cursor: var(--tab-cursor, pointer);
+  color: var(--ezp-userMenu-tab-color, var(--ezp-color-foreground-secondary));
+  cursor: var(--ezp-userMenu-tab-cursor, pointer);
   display: flex;
-  gap: var(--spacing-2);
+  gap: var(--ezp-spacing-2);
   justify-content: center;
   margin: 0;
   outline: none;
-  padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) var(--spacing-2);
+  padding: var(--ezp-spacing-3) var(--ezp-spacing-3) var(--ezp-spacing-3) var(--ezp-spacing-2);
 
   &:not(.selected) {
     @media (hover: hover) {
       &:hover {
-        --tab-background: var(--color-shade-primary);
+        --ezp-userMenu-tab-background: var(--ezp-color-shade-primary);
       }
 
       &:active {
-        --tab-background: var(--color-shade-secondary);
+        --ezp-userMenu-tab-background: var(--ezp-color-shade-secondary);
       }
     }
   }
 
   &.selected {
-    --tab-background: var(--color-theme-translucent);
-    --tab-color: var(--color-theme-solid);
-    --tab-cursor: normal;
+    --ezp-userMenu-tab-background: var(--ezp-color-theme-translucent);
+    --ezp-userMenu-tab-color: var(--ezp-color-theme-solid);
+    --ezp-userMenu-tab-cursor: normal;
   }
 }
 

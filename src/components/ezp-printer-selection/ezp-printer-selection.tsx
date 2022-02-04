@@ -454,7 +454,7 @@ export class EzpPrinterSelection {
       />
     ) : (
       <Host>
-        <div id="container" data-backdrop-surface>
+        <div id="box" data-backdrop-surface>
           {this.printProcessing ? (
             <ezp-status
               processing
@@ -506,7 +506,7 @@ export class EzpPrinterSelection {
               onClick={this.handleUserMenu}
             />
           </div>
-          <div id="content">
+          <div id="body">
             <div id="printer">
               <ezp-select
                 label={i18next.t('printer_selection.printer')}

@@ -6,41 +6,42 @@
 
 :host {
   align-content: center;
-  background: var(--host-background, transparent);
-  border: 1px dashed var(--host-border-color, var(--color-foreground-tertiary));
+  background: var(--ezp-upload-background, transparent);
+  border: 1px dashed var(--ezp-upload-border-color, var(--ezp-color-foreground-tertiary));
   border-radius: 3px;
+  color: var(--ezp-color-foreground-primary);
   display: grid;
   grid-template: auto / minmax(auto, 280px);
   height: var(--ezp-upload-height, auto);
   justify-content: center;
-  padding: var(--spacing-3);
+  padding: var(--ezp-spacing-3);
   position: relative;
-  transition: background-color var(--duration-3) var(--easing-out-quart),
-    border-color var(--duration-3) var(--easing-out-quart);
+  transition: background-color var(--ezp-duration-3) var(--ezp-easing-out-quart),
+    border-color var(--ezp-duration-3) var(--ezp-easing-out-quart);
   width: var(--ezp-upload-width, auto);
 
   @at-root {
     #{&}(.dragging) {
-      --host-background: var(--color-theme-translucent);
-      --host-border-color: var(--color-theme-translucent);
-      --header-blur: 16px;
-      --header-opacity: 0.42;
+      --ezp-upload-background: var(--ezp-color-theme-translucent);
+      --ezp-upload-border-color: var(--ezp-color-theme-translucent);
+      --ezp-upload-header-blur: 16px;
+      --ezp-upload-header-opacity: 0.42;
     }
   }
 }
 
 #header {
-  --icon-fill: var(--color-theme-solid);
+  --ezp-icon-fill: var(--ezp-color-theme-solid);
 
   align-items: center;
   display: flex;
-  filter: blur(var(--header-blur, 0));
+  filter: blur(var(--ezp-upload-header-blur, 0));
   flex-direction: column;
-  gap: var(--spacing-5);
-  opacity: var(--header-opacity, 1);
+  gap: var(--ezp-spacing-5);
+  opacity: var(--ezp-upload-header-opacity, 1);
   text-align: center;
-  transition: filter var(--duration-3) var(--easing-out-quart),
-    opacity var(--duration-3) var(--easing-out-quart);
+  transition: filter var(--ezp-duration-3) var(--ezp-easing-out-quart),
+    opacity var(--ezp-duration-3) var(--ezp-easing-out-quart);
 }
 
 #meta {
@@ -49,14 +50,14 @@
 }
 
 #select {
-  color: var(--color-theme-solid);
+  color: var(--ezp-color-theme-solid);
   cursor: pointer;
-  opacity: var(--select-opacity, 1);
+  opacity: var(--ezp-upload-select-opacity, 1);
   text-decoration: underline;
 
   @media (hover: hover) {
     &:hover {
-      --select-opacity: 0.58;
+      --ezp-upload-select-opacity: 0.58;
     }
   }
 }

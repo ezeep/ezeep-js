@@ -47,9 +47,8 @@ $colors: (
     'foreground-secondary': rgba(62 62 62 / 68%),
     'foreground-tertiary': rgba(62 62 62 / 42%),
     'outline': rgba(99 99 99 / 16%),
-    'outline-primary': rgb(226 226 226),
-    'outline-secondary': rgb(209 209 209),
-    'overlay': rgba(0 0 0 / 26%),
+    'overlay-primary': rgba(0 0 0 / 26%),
+    'overlay-secondary': rgba(0 0 0 / 16%),
     'shadow': rgba(0 0 0 / 6%),
   ),
   'dark': (
@@ -78,9 +77,8 @@ $colors: (
     'foreground-secondary': rgba(182 182 182 / 68%),
     'foreground-tertiary': rgba(182 182 182 / 42%),
     'outline': rgb(139 139 139 / 26%),
-    'outline-primary': rgb(62 62 62),
-    'outline-secondary': rgb(75 75 75),
-    'overlay': rgba(0 0 0 / 68%),
+    'overlay-primary': rgba(0 0 0 / 68%),
+    'overlay-secondary': rgba(0 0 0 / 42%),
     'shadow': rgba(0 0 0 / 10%),
   ),
 );
@@ -166,47 +164,30 @@ $themes: ('blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet');
 
 @mixin color-declaration($appearance) {
   @each $name, $value in map.get($colors, $appearance) {
-    --color-#{$name}-#{$appearance}: #{$value};
+    --ezp-color-#{$name}-#{$appearance}: #{$value};
   }
 
   @supports (color: color(display-p3 1 1 1)) {
     @each $name, $value in map.get($colors, $appearance) {
-      --color-#{$name}-#{$appearance}: #{get-color-display-p3($value)};
+      --ezp-color-#{$name}-#{$appearance}: #{get-color-display-p3($value)};
     }
   }
 }
 
 @mixin duration-declaration() {
   @each $duration in $durations {
-    --duration-#{list.index($durations, $duration)}: #{$duration};
-  }
-}
-
-@mixin hairline-width-declaration() {
-  @each $ratio in $ratios {
-    @include media-density($ratio) {
-      --hairline-width-positive: calc(1px / #{$ratio});
-      --hairline-width-negative: calc(-1px / #{$ratio});
-    }
-  }
-}
-
-@mixin hairline-color-declaration() {
-  --hairline-color: var(--color-outline-primary);
-
-  @include media-density(2) {
-    --hairline-color: var(--color-outline-secondary);
+    --ezp-duration-#{list.index($durations, $duration)}: #{$duration};
   }
 }
 
 @mixin spacing-declaration() {
   @each $spacing in $spacings {
-    --spacing-#{list.index($spacings, $spacing)}: #{$spacing};
+    --ezp-spacing-#{list.index($spacings, $spacing)}: #{$spacing};
   }
 }
 
 @mixin easing-declaration() {
   @each $easing in $easings {
-    --easing-#{list.nth($easing, 1)}: #{list.nth($easing, 2)};
+    --ezp-easing-#{list.nth($easing, 1)}: #{list.nth($easing, 2)};
   }
 }

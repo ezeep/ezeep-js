@@ -14,30 +14,30 @@
 
 :host {
   align-items: center;
-  background: var(--color-surface-tertiary);
+  background: var(--ezp-color-surface-tertiary);
   border-radius: 3px;
-  box-shadow: 0 0 0 var(--hairline-width-positive) var(--hairline-color);
+  box-shadow: var(--ezp-stepper-boxShadowPosition, 0 0 0 1px) var(--ezp-color-outline);
   display: grid;
-  gap: var(--spacing-3);
-  grid-template: var(--host-gridTemplate, auto / auto 1fr auto);
-  padding: 0 var(--spacing-2) 0 var(--spacing-3);
+  gap: var(--ezp-spacing-3);
+  grid-template: var(--ezp-stepper-gridTemplate, auto / auto 1fr auto);
+  padding: 0 var(--ezp-spacing-2) 0 var(--ezp-spacing-3);
   position: relative;
   z-index: 0;
 
   @at-root {
     #{&}(.focused) {
-      --icon-color: var(--color-theme-solid);
-      --label-color: var(--color-theme-solid);
+      --ezp-stepper-icon-color: var(--ezp-color-theme-solid);
+      --ezp-stepper-label-color: var(--ezp-color-theme-solid);
     }
 
     #{&}(.has-icon) {
-      --host-gridTemplate: auto / repeat(2, auto) 1fr auto;
+      --ezp-stepper-gridTemplate: auto / repeat(2, auto) 1fr auto;
     }
   }
 }
 
 #toggle {
-  background: var(--toggle-background, transparent);
+  background: var(--ezp-stepper-toggle-background, transparent);
   border-radius: 3px;
   cursor: pointer;
   height: 100%;
@@ -49,18 +49,18 @@
 
   @media (hover: hover) {
     &:hover {
-      --toggle-background: var(--color-shade-primary);
+      --ezp-stepper-toggle-background: var(--ezp-color-shade-primary);
     }
   }
 }
 
 #icon {
-  color: var(--icon-color, var(--color-foreground-secondary));
+  color: var(--ezp-stepper-icon-color, var(--ezp-color-foreground-secondary));
   pointer-events: none;
 }
 
 #label {
-  color: var(--label-color, var(--color-foreground-secondary));
+  color: var(--ezp-stepper-label-color, var(--ezp-color-foreground-secondary));
   pointer-events: none;
 }
 
@@ -81,7 +81,7 @@
   border-radius: 3px;
   box-shadow: none;
   box-sizing: border-box;
-  color: var(--color-foreground-primary);
+  color: var(--ezp-color-foreground-primary);
   cursor: inherit;
   font-family: inherit;
   font-feature-settings: 'tnum';
@@ -110,32 +110,32 @@
 .button {
   align-items: center;
   appearance: none;
-  background: var(--button-background, transparent);
+  background: var(--ezp-stepper-button-background, transparent);
   border: 0;
   border-radius: 50%;
   box-shadow: none;
-  color: var(--button-color, var(--color-theme-solid));
-  cursor: var(--button-cursor, pointer);
+  color: var(--ezp-stepper-button-color, var(--ezp-color-theme-solid));
+  cursor: var(--ezp-stepper-button-cursor, pointer);
   display: flex;
   justify-content: center;
   margin: 0;
   outline: none;
-  padding: var(--spacing-1);
+  padding: var(--ezp-spacing-1);
 
   &:not(:disabled) {
     @media (hover: hover) {
       &:hover {
-        --button-background: var(--color-shade-primary);
+        --ezp-stepper-button-background: var(--ezp-color-shade-primary);
       }
 
       &:active {
-        --button-background: var(--color-shade-secondary);
+        --ezp-stepper-button-background: var(--ezp-color-shade-secondary);
       }
     }
   }
 
   &:disabled {
-    --button-color: var(--color-foreground-tertiary);
-    --button-cursor: not-allowed;
+    --ezp-stepper-button-color: var(--ezp-color-foreground-tertiary);
+    --ezp-stepper-button-cursor: default;
   }
 }

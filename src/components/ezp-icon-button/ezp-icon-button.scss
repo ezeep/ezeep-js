@@ -9,35 +9,35 @@
 
   @at-root {
     #{&}(.primary) {
-      --button-background-disabled: var(--color-shade-primary);
-      --button-background-init: var(--color-theme-solid);
-      --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-on-theme);
+      --button-background-disabled: var(--ezp-color-shade-primary);
+      --button-background-init: var(--ezp-color-theme-solid);
+      --button-color-disabled: var(--ezp-color-foreground-tertiary);
+      --button-color-init: var(--ezp-color-on-theme);
       --button-opacity-active: 0.74;
       --button-opacity-hover: 0.84;
     }
 
     #{&}(.secondary) {
-      --button-background-active: var(--color-shade-tertiary);
-      --button-background-disabled: var(--color-shade-primary);
-      --button-background-hover: var(--color-shade-secondary);
-      --button-background-init: var(--color-shade-primary);
-      --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-theme-solid);
+      --button-background-active: var(--ezp-color-shade-tertiary);
+      --button-background-disabled: var(--ezp-color-shade-primary);
+      --button-background-hover: var(--ezp-color-shade-secondary);
+      --button-background-init: var(--ezp-color-shade-primary);
+      --button-color-disabled: var(--ezp-color-foreground-tertiary);
+      --button-color-init: var(--ezp-color-theme-solid);
     }
 
     #{&}(.tertiary) {
-      --button-background-active: var(--color-shade-secondary);
-      --button-background-hover: var(--color-shade-primary);
+      --button-background-active: var(--ezp-color-shade-secondary);
+      --button-background-hover: var(--ezp-color-shade-primary);
       --button-background-init: transparent;
-      --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-theme-solid);
+      --button-color-disabled: var(--ezp-color-foreground-tertiary);
+      --button-color-init: var(--ezp-color-theme-solid);
     }
 
     #{&}(.quaternary) {
       --button-background-init: transparent;
-      --button-color-disabled: var(--color-foreground-tertiary);
-      --button-color-init: var(--color-theme-solid);
+      --button-color-disabled: var(--ezp-color-foreground-tertiary);
+      --button-color-init: var(--ezp-color-theme-solid);
       --button-opacity-active: 0.58;
       --button-opacity-hover: 0.74;
     }
@@ -58,7 +58,7 @@
   margin: 0;
   opacity: var(--button-opacity, 1);
   outline: none;
-  padding: var(--spacing-2);
+  padding: var(--ezp-spacing-2);
 
   &:not(:disabled) {
     @media (hover: hover) {

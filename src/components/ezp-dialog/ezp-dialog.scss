@@ -13,10 +13,10 @@
  */
 
 :host {
-  --icon-fill: var(--color-theme-solid);
+  --ezp-icon-fill: var(--ezp-color-theme-solid);
 
   align-content: center;
-  background: var(--color-overlay);
+  background: var(--ezp-color-overlay-primary);
   display: grid;
   grid-template: auto / minmax(auto, 280px);
   height: 100%;
@@ -32,35 +32,35 @@
 }
 
 #box {
-  background: var(--color-surface-tertiary);
+  background: var(--ezp-color-surface-tertiary);
   border-radius: 6px;
-  box-shadow: var(--box-outline-position, 0 0 0 1px) var(--color-outline);
+  box-shadow: var(--box-outline-position, 0 0 0 1px) var(--ezp-color-outline);
 }
 
 #header {
   display: flex;
   justify-content: flex-end;
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--ezp-spacing-2) var(--ezp-spacing-3);
 }
 
 #body {
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-5);
-  padding: 0 var(--spacing-5);
+  gap: var(--ezp-spacing-5);
+  padding: 0 var(--ezp-spacing-5);
   text-align: center;
 }
 
 #text {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
+  gap: var(--ezp-spacing-4);
 }
 
 #footer {
   display: grid;
   grid-template: auto / minmax(144px, auto);
   justify-content: center;
-  padding: var(--spacing-5);
+  padding: var(--ezp-spacing-5);
 }
