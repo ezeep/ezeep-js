@@ -587,13 +587,13 @@ export class EzpPrinterSelection {
                         },
                       ]
                 }
-                preSelected={
-                  this.previouslySelectedProperties.color
-                    ? this.previouslySelectedProperties.color
-                    : this.selectedPrinterConfig.Color
-                    ? i18next.t('printer_selection.color_grayscale')
-                    : null
-                }
+                // preSelected={
+                //   this.previouslySelectedProperties.color
+                //     ? this.previouslySelectedProperties.color
+                //     : this.selectedPrinterConfig.Color
+                //     ? i18next.t('printer_selection.color_grayscale')
+                //     : null
+                // }
                 disabled={!this.selectedPrinterConfig.Color}
               />
               <ezp-select
@@ -607,13 +607,13 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'duplex',
                 }))}
-                preSelected={
-                  this.previouslySelectedProperties.duplex
-                    ? this.previouslySelectedProperties.duplex
-                    : this.selectedPrinterConfig.DuplexSupported
-                    ? 'None'
-                    : null
-                }
+                // preSelected={
+                //   this.previouslySelectedProperties.duplex
+                //     ? this.previouslySelectedProperties.duplex
+                //     : this.selectedPrinterConfig.DuplexSupported
+                //     ? 'None'
+                //     : null
+                // }
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
               <ezp-select
@@ -628,13 +628,13 @@ export class EzpPrinterSelection {
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
-                preSelected={
-                  this.previouslySelectedProperties.paper
-                    ? this.previouslySelectedProperties.paper
-                    : this.selectedPrinterConfig.PaperFormats.length > 0
-                    ? this.selectedPrinterConfig.PaperFormats[0].Name
-                    : null
-                }
+                // preSelected={
+                //   this.previouslySelectedProperties.paper
+                //     ? this.previouslySelectedProperties.paper
+                //     : this.selectedPrinterConfig.PaperFormats.length > 0
+                //     ? this.selectedPrinterConfig.PaperFormats[0].Name
+                //     : null
+                // }
                 disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
               />
               <ezp-select
@@ -650,15 +650,15 @@ export class EzpPrinterSelection {
                     type: 'orientation',
                   })
                 )}
-                preSelected={
-                  this.previouslySelectedProperties.orientation
-                    ? this.previouslySelectedProperties.orientation
-                    : this.selectedPrinterConfig.OrientationsSupported.length > 0
-                    ? i18next.t(
-                        `printer_selection.orientation_${this.selectedPrinterConfig.OrientationsSupported[0]}`
-                      )
-                    : null
-                }
+                // preSelected={
+                //   this.previouslySelectedProperties.orientation
+                //     ? this.previouslySelectedProperties.orientation
+                //     : this.selectedPrinterConfig.OrientationsSupported.length > 0
+                //     ? i18next.t(
+                //         `printer_selection.orientation_${this.selectedPrinterConfig.OrientationsSupported[0]}`
+                //       )
+                //     : null
+                // }
                 disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
               />
               <ezp-select
@@ -672,13 +672,13 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'quality',
                 }))}
-                preSelected={
-                  this.previouslySelectedProperties.resolution
-                    ? this.previouslySelectedProperties.resolution
-                    : this.selectedPrinterConfig.Resolutions.length > 0
-                    ? this.selectedPrinterConfig.Resolutions[0]
-                    : null
-                }
+                // preSelected={
+                //   this.previouslySelectedProperties.resolution
+                //     ? this.previouslySelectedProperties.resolution
+                //     : this.selectedPrinterConfig.Resolutions.length > 0
+                //     ? this.selectedPrinterConfig.Resolutions[0]
+                //     : null
+                // }
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
               />
             </div>
