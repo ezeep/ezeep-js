@@ -48,7 +48,7 @@ export type LabelLevelTypes = 'primary' | 'secondary' | 'tertiary'
 export type WeightTypes = 'soft' | 'strong' | 'heavy'
 export type ThemeTypes = 'pink' | 'red' | 'orange' | 'green' | 'cyan' | 'blue' | 'violet'
 export type AppearanceTypes = 'system' | 'light' | 'dark'
-export type TriggerTypes = 'custom' | 'upload'
+export type TriggerTypes = 'custom' | 'file' | 'button'
 export type AlertType = { open: boolean; heading: string; description: string }
 export type SystemAppearanceTypes = 'light' | 'dark'
 export interface PrinterProperties {

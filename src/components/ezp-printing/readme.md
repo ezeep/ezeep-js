@@ -19,7 +19,7 @@
 | `printapihosturl` | `printapihosturl` |             | `string`                                                                 | `undefined` |
 | `redirecturi`     | `redirecturi`     |             | `string`                                                                 | `undefined` |
 | `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "violet"` | `'cyan'`    |
-| `trigger`         | `trigger`         |             | `"custom" \| "upload"`                                                   | `undefined` |
+| `trigger`         | `trigger`         |             | `"button" \| "custom" \| "file"`                                         | `undefined` |
 
 ## Methods
 

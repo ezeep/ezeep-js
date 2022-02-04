@@ -220,16 +220,18 @@ export class EzpPrinting {
           />
         ) : this.trigger === 'custom' ? (
           <slot></slot>
-        ) : this.trigger === 'upload' ? (
+        ) : this.trigger === 'file' ? (
           <ezp-upload />
         ) : (
-          <ezp-icon-button
-            id="print-trigger"
-            icon="printer"
-            slot="trigger"
-            type="button"
-            onClick={() => this.open()}
-          ></ezp-icon-button>
+          this.trigger === 'button' && (
+            <ezp-icon-button
+              id="print-trigger"
+              icon="printer"
+              slot="trigger"
+              type="button"
+              onClick={() => this.open()}
+            ></ezp-icon-button>
+          )
         )}
       </Host>
     )
