@@ -84,25 +84,25 @@ export class EzpSelect {
   watchExpanded() {
     if (this.expandCover) {
       this.component.style.setProperty(
-        '--list-height',
+        '--ezp-select-list-height',
         this.expanded ? `${this.containerHeight - this.toggleHeight}px` : '0px'
       )
       this.component.style.setProperty(
-        '--wrap-translate-y',
+        '--ezp-select-wrap-translateY',
         this.expanded ? `${this.wrapTop * -1 + this.spacing}px` : '0px'
       )
     } else if (this.expandRise) {
       this.component.style.setProperty(
-        '--list-height',
+        '--ezp-select-list-height',
         this.expanded ? `${this.listHeight}px` : '0px'
       )
       this.component.style.setProperty(
-        '--wrap-translate-y',
+        '--ezp-select-wrap-translateY',
         this.expanded ? `${this.wrapDiff + this.spacing}px` : '0px'
       )
     } else {
       this.component.style.setProperty(
-        '--list-height',
+        '--ezp-select-list-height',
         this.expanded ? `${this.listHeight}px` : '0px'
       )
     }
@@ -178,8 +178,8 @@ export class EzpSelect {
   componentDidLoad() {
     const styles = getComputedStyle(this.component)
 
-    this.toggleHeight = parseInt(styles.getPropertyValue('--toggle-height'))
-    this.duration = parseFloat(styles.getPropertyValue('--duration'))
+    this.toggleHeight = parseInt(styles.getPropertyValue('--ezp-select-toggle-height'))
+    this.duration = parseFloat(styles.getPropertyValue('--ezp-select-duration'))
   }
 
   componentWillUpdate() {
