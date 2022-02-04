@@ -1,51 +1,53 @@
 {
-  "login_dialog": {
-    "heading": "Drucken mit ezeep Blue",
-    "description": "Melde dich mit deinem ezeep Blue-Konto an, um zu drucken.",
-    "action": "Anmelden"
-  },
-  "no_document_dialog": {
-    "heading": "Kein Dokument ausgewählt",
-    "description": "At vero eos et accusam et justo duo dolores et ea rebum.",
-    "action": "Alles klar"
-  },
-  "printer_selection": {
-    "loading": "Lade Drucker…",
-    "print": "Drucken",
-    "printer": "Drucker",
-    "print_processing": "Drucke Dokument.",
-    "print_success": "Dokument gedruckt.",
-    "print_failed": "Drucken fehlgeschlagen.",
-    "not_supported": "Dateityp nicht unterstützt.",
-    "color": "Farbe",
-    "orientation": "Ausrichtung",
-    "size": "Papierformat",
-    "duplex": "Duplex",
-    "quality": "Qualität",
-    "select_printer": "Wähle einen Drucker",
-    "select_color": "Wähle eine Farbe",
-    "select_size": "Wähle ein Papierformat",
-    "select_orientation": "Wähle eine Ausrichtung",
-    "select_quality": "Wähle eine Qualität",
-    "select_duplex": "Wähle eine Duplex-Option",
-    "color_color": "Farbe",
-    "color_grayscale": "Graustufen",
-    "orientation_portrait": "Hochformat",
-    "orientation_landscape": "Querformat",
-    "unknown_location": "Unbekannter Standort",
-    "no_printers": "Keine Drucker verfügbar"
-  },
-  "button_actions": {
-    "login": "Anmelden",
-    "print": "Drucken",
-    "cancel": "Abbrechen",
-    "close": "Schließen",
-    "retry": "Wiederholen"
-  },
-  "upload": {
-    "description": "Ziehe dein Dokument hierhin, um es auf einem beliebigen ezeep-Drucker auszudrucken.",
-    "meta_leading": "Oder",
-    "meta_select": "wähle eine Datei",
-    "meta_trailing": "von deinem Computer."
-  }
+    "login_dialog": {
+        "heading": "Drucke mit ezeep Blue",
+        "description": "Melde dich mit deinem ezeep Blue-Konto an, um zu drucken.",
+        "action": "Anmelden"
+    },
+    "no_document_dialog": {
+        "heading": "Keine Datei ausgewählt",
+        "description": "Wähle zunächst eine Datei zum Drucken aus.",
+        "action": "OK"
+    },
+    "printer_selection": {
+        "loading": "Lade meine Drucker…",
+        "print": "Drucken",
+        "printer": "Drucker",
+        "print_processing": "Drucken…",
+        "print_success": "Erfolgreich gedruckt.",
+        "print_failed": "Druck fehlgeschlagen",
+        "not_supported": "Der ausgewählte Dateityp wird nicht unterstützt.",
+        "color": "Farbe",
+        "orientation": "Ausrichtung",
+        "size": "Papierformat",
+        "duplex": "Beidseitig",
+        "quality": "Druckqualität",
+        "select_printer": "Wähle einen Drucker",
+        "select_color": "Wähle Farbe/Graustufen",
+        "select_size": "Wähle Papierformat",
+        "select_orientation": "Wähle Ausrichtung",
+        "select_quality": "Wähle Druckqualität",
+        "select_duplex": "Wähle Beidseitig",
+        "color_color": "Farbe",
+        "color_grayscale": "Graustufen",
+        "orientation_portrait": "Hochformat",
+        "orientation_landscape": "Querformat",
+        "unknown_location": "Unbekannter Standort",
+        "no_printers": "Keine Drucker gefunden.",
+        "prepare_upload": "Vorbereiten…",
+        "uploading": "Hochladen…"
+    },
+    "button_actions": {
+        "login": "Anmelden",
+        "print": "Drucken",
+        "cancel": "Abbrechen",
+        "close": "Schließen",
+        "retry": "Wiederholen"
+    },
+    "upload": {
+        "description": "Ziehe eine Datei hier in den Browser ",
+        "meta_leading": "oder",
+        "meta_select": "wähle eine Datei aus",
+        "meta_trailing": "um mit ezeep Blue zu drucken."
+    }
 }
