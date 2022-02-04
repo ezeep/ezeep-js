@@ -53,7 +53,7 @@ export class EzpPrinterSelection {
   @Prop({ mutable: true }) filetype: string
   @Prop({ mutable: true }) fileid: string
   @Prop() file: File
-  @Prop() hidelogout: boolean
+  @Prop() hidemenu: boolean
 
   /**
    *
@@ -156,6 +156,7 @@ export class EzpPrinterSelection {
     switch (event.detail) {
       case 'print-success':
         this.printSuccess = false
+        this.printCancel.emit()
         break
       case 'print-failed':
         this.printProcessing = false
@@ -523,13 +524,15 @@ export class EzpPrinterSelection {
               text={i18next.t('printer_selection.print') + `${!this.notSupported ? ':' : ''}`}
             />
             <ezp-label text={!this.notSupported ? this.filename : ''} />
-            <ezp-icon-button
-              level="tertiary"
-              icon="menu"
-              id="toggle-menu"
-              type="button"
-              onClick={this.handleUserMenu}
-            />
+            {this.hidemenu && (
+              <ezp-icon-button
+                level="tertiary"
+                icon="menu"
+                id="toggle-menu"
+                type="button"
+                onClick={this.handleUserMenu}
+              />
+            )}
           </div>
           <div id="body">
             <div id="printer">
@@ -698,11 +701,7 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.print')}
             />
           </div>
-          <ezp-user-menu
-            hidelogout={this.hidelogout}
-            open={this.userMenuOpen}
-            name={this.userName}
-          />
+          {this.hidemenu && <ezp-user-menu open={this.userMenuOpen} name={this.userName} />}
         </div>
       </Host>
     )

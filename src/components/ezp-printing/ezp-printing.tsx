@@ -26,7 +26,7 @@ export class EzpPrinting {
   @Prop() filetype: string
   @Prop() custom: boolean
   @Prop() hidelogin: boolean
-  @Prop() hidelogout: boolean
+  @Prop() hidemenu: boolean
   @Prop() authapihosturl: string
   @Prop() printapihosturl: string
   @Prop() theme: ThemeTypes = 'cyan'
@@ -208,7 +208,7 @@ export class EzpPrinting {
             filetype={this.filetype}
             fileid={this.fileid}
             file={this.file}
-            hidelogout={this.hidelogout}
+            hidemenu={this.hidemenu}
           />
         ) : this.noDocumentOpen ? (
           <ezp-dialog

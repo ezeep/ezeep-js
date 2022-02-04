@@ -99,7 +99,7 @@ export namespace Components {
         "filename": string;
         "filetype": string;
         "fileurl": string;
-        "hidelogout": boolean;
+        "hidemenu": boolean;
         "redirectURI": string;
     }
     interface EzpPrinting {
@@ -112,7 +112,7 @@ export namespace Components {
         "filetype": string;
         "fileurl": string;
         "hidelogin": boolean;
-        "hidelogout": boolean;
+        "hidemenu": boolean;
         /**
           * Public methods
          */
@@ -219,7 +219,6 @@ export namespace Components {
     interface EzpUpload {
     }
     interface EzpUserMenu {
-        "hidelogout": boolean;
         "name": string;
         "open": boolean;
     }
@@ -428,7 +427,7 @@ declare namespace LocalJSX {
         "filename"?: string;
         "filetype"?: string;
         "fileurl"?: string;
-        "hidelogout"?: boolean;
+        "hidemenu"?: boolean;
         /**
           * Description...
          */
@@ -449,7 +448,7 @@ declare namespace LocalJSX {
         "filetype"?: string;
         "fileurl"?: string;
         "hidelogin"?: boolean;
-        "hidelogout"?: boolean;
+        "hidemenu"?: boolean;
         "printapihosturl"?: string;
         "redirecturi"?: string;
         "theme"?: ThemeTypes;
@@ -571,7 +570,6 @@ declare namespace LocalJSX {
         "onUploadFile"?: (event: CustomEvent<any>) => void;
     }
     interface EzpUserMenu {
-        "hidelogout"?: boolean;
         "name"?: string;
         "onLogoutEmitter"?: (event: CustomEvent<any>) => void;
         /**
