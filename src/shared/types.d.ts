@@ -50,6 +50,7 @@ export type ThemeTypes = 'pink' | 'red' | 'orange' | 'green' | 'cyan' | 'blue' |
 export type AppearanceTypes = 'system' | 'light' | 'dark'
 export type TriggerTypes = 'custom' | 'upload'
 export type AlertType = { open: boolean; heading: string; description: string }
+export type SystemAppearanceTypes = 'light' | 'dark'
 export interface PrinterProperties {
   paper?: string
   paperid?: number | string

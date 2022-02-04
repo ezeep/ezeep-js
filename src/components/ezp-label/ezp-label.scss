@@ -41,7 +41,7 @@ $weights: (
 
 :host {
   display: block;
-  min-width: var(--minWidth, auto);
+  min-width: var(--ezp-label-minWidth, auto);
   padding-bottom: 1px;
   padding-top: 1px;
 
@@ -53,24 +53,24 @@ $weights: (
   }
 
   &::before {
-    margin-top: calc((var(--offset) + 1px) * -1);
+    margin-top: calc((var(--ezp-label-offset) + 1px) * -1);
   }
 
   &::after {
-    margin-bottom: calc((var(--offset) + 1px) * -1);
+    margin-bottom: calc((var(--ezp-label-offset) + 1px) * -1);
   }
 
   @at-root {
     #{&}(.no-wrap) {
-      --whiteSpace: nowrap;
+      --ezp-label-whiteSpace: nowrap;
     }
 
     #{&}(.ellipsis) {
-      --minWidth: 0;
-      --overflow: hidden;
-      --textOverflow: ellipsis;
-      --whiteSpace: nowrap;
-      --width: 100%;
+      --ezp-label-minWidth: 0;
+      --ezp-label-overflow: hidden;
+      --ezp-label-textOverflow: ellipsis;
+      --ezp-label-whiteSpace: nowrap;
+      --ezp-label-width: 100%;
     }
     @each $levelName, $levelProps in $levels {
       #{&}(.#{$levelName}) {
@@ -79,28 +79,28 @@ $weights: (
         $letterSpacing: global.getLetterSpacing($fontSize);
         $offset: global.getOffset($fontSize, $lineHeight);
 
-        --fontSize: #{$fontSize};
-        --lineHeight: #{$lineHeight};
-        --letterSpacing: #{$letterSpacing};
-        --offset: #{$offset};
+        --ezp-label-fontSize: #{$fontSize};
+        --ezp-label-lineHeight: #{$lineHeight};
+        --ezp-label-letterSpacing: #{$letterSpacing};
+        --ezp-label-offset: #{$offset};
       }
     }
 
     @each $weightName, $weightValue in $weights {
       #{&}(.#{$weightName}) {
-        --fontWeight: #{$weightValue};
+        --ezp-label-fontWeight: #{$weightValue};
       }
     }
   }
 }
 
 #text {
-  font-size: var(--fontSize);
-  font-weight: var(--fontWeight);
-  letter-spacing: var(--letterSpacing);
-  line-height: var(--lineHeight);
-  overflow: var(--overflow, visible);
-  text-overflow: var(--textOverflow, clip);
-  white-space: var(--whiteSpace, normal);
-  width: var(--width, auto);
+  font-size: var(--ezp-label-fontSize);
+  font-weight: var(--ezp-label-fontWeight);
+  letter-spacing: var(--ezp-label-letterSpacing);
+  line-height: var(--ezp-label-lineHeight);
+  overflow: var(--ezp-label-overflow, visible);
+  text-overflow: var(--ezp-label-textOverflow, clip);
+  white-space: var(--ezp-label-whiteSpace, normal);
+  width: var(--ezp-label-width, auto);
 }

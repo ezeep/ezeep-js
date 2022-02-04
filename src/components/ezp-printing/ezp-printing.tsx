@@ -3,7 +3,12 @@ import authStore, { sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
 import config from '../../shared/config.json'
-import { ThemeTypes, AppearanceTypes, TriggerTypes } from './../../shared/types'
+import {
+  ThemeTypes,
+  AppearanceTypes,
+  TriggerTypes,
+  SystemAppearanceTypes,
+} from './../../shared/types'
 import i18next from 'i18next'
 import { initi18n } from '../../utils/utils'
 
@@ -39,6 +44,7 @@ export class EzpPrinting {
   @State() printOpen: boolean = false
   @State() authOpen: boolean = false
   @State() noDocumentOpen: boolean = false
+  @State() systemAppearance: SystemAppearanceTypes
 
   /**
    *
@@ -143,6 +149,14 @@ export class EzpPrinting {
   }
 
   componentWillLoad() {
+    const systemAppearanceDark = window.matchMedia('(prefers-color-scheme: dark)')
+
+    this.systemAppearance = systemAppearanceDark.matches ? 'dark' : 'light'
+
+    systemAppearanceDark.addEventListener('change', (event) => {
+      this.systemAppearance = event.matches ? 'dark' : 'light'
+    })
+
     authStore.state.redirectUri = this.redirecturi
     userStore.state.theme = this.theme
     userStore.state.appearance = this.appearance
@@ -172,7 +186,13 @@ export class EzpPrinting {
 
   render() {
     return (
-      <Host class={`${userStore.state.theme} ${userStore.state.appearance}`}>
+      <Host
+        class={`${userStore.state.theme} ${
+          userStore.state.appearance === 'system'
+            ? this.systemAppearance
+            : userStore.state.appearance
+        }`}
+      >
         {this.authOpen ? (
           <ezp-auth
             clientID={this.clientid}

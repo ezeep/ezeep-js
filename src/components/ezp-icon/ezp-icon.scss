@@ -6,38 +6,38 @@
 
 :host {
   align-content: center;
-  background: var(--host-background, transparent);
-  border-radius: var(--host-borderRadius, 0);
+  background: var(--ezp-icon-background, transparent);
+  border-radius: var(--ezp-icon-borderRadius, 0);
   display: grid;
-  grid-template: var(--host-gridTemplate) / var(--host-gridTemplate);
-  height: var(--ezp-icon-height, var(--host-size));
+  grid-template: var(--ezp-icon-gridTemplate) / var(--ezp-icon-gridTemplate);
+  height: var(--ezp-icon-height, var(--ezp-icon-size));
   justify-content: center;
-  padding: var(--host-padding, 0);
-  width: var(--ezp-icon-width, var(--host-size));
+  padding: var(--ezp-icon-padding, 0);
+  width: var(--ezp-icon-width, var(--ezp-icon-size));
 
   @at-root {
     #{&}(.framed) {
-      --host-background: var(--ezp-color-shade-primary);
-      --host-borderRadius: 50%;
-      --host-padding: var(--host-frame);
+      --ezp-icon-background: var(--ezp-color-shade-primary);
+      --ezp-icon-borderRadius: 50%;
+      --ezp-icon-padding: var(--ezp-icon-frame);
     }
 
     #{&}(.normal) {
-      --host-size: 18px;
-      --host-gridTemplate: 24px;
-      --host-frame: var(--ezp-spacing-3);
+      --ezp-icon-size: 18px;
+      --ezp-icon-gridTemplate: 24px;
+      --ezp-icon-frame: var(--ezp-spacing-3);
     }
 
     #{&}(.large) {
-      --host-size: 36px;
-      --host-gridTemplate: 48px;
-      --host-frame: var(--ezp-spacing-4);
+      --ezp-icon-size: 36px;
+      --ezp-icon-gridTemplate: 48px;
+      --ezp-icon-frame: var(--ezp-spacing-4);
     }
 
     #{&}(.huge) {
-      --host-size: 54px;
-      --host-gridTemplate: 72px;
-      --host-frame: var(--ezp-spacing-5);
+      --ezp-icon-size: 54px;
+      --ezp-icon-gridTemplate: 72px;
+      --ezp-icon-frame: var(--ezp-spacing-5);
     }
   }
 }

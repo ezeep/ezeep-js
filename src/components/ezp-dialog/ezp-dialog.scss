@@ -1,17 +1,3 @@
-/**
- *
- * Modules
- *
- */
-
-@use './../../shared/utils';
-
-/**
- *
- * Rules
- *
- */
-
 :host {
   --ezp-icon-fill: var(--ezp-color-theme-solid);
 
@@ -25,16 +11,12 @@
   position: fixed;
   top: 0;
   width: 100%;
-
-  @include utils.mediaDarkMode {
-    --box-outline-position: inset 0 0 0 1px;
-  }
 }
 
 #box {
   background: var(--ezp-color-surface-tertiary);
   border-radius: 6px;
-  box-shadow: var(--box-outline-position, 0 0 0 1px) var(--ezp-color-outline);
+  box-shadow: var(--ezp-dialog-box-boxShadow, 0 0 0 1px var(--ezp-color-overlay-secondary));
 }
 
 #header {
@@ -53,6 +35,7 @@
 }
 
 #text {
+  color: var(--ezp-color-foreground-primary);
   display: flex;
   flex-direction: column;
   gap: var(--ezp-spacing-4);
