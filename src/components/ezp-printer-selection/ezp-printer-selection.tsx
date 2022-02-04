@@ -597,6 +597,47 @@ export class EzpPrinterSelection {
                 disabled={!this.selectedPrinterConfig.Color}
               />
               <ezp-select
+                label={i18next.t('printer_selection.duplex')}
+                icon="duplex"
+                placeholder={i18next.t('printer_selection.select_duplex')}
+                toggleFlow="horizontal"
+                options={this.duplexOptions.map((option) => ({
+                  id: option.id,
+                  title: option.title,
+                  meta: '',
+                  type: 'duplex',
+                }))}
+                preSelected={
+                  this.previouslySelectedProperties.duplex
+                    ? this.previouslySelectedProperties.duplex
+                    : this.selectedPrinterConfig.DuplexSupported
+                    ? 'None'
+                    : null
+                }
+                disabled={!this.selectedPrinterConfig.DuplexSupported}
+              />
+              <ezp-select
+                label={i18next.t('printer_selection.size')}
+                icon="size"
+                placeholder={i18next.t('printer_selection.select_size')}
+                toggleFlow="horizontal"
+                optionFlow="horizontal"
+                options={this.selectedPrinterConfig.PaperFormats.map((format) => ({
+                  id: format.Id,
+                  title: format.Name,
+                  meta: `${format.XRes} x ${format.YRes}`,
+                  type: 'format',
+                }))}
+                preSelected={
+                  this.previouslySelectedProperties.paper
+                    ? this.previouslySelectedProperties.paper
+                    : this.selectedPrinterConfig.PaperFormats.length > 0
+                    ? this.selectedPrinterConfig.PaperFormats[0].Name
+                    : null
+                }
+                disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
+              />
+              <ezp-select
                 label={i18next.t('printer_selection.orientation')}
                 icon="orientation"
                 placeholder={i18next.t('printer_selection.select_orientation')}
@@ -621,27 +662,6 @@ export class EzpPrinterSelection {
                 disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
               />
               <ezp-select
-                label={i18next.t('printer_selection.size')}
-                icon="size"
-                placeholder={i18next.t('printer_selection.select_size')}
-                toggleFlow="horizontal"
-                optionFlow="horizontal"
-                options={this.selectedPrinterConfig.PaperFormats.map((format) => ({
-                  id: format.Id,
-                  title: format.Name,
-                  meta: `${format.XRes} x ${format.YRes}`,
-                  type: 'format',
-                }))}
-                preSelected={
-                  this.previouslySelectedProperties.paper
-                    ? this.previouslySelectedProperties.paper
-                    : this.selectedPrinterConfig.PaperFormats.length > 0
-                    ? this.selectedPrinterConfig.PaperFormats[0].Name
-                    : null
-                }
-                disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
-              />
-              <ezp-select
                 label={i18next.t('printer_selection.quality')}
                 icon="quality"
                 placeholder={i18next.t('printer_selection.select_quality')}
@@ -660,26 +680,6 @@ export class EzpPrinterSelection {
                     : null
                 }
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
-              />
-              <ezp-select
-                label={i18next.t('printer_selection.duplex')}
-                icon="duplex"
-                placeholder={i18next.t('printer_selection.select_duplex')}
-                toggleFlow="horizontal"
-                options={this.duplexOptions.map((option) => ({
-                  id: option.id,
-                  title: option.title,
-                  meta: '',
-                  type: 'duplex',
-                }))}
-                preSelected={
-                  this.previouslySelectedProperties.duplex
-                    ? this.previouslySelectedProperties.duplex
-                    : this.selectedPrinterConfig.DuplexSupported
-                    ? 'None'
-                    : null
-                }
-                disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
             </div>
             <ezp-stepper label="Copies" max={10} icon="copies" />
