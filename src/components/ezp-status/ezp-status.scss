@@ -13,8 +13,6 @@
  */
 
 :host {
-  --stroke-width: 4;
-
   align-items: center;
   background: var(--ezp-color-overlay-primary);
   border-radius: 6px;
@@ -40,8 +38,7 @@
   align-items: center;
   background: var(--ezp-color-surface-tertiary);
   border-radius: 3px;
-  box-shadow: var(--box-separator-position, 0 0 0 var(--hairline-width-positive))
-    var(--hairline-color);
+  box-shadow: var(--ezp-status-box-boxShadowPosition, 0 0 0 1px) var(--ezp-color-outline);
   display: flex;
   flex-direction: column;
   gap: var(--ezp-spacing-4);
@@ -58,8 +55,8 @@
 
 #track {
   fill: none;
-  stroke: var(--ezp-color-outline-primary);
-  stroke-width: var(--stroke-width);
+  stroke: var(--ezp-color-outline);
+  stroke-width: 4px;
 }
 
 #value {
@@ -69,7 +66,7 @@
   stroke-dasharray: 110;
   stroke-dashoffset: 110;
   stroke-linecap: round;
-  stroke-width: var(--stroke-width);
+  stroke-width: 4px;
 }
 
 #description {
