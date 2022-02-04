@@ -46,7 +46,9 @@
 
 #meta {
   display: flex;
-  gap: 3px;
+  flex-wrap: wrap;
+  gap: var(--ezp-spacing-3) 3px;
+  justify-content: center;
 }
 
 #select {
@@ -54,6 +56,7 @@
   cursor: pointer;
   opacity: var(--ezp-upload-select-opacity, 1);
   text-decoration: underline;
+  white-space: nowrap;
 
   @media (hover: hover) {
     &:hover {
