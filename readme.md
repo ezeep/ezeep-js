@@ -59,9 +59,10 @@ There are multiple required and optional attributes the ezp-printing element nee
 | filename        | The name of the file that is printed.                                                                                                                                                                     | string  | No                                      |
 | filetype        | The type of the file that is printed.                                                                                                                                                                     | string  | No                                      |
 | hidelogin       | If set to true, no additional info popup is shown before the user authentication.                                                                                                                         | boolean | No                                      |
-| authapihosturl  | Overrides the default URL of the authentication API.                                                                                                                                                      | string  | No                                      |
-| printapihosturl | Overrides the default URL of the printing API.                                                                                                                                                            | string  | No                                      |
-| theme           | The overall color theme. Possible colors are pink, red, orange, green, cyan, blue and violet.                                                                                                             | string  | No                                      |
+| hidelogout      | If set to true, logout button is not available in menu.                                                                                                                                                   | boolean | No                                      |
+| authapihosturl | Overrides the default URL of the authentication API. | string | No |
+| printapihosturl | Overrides the default URL of the printing API. | string | No |
+| theme | The overall color theme. Possible colors are pink, red, orange, green, cyan, blue and violet. | string | No |
 
 ### Example
 

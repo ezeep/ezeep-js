@@ -36,6 +36,7 @@ export class EzpUserMenu {
 
   @Prop() name: string = 'John Doe'
   @Prop({ mutable: true }) open: boolean = false
+  @Prop() hidelogout: boolean
 
   /**
    *
@@ -126,10 +127,10 @@ export class EzpUserMenu {
               <ezp-label text={link.title} />
             </a>
           ))}
-          <a class="link" onClick={this.logOut}>
+          {!this.hidelogout && (<a class="link" onClick={this.logOut}>
             <ezp-icon class="link__icon" name="logout" />
-            <ezp-label text={i18next.t('user_menu.logout')} />
-          </a>
+            <ezp-label text="Logout" />
+          </a>)}
         </div>
         <div id="theme">
           <ezp-label class="caption" text={`${i18next.t('user_menu.theme')}:`} weight="heavy" />

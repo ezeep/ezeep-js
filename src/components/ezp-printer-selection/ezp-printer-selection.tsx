@@ -1,4 +1,14 @@
-import { Component, Host, Listen, Event, EventEmitter, State, h, Prop } from '@stencil/core'
+import {
+  Component,
+  Host,
+  Listen,
+  Event,
+  EventEmitter,
+  State,
+  h,
+  Prop,
+  Fragment,
+} from '@stencil/core'
 import i18next from 'i18next'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
@@ -43,6 +53,7 @@ export class EzpPrinterSelection {
   @Prop({ mutable: true }) filetype: string
   @Prop({ mutable: true }) fileid: string
   @Prop() file: File
+  @Prop() hidelogout: boolean
 
   /**
    *
@@ -52,11 +63,14 @@ export class EzpPrinterSelection {
   @State() loading: boolean = true
   @State() options = options
   @State() printProcessing: boolean = false
+  @State() uploading: boolean = false
+  @State() preparingUpload: boolean = false
   @State() printSuccess: boolean = false
   @State() printFailed: boolean = false
   @State() notSupported: boolean = false
   @State() noPrinters: boolean = false
   @State() userMenuOpen: boolean = false
+  @State() printStopped: boolean = false
   @State() userName: string
   @State() printers: Printer[]
   @State() selectedPrinter: Printer
@@ -132,6 +146,7 @@ export class EzpPrinterSelection {
   @Listen('statusCancel')
   listenStatusCancel(event: CustomEvent) {
     if (event.detail === 'print-processing') {
+      this.printStopped = true
       this.printProcessing = false
     }
   }
@@ -235,11 +250,9 @@ export class EzpPrinterSelection {
               validate: this.validateData,
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
+            }).catch((err) => {
+              console.warn(err)
             })
-              .then(() => (this.printSuccess = true))
-              .catch((err) => {
-                console.warn(err)
-              })
           } else {
             this.printFailed = true
           }
@@ -260,6 +273,8 @@ export class EzpPrinterSelection {
       'previouslySelectedProperties',
       JSON.stringify(this.previouslySelectedProperties)
     )
+
+    this.printStopped = false
   }
 
   private handleUserMenu = () => {
@@ -334,25 +349,30 @@ export class EzpPrinterSelection {
   }
 
   async handleFiles(file: File) {
+    this.preparingUpload = true
     const response = await this.printService.prepareFileUpload(authStore.state.accessToken)
+    this.preparingUpload = false
 
     this.fileid = response.fileid
     this.sasUri = response.sasUri
-    this.filetype = file.type
+    this.filetype = this.fileExtension
     let res: BlobUploadCommonResponse
+
+    this.uploading = true
     try {
       res = await this.printService.uploadBlobFiles(this.sasUri, file)
     } catch (error) {
       this.printProcessing = false
       this.printFailed = true
     }
+    this.uploading = false
 
     if (res._response.status === 201) {
       this.printService
         .printByFileID(
           authStore.state.accessToken,
           this.fileid,
-          this.fileExtension,
+          this.filetype,
           this.selectedPrinter.id,
           this.selectedProperties,
           this.filename
@@ -365,24 +385,19 @@ export class EzpPrinterSelection {
               validate: this.validateData,
               interval: this.POLL_INTERVAL,
               maxAttempts: 10,
+            }).catch((err) => {
+              console.log(err)
+              this.printFailed = true
             })
-              .then(() => (this.printSuccess = true))
-              .catch((err) => {
-                console.log(err)
-                this.printFailed = true
-              })
           } else {
-            this.printProcessing = false
             this.printFailed = true
           }
         })
         .catch((error) => {
           console.log(error)
-          this.printProcessing = false
           this.printFailed = true
         })
     } else {
-      this.printProcessing = false
       this.printFailed = true
     }
   }
@@ -454,44 +469,54 @@ export class EzpPrinterSelection {
       />
     ) : (
       <Host>
-        <div id="box" data-backdrop-surface>
-          {this.printProcessing ? (
-            <ezp-status
-              processing
-              description={i18next.t('printer_selection.print_processing')}
-              instance="print-processing"
-            />
-          ) : this.printSuccess ? (
-            <ezp-status
-              icon="checkmark-alt"
-              description={i18next.t('printer_selection.print_success')}
-              instance="print-success"
-              close
-            />
-          ) : this.printFailed ? (
-            <ezp-status
-              icon="exclamation-mark"
-              description={i18next.t('printer_selection.print_failed')}
-              instance="print-failed"
-              close
-              retry
-            />
-          ) : this.notSupported ? (
-            <ezp-status
-              icon="exclamation-mark"
-              description={i18next.t('printer_selection.not_supported')}
-              instance="not-supported"
-              retry
-            />
-          ) : this.noPrinters ? (
-            <ezp-status
-              icon="exclamation-mark"
-              description={i18next.t('printer_selection.no_printers')}
-              instance="no-printers"
-              close
-            />
-          ) : null}
-
+        <div id="container" data-backdrop-surface>
+          {!this.printStopped && (
+            <>
+              {this.printProcessing ? (
+                <ezp-status
+                  processing
+                  description={
+                    this.preparingUpload
+                      ? i18next.t('printer_selection.prepare_upload')
+                      : this.uploading
+                      ? i18next.t('printer_selection.uploading')
+                      : i18next.t('printer_selection.print_processing')
+                  }
+                  instance="print-processing"
+                  cancel
+                />
+              ) : this.printSuccess ? (
+                <ezp-status
+                  icon="checkmark-alt"
+                  description={i18next.t('printer_selection.print_success')}
+                  instance="print-success"
+                  close
+                />
+              ) : this.printFailed ? (
+                <ezp-status
+                  icon="exclamation-mark"
+                  description={i18next.t('printer_selection.print_failed')}
+                  instance="print-failed"
+                  close
+                  retry
+                />
+              ) : this.notSupported ? (
+                <ezp-status
+                  icon="exclamation-mark"
+                  description={i18next.t('printer_selection.not_supported')}
+                  instance="not-supported"
+                  retry
+                />
+              ) : this.noPrinters ? (
+                <ezp-status
+                  icon="exclamation-mark"
+                  description={i18next.t('printer_selection.no_printers')}
+                  instance="no-printers"
+                  close
+                />
+              ) : null}
+            </>
+          )}
           <div id="header">
             <ezp-label
               weight="heavy"
@@ -673,7 +698,11 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.print')}
             />
           </div>
-          <ezp-user-menu open={this.userMenuOpen} name={this.userName} />
+          <ezp-user-menu
+            hidelogout={this.hidelogout}
+            open={this.userMenuOpen}
+            name={this.userName}
+          />
         </div>
       </Host>
     )
