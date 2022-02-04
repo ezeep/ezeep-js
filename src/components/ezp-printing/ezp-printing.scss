@@ -35,24 +35,26 @@
     }
 
     #{&}(.dark) {
-      --ezp-userMenu-boxShadowPosition: inset 0 0 0 1px;
-      --ezp-userMenu-header-boxShadowPosition: inset 0 -1px 0 0;
-      --ezp-userMenu-theme-boxShadowPosition: inset 0 -1px 0 0;
-      --ezp-userMenu-links-boxShadowPosition: inset 0 -1px 0 0;
+      --ezp-dialog-box-boxShadow: inset 0 0 0 1px var(--ezp-color-outline),
+        0 0 0 1px var(--ezp-color-overlay-secondary);
       --ezp-printerSelection-body-boxShadow: inset 1px 0 0 0 var(--ezp-color-outline),
         inset -1px 0 0 0 var(--ezp-color-outline);
       --ezp-printerSelection-footer-boxShadowPosition: inset 0 0 0 1px;
       --ezp-printerSelection-header-boxShadowPosition: inset 0 0 0 1px;
-      --ezp-stepper-boxShadowPosition: inset 0 0 0 1px;
+      --ezp-select-wrap-boxShadowPositionBottom: inset 0 -1px 0 0;
+      --ezp-select-wrap-boxShadowPositionLeft: inset 1px 0 0 0;
+      --ezp-select-wrap-boxShadowPositionRight: inset -1px 0 0 0;
+      --ezp-select-wrap-boxShadowPositionTop: inset 0 1px 0 0;
       --ezp-status-box-boxShadowPosition: inset 0 0 0 1px;
-      --ezp-dialog-box-boxShadow: inset 0 0 0 1px var(--ezp-color-outline),
-        0 0 0 1px var(--ezp-color-overlay-secondary);
+      --ezp-stepper-boxShadowPosition: inset 0 0 0 1px;
+      --ezp-userMenu-boxShadowPosition: inset 0 0 0 1px;
+      --ezp-userMenu-header-boxShadowPosition: inset 0 -1px 0 0;
+      --ezp-userMenu-links-boxShadowPosition: inset 0 -1px 0 0;
+      --ezp-userMenu-theme-boxShadowPosition: inset 0 -1px 0 0;
 
       @include utils.colors('dark');
     }
-  }
 
-  @at-root {
     @each $theme in global.$themes {
       #{&}(.#{$theme}) {
         --ezp-color-theme-solid: var(--ezp-color-#{$theme}-solid);
