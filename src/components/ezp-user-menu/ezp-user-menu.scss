@@ -149,8 +149,8 @@
 
   @each $theme in global.$themes {
     &--#{$theme} {
-      --ezp-userMenu-swatch-theme-solid: var(--ezp-color-theme-#{$theme}-solid);
-      --ezp-userMenu-swatch-theme-translucent: var(--ezp-color-theme-#{$theme}-translucent);
+      --ezp-userMenu-swatch-theme-solid: var(--ezp-color-#{$theme}-solid);
+      --ezp-userMenu-swatch-theme-translucent: var(--ezp-color-#{$theme}-translucent);
     }
   }
 }
