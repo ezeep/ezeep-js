@@ -53,7 +53,7 @@ export class EzpPrinterSelection {
   @Prop({ mutable: true }) filetype: string
   @Prop({ mutable: true }) fileid: string
   @Prop() file: File
-  @Prop() hidemenu: boolean
+  @Prop() hidemenu: boolean = false
 
   /**
    *
@@ -418,6 +418,8 @@ export class EzpPrinterSelection {
 
   /** Description... */
   async componentWillLoad() {
+    console.log(navigator.language)
+    console.log(this.hidemenu)
     initi18n()
     this.loading = true
     this.getPropertiesFromLocalStorage()
@@ -524,7 +526,7 @@ export class EzpPrinterSelection {
               text={i18next.t('printer_selection.print') + `${!this.notSupported ? ':' : ''}`}
             />
             <ezp-label text={!this.notSupported ? this.filename : ''} />
-            {this.hidemenu && (
+            {!this.hidemenu && (
               <ezp-icon-button
                 level="tertiary"
                 icon="menu"
@@ -701,7 +703,7 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.print')}
             />
           </div>
-          {this.hidemenu && <ezp-user-menu open={this.userMenuOpen} name={this.userName} />}
+          {!this.hidemenu && <ezp-user-menu open={this.userMenuOpen} name={this.userName} />}
         </div>
       </Host>
     )
