@@ -418,8 +418,6 @@ export class EzpPrinterSelection {
 
   /** Description... */
   async componentWillLoad() {
-    console.log(navigator.language)
-    console.log(this.hidemenu)
     initi18n()
     this.loading = true
     this.getPropertiesFromLocalStorage()
