@@ -426,12 +426,11 @@ export class EzpPrinterSelection {
     } else {
       format = 'A4'
     }
-    this.previouslySelectedProperties.paper = this.selectedPrinterConfig.PaperFormats.find(
-      (el) => el.Name === format
-    ).Name
-    this.previouslySelectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find(
-      (el) => el.Name === format
-    ).Id
+
+    this.previouslySelectedProperties.paper = this.selectedPrinterConfig.PaperFormats
+    .find((el) => el.Name === format).Name
+    this.previouslySelectedProperties.paperid = this.selectedPrinterConfig.PaperFormats
+    .find((el) => el.Name === format).Id
   }
 
   /**
