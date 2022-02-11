@@ -95,16 +95,6 @@ export class EzpPrinterSelection {
     resolution: '',
   }
 
-  // @State() preSelectedProperties: PrinterProperties = {
-  //   paper: '',
-  //   paperid: '',
-  //   color: false,
-  //   duplex: false,
-  //   duplexmode: '',
-  //   orientation: '',
-  //   copies: '',
-  //   resolution: '',
-  // }
   /**
    *
    * Events
@@ -272,7 +262,6 @@ export class EzpPrinterSelection {
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
     localStorage.setItem('printer', JSON.stringify(this.selectedPrinter))
-    // localStorage.setItem('preSelectedProperties', JSON.stringify(this.preSelectedProperties))
 
     this.printStopped = false
   }
@@ -291,10 +280,6 @@ export class EzpPrinterSelection {
     } else {
       this.selectedPrinter = { id: '', location: '', name: '' }
     }
-
-    // if (localStorage.getItem('preSelectedProperties')) {
-    //   // this.preSelectedProperties = JSON.parse(localStorage.getItem('preSelectedProperties'))
-    // }
   }
 
   private getUserInfo() {
@@ -317,21 +302,16 @@ export class EzpPrinterSelection {
         break
       case 'color':
         this.selectedProperties.color = !!eventDetails.id
-        // this.preSelectedProperties.color = eventDetails.title
         break
       case 'orientation':
         this.selectedProperties.orientation = eventDetails.id
-        // this.preSelectedProperties.orientation = eventDetails.title
         break
       case 'format':
         this.selectedProperties.paper = eventDetails.title
         this.selectedProperties.paperid = eventDetails.id
-        // this.preSelectedProperties.paper = eventDetails.title
-        // this.preSelectedProperties.paperid = eventDetails.id
         break
       case 'quality':
         this.selectedProperties.resolution = eventDetails.title
-        // this.preSelectedProperties.resolution = eventDetails.title
         break
       case 'duplex':
         if (eventDetails.title === 'None') {
@@ -340,7 +320,6 @@ export class EzpPrinterSelection {
           this.selectedProperties.duplex = true
         }
         this.selectedProperties.duplexmode = eventDetails.id
-        // this.preSelectedProperties.duplexmode = eventDetails.id
         break
       default:
         break
