@@ -95,16 +95,16 @@ export class EzpPrinterSelection {
     resolution: '',
   }
 
-  @State() previouslySelectedProperties: PrinterProperties = {
-    paper: '',
-    paperid: '',
-    color: false,
-    duplex: false,
-    duplexmode: '',
-    orientation: '',
-    copies: '',
-    resolution: '',
-  }
+  // @State() preSelectedProperties: PrinterProperties = {
+  //   paper: '',
+  //   paperid: '',
+  //   color: false,
+  //   duplex: false,
+  //   duplexmode: '',
+  //   orientation: '',
+  //   copies: '',
+  //   resolution: '',
+  // }
   /**
    *
    * Events
@@ -272,10 +272,7 @@ export class EzpPrinterSelection {
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
     localStorage.setItem('printer', JSON.stringify(this.selectedPrinter))
-    localStorage.setItem(
-      'previouslySelectedProperties',
-      JSON.stringify(this.previouslySelectedProperties)
-    )
+    // localStorage.setItem('preSelectedProperties', JSON.stringify(this.preSelectedProperties))
 
     this.printStopped = false
   }
@@ -295,11 +292,9 @@ export class EzpPrinterSelection {
       this.selectedPrinter = { id: '', location: '', name: '' }
     }
 
-    if (localStorage.getItem('previouslySelectedProperties')) {
-      this.previouslySelectedProperties = JSON.parse(
-        localStorage.getItem('previouslySelectedProperties')
-      )
-    }
+    // if (localStorage.getItem('preSelectedProperties')) {
+    //   // this.preSelectedProperties = JSON.parse(localStorage.getItem('preSelectedProperties'))
+    // }
   }
 
   private getUserInfo() {
@@ -318,26 +313,25 @@ export class EzpPrinterSelection {
         await this.printService
           .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
           .then((data) => (this.selectedPrinterConfig = data[0]))
-
         this.setDefaultPaperFormat()
         break
       case 'color':
         this.selectedProperties.color = !!eventDetails.id
-        this.previouslySelectedProperties.color = eventDetails.title
+        // this.preSelectedProperties.color = eventDetails.title
         break
       case 'orientation':
         this.selectedProperties.orientation = eventDetails.id
-        this.previouslySelectedProperties.orientation = eventDetails.title
+        // this.preSelectedProperties.orientation = eventDetails.title
         break
       case 'format':
         this.selectedProperties.paper = eventDetails.title
         this.selectedProperties.paperid = eventDetails.id
-        this.previouslySelectedProperties.paper = eventDetails.title
-        this.previouslySelectedProperties.paperid = eventDetails.id
+        // this.preSelectedProperties.paper = eventDetails.title
+        // this.preSelectedProperties.paperid = eventDetails.id
         break
       case 'quality':
         this.selectedProperties.resolution = eventDetails.title
-        this.previouslySelectedProperties.resolution = eventDetails.title
+        // this.preSelectedProperties.resolution = eventDetails.title
         break
       case 'duplex':
         if (eventDetails.title === 'None') {
@@ -346,7 +340,7 @@ export class EzpPrinterSelection {
           this.selectedProperties.duplex = true
         }
         this.selectedProperties.duplexmode = eventDetails.id
-        this.previouslySelectedProperties.duplexmode = eventDetails.id
+        // this.preSelectedProperties.duplexmode = eventDetails.id
         break
       default:
         break
@@ -427,10 +421,12 @@ export class EzpPrinterSelection {
       format = 'A4'
     }
 
-    this.previouslySelectedProperties.paper = this.selectedPrinterConfig.PaperFormats
-    .find((el) => el.Name === format).Name
-    this.previouslySelectedProperties.paperid = this.selectedPrinterConfig.PaperFormats
-    .find((el) => el.Name === format).Id
+    this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats.find(
+      (el) => el.Name === format
+    ).Name
+    this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find(
+      (el) => el.Name === format
+    ).Id
   }
 
   /**
@@ -453,8 +449,9 @@ export class EzpPrinterSelection {
       await this.printService
         .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
         .then((data) => (this.selectedPrinterConfig = data[0]))
-
-      this.setDefaultPaperFormat()
+      if (this.selectedProperties.paper === '') {
+        this.setDefaultPaperFormat()
+      }
     }
 
     await (await this.printService.getConfig(authStore.state.accessToken))
@@ -624,8 +621,8 @@ export class EzpPrinterSelection {
                       ]
                 }
                 preSelected={
-                  this.previouslySelectedProperties.color
-                    ? this.previouslySelectedProperties.color
+                  this.selectedProperties.color
+                    ? this.selectedProperties.color
                     : this.selectedPrinterConfig.Color
                     ? i18next.t('printer_selection.color_grayscale')
                     : null
@@ -644,8 +641,8 @@ export class EzpPrinterSelection {
                   type: 'duplex',
                 }))}
                 preSelected={
-                  this.previouslySelectedProperties.duplex
-                    ? this.previouslySelectedProperties.duplex
+                  this.selectedProperties.duplex
+                    ? this.selectedProperties.duplex
                     : this.selectedPrinterConfig.DuplexSupported
                     ? 'None'
                     : null
@@ -665,8 +662,8 @@ export class EzpPrinterSelection {
                   type: 'format',
                 }))}
                 preSelected={
-                  this.previouslySelectedProperties.paper
-                    ? this.previouslySelectedProperties.paper
+                  this.selectedProperties.paper
+                    ? this.selectedProperties.paper
                     : this.selectedPrinterConfig.PaperFormats.length > 0
                     ? this.selectedPrinterConfig.PaperFormats[0].Name
                     : null
@@ -687,8 +684,8 @@ export class EzpPrinterSelection {
                   })
                 )}
                 preSelected={
-                  this.previouslySelectedProperties.orientation
-                    ? this.previouslySelectedProperties.orientation
+                  this.selectedProperties.orientation
+                    ? this.selectedProperties.orientation
                     : this.selectedPrinterConfig.OrientationsSupported.length > 0
                     ? i18next.t(
                         `printer_selection.orientation_${this.selectedPrinterConfig.OrientationsSupported[0]}`
@@ -709,8 +706,8 @@ export class EzpPrinterSelection {
                   type: 'quality',
                 }))}
                 preSelected={
-                  this.previouslySelectedProperties.resolution
-                    ? this.previouslySelectedProperties.resolution
+                  this.selectedProperties.resolution
+                    ? this.selectedProperties.resolution
                     : this.selectedPrinterConfig.Resolutions.length > 0
                     ? this.selectedPrinterConfig.Resolutions[0]
                     : null
