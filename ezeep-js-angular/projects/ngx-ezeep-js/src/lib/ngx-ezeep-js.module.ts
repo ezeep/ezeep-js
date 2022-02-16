@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { defineCustomElements } from "@ezeep/ezeep-js";
 
-import {EzpAuth, EzpBackdrop, EzpIcon, EzpIconButton, EzpPrinterSelection, EzpPrinting, EzpProgress, EzpSelect, EzpTextButton, EzpUserMenu } from "./directives/proxies";
+import {EzpAuth, EzpBackdrop, EzpIcon, EzpIconButton, EzpPrinterSelection, EzpPrinting, EzpStatus, EzpSelect, EzpTextButton, EzpUserMenu } from "./directives/proxies";
 
 defineCustomElements(window);
 
@@ -14,7 +14,7 @@ const DECLARATIONS = [
   EzpIconButton,
   EzpPrinterSelection,
   EzpPrinting,
-  EzpProgress,
+  EzpStatus,
   EzpSelect,
   EzpTextButton,
   EzpUserMenu,
