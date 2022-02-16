@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "tslib": "^2.3.0",
-    "@ezeep/ezeep-js": "^1.0.86"
+    "@ezeep/ezeep-js": "^1.0.146"
   }
 }
