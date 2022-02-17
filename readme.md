@@ -11,15 +11,18 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 ### Getting started
 
 1. Sign up for an ezeep Blue account. This creates an **administrator account** and a new **ezeep organization**.
-   [Sign up here](https://www.ezeep.com/blue/)
+   [Sign up here](https://www.ezeep.com/blue/). After successfully signup, you can manage your ezeep organization [here](https://app.ezeep.com).
 
 2. Register your web application to receive your **Client-ID**. Contact the ezeep team at <helpdesk@ezeep.com> and provide the **Redirect Uri** of your web application. This Uri must host the ezeep.js component.
 
-### Usage
+3. Download the [ezeep Blue Connector](https://ezeep.io/blueconnectorps) and install it on a machine (e.g. your local machine) with a printer on the same network. After the installation you are prompted to authenticate with your ezeep Account. Your printers in your network will be discovered automatically and advertised to the ezeep Administration Portal.
 
-#### Important: You need to set up your server with https!
+### Angular Integration
+ezeep.js is available as Angular library as well. Instructions on how to setup ezeep.js with Angular can be found [here](https://github.com/ezeep/ezeep-js/tree/ngx-ezeep-js/ezeep-js-angular/projects/ngx-ezeep-js).
 
-#### Angular: See instructions on how to setup ezeep.js with Angular [here](https://github.com/ezeep/ezeep-js/tree/ngx-ezeep-js/ezeep-js-angular/projects/ngx-ezeep-js).
+### JavaScript Integration
+
+**Important: You need to set up your server with https!**
 
 1. Include ezeep.js to your web app by the following options:
 
