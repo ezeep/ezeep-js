@@ -16,7 +16,7 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 2. Register your web application to receive your **Client-ID**. Contact the ezeep team at <helpdesk@ezeep.com> and provide the **Redirect Uri** of your web application. This Uri must host the ezeep.js component.
 
 ### Angular Integration
-ezeep.js is available as Angular module as well. Instructions on how to setup ezeep.js with Angular can be found [here](https://github.com/ezeep/ezeep-js/tree/ngx-ezeep-js/ezeep-js-angular/projects/ngx-ezeep-js).
+ezeep.js is available as Angular library as well. Instructions on how to setup ezeep.js with Angular can be found [here](https://github.com/ezeep/ezeep-js/tree/ngx-ezeep-js/ezeep-js-angular/projects/ngx-ezeep-js).
 
 ### JavaScript Integration
 
