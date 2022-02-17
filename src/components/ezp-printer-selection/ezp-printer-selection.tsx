@@ -473,9 +473,6 @@ export class EzpPrinterSelection {
       })
     }
 
-    console.log(this.selectedProperties);
-
-
     this.loading = false
   }
 
@@ -579,7 +576,7 @@ export class EzpPrinterSelection {
                       : i18next.t('printer_selection.unknown_location'),
                   type: 'printer',
                 }))}
-                preSelected={this.selectedPrinter ? this.selectedPrinter.name : null}
+                // preSelected={this.selectedPrinter ? this.selectedPrinter.name : null}
                 disabled={!(this.printers.length > 0)}
               />
             </div>
@@ -648,13 +645,13 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'duplex',
                 }))}
-                preSelected={
-                  this.selectedProperties.duplex
-                    ? this.selectedProperties.duplex
-                    // : this.selectedPrinterConfig.DuplexSupported
-                    // ? 'None'
-                    : null
-                }
+                // preSelected={
+                //   this.selectedProperties.duplex
+                //     ? this.selectedProperties.duplex
+                //     // : this.selectedPrinterConfig.DuplexSupported
+                //     // ? 'None'
+                //     : null
+                // }
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
               <ezp-select
@@ -669,13 +666,13 @@ export class EzpPrinterSelection {
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
-                preSelected={
-                  this.selectedProperties.paper
-                    ? this.selectedProperties.paper
-                    // : this.selectedPrinterConfig.PaperFormats.length > 0
-                    // ? this.selectedPrinterConfig.PaperFormats[0].Name
-                    : null
-                }
+                // preSelected={
+                //   this.selectedProperties.paper
+                //     ? this.selectedProperties.paper
+                //     // : this.selectedPrinterConfig.PaperFormats.length > 0
+                //     // ? this.selectedPrinterConfig.PaperFormats[0].Name
+                //     : null
+                // }
                 disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
               />
               <ezp-select
@@ -691,15 +688,15 @@ export class EzpPrinterSelection {
                     type: 'orientation',
                   })
                 )}
-                preSelected={
-                  this.selectedProperties.orientation
-                    ? this.selectedProperties.orientation
-                    // : this.selectedPrinterConfig.OrientationsSupported.length > 0
-                    // ? i18next.t(
-                    //     `printer_selection.orientation_${this.selectedPrinterConfig.OrientationsSupported[0]}`
-                    //   )
-                    : null
-                }
+                // preSelected={
+                //   this.selectedProperties.orientation
+                //     ? this.selectedProperties.orientation
+                //     // : this.selectedPrinterConfig.OrientationsSupported.length > 0
+                //     // ? i18next.t(
+                //     //     `printer_selection.orientation_${this.selectedPrinterConfig.OrientationsSupported[0]}`
+                //     //   )
+                //     : null
+                // }
                 disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
               />
               <ezp-select
@@ -713,13 +710,13 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'quality',
                 }))}
-                preSelected={
-                  this.selectedProperties.resolution
-                    ? this.selectedProperties.resolution
-                    // : this.selectedPrinterConfig.Resolutions.length > 0
-                    // ? this.selectedPrinterConfig.Resolutions[0]
-                    : null
-                }
+                // preSelected={
+                //   this.selectedProperties.resolution
+                //     ? this.selectedProperties.resolution
+                //     // : this.selectedPrinterConfig.Resolutions.length > 0
+                //     // ? this.selectedPrinterConfig.Resolutions[0]
+                //     : null
+                // }
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
               />
             </div>
