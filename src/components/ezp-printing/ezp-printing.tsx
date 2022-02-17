@@ -21,7 +21,7 @@ export class EzpPrinting {
   private file: File
   @Prop() clientid: string
   @Prop() redirecturi: string
-  @Prop({ mutable: true }) filename: string
+  @Prop({ mutable: true }) filename: string = ''
   @Prop() fileurl: string
   @Prop() filetype: string
   @Prop() custom: boolean
@@ -72,7 +72,7 @@ export class EzpPrinting {
 
   @Listen('authSuccess')
   listenAuthSuccess() {
-    if (this.filename) {
+    if (this.filename != '') {
       this.printOpen = true
     } else {
       this.noDocumentOpen = true
