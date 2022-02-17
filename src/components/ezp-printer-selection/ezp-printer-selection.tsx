@@ -30,15 +30,15 @@ export class EzpPrinterSelection {
   private duplexOptions = [
     {
       id: 1,
-      title: 'None',
+      title: i18next.t('printer_selection.duplex_none'),
     },
     {
       id: 2,
-      title: 'Long edge binding',
+      title: i18next.t('printer_selection.duplex_long'),
     },
     {
       id: 3,
-      title: 'Short edge binding',
+      title: i18next.t('printer_selection.duplex_short'),
     },
   ]
   /**
@@ -473,6 +473,9 @@ export class EzpPrinterSelection {
       })
     }
 
+    console.log(this.selectedProperties);
+
+
     this.loading = false
   }
 
@@ -611,13 +614,27 @@ export class EzpPrinterSelection {
                         },
                       ]
                 }
-                preSelected={
-                  this.selectedProperties.color
-                    ? this.selectedProperties.color
-                    : this.selectedPrinterConfig.Color
-                    ? i18next.t('printer_selection.color_grayscale')
-                    : null
-                }
+                // preSelected={
+                //   this.selectedProperties.color ?
+                //       [
+                //         {
+                //           id: 1,
+                //           title: i18next.t('printer_selection.color'),
+                //           meta: '',
+                //           type: 'color',
+                //         },
+                //       ]
+                //       : !this.selectedProperties.color ?
+                //       [
+                //         {
+                //           id: 0,
+                //           title: i18next.t('printer_selection.color_grayscale'),
+                //           meta: '',
+                //           type: 'color',
+                //         },
+                //       ]
+                //       : null
+                // }
                 disabled={!this.selectedPrinterConfig.Color}
               />
               <ezp-select
@@ -634,8 +651,8 @@ export class EzpPrinterSelection {
                 preSelected={
                   this.selectedProperties.duplex
                     ? this.selectedProperties.duplex
-                    : this.selectedPrinterConfig.DuplexSupported
-                    ? 'None'
+                    // : this.selectedPrinterConfig.DuplexSupported
+                    // ? 'None'
                     : null
                 }
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
@@ -655,8 +672,8 @@ export class EzpPrinterSelection {
                 preSelected={
                   this.selectedProperties.paper
                     ? this.selectedProperties.paper
-                    : this.selectedPrinterConfig.PaperFormats.length > 0
-                    ? this.selectedPrinterConfig.PaperFormats[0].Name
+                    // : this.selectedPrinterConfig.PaperFormats.length > 0
+                    // ? this.selectedPrinterConfig.PaperFormats[0].Name
                     : null
                 }
                 disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
@@ -677,10 +694,10 @@ export class EzpPrinterSelection {
                 preSelected={
                   this.selectedProperties.orientation
                     ? this.selectedProperties.orientation
-                    : this.selectedPrinterConfig.OrientationsSupported.length > 0
-                    ? i18next.t(
-                        `printer_selection.orientation_${this.selectedPrinterConfig.OrientationsSupported[0]}`
-                      )
+                    // : this.selectedPrinterConfig.OrientationsSupported.length > 0
+                    // ? i18next.t(
+                    //     `printer_selection.orientation_${this.selectedPrinterConfig.OrientationsSupported[0]}`
+                    //   )
                     : null
                 }
                 disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
@@ -699,8 +716,8 @@ export class EzpPrinterSelection {
                 preSelected={
                   this.selectedProperties.resolution
                     ? this.selectedProperties.resolution
-                    : this.selectedPrinterConfig.Resolutions.length > 0
-                    ? this.selectedPrinterConfig.Resolutions[0]
+                    // : this.selectedPrinterConfig.Resolutions.length > 0
+                    // ? this.selectedPrinterConfig.Resolutions[0]
                     : null
                 }
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
