@@ -55,6 +55,7 @@ export class EzpAuthorizationService {
 
   getAccessToken() {
     return fetch(this.accessTokenURL, {
+      credentials: 'include',
       headers: {
         Authorization: 'Basic ' + btoa(this.clientID + ':'),
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -91,6 +92,7 @@ export class EzpAuthorizationService {
 
   refreshTokens() {
     fetch(this.accessTokenURL, {
+      credentials: 'include',
       headers: {
         Authorization: 'Basic ' + btoa(this.clientID + ':'),
         'Content-Type': 'application/x-www-form-urlencoded',

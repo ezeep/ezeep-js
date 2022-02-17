@@ -234,6 +234,10 @@ export class EzpPrinterSelection {
           }
         })
         .then((data) => {
+          if (data.code === 804) {
+            this.printFailed = true
+            this.printProcessing = false
+          }
           if (data.jobid) {
             printStore.state.jobID = data.jobid
             poll({
@@ -248,11 +252,13 @@ export class EzpPrinterSelection {
             })
           } else {
             this.printFailed = true
+            this.printProcessing = false
           }
         })
         .catch((error) => {
           console.log(error)
           this.printFailed = true
+          this.printProcessing = false
         })
     }
 
@@ -356,6 +362,10 @@ export class EzpPrinterSelection {
           this.filename
         )
         .then((data) => {
+          if (data.code === 804) {
+            this.printFailed = true
+            this.printProcessing = false
+          }
           if (data.jobid) {
             printStore.state.jobID = data.jobid
             poll({
@@ -370,14 +380,17 @@ export class EzpPrinterSelection {
             })
           } else {
             this.printFailed = true
+            this.printProcessing = false
           }
         })
         .catch((error) => {
           console.log(error)
           this.printFailed = true
+          this.printProcessing = false
         })
     } else {
       this.printFailed = true
+      this.printProcessing = false
     }
   }
 
@@ -420,7 +433,6 @@ export class EzpPrinterSelection {
     this.loading = true
     this.getPropertiesFromLocalStorage()
     this.getUserInfo()
-
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
 
     // if printer is stored from previous print, get the config to enable property selection

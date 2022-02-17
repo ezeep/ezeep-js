@@ -79,7 +79,7 @@ export class EzpAuth {
 
   receiveMessage(event) {
     this.auth.code = event.data
-    this.auth.getAccessToken().finally(() => {
+    this.auth.getAccessToken().then(() => {
       this.authCancel.emit()
       this.authSuccess.emit()
     })
