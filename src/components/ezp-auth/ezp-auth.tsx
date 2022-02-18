@@ -2,8 +2,6 @@ import { Component, Host, h, Prop, State, Event, EventEmitter, Listen } from '@s
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
 import i18next from 'i18next'
-import { initi18n } from '../../utils/utils'
-
 @Component({
   tag: 'ezp-auth',
   styleUrl: 'ezp-auth.scss',
@@ -86,7 +84,6 @@ export class EzpAuth {
   }
 
   async componentWillLoad() {
-    initi18n()
     this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
     if (authStore.state.isAuthorized === false) {
       this.auth.generateCodeVerifier()

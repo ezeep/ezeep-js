@@ -14,7 +14,7 @@ import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
-import { initi18n, poll, removeEmptyStrings } from '../../utils/utils'
+import { poll, removeEmptyStrings } from '../../utils/utils'
 import options from '../../data/options.json'
 import { BlobUploadCommonResponse } from '@azure/storage-blob'
 
@@ -429,7 +429,6 @@ export class EzpPrinterSelection {
 
   /** Description... */
   async componentWillLoad() {
-    initi18n()
     this.loading = true
     this.getPropertiesFromLocalStorage()
     this.getUserInfo()
@@ -720,7 +719,7 @@ export class EzpPrinterSelection {
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
               />
             </div>
-            <ezp-stepper label="Copies" max={10} icon="copies" />
+            <ezp-stepper label={i18next.t('printer_selection.copies')} max={10} icon="copies" />
           </div>
           <div id="footer">
             <ezp-text-button

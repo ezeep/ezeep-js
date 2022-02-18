@@ -1,6 +1,5 @@
 import { Component, Host, Prop, Event, EventEmitter, h } from '@stencil/core'
 import { IconNameTypes } from '../../shared/types'
-import { initi18n } from '../../utils/utils'
 import i18next from 'i18next'
 
 @Component({
@@ -58,7 +57,6 @@ export class EzpStatus {
    */
 
   componentWillLoad() {
-    initi18n()
   }
 
   /**

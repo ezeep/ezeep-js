@@ -1,5 +1,4 @@
 import { Component, Host, Listen, Event, EventEmitter, State, h } from '@stencil/core'
-import { initi18n } from '../../utils/utils'
 import i18next from 'i18next'
 
 @Component({
@@ -75,7 +74,6 @@ export class EzpUpload {
    */
 
   componentWillLoad() {
-    initi18n()
   }
 
   /**

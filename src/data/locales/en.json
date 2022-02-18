@@ -38,7 +38,9 @@
         "orientation_portrait": "Portrait",
         "orientation_landscape": "Landscape",
         "unknown_location": "Unknown location",
-        "no_printers": "No printers found."
+        "no_printers": "No printers found.",
+        "copies": "Copies"
+
     },
     "button_actions": {
         "login": "Sign In",

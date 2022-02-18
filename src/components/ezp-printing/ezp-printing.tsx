@@ -33,7 +33,7 @@ export class EzpPrinting {
   @Prop() fileid: string
   @Prop() appearance: AppearanceTypes = 'system'
   @Prop() trigger: TriggerTypes
-
+  @Prop() language: string = ''
   /**
    *
    * States
@@ -173,7 +173,7 @@ export class EzpPrinting {
       printStore.state.printApiHostUrl = config.printingApiHostUrl
     }
 
-    initi18n()
+    initi18n(this.language)
     sendCodeToParentWindow()
     this.checkAuth()
   }

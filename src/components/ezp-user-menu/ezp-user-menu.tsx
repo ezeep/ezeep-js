@@ -2,7 +2,6 @@ import { Component, Host, Prop, Event, Element, EventEmitter, Watch, h } from '@
 import authStore from '../../services/auth'
 import userStore from '../../services/user'
 import { IconNameTypes, ThemeTypes, AppearanceTypes } from '../../shared/types'
-import { initi18n } from '../../utils/utils'
 import i18next from 'i18next'
 
 @Component({
@@ -93,8 +92,6 @@ export class EzpUserMenu {
    */
 
   componentWillLoad() {
-    initi18n()
-
     this.container = this.component.closest('[data-backdrop-surface]')
 
     this.backdrop.addEventListener('backdropHideStart', () => {

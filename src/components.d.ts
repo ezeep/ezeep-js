@@ -113,6 +113,7 @@ export namespace Components {
         "fileurl": string;
         "hidelogin": boolean;
         "hidemenu": boolean;
+        "language": string;
         /**
           * Public methods
          */
@@ -449,6 +450,7 @@ declare namespace LocalJSX {
         "fileurl"?: string;
         "hidelogin"?: boolean;
         "hidemenu"?: boolean;
+        "language"?: string;
         "printapihosturl"?: string;
         "redirecturi"?: string;
         "theme"?: ThemeTypes;
