@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property            | Attribute | Description    | Type                                                                                                                                                                                                                                                                                                                 | Default     |
@@ -10,20 +11,20 @@
 | `name` _(required)_ | `name`    | Description... | `"account" \| "checkmark" \| "close" \| "color" \| "copies" \| "dark" \| "duplex" \| "expand" \| "help" \| "light" \| "logout" \| "menu" \| "minus" \| "orientation" \| "plus" \| "printer" \| "quality" \| "size" \| "system" \| "drag-drop" \| "checkmark-alt" \| "question-mark" \| "exclamation-mark" \| "logo"` | `undefined` |
 | `size`              | `size`    | Description... | `"huge" \| "large" \| "normal"`                                                                                                                                                                                                                                                                                      | `'normal'`  |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ezp-dialog](../ezp-dialog)
-- [ezp-icon-button](../ezp-icon-button)
-- [ezp-select](../ezp-select)
-- [ezp-status](../ezp-status)
-- [ezp-stepper](../ezp-stepper)
-- [ezp-upload](../ezp-upload)
-- [ezp-user-menu](../ezp-user-menu)
+ - [ezp-dialog](../ezp-dialog)
+ - [ezp-icon-button](../ezp-icon-button)
+ - [ezp-select](../ezp-select)
+ - [ezp-status](../ezp-status)
+ - [ezp-stepper](../ezp-stepper)
+ - [ezp-upload](../ezp-upload)
+ - [ezp-user-menu](../ezp-user-menu)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-dialog --> ezp-icon
@@ -36,4 +37,6 @@ graph TD;
   style ezp-icon fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

@@ -2,18 +2,20 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute        | Description | Type      | Default     |
 | ------------- | ---------------- | ----------- | --------- | ----------- |
-| `clientID`    | `client-i-d`     | Properties  | `string`  | `undefined` |
+| `clientID`    | `client-i-d`     |  Properties | `string`  | `undefined` |
 | `file`        | --               |             | `File`    | `undefined` |
 | `fileid`      | `fileid`         |             | `string`  | `undefined` |
 | `filename`    | `filename`       |             | `string`  | `undefined` |
 | `filetype`    | `filetype`       |             | `string`  | `undefined` |
 | `fileurl`     | `fileurl`        |             | `string`  | `undefined` |
-| `hidelogout`  | `hidelogout`     |             | `boolean` | `undefined` |
+| `hidemenu`    | `hidemenu`       |             | `boolean` | `false`     |
 | `redirectURI` | `redirect-u-r-i` |             | `string`  | `undefined` |
+
 
 ## Events
 
@@ -22,11 +24,12 @@
 | `printCancel` | Description... | `CustomEvent<MouseEvent>` |
 | `printSubmit` | Description... | `CustomEvent<MouseEvent>` |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ezp-printing](../ezp-printing)
+ - [ezp-printing](../ezp-printing)
 
 ### Depends on
 
@@ -39,7 +42,6 @@
 - [ezp-user-menu](../ezp-user-menu)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-printer-selection --> ezp-status
@@ -67,4 +69,6 @@ graph TD;
   style ezp-printer-selection fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+
