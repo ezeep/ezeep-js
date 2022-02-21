@@ -9,10 +9,10 @@
     "url": "git+https://github.com/ezeep/ezeep-js.git"
   },
   "main": "dist/index.cjs.js",
-  "module": "./dist/index.js",
+  "module": "dist/custom-elements/index.js",
   "es2015": "dist/esm/index.mjs",
   "es2017": "dist/esm/index.mjs",
-  "types": "./dist/types/components.d.ts",
+  "types": "dist/custom-elements/index.d.ts",
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
   "unpkg": "dist/ezeep-js/ezeep-js.esm.js",
