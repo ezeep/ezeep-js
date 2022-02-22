@@ -35,7 +35,11 @@
         "unknown_location": "Unbekannter Standort",
         "no_printers": "Keine Drucker gefunden.",
         "prepare_upload": "Vorbereiten…",
-        "uploading": "Hochladen…"
+        "uploading": "Hochladen…",
+        "duplex_none": "Keine",
+        "copies": "Kopien",
+        "duplex_long": "auf der kurzen Seite umdrehen",
+        "duplex_short": "auf der kurzen Seite umdrehen"
     },
     "button_actions": {
         "login": "Anmelden",
@@ -52,12 +56,12 @@
     },
     "user_menu": {
         "theme": "Farbschema",
-        "appearance": "Erscheinungsbild",
+        "appearance": "Darstellung",
         "system": "System",
         "light": "Hell",
         "dark": "Dunkel",
         "account": "Account verwalten",
-        "help": "Hilfe & Support",
+        "help": "Hilfe & Unterstützung",
         "logout": "Ausloggen"
     }
 }
