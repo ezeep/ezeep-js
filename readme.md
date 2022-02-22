@@ -65,6 +65,7 @@ There are multiple required and optional attributes the ezp-printing element nee
 | authapihosturl  | Overrides the default URL of the authentication API.                                                                                                                                                                                                    | string  | No                                                   |
 | printapihosturl | Overrides the default URL of the printing API.                                                                                                                                                                                                          | string  | No                                                   |
 | theme           | The overall color theme. Possible colors are pink, red, orange, green, cyan, blue and violet.                                                                                                                                                           | string  | No                                                   |
+| appearance | Sets the overall appearance to "light", "dark" or the "system" default. | string | No
 | language | Overrides the browserlanguage. Possible values are "de" for German and "en" for English. | string | No
 
 ### Example with button trigger
