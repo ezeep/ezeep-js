@@ -38,7 +38,7 @@
         "uploading": "Hochladen…",
         "duplex_none": "Keine",
         "copies": "Kopien",
-        "duplex_long": "auf der kurzen Seite umdrehen",
+        "duplex_long": "auf der langen Seite umdrehen",
         "duplex_short": "auf der kurzen Seite umdrehen"
     },
     "button_actions": {
