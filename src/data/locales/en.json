@@ -23,9 +23,9 @@
         "orientation": "Orientation",
         "size": "Paper Size",
         "duplex": "Double-sided",
-        "duplex_none":"None",
-        "duplex_long":"Long edge binding",
-        "duplex_short":"Short edge binding",
+        "duplex_none": "None",
+        "duplex_long": "flip on long side",
+        "duplex_short": "flip on short side",
         "quality": "Print Quality",
         "select_printer": "Select a printer",
         "select_color": "Select Color/Grayscale",
@@ -40,7 +40,6 @@
         "unknown_location": "Unknown location",
         "no_printers": "No printers found.",
         "copies": "Copies"
-
     },
     "button_actions": {
         "login": "Sign In",
@@ -62,7 +61,7 @@
         "light": "Light",
         "dark": "Dark",
         "account": "Manage account",
-        "help": "Help & support",
+        "help": "Help & Support",
         "logout": "Logout"
     }
 }
