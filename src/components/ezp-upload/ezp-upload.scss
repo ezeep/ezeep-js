@@ -9,6 +9,7 @@
   background: var(--ezp-upload-background, transparent);
   border: 1px dashed var(--ezp-upload-border-color, var(--ezp-color-foreground-tertiary));
   border-radius: 3px;
+  box-sizing: border-box;
   color: var(--ezp-color-foreground-primary);
   display: grid;
   grid-template: auto / minmax(auto, 280px);
