@@ -414,10 +414,10 @@ export class EzpPrinterSelection {
     }
 
     this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats.find(
-      (el) => el.Name === format
+      (el) => el.Name.includes(format)
     ).Name
     this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find(
-      (el) => el.Name === format
+      (el) => el.Name.includes(format)
     ).Id
   }
 
