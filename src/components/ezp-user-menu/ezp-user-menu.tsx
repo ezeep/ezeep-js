@@ -72,7 +72,11 @@ export class EzpUserMenu {
   }
 
   private logOut = () => {
-    localStorage.clear()
+    localStorage.removeItem('properties')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('printer')
+    localStorage.removeItem('isAuthorized')
     authStore.state.isAuthorized = false
     this.logoutEmitter.emit()
   }

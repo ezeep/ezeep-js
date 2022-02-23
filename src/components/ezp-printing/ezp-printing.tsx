@@ -119,6 +119,16 @@ export class EzpPrinting {
     }
   }
 
+  @Method()
+  async logOut() {
+    localStorage.removeItem('properties')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('printer')
+    localStorage.removeItem('isAuthorized')
+    this.printOpen = false
+  }
+
   checkAuth() {
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 

@@ -244,7 +244,7 @@ export class EzpPrinterSelection {
               fn: this.printService.getPrintStatus,
               validate: this.validateData,
               interval: this.POLL_INTERVAL,
-              maxAttempts: 10,
+              maxAttempts: 30,
             }).catch((err) => {
               console.warn(err)
               this.printFailed = true
@@ -372,7 +372,7 @@ export class EzpPrinterSelection {
               fn: this.printService.getPrintStatus,
               validate: this.validateData,
               interval: this.POLL_INTERVAL,
-              maxAttempts: 10,
+              maxAttempts: 30,
             }).catch((err) => {
               console.log(err)
               this.printFailed = true
@@ -470,7 +470,6 @@ export class EzpPrinterSelection {
         this.notSupported = !valid ? true : false
       })
     }
-
     this.loading = false
   }
 

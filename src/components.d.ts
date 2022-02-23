@@ -114,6 +114,7 @@ export namespace Components {
         "hidelogin": boolean;
         "hidemenu": boolean;
         "language": string;
+        "logOut": () => Promise<void>;
         /**
           * Public methods
          */
