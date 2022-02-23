@@ -428,8 +428,7 @@ export class EzpPrinterSelection {
    */
 
   /** Description... */
-  async componentWillLoad() {
-    this.loading = true
+  async connectedCallback() {
     this.getPropertiesFromLocalStorage()
     this.getUserInfo()
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
