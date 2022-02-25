@@ -28,7 +28,12 @@ export class EzpAuth {
     this.authCancel.emit()
   }
 
-  windowObjectReference = null
+  @Listen('statusCancel')
+  listenStatusCancel() {
+    this.authCancel.emit()
+  }
+
+  oauthPopupWindow: Window = null
   previousUrl = null
 
   openSignInWindow(url: string, name: string) {
@@ -38,35 +43,26 @@ export class EzpAuth {
     // window features
     const strWindowFeatures = 'toolbar=no, menubar=no, width=600, height=7000, top=100, left=100'
 
-    if (this.windowObjectReference === null || this.windowObjectReference.closed) {
+    if (this.oauthPopupWindow === null || this.oauthPopupWindow.closed) {
       /* if the pointer to the window object in memory does not exist
       or if such pointer exists but the window was closed */
 
-      this.windowObjectReference = window.open(url, name, strWindowFeatures)
+      this.oauthPopupWindow = window.open(url, name, strWindowFeatures)
     } else if (this.previousUrl !== this.auth.authURI.toString()) {
       /* if the resource to load is different,
       then we load it in the already opened secondary window and then
       we bring such window back on top/in front of its parent window. */
 
-      this.windowObjectReference = window.open(url, name, strWindowFeatures)
-      this.windowObjectReference.focus()
+      this.oauthPopupWindow = window.open(url, name, strWindowFeatures)
+
+      this.oauthPopupWindow.focus()
     } else {
       /* else the window reference must exist and the window
      is not closed; therefore, we can bring it back on top of any other
      window with the focus() method. There would be no need to re-create
      the window or to reload the referenced resource. */
 
-      this.windowObjectReference.focus()
-    }
-
-    // check if the window was closed and cancel login accordingly
-    if (this.hidelogin) {
-      let checkClosedTimer = setInterval(() => {
-        if (this.windowObjectReference.closed) {
-          this.authCancel.emit()
-          clearInterval(checkClosedTimer)
-        }
-      }, 500)
+      this.oauthPopupWindow.focus()
     }
 
     // add the listener for receiving a message from the popup
@@ -98,7 +94,7 @@ export class EzpAuth {
 
   render() {
     return this.hidelogin ? (
-      <ezp-status description={i18next.t('login_dialog.action')} processing></ezp-status>
+      <ezp-status description={i18next.t('login_dialog.action')} processing cancel></ezp-status>
     ) : (
       <Host>
         <ezp-dialog
