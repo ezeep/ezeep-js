@@ -78,8 +78,8 @@ To get started, you can use the default ezeep print button within your web app:
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-    <script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
-    <script nomodule src="https://cdn.ezeep.com/libs/js/esm/ezeep.js"></script>
+    <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
     <title>ezeep-js</title>
   </head>
   <body>
@@ -106,8 +106,8 @@ If you want to bind the printing process to a custom html element, you can use t
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-    <script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
-    <script nomodule src="https://cdn.ezeep.com/libs/js/esm/ezeep.js"></script>
+    <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
     <title>ezeep-js</title>
     <style>
       .customButton {
@@ -154,8 +154,8 @@ If you want to bind the printing process to a custom html element, you can use t
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-    <script type="module" src="https://cdn.ezeep.com/libs/js/ezeep/ezeep.esm.js"></script>
-    <script nomodule src="https://cdn.ezeep.com/libs/js/esm/ezeep.js"></script>
+    <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
     <title>ezeep-js</title>
     <style>
       /*
