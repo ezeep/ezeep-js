@@ -15,7 +15,6 @@ import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { poll, removeEmptyStrings } from '../../utils/utils'
-import options from '../../data/options.json'
 import { BlobUploadCommonResponse } from '@azure/storage-blob'
 
 @Component({
@@ -61,7 +60,6 @@ export class EzpPrinterSelection {
    *
    */
   @State() loading: boolean = true
-  @State() options = options
   @State() printProcessing: boolean = false
   @State() uploading: boolean = false
   @State() preparingUpload: boolean = false
@@ -192,6 +190,7 @@ export class EzpPrinterSelection {
     return false
   }
   private POLL_INTERVAL = 2000
+  private MAX_POLL_ATTEMPTS = 30
 
   /** Description... */
   private handlePrint = async () => {
@@ -199,7 +198,7 @@ export class EzpPrinterSelection {
 
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
-    this.selectedProperties = removeEmptyStrings(this.selectedProperties)
+    const cleanPrintProperties = removeEmptyStrings(this.selectedProperties)
     // put it in store for further use
     printStore.state.fileUrl = this.fileurl
     printStore.state.fileID = this.fileid
@@ -215,7 +214,7 @@ export class EzpPrinterSelection {
           this.fileurl,
           this.filetype,
           this.selectedPrinter.id,
-          this.selectedProperties,
+          cleanPrintProperties,
           this.filename
         )
         .then((response) => {
@@ -226,7 +225,7 @@ export class EzpPrinterSelection {
               this.fileid,
               this.filetype,
               this.selectedPrinter.id,
-              this.selectedProperties,
+              cleanPrintProperties,
               this.filename
             )
           } else {
@@ -244,7 +243,7 @@ export class EzpPrinterSelection {
               fn: this.printService.getPrintStatus,
               validate: this.validateData,
               interval: this.POLL_INTERVAL,
-              maxAttempts: 30,
+              maxAttempts: this.MAX_POLL_ATTEMPTS,
             }).catch((err) => {
               console.warn(err)
               this.printFailed = true
@@ -263,7 +262,7 @@ export class EzpPrinterSelection {
     }
 
     if (this.file) {
-      await this.handleFiles(this.file)
+      await this.handleFiles(this.file, cleanPrintProperties)
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
@@ -308,16 +307,24 @@ export class EzpPrinterSelection {
         break
       case 'color':
         this.selectedProperties.color = !!eventDetails.id
+        console.log('color selected:')
+        console.log(this.selectedProperties.color)
         break
       case 'orientation':
         this.selectedProperties.orientation = eventDetails.id
+        console.log('orientation selected:')
+        console.log(this.selectedProperties.orientation)
         break
       case 'format':
         this.selectedProperties.paper = eventDetails.title
         this.selectedProperties.paperid = eventDetails.id
+        console.log('paper selected:')
+        console.log(this.selectedProperties.paper)
         break
       case 'quality':
         this.selectedProperties.resolution = eventDetails.title
+        console.log('quality selected:')
+        console.log(this.selectedProperties.resolution)
         break
       case 'duplex':
         if (eventDetails.title === 'None') {
@@ -326,13 +333,15 @@ export class EzpPrinterSelection {
           this.selectedProperties.duplex = true
         }
         this.selectedProperties.duplexmode = eventDetails.id
+        console.log('duplex selected:')
+        console.log(this.selectedProperties.duplexmode)
         break
       default:
         break
     }
   }
 
-  async handleFiles(file: File) {
+  async handleFiles(file: File, printPorperties) {
     this.preparingUpload = true
     const response = await this.printService.prepareFileUpload(authStore.state.accessToken)
     this.preparingUpload = false
@@ -358,7 +367,7 @@ export class EzpPrinterSelection {
           this.fileid,
           this.filetype,
           this.selectedPrinter.id,
-          this.selectedProperties,
+          printPorperties,
           this.filename
         )
         .then((data) => {
@@ -372,7 +381,7 @@ export class EzpPrinterSelection {
               fn: this.printService.getPrintStatus,
               validate: this.validateData,
               interval: this.POLL_INTERVAL,
-              maxAttempts: 30,
+              maxAttempts: this.MAX_POLL_ATTEMPTS,
             }).catch((err) => {
               console.log(err)
               this.printFailed = true
@@ -573,7 +582,7 @@ export class EzpPrinterSelection {
                       : i18next.t('printer_selection.unknown_location'),
                   type: 'printer',
                 }))}
-                // preSelected={this.selectedPrinter ? this.selectedPrinter.name : null}
+                preSelected={this.selectedPrinter ? this.selectedPrinter.name : null}
                 disabled={!(this.printers.length > 0)}
               />
             </div>
@@ -608,27 +617,11 @@ export class EzpPrinterSelection {
                         },
                       ]
                 }
-                // preSelected={
-                //   this.selectedProperties.color ?
-                //       [
-                //         {
-                //           id: 1,
-                //           title: i18next.t('printer_selection.color'),
-                //           meta: '',
-                //           type: 'color',
-                //         },
-                //       ]
-                //       : !this.selectedProperties.color ?
-                //       [
-                //         {
-                //           id: 0,
-                //           title: i18next.t('printer_selection.color_grayscale'),
-                //           meta: '',
-                //           type: 'color',
-                //         },
-                //       ]
-                //       : null
-                // }
+                preSelected={
+                    this.selectedProperties.color
+                    ? i18next.t('printer_selection.color_color')
+                    : i18next.t('printer_selection.color_grayscale')
+                }
                 disabled={!this.selectedPrinterConfig.Color}
               />
               <ezp-select
@@ -642,13 +635,11 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'duplex',
                 }))}
-                // preSelected={
-                //   this.selectedProperties.duplex
-                //     ? this.selectedProperties.duplex
-                //     // : this.selectedPrinterConfig.DuplexSupported
-                //     // ? 'None'
-                //     : null
-                // }
+                preSelected={
+                  this.selectedProperties.duplex
+                    ? this.duplexOptions.find((option) => option.id === this.selectedProperties.duplexmode).id
+                    : null
+                }
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
               <ezp-select
@@ -663,13 +654,11 @@ export class EzpPrinterSelection {
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
-                // preSelected={
-                //   this.selectedProperties.paper
-                //     ? this.selectedProperties.paper
-                //     // : this.selectedPrinterConfig.PaperFormats.length > 0
-                //     // ? this.selectedPrinterConfig.PaperFormats[0].Name
-                //     : null
-                // }
+                preSelected={
+                  this.selectedProperties.paper
+                    ? this.selectedProperties.paper
+                    : null
+                }
                 disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
               />
               <ezp-select
@@ -685,15 +674,11 @@ export class EzpPrinterSelection {
                     type: 'orientation',
                   })
                 )}
-                // preSelected={
-                //   this.selectedProperties.orientation
-                //     ? this.selectedProperties.orientation
-                //     // : this.selectedPrinterConfig.OrientationsSupported.length > 0
-                //     // ? i18next.t(
-                //     //     `printer_selection.orientation_${this.selectedPrinterConfig.OrientationsSupported[0]}`
-                //     //   )
-                //     : null
-                // }
+                preSelected={
+                  this.selectedProperties.orientation
+                    ? this.selectedProperties.orientation
+                    : null
+                }
                 disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
               />
               <ezp-select
@@ -707,13 +692,11 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'quality',
                 }))}
-                // preSelected={
-                //   this.selectedProperties.resolution
-                //     ? this.selectedProperties.resolution
-                //     // : this.selectedPrinterConfig.Resolutions.length > 0
-                //     // ? this.selectedPrinterConfig.Resolutions[0]
-                //     : null
-                // }
+                preSelected={
+                  this.selectedProperties.resolution
+                    ? this.selectedProperties.resolution
+                    : null
+                }
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
               />
             </div>

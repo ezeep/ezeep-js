@@ -41,19 +41,19 @@ export class EzpAuth {
     window.removeEventListener('message', this.receiveMessage)
 
     // window features
-    const strWindowFeatures = 'toolbar=no, menubar=no, width=600, height=7000, top=100, left=100'
+    const windowFeatures = 'toolbar=no, menubar=no, width=600, height=7000, top=100, left=100'
 
     if (this.oauthPopupWindow === null || this.oauthPopupWindow.closed) {
       /* if the pointer to the window object in memory does not exist
       or if such pointer exists but the window was closed */
 
-      this.oauthPopupWindow = window.open(url, name, strWindowFeatures)
+      this.oauthPopupWindow = window.open(url, name, windowFeatures)
     } else if (this.previousUrl !== this.auth.authURI.toString()) {
       /* if the resource to load is different,
       then we load it in the already opened secondary window and then
       we bring such window back on top/in front of its parent window. */
 
-      this.oauthPopupWindow = window.open(url, name, strWindowFeatures)
+      this.oauthPopupWindow = window.open(url, name, windowFeatures)
 
       this.oauthPopupWindow.focus()
     } else {
