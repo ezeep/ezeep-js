@@ -10,7 +10,6 @@ export class EzpPrintService {
     this.printingApi = printStore.state.printApiHostUrl
 
     this.checkStoredRefreshToken()
-    this.registerFetchInterceptor()
   }
 
   clientID: string
@@ -30,7 +29,7 @@ export class EzpPrintService {
     }
   }
 
-  private registerFetchInterceptor() {
+  registerFetchInterceptor() {
     fetchIntercept.register({
       request: (url, config) => {
         // Modify the url or config here

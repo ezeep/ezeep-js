@@ -1,5 +1,5 @@
 import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
-import authStore, { sendCodeToParentWindow } from '../../services/auth'
+import authStore, { EzpAuthorizationService, sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
 import config from '../../shared/config.json'
@@ -170,6 +170,14 @@ export class EzpPrinting {
       })
   }
 
+  refreshTokensPeriodically(seconds: number) {
+    const authService = new EzpAuthorizationService(this.redirecturi, this.clientid)
+    setInterval(() => {
+      authService.refreshTokens()
+      console.log('tokens refreshed')
+    }, seconds * 1000)
+  }
+
   componentWillLoad() {
     const systemAppearanceDark = window.matchMedia('(prefers-color-scheme: dark)')
 
@@ -198,6 +206,10 @@ export class EzpPrinting {
     initi18n(this.language)
     sendCodeToParentWindow()
     this.checkAuth()
+  }
+
+  componentDidLoad() {
+    this.refreshTokensPeriodically(1800)
   }
 
   /**

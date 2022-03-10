@@ -439,8 +439,9 @@ export class EzpPrinterSelection {
   /** Description... */
   async connectedCallback() {
     this.getPropertiesFromLocalStorage()
-    this.getUserInfo()
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
+    this.printService.registerFetchInterceptor()
+    await this.getUserInfo()
 
     // if printer is stored from previous print, get the config to enable property selection
     if (this.selectedPrinter.id != '') {

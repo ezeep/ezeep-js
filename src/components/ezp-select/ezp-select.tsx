@@ -138,6 +138,8 @@ export class EzpSelect {
 
     this.selected = this.options.find((option) => option.id === id)
     this.selectSelection.emit(this.selected)
+    console.log('ezp-select:')
+    console.log(this.selected)
     window.setTimeout(() => {
       this.toggle()
     }, delay)
