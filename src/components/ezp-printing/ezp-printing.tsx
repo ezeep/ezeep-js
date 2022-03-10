@@ -129,6 +129,18 @@ export class EzpPrinting {
     this.printOpen = false
   }
 
+  @Method()
+  async getSasUri(): Promise<string> {
+    const printService = new EzpPrintService(this.redirecturi, this.clientid)
+
+    const response = await printService.prepareFileUpload(authStore.state.accessToken)
+      .catch(() => this.open())
+
+    const sasUri = response.sasUri
+
+    return sasUri
+  }
+
   checkAuth() {
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 

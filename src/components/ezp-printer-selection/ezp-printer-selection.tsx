@@ -88,7 +88,7 @@ export class EzpPrinterSelection {
     color: false,
     duplex: false,
     duplexmode: '',
-    orientation: '',
+    orientation: 0,
     copies: '',
     resolution: '',
   }
@@ -422,11 +422,11 @@ export class EzpPrinterSelection {
       format = 'A4'
     }
 
-    this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats.find(
-      (el) => el.Name.includes(format)
+    this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats.find((el) =>
+      el.Name.includes(format)
     ).Name
-    this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find(
-      (el) => el.Name.includes(format)
+    this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find((el) =>
+      el.Name.includes(format)
     ).Id
   }
 
@@ -618,7 +618,7 @@ export class EzpPrinterSelection {
                       ]
                 }
                 preSelected={
-                    this.selectedProperties.color
+                  this.selectedProperties.color
                     ? i18next.t('printer_selection.color_color')
                     : i18next.t('printer_selection.color_grayscale')
                 }
@@ -637,7 +637,9 @@ export class EzpPrinterSelection {
                 }))}
                 preSelected={
                   this.selectedProperties.duplex
-                    ? this.duplexOptions.find((option) => option.id === this.selectedProperties.duplexmode).id
+                    ? this.duplexOptions.find(
+                        (option) => option.id === this.selectedProperties.duplexmode
+                      ).id
                     : null
                 }
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
@@ -654,11 +656,7 @@ export class EzpPrinterSelection {
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
-                preSelected={
-                  this.selectedProperties.paper
-                    ? this.selectedProperties.paper
-                    : null
-                }
+                preSelected={this.selectedProperties.paper ? this.selectedProperties.paper : null}
                 disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
               />
               <ezp-select
@@ -674,11 +672,7 @@ export class EzpPrinterSelection {
                     type: 'orientation',
                   })
                 )}
-                preSelected={
-                  this.selectedProperties.orientation
-                    ? this.selectedProperties.orientation
-                    : null
-                }
+                preSelected={this.selectedProperties.orientation}
                 disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
               />
               <ezp-select
@@ -693,9 +687,7 @@ export class EzpPrinterSelection {
                   type: 'quality',
                 }))}
                 preSelected={
-                  this.selectedProperties.resolution
-                    ? this.selectedProperties.resolution
-                    : null
+                  this.selectedProperties.resolution ? this.selectedProperties.resolution : null
                 }
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
               />
