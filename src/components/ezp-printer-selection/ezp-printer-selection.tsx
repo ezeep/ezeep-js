@@ -88,7 +88,7 @@ export class EzpPrinterSelection {
     color: false,
     duplex: false,
     duplexmode: '',
-    orientation: 0,
+    orientation: '',
     copies: '',
     resolution: '',
   }
@@ -190,7 +190,7 @@ export class EzpPrinterSelection {
     return false
   }
   private POLL_INTERVAL = 2000
-  private MAX_POLL_ATTEMPTS = 30
+  private MAX_POLL_ATTEMPTS = 1000
 
   /** Description... */
   private handlePrint = async () => {
@@ -667,13 +667,17 @@ export class EzpPrinterSelection {
                 toggleFlow="horizontal"
                 options={this.selectedPrinterConfig.OrientationsSupported.map(
                   (orientation, index) => ({
-                    id: index,
+                    id: index + 1,
                     title: i18next.t(`printer_selection.orientation_${orientation}`),
                     meta: '',
                     type: 'orientation',
                   })
                 )}
-                preSelected={this.selectedProperties.orientation}
+                preSelected={
+                  this.selectedProperties.orientation
+                  ? this.selectedProperties.orientation
+                  : null
+                }
                 disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
               />
               <ezp-select
