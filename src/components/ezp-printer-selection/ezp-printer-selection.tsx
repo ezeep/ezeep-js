@@ -583,7 +583,7 @@ export class EzpPrinterSelection {
                       : i18next.t('printer_selection.unknown_location'),
                   type: 'printer',
                 }))}
-                preSelected={this.selectedPrinter ? this.selectedPrinter.name : null}
+                // preSelected={this.selectedPrinter ? this.selectedPrinter.name : null}
                 disabled={!(this.printers.length > 0)}
               />
             </div>
@@ -618,11 +618,11 @@ export class EzpPrinterSelection {
                         },
                       ]
                 }
-                preSelected={
-                  this.selectedProperties.color
-                    ? i18next.t('printer_selection.color_color')
-                    : i18next.t('printer_selection.color_grayscale')
-                }
+                // preSelected={
+                //   this.selectedProperties.color
+                //     ? i18next.t('printer_selection.color_color')
+                //     : i18next.t('printer_selection.color_grayscale')
+                // }
                 disabled={!this.selectedPrinterConfig.Color}
               />
               <ezp-select
@@ -636,13 +636,13 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'duplex',
                 }))}
-                preSelected={
-                  this.selectedProperties.duplex
-                    ? this.duplexOptions.find(
-                        (option) => option.id === this.selectedProperties.duplexmode
-                      ).id
-                    : null
-                }
+                // preSelected={
+                //   this.selectedProperties.duplex
+                //     ? this.duplexOptions.find(
+                //         (option) => option.id === this.selectedProperties.duplexmode
+                //       ).id
+                //     : null
+                // }
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
               <ezp-select
@@ -657,7 +657,7 @@ export class EzpPrinterSelection {
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
-                preSelected={this.selectedProperties.paper ? this.selectedProperties.paper : null}
+                // preSelected={this.selectedProperties.paper ? this.selectedProperties.paper : null}
                 disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
               />
               <ezp-select
@@ -673,11 +673,11 @@ export class EzpPrinterSelection {
                     type: 'orientation',
                   })
                 )}
-                preSelected={
-                  this.selectedProperties.orientation
-                  ? this.selectedProperties.orientation
-                  : null
-                }
+                // preSelected={
+                //   this.selectedProperties.orientation
+                //   ? this.selectedProperties.orientation
+                //   : null
+                // }
                 disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
               />
               <ezp-select
@@ -691,9 +691,9 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'quality',
                 }))}
-                preSelected={
-                  this.selectedProperties.resolution ? this.selectedProperties.resolution : null
-                }
+                // preSelected={
+                //   this.selectedProperties.resolution ? this.selectedProperties.resolution : null
+                // }
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
               />
             </div>

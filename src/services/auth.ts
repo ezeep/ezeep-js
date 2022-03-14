@@ -138,8 +138,10 @@ export function sendCodeToParentWindow() {
   const params = new URLSearchParams(window.location.search)
   const code = params.get('code')
   if (window.opener) {
-    // send them to the opening window
+    if (code) {
+      // send them to the opening window
     window.opener.postMessage(code, authStore.state.redirectUri)
     window.close()
+    }
   }
 }
