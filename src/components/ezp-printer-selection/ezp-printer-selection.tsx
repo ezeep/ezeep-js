@@ -190,7 +190,7 @@ export class EzpPrinterSelection {
     return false
   }
   private POLL_INTERVAL = 2000
-  private MAX_POLL_ATTEMPTS = 1000
+  private MAX_POLL_ATTEMPTS = Infinity
 
   /** Description... */
   private handlePrint = async () => {
@@ -580,7 +580,7 @@ export class EzpPrinterSelection {
                   meta:
                     printer.location !== ''
                       ? printer.location
-                      : i18next.t('printer_selection.unknown_location'),
+                      : '',
                   type: 'printer',
                 }))}
                 // preSelected={this.selectedPrinter ? this.selectedPrinter.name : null}
