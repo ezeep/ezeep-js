@@ -307,24 +307,24 @@ export class EzpPrinterSelection {
         break
       case 'color':
         this.selectedProperties.color = !!eventDetails.id
-        console.log('color selected:')
-        console.log(this.selectedProperties.color)
+        // console.log('color selected:')
+        // console.log(this.selectedProperties.color)
         break
       case 'orientation':
         this.selectedProperties.orientation = eventDetails.id
-        console.log('orientation selected:')
-        console.log(this.selectedProperties.orientation)
+        // console.log('orientation selected:')
+        // console.log(this.selectedProperties.orientation)
         break
       case 'format':
         this.selectedProperties.paper = eventDetails.title
         this.selectedProperties.paperid = eventDetails.id
-        console.log('paper selected:')
-        console.log(this.selectedProperties.paper)
+        // console.log('paper selected:')
+        // console.log(this.selectedProperties.paper)
         break
       case 'quality':
         this.selectedProperties.resolution = eventDetails.title
-        console.log('quality selected:')
-        console.log(this.selectedProperties.resolution)
+        // console.log('quality selected:')
+        // console.log(this.selectedProperties.resolution)
         break
       case 'duplex':
         if (eventDetails.title === 'None') {
@@ -333,8 +333,8 @@ export class EzpPrinterSelection {
           this.selectedProperties.duplex = true
         }
         this.selectedProperties.duplexmode = eventDetails.id
-        console.log('duplex selected:')
-        console.log(this.selectedProperties.duplexmode)
+        // console.log('duplex selected:')
+        // console.log(this.selectedProperties.duplexmode)
         break
       default:
         break

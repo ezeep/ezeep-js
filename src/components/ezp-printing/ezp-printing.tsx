@@ -174,7 +174,6 @@ export class EzpPrinting {
     const authService = new EzpAuthorizationService(this.redirecturi, this.clientid)
     setInterval(() => {
       authService.refreshTokens()
-      console.log('tokens refreshed')
     }, seconds * 1000)
   }
 
