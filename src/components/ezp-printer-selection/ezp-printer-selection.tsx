@@ -405,9 +405,9 @@ export class EzpPrinterSelection {
 
   private validateFileType = async (name: string): Promise<boolean> => {
     const extension = name.split('.').pop()
-    this.fileExtension = extension
+    this.fileExtension = extension.toLowerCase()
 
-    return printStore.state.supportedFileExtensions.includes(`${extension}`)
+    return printStore.state.supportedFileExtensions.includes(`${this.fileExtension}`)
   }
 
   setDefaultPaperFormat() {
