@@ -43,6 +43,7 @@ export class EzpPrinting {
   /** Description... */
   @State() printOpen: boolean = false
   @State() authOpen: boolean = false
+  @State() onlyGetSasUri: boolean = false
   @State() noDocumentOpen: boolean = false
   @State() systemAppearance: SystemAppearanceTypes
 
@@ -72,7 +73,10 @@ export class EzpPrinting {
 
   @Listen('authSuccess')
   listenAuthSuccess() {
-    if (this.filename != '') {
+    if (this.onlyGetSasUri) {
+      this.printOpen = false
+      this.onlyGetSasUri = false
+    } else if (this.filename != '') {
       this.printOpen = true
     } else {
       this.noDocumentOpen = true
@@ -131,14 +135,19 @@ export class EzpPrinting {
 
   @Method()
   async getSasUri(): Promise<string> {
+    this.onlyGetSasUri = true
+
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
-    const response = await printService.prepareFileUpload(authStore.state.accessToken)
-      .catch(() => this.open())
+    let response = await printService.prepareFileUpload(authStore.state.accessToken).catch(() => {
+      this.open()
+      return null
+    })
 
-    const sasUri = response.sasUri
-
-    return sasUri
+    if (response) {
+      const sasUri = response.sasUri
+      return sasUri
+    }
   }
 
   checkAuth() {
