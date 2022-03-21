@@ -283,7 +283,7 @@ export class EzpPrinterSelection {
     if (localStorage.getItem('printer')) {
       this.selectedPrinter = JSON.parse(localStorage.getItem('printer'))
     } else {
-      this.selectedPrinter = { id: '', location: '', name: '' }
+      this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
     }
   }
 
@@ -295,11 +295,17 @@ export class EzpPrinterSelection {
     })
   }
 
-  private async setSelectedProperties(eventDetails: { type: string; id: string; title: string }) {
+  private async setSelectedProperties(eventDetails: {
+    type: string
+    id: string
+    title: string
+    is_queue: boolean
+  }) {
     switch (eventDetails.type) {
       case 'printer':
         this.selectedPrinter.id = eventDetails.id
         this.selectedPrinter.name = eventDetails.title
+        this.selectedPrinter.is_queue = eventDetails.is_queue
         await this.printService
           .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
           .then((data) => (this.selectedPrinterConfig = data[0]))
@@ -422,12 +428,14 @@ export class EzpPrinterSelection {
       format = 'A4'
     }
 
-    this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats.find((el) =>
-      el.Name.includes(format)
-    ).Name
-    this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find((el) =>
-      el.Name.includes(format)
-    ).Id
+    if (this.selectedPrinterConfig.PaperFormats.find((el) => el.Name.includes(format))) {
+      this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats.find((el) =>
+        el.Name.includes(format)
+      ).Name
+      this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find((el) =>
+        el.Name.includes(format)
+      ).Id
+    }
   }
 
   /**
@@ -521,6 +529,13 @@ export class EzpPrinterSelection {
                   instance="print-success"
                   close
                 />
+              ) : this.printSuccess && this.selectedPrinter.is_queue ? (
+                <ezp-status
+                  icon="checkmark-alt"
+                  description={i18next.t('printer_selection.pull_print_success')}
+                  instance="print-success"
+                  close
+                />
               ) : this.printFailed ? (
                 <ezp-status
                   icon="exclamation-mark"
@@ -577,11 +592,9 @@ export class EzpPrinterSelection {
                 options={this.printers.map((printer) => ({
                   id: printer.id,
                   title: printer.name,
-                  meta:
-                    printer.location !== ''
-                      ? printer.location
-                      : '',
+                  meta: printer.location !== '' ? printer.location : '',
                   type: 'printer',
+                  is_queue: printer.is_queue,
                 }))}
                 // preSelected={this.selectedPrinter ? this.selectedPrinter.name : null}
                 disabled={!(this.printers.length > 0)}

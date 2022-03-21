@@ -55,6 +55,10 @@ export class EzpAuth {
 
       this.oauthPopupWindow = window.open(url, name, windowFeatures)
 
+      if ( !this.oauthPopupWindow || this.oauthPopupWindow.closed || typeof this.oauthPopupWindow.closed=='undefined' ) {
+        alert('popup blocked')
+      }
+
       this.oauthPopupWindow.focus()
     } else {
       /* else the window reference must exist and the window

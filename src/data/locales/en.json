@@ -13,6 +13,7 @@
         "loading": "Loading My Printers…",
         "print_processing": "Printing…",
         "print_success": "Successfully printed.",
+        "pull_print_success": "Ready to be released.",
         "print_failed": "Print failed",
         "not_supported": "The selected file type is not supported.",
         "prepare_upload": "Preparing…",

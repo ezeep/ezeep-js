@@ -66,6 +66,7 @@ export interface Printer {
   id: string
   location: string
   name: string
+  is_queue: boolean
 }
 
 export interface PaperFormat {
