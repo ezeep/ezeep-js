@@ -24,7 +24,7 @@ $RECYCLE.BIN/
 Thumbs.db
 UserInterfaceState.xcuserstate
 .env
-certificate.pem
-cert.pem
-key.pem
+*.pem
+*.crt
+*.key
 stencil.config.ts

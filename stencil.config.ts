@@ -43,8 +43,8 @@ export const config: Config = {
   //   address: process.env.DEV_SERVER_ADDRESS,
   //   port: parseInt(process.env.DEV_SERVER_PORT),
   //   https: {
-  //     cert: fs.readFileSync('certificate.pem', 'utf-8'),
-  //     key: fs.readFileSync('key.pem', 'utf-8'),
+  //     cert: fs.readFileSync(process.env.DEV_SERVER_HTTPS_CERT, 'utf8'),
+  //     key: fs.readFileSync(process.env.DEV_SERVER_HTTPS_KEY, 'utf8'),
   //   },
   // },
   rollupPlugins: {
