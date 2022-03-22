@@ -1,4 +1,4 @@
-import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
+import { Component, Host, State, Listen, Method, h, Prop, Fragment } from '@stencil/core'
 import authStore, { EzpAuthorizationService, sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
@@ -240,6 +240,7 @@ export class EzpPrinting {
             clientID={this.clientid}
             redirectURI={this.redirecturi}
             hidelogin={this.hidelogin}
+            trigger={this.trigger}
           ></ezp-auth>
         ) : this.printOpen ? (
           <ezp-printer-selection
@@ -260,7 +261,8 @@ export class EzpPrinting {
             iconName="question-mark"
             instance="no-document-selected"
           />
-        ) : this.trigger === 'custom' ? (
+        ) : null}
+        {this.trigger === 'custom' ? (
           <slot></slot>
         ) : this.trigger === 'file' ? (
           <ezp-upload />

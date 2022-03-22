@@ -47,7 +47,8 @@
         "print": "Print",
         "cancel": "Cancel",
         "close": "Close",
-        "retry": "Retry"
+        "retry": "Retry",
+        "next": "Next"
     },
     "upload": {
         "description": "Drop a file here into the browser ",

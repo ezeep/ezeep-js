@@ -11,6 +11,7 @@ export namespace Components {
         "clientID": string;
         "hidelogin": boolean;
         "redirectURI": string;
+        "trigger": string;
     }
     interface EzpBackdrop {
         "visible": boolean;
@@ -335,6 +336,7 @@ declare namespace LocalJSX {
         "onAuthCancel"?: (event: CustomEvent<MouseEvent>) => void;
         "onAuthSuccess"?: (event: CustomEvent<any>) => void;
         "redirectURI"?: string;
+        "trigger"?: string;
     }
     interface EzpBackdrop {
         "onBackdropHideEnd"?: (event: CustomEvent<any>) => void;
