@@ -59,7 +59,7 @@ export interface PrinterProperties {
   duplexmode?: number | string
   orientation?: number | string
   copies?: number | string
-  resolution?: string
+  resolution?: string | number
 }
 
 export interface Printer {

@@ -1,4 +1,4 @@
-import { Component, Host, State, Listen, Method, h, Prop, Fragment } from '@stencil/core'
+import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
 import authStore, { EzpAuthorizationService, sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'

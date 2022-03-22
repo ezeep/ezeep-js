@@ -13,6 +13,7 @@
  */
 
 :host {
+  z-index: 1;
   align-content: center;
   background: var(--ezp-core-backdrop);
   display: grid;
