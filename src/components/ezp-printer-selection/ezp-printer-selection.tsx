@@ -40,6 +40,8 @@ export class EzpPrinterSelection {
       title: i18next.t('printer_selection.duplex_short'),
     },
   ]
+  private printButton?: HTMLEzpTextButtonElement
+
   /**
    *
    * Properties
@@ -194,6 +196,7 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = async () => {
+    this.printButton.blur()
     this.printProcessing = true
 
     // we have to initialse this obj with empty strings to display the select component
@@ -707,10 +710,11 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.cancel')}
             />
             <ezp-text-button
-              disabled={this.selectedPrinter.id === ''}
+              disabled={this.selectedPrinter.id === '' || this.printProcessing}
               type="button"
               onClick={this.handlePrint}
               label={i18next.t('button_actions.print')}
+              ref={(button) => (this.printButton = button)}
             />
           </div>
           {!this.hidemenu && <ezp-user-menu open={this.userMenuOpen} name={this.userName} />}
