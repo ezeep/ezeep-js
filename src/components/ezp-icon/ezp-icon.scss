@@ -17,7 +17,7 @@
 
   @at-root {
     #{&}(.framed) {
-      --ezp-icon-background: var(--ezp-color-shade-primary);
+      --ezp-icon-background: var(--ezp-core-shade-primary);
       --ezp-icon-borderRadius: 50%;
       --ezp-icon-padding: var(--ezp-icon-frame);
     }

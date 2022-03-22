@@ -9,35 +9,35 @@
 
   @at-root {
     #{&}(.primary) {
-      --ezp-iconButton-background-disabled: var(--ezp-color-shade-primary);
-      --ezp-iconButton-background-init: var(--ezp-color-theme-solid);
-      --ezp-iconButton-color-disabled: var(--ezp-color-foreground-tertiary);
-      --ezp-iconButton-color-init: var(--ezp-color-on-theme);
+      --ezp-iconButton-background-disabled: var(--ezp-core-shade-primary);
+      --ezp-iconButton-background-init: var(--ezp-theme-solid);
+      --ezp-iconButton-color-disabled: var(--ezp-core-foreground-tertiary);
+      --ezp-iconButton-color-init: var(--ezp-white-100);
       --ezp-iconButton-opacity-active: 0.74;
       --ezp-iconButton-opacity-hover: 0.84;
     }
 
     #{&}(.secondary) {
-      --ezp-iconButton-background-active: var(--ezp-color-shade-tertiary);
-      --ezp-iconButton-background-disabled: var(--ezp-color-shade-primary);
-      --ezp-iconButton-background-hover: var(--ezp-color-shade-secondary);
-      --ezp-iconButton-background-init: var(--ezp-color-shade-primary);
-      --ezp-iconButton-color-disabled: var(--ezp-color-foreground-tertiary);
-      --ezp-iconButton-color-init: var(--ezp-color-theme-solid);
+      --ezp-iconButton-background-active: var(--ezp-core-shade-tertiary);
+      --ezp-iconButton-background-disabled: var(--ezp-core-shade-primary);
+      --ezp-iconButton-background-hover: var(--ezp-core-shade-secondary);
+      --ezp-iconButton-background-init: var(--ezp-core-shade-primary);
+      --ezp-iconButton-color-disabled: var(--ezp-core-foreground-tertiary);
+      --ezp-iconButton-color-init: var(--ezp-theme-solid);
     }
 
     #{&}(.tertiary) {
-      --ezp-iconButton-background-active: var(--ezp-color-shade-secondary);
-      --ezp-iconButton-background-hover: var(--ezp-color-shade-primary);
+      --ezp-iconButton-background-active: var(--ezp-core-shade-secondary);
+      --ezp-iconButton-background-hover: var(--ezp-core-shade-primary);
       --ezp-iconButton-background-init: transparent;
-      --ezp-iconButton-color-disabled: var(--ezp-color-foreground-tertiary);
-      --ezp-iconButton-color-init: var(--ezp-color-theme-solid);
+      --ezp-iconButton-color-disabled: var(--ezp-core-foreground-tertiary);
+      --ezp-iconButton-color-init: var(--ezp-theme-solid);
     }
 
     #{&}(.quaternary) {
       --ezp-iconButton-background-init: transparent;
-      --ezp-iconButton-color-disabled: var(--ezp-color-foreground-tertiary);
-      --ezp-iconButton-color-init: var(--ezp-color-theme-solid);
+      --ezp-iconButton-color-disabled: var(--ezp-core-foreground-tertiary);
+      --ezp-iconButton-color-init: var(--ezp-theme-solid);
       --ezp-iconButton-opacity-active: 0.58;
       --ezp-iconButton-opacity-hover: 0.74;
     }

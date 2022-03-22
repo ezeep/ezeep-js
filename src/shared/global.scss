@@ -20,68 +20,6 @@ $breakpoints: (
   'md': 800px,
   'lg': 1120px,
 );
-$colors: (
-  'light': (
-    'pink-solid': rgb(242 50 103),
-    'red-solid': rgb(242 59 34),
-    'orange-solid': rgb(254 114 0),
-    'green-solid': rgb(93 146 0),
-    'cyan-solid': rgb(0 145 180),
-    'blue-solid': rgb(78 129 243),
-    'violet-solid': rgb(174 94 243),
-    'pink-translucent': rgba(242 50 103 / 16%),
-    'red-translucent': rgba(242 59 34 / 16%),
-    'orange-translucent': rgba(254 114 0 / 16%),
-    'green-translucent': rgba(93 146 0 / 16%),
-    'cyan-translucent': rgba(0 145 180 / 16%),
-    'blue-translucent': rgba(78 129 243 / 16%),
-    'violet-translucent': rgba(174 94 243 / 16%),
-    'on-theme': rgb(255 255 255),
-    'surface-primary': rgb(255 255 255),
-    'surface-secondary': rgb(243 243 243),
-    'surface-tertiary': rgb(255 255 255),
-    'shade-primary': rgba(139 139 139 / 10%),
-    'shade-secondary': rgba(139 139 139 / 16%),
-    'shade-tertiary': rgba(139 139 139 / 22%),
-    'foreground-primary': rgba(0 0 0 / 94%),
-    'foreground-secondary': rgba(62 62 62 / 68%),
-    'foreground-tertiary': rgba(62 62 62 / 42%),
-    'outline': rgba(99 99 99 / 16%),
-    'overlay-primary': rgba(0 0 0 / 26%),
-    'overlay-secondary': rgba(0 0 0 / 16%),
-    'shadow': rgba(0 0 0 / 6%),
-  ),
-  'dark': (
-    'pink-solid': rgb(255 65 113),
-    'red-solid': rgb(255 72 44),
-    'orange-solid': rgb(255 129 28),
-    'green-solid': rgb(103 156 21),
-    'cyan-solid': rgb(32 155 191),
-    'blue-solid': rgb(91 139 255),
-    'violet-solid': rgb(186 105 255),
-    'pink-translucent': rgba(255 65 113 / 26%),
-    'red-translucent': rgba(255 72 44 / 26%),
-    'orange-translucent': rgba(255 129 28 / 26%),
-    'green-translucent': rgba(103 156 21 / 26%),
-    'cyan-translucent': rgba(32 155 191 / 26%),
-    'blue-translucent': rgba(91 139 255 / 26%),
-    'violet-translucent': rgba(186 105 255 / 26%),
-    'on-theme': rgb(255 255 255),
-    'surface-primary': rgb(0 0 0),
-    'surface-secondary': rgb(27 27 27),
-    'surface-tertiary': rgb(40 40 40),
-    'shade-primary': rgba(99 99 99 / 26%),
-    'shade-secondary': rgba(99 99 99 / 32%),
-    'shade-tertiary': rgba(99 99 99 / 38%),
-    'foreground-primary': rgba(255 255 255 / 94%),
-    'foreground-secondary': rgba(182 182 182 / 68%),
-    'foreground-tertiary': rgba(182 182 182 / 42%),
-    'outline': rgb(139 139 139 / 26%),
-    'overlay-primary': rgba(0 0 0 / 68%),
-    'overlay-secondary': rgba(0 0 0 / 42%),
-    'shadow': rgba(0 0 0 / 10%),
-  ),
-);
 $easings: (
   'in-quart': cubic-bezier(0.11, 0, 0.5, 0),
   'in-out-quart': cubic-bezier(0.76, 0, 0.24, 1),
@@ -93,23 +31,13 @@ $easings: (
 $durations: (0.1s, 0.16s, 0.26s, 0.42s, 0.68s, 1s);
 $ratios: (1, 2, 3);
 $spacings: (4px, 6px, 10px, 16px, 26px, 42px, 68px, 110px);
-$themes: ('blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet');
+$themes: ('blue', 'cyan', 'green', 'teal', 'orange', 'pink', 'red', 'violet');
 
 /**
  *
  * Functions
  *
  */
-
-@function get-color-display-p3($color) {
-  $red: math.div(color.red($color), 255);
-  $green: math.div(color.green($color), 255);
-  $blue: math.div(color.blue($color), 255);
-  $alpha: color.alpha($color) * 100%;
-  $display-p3: color(display-p3 #{$red} #{$green} #{$blue} / #{$alpha});
-
-  @return $display-p3;
-}
 
 @function getLetterSpacing($fontSize) {
   $a: -0.0223;
@@ -124,12 +52,6 @@ $themes: ('blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet');
   $boxHeight: 2 * math.round(math.div(((math.div(2048, 2816)) * $fontSize), 2));
 
   @return math.div(($lineHeight - $boxHeight), 2);
-}
-
-@function getColorNames() {
-  $names: map.merge(map.get($colors, 'light'), map.get($colors, 'dark'));
-
-  @return map.keys($names);
 }
 
 /**
@@ -159,18 +81,6 @@ $themes: ('blue', 'cyan', 'green', 'orange', 'pink', 'red', 'violet');
 @mixin media-density($ratio) {
   @media (-webkit-min-device-pixel-ratio: #{$ratio}), (min-device-pixel-ratio: #{$ratio}) {
     @content;
-  }
-}
-
-@mixin color-declaration($appearance) {
-  @each $name, $value in map.get($colors, $appearance) {
-    --ezp-color-#{$name}-#{$appearance}: #{$value};
-  }
-
-  @supports (color: color(display-p3 1 1 1)) {
-    @each $name, $value in map.get($colors, $appearance) {
-      --ezp-color-#{$name}-#{$appearance}: #{get-color-display-p3($value)};
-    }
   }
 }
 

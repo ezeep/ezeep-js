@@ -1,4 +1,4 @@
-import { Component, Host, Prop, Event, EventEmitter, h } from '@stencil/core'
+import { Component, Host, Prop, Event, EventEmitter, Fragment, h } from '@stencil/core'
 import { IconNameTypes } from '../../shared/types'
 import i18next from 'i18next'
 
@@ -78,39 +78,43 @@ export class EzpStatus {
             <ezp-icon name={this.icon} framed />
           ) : null}
           <ezp-label id="description" level="tertiary" weight="strong" text={this.description} />
-          <div id="footer">
-            {this.cancel && (
-              <ezp-text-button
-                level="secondary"
-                small
-                onClick={this.handleCancel}
-                label={
-                  typeof this.cancel === 'string' ? this.cancel : i18next.t('button_actions.cancel')
-                }
-              />
-            )}
-            {this.close && (
-              <ezp-text-button
-                level={this.retry ? 'secondary' : 'primary'}
-                small
-                onClick={this.handleClose}
-                label={
-                  typeof this.close === 'string' ? this.close : i18next.t('button_actions.close')
-                }
-              />
-            )}
-            {this.retry && (
-              <ezp-text-button
-                level="primary"
-                small
-                onClick={this.handleRetry}
-                label={
-                  typeof this.retry === 'string' ? this.retry : i18next.t('button_actions.retry')
-                }
-              />
-            )}
-            <slot />
-          </div>
+          {this.cancel || this.close || this.retry && (
+            <>
+              <div id="footer">
+                {this.cancel && (
+                  <ezp-text-button
+                    level="secondary"
+                    small
+                    onClick={this.handleCancel}
+                    label={
+                      typeof this.cancel === 'string' ? this.cancel : i18next.t('button_actions.cancel')
+                    }
+                  />
+                )}
+                {this.close && (
+                  <ezp-text-button
+                    level={this.retry ? 'secondary' : 'primary'}
+                    small
+                    onClick={this.handleClose}
+                    label={
+                      typeof this.close === 'string' ? this.close : i18next.t('button_actions.close')
+                    }
+                  />
+                )}
+                {this.retry && (
+                  <ezp-text-button
+                    level="primary"
+                    small
+                    onClick={this.handleRetry}
+                    label={
+                      typeof this.retry === 'string' ? this.retry : i18next.t('button_actions.retry')
+                    }
+                  />
+                )}
+                <slot />
+              </div>
+            </>
+          ) }
         </div>
       </Host>
     )

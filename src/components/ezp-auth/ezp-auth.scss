@@ -5,8 +5,8 @@
  */
 
 :host {
-  --ezp-color-theme-solid: var(--ezp-color-cyan-solid);
-  --ezp-color-theme-translucent: var(--ezp-color-cyan-translucent);
+  --ezp-theme-solid: var(--ezp-accent-cyan-solid);
+  --ezp-theme-translucent: var(--ezp-accent-cyan-translucent);
 
   display: block;
 }

@@ -14,9 +14,9 @@
 
 :host {
   align-items: center;
-  background: var(--ezp-color-surface-tertiary);
+  background: var(--ezp-core-surface-tertiary);
   border-radius: 3px;
-  box-shadow: var(--ezp-stepper-boxShadowPosition, 0 0 0 1px) var(--ezp-color-outline);
+  box-shadow: var(--ezp-stepper-boxShadowPosition, 0 0 0 1px) var(--ezp-core-outline);
   display: grid;
   gap: var(--ezp-spacing-3);
   grid-template: var(--ezp-stepper-gridTemplate, auto / auto 1fr auto);
@@ -26,8 +26,8 @@
 
   @at-root {
     #{&}(.focused) {
-      --ezp-stepper-icon-color: var(--ezp-color-theme-solid);
-      --ezp-stepper-label-color: var(--ezp-color-theme-solid);
+      --ezp-stepper-icon-color: var(--ezp-theme-solid);
+      --ezp-stepper-label-color: var(--ezp-theme-solid);
     }
 
     #{&}(.has-icon) {
@@ -49,18 +49,18 @@
 
   @media (hover: hover) {
     &:hover {
-      --ezp-stepper-toggle-background: var(--ezp-color-shade-primary);
+      --ezp-stepper-toggle-background: var(--ezp-core-shade-primary);
     }
   }
 }
 
 #icon {
-  color: var(--ezp-stepper-icon-color, var(--ezp-color-foreground-secondary));
+  color: var(--ezp-stepper-icon-color, var(--ezp-core-foreground-secondary));
   pointer-events: none;
 }
 
 #label {
-  color: var(--ezp-stepper-label-color, var(--ezp-color-foreground-secondary));
+  color: var(--ezp-stepper-label-color, var(--ezp-core-foreground-secondary));
   pointer-events: none;
 }
 
@@ -81,7 +81,7 @@
   border-radius: 3px;
   box-shadow: none;
   box-sizing: border-box;
-  color: var(--ezp-color-foreground-primary);
+  color: var(--ezp-core-foreground-primary);
   cursor: inherit;
   font-family: inherit;
   font-feature-settings: 'tnum';
@@ -114,7 +114,7 @@
   border: 0;
   border-radius: 50%;
   box-shadow: none;
-  color: var(--ezp-stepper-button-color, var(--ezp-color-theme-solid));
+  color: var(--ezp-stepper-button-color, var(--ezp-theme-solid));
   cursor: var(--ezp-stepper-button-cursor, pointer);
   display: flex;
   justify-content: center;
@@ -125,17 +125,17 @@
   &:not(:disabled) {
     @media (hover: hover) {
       &:hover {
-        --ezp-stepper-button-background: var(--ezp-color-shade-primary);
+        --ezp-stepper-button-background: var(--ezp-core-shade-primary);
       }
 
       &:active {
-        --ezp-stepper-button-background: var(--ezp-color-shade-secondary);
+        --ezp-stepper-button-background: var(--ezp-core-shade-secondary);
       }
     }
   }
 
   &:disabled {
-    --ezp-stepper-button-color: var(--ezp-color-foreground-tertiary);
+    --ezp-stepper-button-color: var(--ezp-core-foreground-tertiary);
     --ezp-stepper-button-cursor: default;
   }
 }

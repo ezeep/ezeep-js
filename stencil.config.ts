@@ -11,7 +11,7 @@ import fs from 'fs'
 export const config: Config = {
   namespace: 'ezeep',
   globalScript: 'src/shared/global.ts',
-  plugins: [sass()],
+  plugins: [sass({ includePaths: ['node_modules'] })],
   outputTargets: [
     angularOutputTarget({
       componentCorePackage: '@ezeep/ezeep-js', // name of npm package
