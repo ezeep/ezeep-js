@@ -185,7 +185,7 @@ export class EzpSelect {
   }
 
   componentWillUpdate() {
-    if (!this.selected.id && this.preSelected) {
+    if (this.selected.id === undefined && this.preSelected) {
       this.preSelect()
     }
   }
