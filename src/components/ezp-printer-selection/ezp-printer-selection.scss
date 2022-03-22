@@ -16,7 +16,7 @@
   align-content: center;
   background: var(--ezp-core-backdrop);
   display: grid;
-  grid-template: auto / 320px;
+  grid-template: auto / var(--ezp-printerSelection-width, 320px);
   height: 100vh;
   justify-content: center;
   left: 0;
