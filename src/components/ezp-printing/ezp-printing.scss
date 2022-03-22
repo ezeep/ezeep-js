@@ -5,8 +5,20 @@
  */
 
 @use 'sass:map';
+@use '@cortado-holding/colors' with (
+  $namespace: 'ezp',
+  $selector: ':host'
+);
+@use '@cortado-holding/colors/accents' with (
+  $useDeclaration: false
+);
+@use '@cortado-holding/colors/core' with (
+  $useDisplayP3: false,
+  $useDeclaration: false
+);
+@use '@cortado-holding/colors/black';
+@use '@cortado-holding/colors/white';
 @use './../../shared/global';
-@use './../../shared/utils';
 
 /**
  *
@@ -31,34 +43,35 @@
 
   @at-root {
     #{&}(.light) {
-      @include utils.colors('light');
+      @include colors.colors(map.get(accents.$palette, 'light'), 'accent');
+      @include colors.colors(map.get(core.$palette, 'light'), 'core');
     }
 
     #{&}(.dark) {
-      --ezp-dialog-box-boxShadow: inset 0 0 0 1px var(--ezp-color-outline),
-        0 0 0 1px var(--ezp-color-overlay-secondary);
-      --ezp-printerSelection-body-boxShadow: inset 1px 0 0 0 var(--ezp-color-outline),
-        inset -1px 0 0 0 var(--ezp-color-outline);
+      --ezp-dialog-box-boxShadow: inset 0 0 0 1px var(--ezp-core-outline), 0 0 0 1px var(--ezp-black-60);
+      --ezp-printerSelection-body-boxShadow: inset 1px 0 0 0 var(--ezp-core-outline), inset -1px 0 0 0 var(--ezp-core-outline);
+      --ezp-printerSelection-box-boxShadow: 0 0 0 1px var(--ezp-black-60);
       --ezp-printerSelection-footer-boxShadowPosition: inset 0 0 0 1px;
       --ezp-printerSelection-header-boxShadowPosition: inset 0 0 0 1px;
       --ezp-select-wrap-boxShadowPositionBottom: inset 0 -1px 0 0;
       --ezp-select-wrap-boxShadowPositionLeft: inset 1px 0 0 0;
       --ezp-select-wrap-boxShadowPositionRight: inset -1px 0 0 0;
       --ezp-select-wrap-boxShadowPositionTop: inset 0 1px 0 0;
-      --ezp-status-box-boxShadowPosition: inset 0 0 0 1px;
+      --ezp-status-box-boxShadow: inset 0 0 0 1px var(--ezp-core-outline), 0 0 0 1px var(--ezp-black-60);
       --ezp-stepper-boxShadowPosition: inset 0 0 0 1px;
-      --ezp-userMenu-boxShadowPosition: inset 0 0 0 1px;
+      --ezp-userMenu-boxShadow: inset 0 0 0 1px var(--ezp-core-outline), 0 0 0 1px var(--ezp-black-60);
       --ezp-userMenu-header-boxShadowPosition: inset 0 -1px 0 0;
       --ezp-userMenu-links-boxShadowPosition: inset 0 -1px 0 0;
       --ezp-userMenu-theme-boxShadowPosition: inset 0 -1px 0 0;
 
-      @include utils.colors('dark');
+      @include colors.colors(map.get(accents.$palette, 'dark'), 'accent');
+      @include colors.colors(map.get(core.$palette, 'dark'), 'core');
     }
 
     @each $theme in global.$themes {
       #{&}(.#{$theme}) {
-        --ezp-color-theme-solid: var(--ezp-color-#{$theme}-solid);
-        --ezp-color-theme-translucent: var(--ezp-color-#{$theme}-translucent);
+        --ezp-theme-solid: var(--ezp-accent-#{$theme}-solid);
+        --ezp-theme-translucent: var(--ezp-accent-#{$theme}-translucent);
       }
     }
   }

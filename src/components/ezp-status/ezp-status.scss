@@ -14,7 +14,7 @@
 
 :host {
   align-items: center;
-  background: var(--ezp-color-overlay-primary);
+  background: var(--ezp-core-backdrop);
   border-radius: 6px;
   box-sizing: border-box;
   display: flex;
@@ -33,17 +33,16 @@
 }
 
 #box {
-  --ezp-icon-fill: var(--ezp-color-theme-solid);
+  --ezp-icon-fill: var(--ezp-theme-solid);
 
   align-items: center;
-  background: var(--ezp-color-surface-tertiary);
+  background: var(--ezp-core-surface-tertiary);
   border-radius: 3px;
-  box-shadow: var(--ezp-status-box-boxShadowPosition, 0 0 0 1px) var(--ezp-color-outline);
+  box-shadow: var(--ezp-status-box-boxShadow, 0 0 0 1px var(--ezp-black-10));
   display: flex;
   flex-direction: column;
   gap: var(--ezp-spacing-4);
   padding: var(--ezp-spacing-4) var(--ezp-spacing-5);
-  margin-bottom: 100px;
 }
 
 #indicator {
@@ -56,14 +55,14 @@
 
 #track {
   fill: none;
-  stroke: var(--ezp-color-outline);
+  stroke: var(--ezp-core-outline);
   stroke-width: 4px;
 }
 
 #value {
   animation: offset var(--ezp-duration-6) linear alternate infinite;
   fill: none;
-  stroke: var(--ezp-color-theme-solid);
+  stroke: var(--ezp-theme-solid);
   stroke-dasharray: 110;
   stroke-dashoffset: 110;
   stroke-linecap: round;
@@ -71,7 +70,7 @@
 }
 
 #description {
-  color: var(--ezp-color-foreground-primary);
+  color: var(--ezp-core-foreground-primary);
 }
 
 #footer {

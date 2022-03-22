@@ -9,30 +9,30 @@
 
   @at-root {
     #{&}(.primary) {
-      --ezp-textButton-background-disabled: var(--ezp-color-shade-primary);
-      --ezp-textButton-background-init: var(--ezp-color-theme-solid);
-      --ezp-textButton-color-disabled: var(--ezp-color-foreground-tertiary);
-      --ezp-textButton-color-init: var(--ezp-color-on-theme);
+      --ezp-textButton-background-disabled: var(--ezp-core-shade-primary);
+      --ezp-textButton-background-init: var(--ezp-theme-solid);
+      --ezp-textButton-color-disabled: var(--ezp-core-foreground-tertiary);
+      --ezp-textButton-color-init: var(--ezp-white-100);
       --ezp-textButton-opacity-active: 0.74;
       --ezp-textButton-opacity-hover: 0.84;
     }
 
     #{&}(.secondary) {
-      --ezp-textButton-background-active: var(--ezp-color-shade-tertiary);
-      --ezp-textButton-background-disabled: var(--ezp-color-shade-primary);
-      --ezp-textButton-background-hover: var(--ezp-color-shade-secondary);
-      --ezp-textButton-background-init: var(--ezp-color-shade-primary);
-      --ezp-textButton-color-disabled: var(--ezp-color-foreground-tertiary);
-      --ezp-textButton-color-init: var(--ezp-color-theme-solid);
+      --ezp-textButton-background-active: var(--ezp-core-shade-tertiary);
+      --ezp-textButton-background-disabled: var(--ezp-core-shade-primary);
+      --ezp-textButton-background-hover: var(--ezp-core-shade-secondary);
+      --ezp-textButton-background-init: var(--ezp-core-shade-primary);
+      --ezp-textButton-color-disabled: var(--ezp-core-foreground-tertiary);
+      --ezp-textButton-color-init: var(--ezp-theme-solid);
     }
 
     #{&}(.tertiary) {
-      --ezp-textButton-background-active: var(--ezp-color-shade-secondary);
+      --ezp-textButton-background-active: var(--ezp-core-shade-secondary);
       --ezp-textButton-background-disabled: transparent;
-      --ezp-textButton-background-hover: var(--ezp-color-shade-primary);
+      --ezp-textButton-background-hover: var(--ezp-core-shade-primary);
       --ezp-textButton-background-init: transparent;
-      --ezp-textButton-color-disabled: var(--ezp-color-foreground-tertiary);
-      --ezp-textButton-color-init: var(--ezp-color-theme-solid);
+      --ezp-textButton-color-disabled: var(--ezp-core-foreground-tertiary);
+      --ezp-textButton-color-init: var(--ezp-theme-solid);
     }
   }
 }

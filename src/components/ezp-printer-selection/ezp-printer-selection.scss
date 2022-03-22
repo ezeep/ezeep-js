@@ -14,9 +14,9 @@
 
 :host {
   align-content: center;
-  background: var(--ezp-color-overlay-primary);
+  background: var(--ezp-core-backdrop);
   display: grid;
-  grid-template: auto / 320px;
+  grid-template: auto / var(--ezp-printerSelection-width, 320px);
   height: 100vh;
   justify-content: center;
   left: 0;
@@ -26,11 +26,11 @@
 }
 
 #box {
-  background: var(--ezp-color-surface-tertiary);
+  background: var(--ezp-core-surface-tertiary);
   border-radius: 6px;
   box-shadow: var(
     --ezp-printerSelection-box-boxShadow,
-    0 0 0 1px var(--ezp-color-overlay-secondary)
+    0 0 0 1px var(--ezp-black-10)
   );
   position: relative;
 }
@@ -38,10 +38,10 @@
 #header {
   border-radius: 6px 6px 0 0;
   box-shadow: var(--ezp-printerSelection-header-boxShadowPosition, 0 1px 0 0)
-    var(--ezp-color-outline);
-  color: var(--ezp-color-foreground-primary);
+    var(--ezp-core-outline);
+  color: var(--ezp-core-foreground-primary);
   display: grid;
-  grid-column-gap: var(--ezp-spacing-1);
+  grid-column-gap: var(--ezp-spacing-2);
   grid-template-columns: auto 1fr auto;
   padding: var(--ezp-spacing-4) var(--ezp-spacing-3) var(--ezp-spacing-4) var(--ezp-spacing-4);
   position: relative;
@@ -55,7 +55,7 @@
 }
 
 #body {
-  background: var(--ezp-color-surface-secondary);
+  background: var(--ezp-core-surface-secondary);
   box-shadow: var(--ezp-printerSelection-body-boxShadow, none);
   display: flex;
   flex-direction: column;
@@ -66,7 +66,7 @@
 #footer {
   border-radius: 0 0 6px 6px;
   box-shadow: var(--ezp-printerSelection-footer-boxShadowPosition, 0 -1px 0 0)
-    var(--ezp-color-outline);
+    var(--ezp-core-outline);
   display: grid;
   grid-column-gap: var(--ezp-spacing-2);
   grid-template-columns: repeat(2, 1fr);

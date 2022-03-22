@@ -26,7 +26,7 @@ export class EzpUserMenu {
       href: 'https://support.ezeep.com',
     },
   ]
-  private themes = ['pink', 'red', 'orange', 'green', 'cyan', 'blue', 'violet']
+  private themes = ['pink', 'red', 'orange', 'green', 'teal', 'cyan', 'blue', 'violet']
   private appearances = [
     { title: i18next.t('user_menu.system'), name: 'system' },
     { title: i18next.t('user_menu.light'), name: 'light' },

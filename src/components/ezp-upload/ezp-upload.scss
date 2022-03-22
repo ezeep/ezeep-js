@@ -7,10 +7,10 @@
 :host {
   align-content: center;
   background: var(--ezp-upload-background, transparent);
-  border: 1px dashed var(--ezp-upload-border-color, var(--ezp-color-foreground-tertiary));
+  border: 1px dashed var(--ezp-upload-border-color, var(--ezp-core-foreground-tertiary));
   border-radius: 3px;
   box-sizing: border-box;
-  color: var(--ezp-color-foreground-primary);
+  color: var(--ezp-core-foreground-primary);
   display: grid;
   grid-template: auto / minmax(auto, 280px);
   height: var(--ezp-upload-height, auto);
@@ -23,8 +23,8 @@
 
   @at-root {
     #{&}(.dragging) {
-      --ezp-upload-background: var(--ezp-color-theme-translucent);
-      --ezp-upload-border-color: var(--ezp-color-theme-translucent);
+      --ezp-upload-background: var(--ezp-theme-translucent);
+      --ezp-upload-border-color: var(--ezp-theme-translucent);
       --ezp-upload-header-blur: 16px;
       --ezp-upload-header-opacity: 0.42;
     }
@@ -32,7 +32,7 @@
 }
 
 #header {
-  --ezp-icon-fill: var(--ezp-color-theme-solid);
+  --ezp-icon-fill: var(--ezp-theme-solid);
 
   align-items: center;
   display: flex;
@@ -53,7 +53,7 @@
 }
 
 #select {
-  color: var(--ezp-color-theme-solid);
+  color: var(--ezp-theme-solid);
   cursor: pointer;
   opacity: var(--ezp-upload-select-opacity, 1);
   text-decoration: underline;
