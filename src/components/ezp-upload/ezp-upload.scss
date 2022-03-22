@@ -5,6 +5,7 @@
  */
 
 :host {
+  z-index: -1;
   align-content: center;
   background: var(--ezp-upload-background, transparent);
   border: 1px dashed var(--ezp-upload-border-color, var(--ezp-core-foreground-tertiary));

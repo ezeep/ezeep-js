@@ -1,4 +1,14 @@
-import { Component, Host, h, Prop, State, Event, EventEmitter, Listen } from '@stencil/core'
+import {
+  Component,
+  Host,
+  h,
+  Prop,
+  State,
+  Event,
+  EventEmitter,
+  Listen,
+  Fragment,
+} from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
 import i18next from 'i18next'
@@ -11,6 +21,7 @@ export class EzpAuth {
   @Prop({ mutable: true }) clientID: string
   @Prop({ mutable: true }) redirectURI: string
   @Prop() hidelogin: boolean
+  @Prop() trigger: string
   @State() auth: EzpAuthorizationService
   @State() authURI: string
   @State() accessToken: string
@@ -55,7 +66,11 @@ export class EzpAuth {
 
       this.oauthPopupWindow = window.open(url, name, windowFeatures)
 
-      if ( !this.oauthPopupWindow || this.oauthPopupWindow.closed || typeof this.oauthPopupWindow.closed=='undefined' ) {
+      if (
+        !this.oauthPopupWindow ||
+        this.oauthPopupWindow.closed ||
+        typeof this.oauthPopupWindow.closed == 'undefined'
+      ) {
         alert('popup blocked')
       }
 
@@ -91,25 +106,34 @@ export class EzpAuth {
       this.auth.buildAuthURI()
     }
 
-    if (this.hidelogin) {
+    if (this.hidelogin && this.trigger === 'button') {
       this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
     }
   }
 
   render() {
-    return this.hidelogin ? (
-      <ezp-status description={i18next.t('login_dialog.action')} processing cancel></ezp-status>
-    ) : (
+    return (
       <Host>
-        <ezp-dialog
-          heading={i18next.t('login_dialog.heading')}
-          description={i18next.t('login_dialog.description')}
-          action={i18next.t('login_dialog.action')}
-          iconName="logo"
-          iconSize="huge"
-          iconFramed={false}
-          instance="login"
-        />
+        {this.hidelogin && this.trigger === 'button' ? (
+          <ezp-status description={i18next.t('login_dialog.action')} processing cancel></ezp-status>
+        ) : this.hidelogin && this.trigger === 'file' ? (
+          <ezp-text-button
+            type="button"
+            level="primary"
+            onClick={() => this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')}
+            label={i18next.t('button_actions.next')}
+          />
+        ) : (
+          <ezp-dialog
+            heading={i18next.t('login_dialog.heading')}
+            description={i18next.t('login_dialog.description')}
+            action={i18next.t('login_dialog.action')}
+            iconName="logo"
+            iconSize="huge"
+            iconFramed={false}
+            instance="login"
+          />
+        )}
       </Host>
     )
   }
