@@ -551,7 +551,7 @@ export class EzpPrinterSelection {
               weight="heavy"
               text={i18next.t('printer_selection.print') + `${!this.notSupported ? ':' : ''}`}
             />
-            <ezp-label text={!this.notSupported ? this.filename : ''} />
+            <ezp-label text={!this.notSupported ? this.filename : ''} ellipsis />
             {!this.hidemenu && (
               <ezp-icon-button
                 level="tertiary"

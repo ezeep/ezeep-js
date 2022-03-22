@@ -41,7 +41,7 @@
     var(--ezp-color-outline);
   color: var(--ezp-color-foreground-primary);
   display: grid;
-  grid-column-gap: var(--ezp-spacing-1);
+  grid-column-gap: var(--ezp-spacing-2);
   grid-template-columns: auto 1fr auto;
   padding: var(--ezp-spacing-4) var(--ezp-spacing-3) var(--ezp-spacing-4) var(--ezp-spacing-4);
   position: relative;
