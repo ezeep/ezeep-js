@@ -69,15 +69,6 @@ export class EzpUpload {
 
   /**
    *
-   * Lifecycle methods
-   *
-   */
-
-  componentWillLoad() {
-  }
-
-  /**
-   *
    * Render method
    *
    */
