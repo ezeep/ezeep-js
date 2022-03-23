@@ -8,6 +8,7 @@ import i18next from 'i18next'
 })
 export class EzpUpload {
   private input?: HTMLInputElement
+  private form?: HTMLFormElement
 
   /**
    *
@@ -57,6 +58,11 @@ export class EzpUpload {
     this.uploadFile.emit(event.dataTransfer.files)
   }
 
+  @Listen('printCancel', { target: 'document' })
+  listenPrintCancel() {
+    this.form.reset()
+  }
+
   /**
    *
    * Private methods
@@ -76,7 +82,7 @@ export class EzpUpload {
   render() {
     return (
       <Host class={{ dragging: this.dragging }}>
-        <div id="box">
+        <form id="form" ref={(form) => (this.form = form)}>
           <div id="header">
             <ezp-icon name="drag-drop" size="huge" framed />
             <ezp-label weight="strong" text={i18next.t('upload.description')} />
@@ -99,7 +105,7 @@ export class EzpUpload {
               <ezp-label level="tertiary" text={i18next.t('upload.meta_trailing')} />
             </div>
           </div>
-        </div>
+        </form>
       </Host>
     )
   }
