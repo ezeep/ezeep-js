@@ -13,7 +13,6 @@
  */
 
 :host {
-  z-index: 1;
   align-content: center;
   background: var(--ezp-core-backdrop);
   display: grid;
@@ -24,15 +23,13 @@
   position: fixed;
   top: 0;
   width: 100vw;
+  z-index: 1;
 }
 
 #box {
   background: var(--ezp-core-surface-tertiary);
   border-radius: 6px;
-  box-shadow: var(
-    --ezp-printerSelection-box-boxShadow,
-    0 0 0 1px var(--ezp-black-10)
-  );
+  box-shadow: var(--ezp-printerSelection-box-boxShadow, 0 0 0 1px var(--ezp-black-10));
   position: relative;
 }
 

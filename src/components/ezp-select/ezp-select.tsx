@@ -138,8 +138,7 @@ export class EzpSelect {
 
     this.selected = this.options.find((option) => option.id === id)
     this.selectSelection.emit(this.selected)
-    // console.log('ezp-select:')
-    // console.log(this.selected)
+
     window.setTimeout(() => {
       this.toggle()
     }, delay)
@@ -172,7 +171,7 @@ export class EzpSelect {
       this.container.removeChild(this.backdrop)
     })
 
-    if (this.preSelected) {
+    if (this.preSelected !== undefined && this.preSelected !== '' && this.preSelected !== null) {
       this.preSelect()
     }
   }
@@ -185,7 +184,12 @@ export class EzpSelect {
   }
 
   componentWillUpdate() {
-    if (this.selected.id === undefined && this.preSelected) {
+    if (
+      this.selected.id === false &&
+      this.preSelected !== undefined &&
+      this.preSelected !== '' &&
+      this.preSelected !== null
+    ) {
       this.preSelect()
     }
   }

@@ -88,11 +88,11 @@ export class EzpPrinterSelection {
     paper: '',
     paperid: '',
     color: false,
-    duplex: false,
-    duplexmode: '',
-    orientation: '',
+    duplex: true,
+    duplexmode: 1,
+    orientation: 1,
     copies: '',
-    resolution: '',
+    resolution: 0,
   }
 
   /**
@@ -600,7 +600,7 @@ export class EzpPrinterSelection {
                   type: 'printer',
                   is_queue: printer.is_queue,
                 }))}
-                preSelected={this.selectedPrinter ? this.selectedPrinter.name : null}
+                preSelected={this.selectedPrinter.id ? this.selectedPrinter.name : null}
                 disabled={!(this.printers.length > 0)}
               />
             </div>
@@ -636,9 +636,11 @@ export class EzpPrinterSelection {
                       ]
                 }
                 preSelected={
-                  this.selectedProperties.color
-                    ? i18next.t('printer_selection.color_color')
-                    : i18next.t('printer_selection.color_grayscale')
+                  this.selectedPrinter.id
+                    ? this.selectedProperties.color
+                      ? i18next.t('printer_selection.color_color')
+                      : i18next.t('printer_selection.color_grayscale')
+                    : null
                 }
                 disabled={!this.selectedPrinterConfig.Color}
               />
@@ -654,7 +656,7 @@ export class EzpPrinterSelection {
                   type: 'duplex',
                 }))}
                 preSelected={
-                  this.selectedProperties.duplex
+                  this.selectedPrinter.id && this.selectedProperties.duplex
                     ? this.duplexOptions.find(
                         (option) => option.id === this.selectedProperties.duplexmode
                       ).id
@@ -674,7 +676,7 @@ export class EzpPrinterSelection {
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
-                preSelected={this.selectedProperties.paper ? this.selectedProperties.paper : null}
+                preSelected={this.selectedPrinter.id ? this.selectedProperties.paper : null}
                 disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
               />
               <ezp-select
@@ -690,11 +692,7 @@ export class EzpPrinterSelection {
                     type: 'orientation',
                   })
                 )}
-                preSelected={
-                  this.selectedProperties.orientation
-                  ? this.selectedProperties.orientation
-                  : null
-                }
+                preSelected={this.selectedPrinter.id ? this.selectedProperties.orientation : null}
                 disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
               />
               <ezp-select
@@ -708,9 +706,7 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'quality',
                 }))}
-                preSelected={
-                  this.selectedProperties.resolution ? this.selectedProperties.resolution : null
-                }
+                preSelected={this.selectedPrinter.id ? this.selectedProperties.resolution : null}
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
               />
             </div>
