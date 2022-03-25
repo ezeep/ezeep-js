@@ -1,6 +1,5 @@
-import { Component, Host, Listen, Event, EventEmitter, State, h } from '@stencil/core'
+import { Component, Host, Listen, Event, EventEmitter, State, h, Fragment } from '@stencil/core'
 import i18next from 'i18next'
-
 @Component({
   tag: 'ezp-upload',
   styleUrl: 'ezp-upload.scss',
@@ -16,6 +15,7 @@ export class EzpUpload {
    *
    */
 
+  @State() filename: string = ''
   @State() dragging: boolean = false
 
   /**
@@ -55,12 +55,14 @@ export class EzpUpload {
     event.preventDefault()
 
     this.dragging = false
+    this.filename = event.dataTransfer.files[0].name
     this.uploadFile.emit(event.dataTransfer.files)
   }
 
   @Listen('printCancel', { target: 'document' })
   listenPrintCancel() {
     this.form.reset()
+    this.filename = ''
   }
 
   /**
@@ -70,6 +72,7 @@ export class EzpUpload {
    */
 
   private handleInput = () => {
+    this.filename = this.input.files[0].name
     this.uploadFile.emit(this.input.files)
   }
 
@@ -104,6 +107,12 @@ export class EzpUpload {
               />
               <ezp-label level="tertiary" text={i18next.t('upload.meta_trailing')} />
             </div>
+            {this.filename != '' && (
+              <>
+                <ezp-label level="secondary" text={i18next.t('upload.selected_file')} />
+                <ezp-label level="tertiary" text={this.filename} />
+              </>
+            )}
           </div>
         </form>
       </Host>

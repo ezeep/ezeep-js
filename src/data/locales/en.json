@@ -48,13 +48,14 @@
         "cancel": "Cancel",
         "close": "Close",
         "retry": "Retry",
-        "next": "Next"
+        "select_printer": "Select Printer"
     },
     "upload": {
         "description": "Drop a file here into the browser ",
         "meta_leading": "or",
         "meta_select": "select a file",
-        "meta_trailing": "to print with ezeep Blue."
+        "meta_trailing": "to print with ezeep Blue.",
+        "selected_file": "Selected File:"
     },
     "user_menu": {
         "theme": "Color theme",

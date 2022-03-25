@@ -47,6 +47,13 @@ export class EzpAuth {
   previousUrl = null
 
   openSignInWindow(url: string, name: string) {
+
+    if (authStore.state.isAuthorized) {
+      this.authCancel.emit()
+      this.authSuccess.emit()
+      return
+    }
+
     // remove any existing event listeners
     window.removeEventListener('message', this.receiveMessage)
 
@@ -120,7 +127,7 @@ export class EzpAuth {
             type="button"
             level="primary"
             onClick={() => this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')}
-            label={i18next.t('button_actions.next')}
+            label={i18next.t('button_actions.select_printer')}
           />
         ) : (
           <ezp-dialog

@@ -57,18 +57,21 @@ export class EzpPrinting {
   @Listen('printCancel')
   listenPrintCancel() {
     this.printOpen = false
+    this.checkAuth()
   }
 
   /** Description... */
   @Listen('printSubmit')
   listenPrintSubmit() {
     this.printOpen = false
+    this.checkAuth()
   }
 
   /** Description... */
   @Listen('authCancel')
   listenAuthCancel() {
     this.authOpen = false
+    this.checkAuth()
   }
 
   @Listen('authSuccess')
@@ -112,7 +115,8 @@ export class EzpPrinting {
 
   @Method()
   async open() {
-    if (authStore.state.isAuthorized) {
+    if (authStore.state.isAuthorized && this.trigger === 'file') {
+      this.authOpen = true
       if (this.filename) {
         this.printOpen = true
       } else {
@@ -211,8 +215,8 @@ export class EzpPrinting {
       printStore.state.printApiHostUrl = config.printingApiHostUrl
     }
 
-    initi18n(this.language)
     sendCodeToParentWindow()
+    initi18n(this.language)
     this.checkAuth()
   }
 
@@ -235,6 +239,21 @@ export class EzpPrinting {
             : userStore.state.appearance
         }`}
       >
+        {this.trigger === 'custom' ? (
+          <slot></slot>
+        ) : this.trigger === 'file' ? (
+          <ezp-upload />
+        ) : (
+          this.trigger === 'button' && (
+            <ezp-icon-button
+              id="print-trigger"
+              icon="printer"
+              slot="trigger"
+              type="button"
+              onClick={() => this.open()}
+            ></ezp-icon-button>
+          )
+        )}
         {this.authOpen ? (
           <ezp-auth
             clientID={this.clientid}
@@ -262,21 +281,6 @@ export class EzpPrinting {
             instance="no-document-selected"
           />
         ) : null}
-        {this.trigger === 'custom' ? (
-          <slot></slot>
-        ) : this.trigger === 'file' ? (
-          <ezp-upload />
-        ) : (
-          this.trigger === 'button' && (
-            <ezp-icon-button
-              id="print-trigger"
-              icon="printer"
-              slot="trigger"
-              type="button"
-              onClick={() => this.open()}
-            ></ezp-icon-button>
-          )
-        )}
       </Host>
     )
   }

@@ -312,7 +312,6 @@ export class EzpPrinterSelection {
         await this.printService
           .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
           .then((data) => (this.selectedPrinterConfig = data[0]))
-        console.log(this.selectedPrinterConfig)
         this.setDefaultPaperFormat()
         break
       case 'color':
