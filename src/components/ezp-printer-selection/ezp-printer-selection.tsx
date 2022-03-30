@@ -530,17 +530,17 @@ export class EzpPrinterSelection {
                   instance="print-processing"
                   cancel
                 />
+              ) : this.selectedPrinter.is_queue && this.printSuccess ? (
+                <ezp-status
+                  icon="checkmark-alt"
+                  description={i18next.t('printer_selection.pull_print_success')}
+                  instance="print-success"
+                  close
+                />
               ) : this.printSuccess ? (
                 <ezp-status
                   icon="checkmark-alt"
                   description={i18next.t('printer_selection.print_success')}
-                  instance="print-success"
-                  close
-                />
-              ) : this.printSuccess && this.selectedPrinter.is_queue ? (
-                <ezp-status
-                  icon="checkmark-alt"
-                  description={i18next.t('printer_selection.pull_print_success')}
                   instance="print-success"
                   close
                 />
