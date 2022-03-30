@@ -221,6 +221,11 @@ export class EzpPrinterSelection {
           this.filename
         )
         .then((response) => {
+          if (response.status === 200 && this.selectedPrinter.is_queue) {
+            this.printProcessing = false
+            this.printSuccess = true
+          }
+
           if (response.status === 412) {
             response.json().then((data) => (this.fileid = data.fileid))
             this.printService.printByFileID(
