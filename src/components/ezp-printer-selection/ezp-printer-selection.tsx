@@ -289,7 +289,14 @@ export class EzpPrinterSelection {
     }
 
     if (localStorage.getItem('printer')) {
-      this.selectedPrinter = JSON.parse(localStorage.getItem('printer'))
+      const savedPrinter = JSON.parse(localStorage.getItem('printer'))
+      if (this.printers.some((printer) => printer.id === savedPrinter.id)) {
+        this.selectedPrinter = savedPrinter
+      } else {
+        this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
+        localStorage.removeItem('printer')
+        localStorage.removeItem('properties')
+      }
     } else {
       this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
     }
@@ -454,10 +461,22 @@ export class EzpPrinterSelection {
 
   /** Description... */
   async connectedCallback() {
-    this.getPropertiesFromLocalStorage()
+
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService.registerFetchInterceptor()
     await this.getUserInfo()
+
+    await this.printService
+      .getPrinterList(authStore.state.accessToken)
+      .then((printers: Printer[]) => {
+        this.printers = printers
+
+        if (!(this.printers.length > 0)) {
+          this.noPrinters = true
+        }
+      })
+
+    this.getPropertiesFromLocalStorage()
 
     // if printer is stored from previous print, get the config to enable property selection
     if (this.selectedPrinter.id != '') {
@@ -473,16 +492,6 @@ export class EzpPrinterSelection {
       .json()
       .then((response) => {
         printStore.state.supportedFileExtensions = response.System.FILEEXT
-      })
-
-    await this.printService
-      .getPrinterList(authStore.state.accessToken)
-      .then((printers: Printer[]) => {
-        this.printers = printers
-
-        if (!(this.printers.length > 0)) {
-          this.noPrinters = true
-        }
       })
 
     await this.printService
