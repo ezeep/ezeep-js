@@ -18,7 +18,7 @@ import { initi18n } from '../../utils/utils'
   shadow: true,
 })
 export class EzpPrinting {
-  private file: File
+  @Prop({mutable: true}) file: File
   @Prop() clientid: string
   @Prop() redirecturi: string
   @Prop({ mutable: true }) filename: string = ''
