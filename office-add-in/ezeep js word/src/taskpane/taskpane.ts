@@ -111,12 +111,14 @@ function download(file) {
 }
 
 function openAuthDialog() {
+  showMessage('authUri:' + authUri)
 // open office dialog
   Office.context.ui.displayDialogAsync(authUri, { height: 300, width: 300 }, function (result) {
     if (result.status === Office.AsyncResultStatus.Succeeded) {
       // dialog was opened
     } else {
       // dialog failed to open
+      showMessage("Error: " + result.error.message);
     }
   })
 }
