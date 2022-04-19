@@ -113,7 +113,7 @@ export namespace Components {
         "filename": string;
         "filetype": string;
         "fileurl": string;
-        "getAuthUri": () => string;
+        "getAuthUri": () => Promise<string>;
         "getSasUri": () => Promise<string>;
         "hidelogin": boolean;
         "hidemenu": boolean;

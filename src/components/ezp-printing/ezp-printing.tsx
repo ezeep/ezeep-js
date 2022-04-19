@@ -155,7 +155,7 @@ export class EzpPrinting {
   }
 
   @Method()
-  getAuthUri(): string {
+  async getAuthUri(): Promise<string> {
     return authStore.state.authUri
   }
 
