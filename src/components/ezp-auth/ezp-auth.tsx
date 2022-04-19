@@ -7,7 +7,6 @@ import {
   Event,
   EventEmitter,
   Listen,
-  Method,
 } from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'

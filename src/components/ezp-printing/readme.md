@@ -5,26 +5,47 @@
 
 ## Properties
 
-| Property          | Attribute         | Description | Type                                                                     | Default     |
-| ----------------- | ----------------- | ----------- | ------------------------------------------------------------------------ | ----------- |
-| `appearance`      | `appearance`      |             | `"dark" \| "light" \| "system"`                                          | `'system'`  |
-| `authapihosturl`  | `authapihosturl`  |             | `string`                                                                 | `undefined` |
-| `clientid`        | `clientid`        |             | `string`                                                                 | `undefined` |
-| `custom`          | `custom`          |             | `boolean`                                                                | `undefined` |
-| `fileid`          | `fileid`          |             | `string`                                                                 | `undefined` |
-| `filename`        | `filename`        |             | `string`                                                                 | `''`        |
-| `filetype`        | `filetype`        |             | `string`                                                                 | `undefined` |
-| `fileurl`         | `fileurl`         |             | `string`                                                                 | `undefined` |
-| `hidelogin`       | `hidelogin`       |             | `boolean`                                                                | `undefined` |
-| `hidemenu`        | `hidemenu`        |             | `boolean`                                                                | `false`     |
-| `language`        | `language`        |             | `string`                                                                 | `''`        |
-| `printapihosturl` | `printapihosturl` |             | `string`                                                                 | `undefined` |
-| `redirecturi`     | `redirecturi`     |             | `string`                                                                 | `undefined` |
-| `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "violet"` | `'cyan'`    |
-| `trigger`         | `trigger`         |             | `"button" \| "custom" \| "file"`                                         | `undefined` |
+| Property          | Attribute         | Description | Type                                                                               | Default     |
+| ----------------- | ----------------- | ----------- | ---------------------------------------------------------------------------------- | ----------- |
+| `appearance`      | `appearance`      |             | `"dark" \| "light" \| "system"`                                                    | `'system'`  |
+| `authapihosturl`  | `authapihosturl`  |             | `string`                                                                           | `undefined` |
+| `clientid`        | `clientid`        |             | `string`                                                                           | `undefined` |
+| `custom`          | `custom`          |             | `boolean`                                                                          | `undefined` |
+| `file`            | --                |             | `File`                                                                             | `undefined` |
+| `fileid`          | `fileid`          |             | `string`                                                                           | `undefined` |
+| `filename`        | `filename`        |             | `string`                                                                           | `''`        |
+| `filetype`        | `filetype`        |             | `string`                                                                           | `undefined` |
+| `fileurl`         | `fileurl`         |             | `string`                                                                           | `undefined` |
+| `hidelogin`       | `hidelogin`       |             | `boolean`                                                                          | `undefined` |
+| `hidemenu`        | `hidemenu`        |             | `boolean`                                                                          | `false`     |
+| `language`        | `language`        |             | `string`                                                                           | `''`        |
+| `printapihosturl` | `printapihosturl` |             | `string`                                                                           | `undefined` |
+| `redirecturi`     | `redirecturi`     |             | `string`                                                                           | `undefined` |
+| `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "teal" \| "violet"` | `'cyan'`    |
+| `trigger`         | `trigger`         |             | `"button" \| "custom" \| "file"`                                                   | `undefined` |
 
 
 ## Methods
+
+### `getAuthUri() => Promise<string>`
+
+
+
+#### Returns
+
+Type: `Promise<string>`
+
+
+
+### `getSasUri() => Promise<string>`
+
+
+
+#### Returns
+
+Type: `Promise<string>`
+
+
 
 ### `logOut() => Promise<void>`
 
@@ -52,21 +73,25 @@ Type: `Promise<void>`
 
 ### Depends on
 
+- [ezp-upload](../ezp-upload)
+- [ezp-icon-button](../ezp-icon-button)
 - [ezp-auth](../ezp-auth)
 - [ezp-printer-selection](../ezp-printer-selection)
 - [ezp-dialog](../ezp-dialog)
-- [ezp-upload](../ezp-upload)
-- [ezp-icon-button](../ezp-icon-button)
 
 ### Graph
 ```mermaid
 graph TD;
+  ezp-printing --> ezp-upload
+  ezp-printing --> ezp-icon-button
   ezp-printing --> ezp-auth
   ezp-printing --> ezp-printer-selection
   ezp-printing --> ezp-dialog
-  ezp-printing --> ezp-upload
-  ezp-printing --> ezp-icon-button
+  ezp-upload --> ezp-icon
+  ezp-upload --> ezp-label
+  ezp-icon-button --> ezp-icon
   ezp-auth --> ezp-status
+  ezp-auth --> ezp-text-button
   ezp-auth --> ezp-dialog
   ezp-status --> ezp-icon
   ezp-status --> ezp-label
@@ -76,7 +101,6 @@ graph TD;
   ezp-dialog --> ezp-icon
   ezp-dialog --> ezp-label
   ezp-dialog --> ezp-text-button
-  ezp-icon-button --> ezp-icon
   ezp-printer-selection --> ezp-status
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
@@ -93,8 +117,6 @@ graph TD;
   ezp-user-menu --> ezp-label
   ezp-user-menu --> ezp-icon-button
   ezp-user-menu --> ezp-icon
-  ezp-upload --> ezp-icon
-  ezp-upload --> ezp-label
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
