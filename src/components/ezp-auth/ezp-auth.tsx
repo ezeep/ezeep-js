@@ -7,6 +7,7 @@ import {
   Event,
   EventEmitter,
   Listen,
+  Method,
 } from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
@@ -21,6 +22,7 @@ export class EzpAuth {
   @Prop({ mutable: true }) redirectURI: string
   @Prop() hidelogin: boolean
   @Prop() trigger: string
+
   @State() auth: EzpAuthorizationService
   @State() authURI: string
   @State() accessToken: string

@@ -154,6 +154,11 @@ export class EzpPrinting {
     }
   }
 
+  @Method()
+  getAuthUri(): string {
+    return authStore.state.authUri
+  }
+
   checkAuth() {
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 

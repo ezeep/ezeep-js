@@ -4,32 +4,18 @@
  */
 
 /* global document, Office, Word */
+let authUri;
 
-Office.onReady((info) => {
+Office.onReady(async (info) => {
   if (info.host === Office.HostType.Word) {
-    document.getElementById("run").onclick = run;
     document.getElementById("getfileurl").onclick = getFileUrl;
-    document.getElementById("getFile").onclick = getFile;
+    document.getElementById("getFile").onclick = getFileAsPDF;
+    document.getElementById("openAuthDialog").onclick = openAuthDialog;
     const ezpPrinting: any = document.querySelector("ezp-printing");
-    ezpPrinting.open();
+    await ezpPrinting.open();
+    authUri = ezpPrinting.getAuthUri();
   }
 });
-
-export async function run() {
-  return Word.run(async (context) => {
-    /**
-     * Insert your Word code here
-     */
-
-    // insert a paragraph at the end of the document.
-    const paragraph = context.document.body.insertParagraph("Hello World", Word.InsertLocation.end);
-
-    // change the paragraph color to blue.
-    paragraph.font.color = "blue";
-
-    await context.sync();
-  });
-}
 
 // To read the URL of the current file, you need to write a callback function that returns the URL.
 // The following example shows how to:
@@ -52,7 +38,7 @@ function showMessage(message) {
   messageElement.innerText = message;
 }
 
-export function getFile() {
+export function getFileAsPDF() {
   //Get the current file
   Office.context.document.getFileAsync(Office.FileType.Pdf, (asyncResult: Office.AsyncResult<Office.File>) => {
     if (asyncResult.status === Office.AsyncResultStatus.Failed) {
@@ -86,6 +72,7 @@ function getSliceAsync(file: Office.File, nextSlice: number, sliceCount: number,
         docdataSlices[sliceResult.value.index] = sliceResult.value.data;
         if (++slicesReceived == sliceCount) {
           // All slices have been received.
+
           file.closeAsync();
           onGotAllSlices(docdataSlices);
         } else {
@@ -121,4 +108,15 @@ function download(file) {
 
   document.body.removeChild(link)
   window.URL.revokeObjectURL(url)
+}
+
+function openAuthDialog() {
+// open office dialog
+  Office.context.ui.displayDialogAsync(authUri, { height: 300, width: 300 }, function (result) {
+    if (result.status === Office.AsyncResultStatus.Succeeded) {
+      // dialog was opened
+    } else {
+      // dialog failed to open
+    }
+  })
 }

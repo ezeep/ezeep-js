@@ -108,6 +108,7 @@ export namespace Components {
         "authapihosturl": string;
         "clientid": string;
         "custom": boolean;
+        "file": File;
         "fileid": string;
         "filename": string;
         "filetype": string;
@@ -448,6 +449,7 @@ declare namespace LocalJSX {
         "authapihosturl"?: string;
         "clientid"?: string;
         "custom"?: boolean;
+        "file"?: File;
         "fileid"?: string;
         "filename"?: string;
         "filetype"?: string;

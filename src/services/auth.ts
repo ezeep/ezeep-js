@@ -51,6 +51,7 @@ export class EzpAuthorizationService {
     this.urlParams.append('code_challenge', this.codeChallenge)
     this.urlParams.append('code_challenge_method', 'S256')
     this.authURI.search = this.urlParams.toString()
+    authStore.state.authUri = this.authURI.toString()
   }
 
   getAccessToken() {
@@ -129,6 +130,7 @@ const authStore = createStore({
   devApi: false,
   authApiHostUrl: '',
   redirectUri: '',
+  authUri: ''
 })
 
 export default authStore
