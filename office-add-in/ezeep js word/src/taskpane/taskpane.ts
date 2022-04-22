@@ -4,16 +4,20 @@
  */
 
 /* global document, Office, Word */
-let authUri;
-
+let ezpPrinting: any;
+let file: File;
 Office.onReady(async (info) => {
   if (info.host === Office.HostType.Word) {
     document.getElementById("getfileurl").onclick = getFileUrl;
     document.getElementById("getFile").onclick = getFileAsPDF;
     document.getElementById("openAuthDialog").onclick = openAuthDialog;
-    const ezpPrinting: any = document.querySelector("ezp-printing");
+    ezpPrinting = document.querySelector("ezp-printing");
+    // await getFileAsPDF();
+    // console.log("FILE:")
+    // console.log(file)
+    // console.log("_______________________________")
+    // ezpPrinting.setAttribute('file', file)
     await ezpPrinting.open();
-    authUri = ezpPrinting.getAuthUri();
   }
 });
 
@@ -38,9 +42,9 @@ function showMessage(message) {
   messageElement.innerText = message;
 }
 
-export function getFileAsPDF() {
+export async function getFileAsPDF() {
   //Get the current file
-  Office.context.document.getFileAsync(Office.FileType.Pdf, (asyncResult: Office.AsyncResult<Office.File>) => {
+  Office.context.document.getFileAsync(Office.FileType.Pdf, async (asyncResult: Office.AsyncResult<Office.File>) => {
     if (asyncResult.status === Office.AsyncResultStatus.Failed) {
       showMessage("Error: " + asyncResult.error.message);
     } else {
@@ -52,73 +56,80 @@ export function getFileAsPDF() {
         sliceCount = file.sliceCount;
 
       // Get the file slices.
-      getSliceAsync(file, 0, sliceCount, gotAllSlices, docdataSlices, slicesReceived);
+      await getSliceAsync(file, 0, sliceCount, gotAllSlices, docdataSlices, slicesReceived);
       file.closeAsync();
     }
   });
 }
 
-function getSliceAsync(file: Office.File, nextSlice: number, sliceCount: number, gotAllSlices: boolean, docdataSlices: any[], slicesReceived: number) {
-  file.getSliceAsync(nextSlice, (sliceResult) => {
-      if (sliceResult.status === Office.AsyncResultStatus.Succeeded) {
-        if (!gotAllSlices) {
-          // Failed to get all slices, no need to continue.
-          return;
-        }
-
-        // Got one slice, store it in a temporary array.
-        // (Or you can do something else, such as
-        // send it to a third-party server.)
-        docdataSlices[sliceResult.value.index] = sliceResult.value.data;
-        if (++slicesReceived == sliceCount) {
-          // All slices have been received.
-
-          file.closeAsync();
-          onGotAllSlices(docdataSlices);
-        } else {
-          getSliceAsync(file, ++nextSlice, sliceCount, gotAllSlices, docdataSlices, slicesReceived);
-        }
-      } else {
-        gotAllSlices = false;
-        file.closeAsync();
-        showMessage(`getSliceAsync Error:${sliceResult.error.message}`);
+async function getSliceAsync(
+  file: Office.File,
+  nextSlice: number,
+  sliceCount: number,
+  gotAllSlices: boolean,
+  docdataSlices: any[],
+  slicesReceived: number
+) {
+  file.getSliceAsync(nextSlice, async (sliceResult) => {
+    if (sliceResult.status === Office.AsyncResultStatus.Succeeded) {
+      if (!gotAllSlices) {
+        // Failed to get all slices, no need to continue.
+        return;
       }
-    });
+
+      // Got one slice, store it in a temporary array.
+      // (Or you can do something else, such as
+      // send it to a third-party server.)
+      docdataSlices[sliceResult.value.index] = sliceResult.value.data;
+      if (++slicesReceived == sliceCount) {
+        // All slices have been received.
+
+        file.closeAsync();
+        await onGotAllSlices(docdataSlices);
+      } else {
+        getSliceAsync(file, ++nextSlice, sliceCount, gotAllSlices, docdataSlices, slicesReceived);
+      }
+    } else {
+      gotAllSlices = false;
+      file.closeAsync();
+      showMessage(`getSliceAsync Error:${sliceResult.error.message}`);
+    }
+  });
 }
 
-function onGotAllSlices(docdataSlices) {
+async function onGotAllSlices(docdataSlices) {
   var docdata = [];
   for (var i = 0; i < docdataSlices.length; i++) {
     docdata = docdata.concat(docdataSlices[i]);
   }
 
   const finalPDF = new File([new Uint8Array(docdata)], "ezp_word_printing.pdf", { type: "application/pdf" });
-
+  file = finalPDF;
   download(finalPDF);
 }
 
 function download(file) {
-  const link = document.createElement('a')
-  const url = URL.createObjectURL(file)
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(file);
 
-  link.href = url
-  link.download = file.name
-  document.body.appendChild(link)
-  link.click()
+  link.href = url;
+  link.download = file.name;
+  document.body.appendChild(link);
+  link.click();
 
-  document.body.removeChild(link)
-  window.URL.revokeObjectURL(url)
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
 }
 
-function openAuthDialog() {
-  showMessage('authUri:' + authUri)
-// open office dialog
-  Office.context.ui.displayDialogAsync(authUri, { height: 300, width: 300 }, function (result) {
-    if (result.status === Office.AsyncResultStatus.Succeeded) {
-      // dialog was opened
-    } else {
-      // dialog failed to open
-      showMessage("Error: " + result.error.message);
-    }
-  })
+async function openAuthDialog() {
+  const authUri = await ezpPrinting.getAuthUri();
+  showMessage("authUri:" + authUri);
+  // open office dialog
+  Office.context.ui.displayDialogAsync(authUri, { height: 300, width: 300 }, (result) => {
+    const dialog = result.value;
+    dialog.addEventHandler(Office.EventType.DialogMessageReceived, (arg: any) => {
+      showMessage("message:" + arg.message);
+      dialog.close();
+    })
+  });
 }
