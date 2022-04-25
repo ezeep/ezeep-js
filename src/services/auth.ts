@@ -55,7 +55,6 @@ export class EzpAuthorizationService {
   }
 
   getAccessToken() {
-    debugger
     return fetch(this.accessTokenURL, {
       credentials: 'include',
       headers: {
