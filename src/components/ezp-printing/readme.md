@@ -10,6 +10,7 @@
 | `appearance`      | `appearance`      |             | `"dark" \| "light" \| "system"`                                                    | `'system'`  |
 | `authapihosturl`  | `authapihosturl`  |             | `string`                                                                           | `undefined` |
 | `clientid`        | `clientid`        |             | `string`                                                                           | `undefined` |
+| `code`            | `code`            |             | `string`                                                                           | `undefined` |
 | `custom`          | `custom`          |             | `boolean`                                                                          | `undefined` |
 | `file`            | --                |             | `File`                                                                             | `undefined` |
 | `fileid`          | `fileid`          |             | `string`                                                                           | `undefined` |

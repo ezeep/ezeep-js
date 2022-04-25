@@ -18,8 +18,9 @@ module.exports = async (env, options) => {
     devtool: "source-map",
     entry: {
       polyfill: ["core-js/stable", "regenerator-runtime/runtime"],
-      taskpane: "./src/taskpane/taskpane.ts",
+      taskpane: "./src/taskpane/taskpane.ts", // The entry point of your extension
       commands: "./src/commands/commands.ts",
+      authRedirect: "./src/authRedirect/authRedirect.ts", // This is the redirect page for the OAuth flow
     },
     output: {
       devtoolModuleFilenameTemplate: "webpack:///[resource-path]?[loaders]",
@@ -88,6 +89,11 @@ module.exports = async (env, options) => {
         filename: "commands.html",
         template: "./src/commands/commands.html",
         chunks: ["polyfill", "commands"],
+      }),
+      new HtmlWebpackPlugin({
+        filename: "authRedirect.html",
+        template: "./src/authRedirect/authRedirect.html",
+        chunks: ["polyfill", "authRedirect"],
       }),
     ],
     devServer: {

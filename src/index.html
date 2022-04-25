@@ -48,13 +48,13 @@
   </head>
 
   <body>
-    <!-- für ezeep js dev client: 9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW
+    <!-- für ezeep js live client: oWuvEAndErO3kKCqzaWBOAs2PhOuAbD7MZYWQ9yJ
           authapihosturl="account.dev.azdev.ezeep.com"
       printapihosturl="printapi.dev.azdev.ezeep.com"
 
    -->
     <ezp-printing
-      clientid="oWuvEAndErO3kKCqzaWBOAs2PhOuAbD7MZYWQ9yJ"
+      clientid="9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW"
       redirecturi="https://develop.dev.azdev.ezeep.com:3333"
       theme="blue"
       appearance="system"
@@ -63,13 +63,15 @@
       fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       filename="dummypdf"
       filetype="pdf"
+      authapihosturl="account.dev.azdev.ezeep.com"
+      printapihosturl="printapi.dev.azdev.ezeep.com"
     >
 
     </ezp-printing>
      <!-- <button class="customButton">log sas uri</button> -->
     <script>
-
-      // const ezpPrinting = document.querySelector('ezp-printing')
+      const ezpPrinting = document.querySelector('ezp-printing')
+      ezpPrinting.setAttribute('code', 'PvZo7jnD1xpxWPHzkWLIzmHGTocFNS')
       // const button = document.querySelector('button')
 
       // button.onclick = async () => console.log(await ezpPrinting.getSasUri())
