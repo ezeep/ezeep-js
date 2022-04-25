@@ -8,8 +8,10 @@
 | Property      | Attribute        | Description | Type      | Default     |
 | ------------- | ---------------- | ----------- | --------- | ----------- |
 | `clientID`    | `client-i-d`     |             | `string`  | `undefined` |
+| `code`        | `code`           |             | `string`  | `undefined` |
 | `hidelogin`   | `hidelogin`      |             | `boolean` | `undefined` |
 | `redirectURI` | `redirect-u-r-i` |             | `string`  | `undefined` |
+| `trigger`     | `trigger`        |             | `string`  | `undefined` |
 
 
 ## Events
@@ -29,12 +31,14 @@
 ### Depends on
 
 - [ezp-status](../ezp-status)
+- [ezp-text-button](../ezp-text-button)
 - [ezp-dialog](../ezp-dialog)
 
 ### Graph
 ```mermaid
 graph TD;
   ezp-auth --> ezp-status
+  ezp-auth --> ezp-text-button
   ezp-auth --> ezp-dialog
   ezp-status --> ezp-icon
   ezp-status --> ezp-label

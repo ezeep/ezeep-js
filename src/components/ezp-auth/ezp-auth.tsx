@@ -1,14 +1,4 @@
-import {
-  Component,
-  Host,
-  h,
-  Prop,
-  State,
-  Event,
-  EventEmitter,
-  Listen,
-  Method,
-} from '@stencil/core'
+import { Component, Host, h, Prop, State, Event, EventEmitter, Listen } from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
 import i18next from 'i18next'
@@ -22,6 +12,7 @@ export class EzpAuth {
   @Prop({ mutable: true }) redirectURI: string
   @Prop() hidelogin: boolean
   @Prop() trigger: string
+  @Prop() code: string
 
   @State() auth: EzpAuthorizationService
   @State() authURI: string
@@ -49,7 +40,6 @@ export class EzpAuth {
   previousUrl = null
 
   openSignInWindow(url: string, name: string) {
-
     if (authStore.state.isAuthorized) {
       this.authCancel.emit()
       this.authSuccess.emit()
@@ -108,10 +98,22 @@ export class EzpAuth {
 
   async componentWillLoad() {
     this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
+
     if (authStore.state.isAuthorized === false) {
       this.auth.generateCodeVerifier()
       await this.auth.generateCodeChallenge(authStore.state.codeVerifier)
       this.auth.buildAuthURI()
+    }
+
+    if (this.code) {
+      this.auth.code = this.code
+      this.auth.getAccessToken().then(() => {
+        this.authCancel.emit()
+        this.authSuccess.emit()
+      }).catch(() => {
+        this.authCancel.emit()
+      })
+      return
     }
 
     if (this.hidelogin && this.trigger === 'button') {

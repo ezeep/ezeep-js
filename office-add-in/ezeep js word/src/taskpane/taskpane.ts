@@ -127,8 +127,10 @@ async function openAuthDialog() {
   // open office dialog
   Office.context.ui.displayDialogAsync(authUri, { height: 300, width: 300 }, (result) => {
     const dialog = result.value;
+    // process message from the dialog
     dialog.addEventHandler(Office.EventType.DialogMessageReceived, (arg: any) => {
       showMessage("message:" + arg.message);
+      ezpPrinting.setAttribute('code', arg.message);
       dialog.close();
     })
   });

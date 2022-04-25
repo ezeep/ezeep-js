@@ -34,6 +34,7 @@ export class EzpPrinting {
   @Prop() appearance: AppearanceTypes = 'system'
   @Prop() trigger: TriggerTypes
   @Prop() language: string = ''
+  @Prop() code: string
   /**
    *
    * States
@@ -155,7 +156,7 @@ export class EzpPrinting {
   }
 
   @Method()
-  getAuthUri(): string {
+  async getAuthUri(): Promise<string> {
     return authStore.state.authUri
   }
 
@@ -265,6 +266,7 @@ export class EzpPrinting {
             redirectURI={this.redirecturi}
             hidelogin={this.hidelogin}
             trigger={this.trigger}
+            code={this.code}
           ></ezp-auth>
         ) : this.printOpen ? (
           <ezp-printer-selection
