@@ -123,8 +123,8 @@ async function openAuthDialog() {
     dialog.addEventHandler(Office.EventType.DialogMessageReceived, (arg: any) => {
       showMessage("message:" + arg.message);
       ezpPrinting.setAttribute('code', arg.message);
-      dialog.close();
       ezpPrinting.open();
+      dialog.close();
     })
   });
 }

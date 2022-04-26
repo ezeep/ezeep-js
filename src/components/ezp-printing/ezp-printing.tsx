@@ -18,10 +18,9 @@ import { initi18n } from '../../utils/utils'
   shadow: true,
 })
 export class EzpPrinting {
-
   auth: EzpAuthorizationService
 
-  @Prop({mutable: true}) file: File
+  @Prop({ mutable: true }) file: File
   @Prop() clientid: string
   @Prop() redirecturi: string
   @Prop({ mutable: true }) filename: string = ''
@@ -162,9 +161,9 @@ export class EzpPrinting {
   async getAuthUri(): Promise<string> {
     this.auth = new EzpAuthorizationService(this.redirecturi, this.clientid)
 
-      this.auth.generateCodeVerifier()
-      await this.auth.generateCodeChallenge(authStore.state.codeVerifier)
-      this.auth.buildAuthURI()
+    this.auth.generateCodeVerifier()
+    await this.auth.generateCodeChallenge(authStore.state.codeVerifier)
+    this.auth.buildAuthURI()
     return authStore.state.authUri
   }
 
@@ -204,7 +203,7 @@ export class EzpPrinting {
     }, seconds * 1000)
   }
 
-  componentWillLoad() {
+  async componentWillLoad() {
     const systemAppearanceDark = window.matchMedia('(prefers-color-scheme: dark)')
 
     this.systemAppearance = systemAppearanceDark.matches ? 'dark' : 'light'
@@ -230,10 +229,10 @@ export class EzpPrinting {
     }
 
     if (this.code) {
-      this.auth.getAccessToken().then(() => {
-        this.authOpen = false
-        this.printOpen = true
-      })
+      this.auth.code = this.code
+      await this.auth.getAccessToken()
+      this.authOpen = false
+      this.printOpen = true
     }
 
     sendCodeToParentWindow()
