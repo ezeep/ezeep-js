@@ -228,13 +228,6 @@ export class EzpPrinting {
       printStore.state.printApiHostUrl = config.printingApiHostUrl
     }
 
-    if (this.code) {
-      this.auth.code = this.code
-      await this.auth.getAccessToken()
-      this.authOpen = false
-      this.printOpen = true
-    }
-
     sendCodeToParentWindow()
     initi18n(this.language)
     this.checkAuth()
@@ -280,6 +273,7 @@ export class EzpPrinting {
             redirectURI={this.redirecturi}
             hidelogin={this.hidelogin}
             trigger={this.trigger}
+            code={this.code}
           ></ezp-auth>
         ) : this.printOpen ? (
           <ezp-printer-selection

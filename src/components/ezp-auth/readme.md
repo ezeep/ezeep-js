@@ -8,6 +8,7 @@
 | Property      | Attribute        | Description | Type      | Default     |
 | ------------- | ---------------- | ----------- | --------- | ----------- |
 | `clientID`    | `client-i-d`     |             | `string`  | `undefined` |
+| `code`        | `code`           |             | `string`  | `undefined` |
 | `hidelogin`   | `hidelogin`      |             | `boolean` | `undefined` |
 | `redirectURI` | `redirect-u-r-i` |             | `string`  | `undefined` |
 | `trigger`     | `trigger`        |             | `string`  | `undefined` |
