@@ -18,6 +18,9 @@ import { initi18n } from '../../utils/utils'
   shadow: true,
 })
 export class EzpPrinting {
+
+  auth: EzpAuthorizationService
+
   @Prop({mutable: true}) file: File
   @Prop() clientid: string
   @Prop() redirecturi: string
@@ -157,11 +160,11 @@ export class EzpPrinting {
 
   @Method()
   async getAuthUri(): Promise<string> {
-    const authService = new EzpAuthorizationService(this.redirecturi, this.clientid)
+    this.auth = new EzpAuthorizationService(this.redirecturi, this.clientid)
 
-      authService.generateCodeVerifier()
-      await authService.generateCodeChallenge(authStore.state.codeVerifier)
-      authService.buildAuthURI()
+      this.auth.generateCodeVerifier()
+      await this.auth.generateCodeChallenge(authStore.state.codeVerifier)
+      this.auth.buildAuthURI()
     return authStore.state.authUri
   }
 
@@ -224,6 +227,10 @@ export class EzpPrinting {
       printStore.state.printApiHostUrl = this.printapihosturl
     } else {
       printStore.state.printApiHostUrl = config.printingApiHostUrl
+    }
+
+    if (this.code) {
+      this.auth.getAccessToken()
     }
 
     sendCodeToParentWindow()
