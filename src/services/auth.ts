@@ -14,7 +14,6 @@ export class EzpAuthorizationService {
   clientID: string
   redirectURI: string
   oauthUrl: string
-  code: string
   authURI: URL
   urlParams = new URLSearchParams()
   isAuthorized = false
@@ -65,9 +64,9 @@ export class EzpAuthorizationService {
       body: encodeFormData({
         grant_type: 'authorization_code',
         scope: 'printing',
-        code: this.code,
+        code: authStore.state.code,
         redirect_uri: this.redirectURI,
-        code_verifier: this.codeVerifier,
+        code_verifier: authStore.state.codeVerifier,
       }),
     })
       .then((response) => {
@@ -123,6 +122,7 @@ export class EzpAuthorizationService {
 }
 
 const authStore = createStore({
+  code: '',
   codeVerifier: '',
   accessToken: '',
   refreshToken: '',
