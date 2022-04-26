@@ -89,7 +89,7 @@ export class EzpAuth {
   }
 
   receiveMessage(event) {
-    this.auth.code = event.data
+    authStore.state.code = event.data
     this.auth.getAccessToken().then(() => {
       this.authCancel.emit()
       this.authSuccess.emit()
@@ -100,7 +100,7 @@ export class EzpAuth {
     this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
 
     if (this.code) {
-      this.auth.code = this.code
+      authStore.state.code = this.code
       await this.auth.getAccessToken()
       this.authCancel.emit()
       this.authSuccess.emit()
