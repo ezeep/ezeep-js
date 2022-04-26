@@ -12,6 +12,7 @@ export class EzpAuth {
   @Prop({ mutable: true }) redirectURI: string
   @Prop() hidelogin: boolean
   @Prop() trigger: string
+  @Prop() code: string
 
   @State() auth: EzpAuthorizationService
   @State() authURI: string
@@ -97,6 +98,13 @@ export class EzpAuth {
 
   async componentWillLoad() {
     this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
+
+    if (this.code) {
+      this.auth.code = this.code
+      await this.auth.getAccessToken()
+      this.authCancel.emit()
+      this.authSuccess.emit()
+    }
 
     if (authStore.state.isAuthorized === false) {
       this.auth.generateCodeVerifier()

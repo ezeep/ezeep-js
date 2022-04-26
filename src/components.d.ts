@@ -9,6 +9,7 @@ import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTyp
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
+        "code": string;
         "hidelogin": boolean;
         "redirectURI": string;
         "trigger": string;
@@ -335,6 +336,7 @@ declare global {
 declare namespace LocalJSX {
     interface EzpAuth {
         "clientID"?: string;
+        "code"?: string;
         "hidelogin"?: boolean;
         "onAuthCancel"?: (event: CustomEvent<MouseEvent>) => void;
         "onAuthSuccess"?: (event: CustomEvent<any>) => void;
