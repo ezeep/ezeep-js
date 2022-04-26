@@ -230,7 +230,10 @@ export class EzpPrinting {
     }
 
     if (this.code) {
-      this.auth.getAccessToken()
+      this.auth.getAccessToken().then(() => {
+        this.authOpen = false
+        this.printOpen = true
+      })
     }
 
     sendCodeToParentWindow()

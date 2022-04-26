@@ -8,15 +8,7 @@ let ezpPrinting: any;
 let file: File;
 Office.onReady(async (info) => {
   if (info.host === Office.HostType.Word) {
-    document.getElementById("getfileurl").onclick = getFileUrl;
-    document.getElementById("getFile").onclick = getFileAsPDF;
-    document.getElementById("openAuthDialog").onclick = openAuthDialog;
     ezpPrinting = document.querySelector("ezp-printing");
-    // await getFileAsPDF();
-    // console.log("FILE:")
-    // console.log(file)
-    // console.log("_______________________________")
-    // ezpPrinting.setAttribute('file', file)
     await openAuthDialog();
   }
 });
