@@ -157,6 +157,11 @@ export class EzpPrinting {
 
   @Method()
   async getAuthUri(): Promise<string> {
+    const authService = new EzpAuthorizationService(this.redirecturi, this.clientid)
+
+      authService.generateCodeVerifier()
+      await authService.generateCodeChallenge(authStore.state.codeVerifier)
+      authService.buildAuthURI()
     return authStore.state.authUri
   }
 
@@ -266,7 +271,6 @@ export class EzpPrinting {
             redirectURI={this.redirecturi}
             hidelogin={this.hidelogin}
             trigger={this.trigger}
-            code={this.code}
           ></ezp-auth>
         ) : this.printOpen ? (
           <ezp-printer-selection

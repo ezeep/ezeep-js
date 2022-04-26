@@ -12,7 +12,6 @@ export class EzpAuth {
   @Prop({ mutable: true }) redirectURI: string
   @Prop() hidelogin: boolean
   @Prop() trigger: string
-  @Prop() code: string
 
   @State() auth: EzpAuthorizationService
   @State() authURI: string
@@ -103,17 +102,6 @@ export class EzpAuth {
       this.auth.generateCodeVerifier()
       await this.auth.generateCodeChallenge(authStore.state.codeVerifier)
       this.auth.buildAuthURI()
-    }
-
-    if (this.code) {
-      this.auth.code = this.code
-      this.auth.getAccessToken().then(() => {
-        this.authCancel.emit()
-        this.authSuccess.emit()
-      }).catch(() => {
-        this.authCancel.emit()
-      })
-      return
     }
 
     if (this.hidelogin && this.trigger === 'button') {

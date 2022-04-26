@@ -18,6 +18,7 @@ Office.onReady(async (info) => {
     // console.log("_______________________________")
     // ezpPrinting.setAttribute('file', file)
     await ezpPrinting.open();
+    openAuthDialog();
   }
 });
 
@@ -131,6 +132,7 @@ async function openAuthDialog() {
     dialog.addEventHandler(Office.EventType.DialogMessageReceived, (arg: any) => {
       showMessage("message:" + arg.message);
       ezpPrinting.setAttribute('code', arg.message);
+      ezpPrinting.open();
       dialog.close();
     })
   });
