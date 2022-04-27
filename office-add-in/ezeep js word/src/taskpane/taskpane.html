@@ -26,21 +26,26 @@
   </head>
 
   <body class="ms-font-m ms-welcome ms-Fabric">
-    <ezp-printing
-      clientid="9I9DPCHGvsXjraQfwuRzL7OlVpqiryJ19yfYLeLH"
-      redirecturi="https://localhost:3000/authRedirect.html"
-      trigger="button"
-      fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-      filename="dummypdf"
-      filetype="pdf"
-      authapihosturl="account.dev.azdev.ezeep.com"
-      printapihosturl="printapi.dev.azdev.ezeep.com"
-    >
-    </ezp-printing>
+    <div class="flexbox">
+      <ezp-printing
+        clientid="9I9DPCHGvsXjraQfwuRzL7OlVpqiryJ19yfYLeLH"
+        redirecturi="https://localhost:3000/authRedirect.html"
+        trigger="button"
+        fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+        filename="dummypdf"
+        filetype="pdf"
+        authapihosturl="account.dev.azdev.ezeep.com"
+        printapihosturl="printapi.dev.azdev.ezeep.com"
+        appearance="light"
+      >
+      </ezp-printing>
 
+      <div id="authSection">
+        <p>To print a document with ezeep, you first need to authenticate yourself</p>
+        <button id="openAuthBtn">open auth</button>
+      </div>
 
-    <p id="message"></p>
-
-
+      <p id="message"></p>
+    </div>
   </body>
 </html>

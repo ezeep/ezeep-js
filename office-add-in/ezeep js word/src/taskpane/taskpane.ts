@@ -5,11 +5,25 @@
 
 /* global document, Office, Word */
 let ezpPrinting: any;
+let openAuthBtn: HTMLButtonElement;
+let authorized: boolean = false;
+let authSection: HTMLDivElement;
+
 let file: File;
 Office.onReady(async (info) => {
   if (info.host === Office.HostType.Word) {
+    //authorized = await ezpPrinting.isAuthorized();
     ezpPrinting = document.querySelector("ezp-printing");
-    await openAuthDialog();
+    openAuthBtn = document.querySelector("#openAuthBtn");
+    authSection = document.querySelector("#authSection");
+    if (authorized) {
+      authSection.style.display = "none";
+      ezpPrinting.style.display = "block";
+    } else {
+      ezpPrinting.style.display = "none";
+      authSection.style.display = "block";
+      openAuthBtn.addEventListener("click", openAuthDialog);
+    }
   }
 });
 
@@ -115,15 +129,15 @@ function download(file) {
 
 async function openAuthDialog() {
   const authUri = await ezpPrinting.getAuthUri();
-  showMessage("authUri:" + authUri);
   // open office dialog
   Office.context.ui.displayDialogAsync(authUri, { height: 300, width: 300 }, (result) => {
     const dialog = result.value;
     // process message from the dialog
     dialog.addEventHandler(Office.EventType.DialogMessageReceived, (arg: any) => {
-      showMessage("message:" + arg.message);
       ezpPrinting.setAttribute('code', arg.message);
       dialog.close();
+      ezpPrinting.style.display = "block";
+      authSection.style.display = "none";
       ezpPrinting.open();
     })
   });
