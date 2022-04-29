@@ -37,6 +37,7 @@ export class EzpPrinting {
   @Prop() trigger: TriggerTypes
   @Prop() language: string = ''
   @Prop() code: string
+  @Prop() filedata: [ArrayBuffer] | [ArrayBufferView] | [Blob] | [Uint8Array]
   /**
    *
    * States
@@ -49,6 +50,7 @@ export class EzpPrinting {
   @State() onlyGetSasUri: boolean = false
   @State() noDocumentOpen: boolean = false
   @State() systemAppearance: SystemAppearanceTypes
+
 
   /**
    *
@@ -226,6 +228,10 @@ export class EzpPrinting {
       printStore.state.printApiHostUrl = this.printapihosturl
     } else {
       printStore.state.printApiHostUrl = config.printingApiHostUrl
+    }
+
+    if (this.filedata) {
+      this.file = new File(this.filedata, this.filename);
     }
 
     sendCodeToParentWindow()
