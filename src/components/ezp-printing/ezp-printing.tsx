@@ -20,7 +20,6 @@ import { initi18n } from '../../utils/utils'
 export class EzpPrinting {
   auth: EzpAuthorizationService
 
-  @Prop({ mutable: true }) file: File
   @Prop() clientid: string
   @Prop() redirecturi: string
   @Prop({ mutable: true }) filename: string = ''
@@ -37,7 +36,7 @@ export class EzpPrinting {
   @Prop() trigger: TriggerTypes
   @Prop() language: string = ''
   @Prop() code: string
-  @Prop() filedata: [ArrayBuffer] | [ArrayBufferView] | [Blob] | [Uint8Array]
+  @Prop() filedata: string
   /**
    *
    * States
@@ -50,7 +49,7 @@ export class EzpPrinting {
   @State() onlyGetSasUri: boolean = false
   @State() noDocumentOpen: boolean = false
   @State() systemAppearance: SystemAppearanceTypes
-
+  @State() file: File
 
   /**
    *
@@ -231,7 +230,8 @@ export class EzpPrinting {
     }
 
     if (this.filedata) {
-      this.file = new File(this.filedata, this.filename);
+      const uint8array = new TextEncoder().encode(this.filedata)
+      this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
     }
 
     sendCodeToParentWindow()

@@ -505,6 +505,7 @@ export class EzpPrinterSelection {
         this.notSupported = !valid ? true : false
       })
     }
+
     this.loading = false
   }
 

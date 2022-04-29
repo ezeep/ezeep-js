@@ -110,7 +110,7 @@ export namespace Components {
         "clientid": string;
         "code": string;
         "custom": boolean;
-        "file": File;
+        "filedata": string;
         "fileid": string;
         "filename": string;
         "filetype": string;
@@ -454,7 +454,7 @@ declare namespace LocalJSX {
         "clientid"?: string;
         "code"?: string;
         "custom"?: boolean;
-        "file"?: File;
+        "filedata"?: string;
         "fileid"?: string;
         "filename"?: string;
         "filetype"?: string;

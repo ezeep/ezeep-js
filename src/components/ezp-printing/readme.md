@@ -12,7 +12,7 @@
 | `clientid`        | `clientid`        |             | `string`                                                                           | `undefined` |
 | `code`            | `code`            |             | `string`                                                                           | `undefined` |
 | `custom`          | `custom`          |             | `boolean`                                                                          | `undefined` |
-| `file`            | --                |             | `File`                                                                             | `undefined` |
+| `filedata`        | `filedata`        |             | `string`                                                                           | `undefined` |
 | `fileid`          | `fileid`          |             | `string`                                                                           | `undefined` |
 | `filename`        | `filename`        |             | `string`                                                                           | `''`        |
 | `filetype`        | `filetype`        |             | `string`                                                                           | `undefined` |
