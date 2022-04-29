@@ -232,7 +232,10 @@ export class EzpPrinting {
     if (this.filedata) {
       const uint8array = new TextEncoder().encode(this.filedata)
       this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
+      console.log(this.file)
     }
+
+
 
     sendCodeToParentWindow()
     initi18n(this.language)
