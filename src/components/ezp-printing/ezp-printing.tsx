@@ -53,11 +53,19 @@ export class EzpPrinting {
   @State() file: File
 
   /** Watchers */
+
   @Watch('filedata')
   watchFileData(newValue: string, oldValue: string) {
     if (newValue !== oldValue && newValue.length > 0) {
       const uint8array = new TextEncoder().encode(newValue)
       this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
+    }
+  }
+
+  @Watch('filename')
+  watchFilename(newValue: string, oldValue: string) {
+    if (newValue !== oldValue && newValue.length > 0) {
+      this.filename = newValue
     }
   }
   /**
