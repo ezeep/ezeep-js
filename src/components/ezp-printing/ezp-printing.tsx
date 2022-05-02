@@ -38,14 +38,6 @@ export class EzpPrinting {
   @Prop() code: string
   @Prop() filedata: string
 
-  @Watch('filedata')
-  watchFileData(newValue: string, oldValue: string) {
-    if (newValue !== oldValue && newValue.length > 0) {
-      const uint8array = new TextEncoder().encode(newValue)
-      this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
-      console.log(this.file)
-    }
-  }
   /**
    *
    * States
@@ -60,6 +52,14 @@ export class EzpPrinting {
   @State() systemAppearance: SystemAppearanceTypes
   @State() file: File
 
+  /** Watchers */
+  @Watch('filedata')
+  watchFileData(newValue: string, oldValue: string) {
+    if (newValue !== oldValue && newValue.length > 0) {
+      const uint8array = new TextEncoder().encode(newValue)
+      this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
+    }
+  }
   /**
    *
    * Listeners
@@ -237,9 +237,6 @@ export class EzpPrinting {
     } else {
       printStore.state.printApiHostUrl = config.printingApiHostUrl
     }
-
-    console.log(this.filedata)
-    console.log(this.filename)
 
     sendCodeToParentWindow()
     initi18n(this.language)
