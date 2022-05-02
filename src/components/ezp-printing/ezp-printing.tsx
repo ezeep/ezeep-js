@@ -1,4 +1,4 @@
-import { Component, Host, State, Listen, Method, h, Prop } from '@stencil/core'
+import { Component, Host, State, Listen, Method, h, Prop, Watch } from '@stencil/core'
 import authStore, { EzpAuthorizationService, sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
@@ -37,6 +37,15 @@ export class EzpPrinting {
   @Prop() language: string = ''
   @Prop() code: string
   @Prop() filedata: string
+
+  @Watch('filedata')
+  watchFileData(newValue: string, oldValue: string) {
+    if (newValue !== oldValue && newValue.length > 0) {
+      const uint8array = new TextEncoder().encode(newValue)
+      this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
+      console.log(this.file)
+    }
+  }
   /**
    *
    * States
@@ -231,12 +240,6 @@ export class EzpPrinting {
 
     console.log(this.filedata)
     console.log(this.filename)
-
-    if (this.filedata) {
-      const uint8array = new TextEncoder().encode(this.filedata)
-      this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
-      console.log(this.file)
-    }
 
     sendCodeToParentWindow()
     initi18n(this.language)
