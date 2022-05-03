@@ -39,20 +39,23 @@
         "duplex_none": "Keine",
         "copies": "Kopien",
         "duplex_long": "auf der langen Seite umdrehen",
-        "duplex_short": "auf der kurzen Seite umdrehen"
+        "duplex_short": "auf der kurzen Seite umdrehen",
+        "pull_print_success": "Bereit zum Auslösen."
     },
     "button_actions": {
         "login": "Anmelden",
         "print": "Drucken",
         "cancel": "Abbrechen",
         "close": "Schließen",
-        "retry": "Wiederholen"
+        "retry": "Wiederholen",
+        "select_printer": "Wähle Drucker"
     },
     "upload": {
         "description": "Ziehe eine Datei hier in den Browser ",
         "meta_leading": "oder",
         "meta_select": "wähle eine Datei aus",
-        "meta_trailing": "um mit ezeep Blue zu drucken."
+        "meta_trailing": "um mit ezeep Blue zu drucken.",
+        "selected_file": "Ausgewählte Datei:"
     },
     "user_menu": {
         "theme": "Farbschema",
@@ -60,7 +63,7 @@
         "system": "System",
         "light": "Hell",
         "dark": "Dunkel",
-        "account": "Account verwalten",
+        "account": "Konto verwalten",
         "help": "Hilfe & Unterstützung",
         "logout": "Ausloggen"
     }
