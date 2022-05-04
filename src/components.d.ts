@@ -107,6 +107,7 @@ export namespace Components {
     interface EzpPrinting {
         "appearance": AppearanceTypes;
         "authapihosturl": string;
+        "checkAuth": () => Promise<boolean>;
         "clientid": string;
         "code": string;
         "custom": boolean;

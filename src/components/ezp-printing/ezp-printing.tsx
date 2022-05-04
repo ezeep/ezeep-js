@@ -185,7 +185,8 @@ export class EzpPrinting {
     return authStore.state.authUri
   }
 
-  checkAuth() {
+  @Method()
+  async checkAuth(): Promise<boolean> {
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
     let accessToken = authStore.state.accessToken
@@ -199,8 +200,8 @@ export class EzpPrinting {
       authStore.state.isAuthorized = !!localStorage.getItem('isAuthorized')
       this.authOpen = !authStore.state.isAuthorized
     }
-    printService
-      .getConfig(authStore.state.accessToken)
+
+    printService.getConfig(authStore.state.accessToken)
       .then((response) => {
         if (response.ok) {
           authStore.state.isAuthorized = true
@@ -212,6 +213,8 @@ export class EzpPrinting {
       .catch(() => {
         authStore.state.isAuthorized = false
       })
+
+      return authStore.state.isAuthorized
   }
 
   refreshTokensPeriodically(seconds: number) {
