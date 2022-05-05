@@ -59,6 +59,9 @@ export class EzpPrinting {
     if (newValue !== oldValue && newValue.length > 0) {
       const uint8array = new TextEncoder().encode(newValue)
       this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
+      if (authStore.state.isAuthorized) {
+        this.printOpen = true
+      }
     }
   }
 
