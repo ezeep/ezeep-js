@@ -137,7 +137,6 @@ export class EzpPrinting {
   @Method()
   async open() {
     if (authStore.state.isAuthorized) {
-      this.authOpen = true
       if (this.filename) {
         this.printOpen = true
       } else {
