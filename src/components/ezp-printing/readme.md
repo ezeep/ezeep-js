@@ -28,6 +28,16 @@
 
 ## Methods
 
+### `checkAuth() => Promise<boolean>`
+
+
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+
+
 ### `getAuthUri() => Promise<string>`
 
 

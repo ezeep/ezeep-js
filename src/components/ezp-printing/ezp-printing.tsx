@@ -59,9 +59,6 @@ export class EzpPrinting {
     if (newValue !== oldValue && newValue.length > 0) {
       const uint8array = new TextEncoder().encode(newValue)
       this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
-      if (authStore.state.isAuthorized) {
-        this.printOpen = true
-      }
     }
   }
 
@@ -194,16 +191,6 @@ export class EzpPrinting {
 
     let accessToken = authStore.state.accessToken
 
-    if (accessToken === '') {
-      accessToken = localStorage.getItem('access_token')
-      authStore.state.accessToken = accessToken
-    }
-
-    if (localStorage.getItem('isAuthorized')) {
-      authStore.state.isAuthorized = !!localStorage.getItem('isAuthorized')
-      this.authOpen = !authStore.state.isAuthorized
-    }
-
     printService.getConfig(authStore.state.accessToken)
       .then((response) => {
         if (response.ok) {
@@ -215,7 +202,19 @@ export class EzpPrinting {
       })
       .catch(() => {
         authStore.state.isAuthorized = false
+        return false
       })
+
+    if (accessToken === '') {
+      accessToken = localStorage.getItem('access_token')
+      authStore.state.accessToken = accessToken
+    }
+
+    if (localStorage.getItem('isAuthorized')) {
+      authStore.state.isAuthorized = !!localStorage.getItem('isAuthorized')
+      this.authOpen = !authStore.state.isAuthorized
+    }
+
 
       return authStore.state.isAuthorized
   }
