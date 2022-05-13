@@ -201,6 +201,7 @@ export class EzpPrinting {
       })
       .catch(() => {
         authStore.state.isAuthorized = false
+        localStorage.setItem('isAuthorized', 'false')
         return false
       })
 
@@ -213,7 +214,6 @@ export class EzpPrinting {
       authStore.state.isAuthorized = !!localStorage.getItem('isAuthorized')
       this.authOpen = !authStore.state.isAuthorized
     }
-
 
       return authStore.state.isAuthorized
   }
