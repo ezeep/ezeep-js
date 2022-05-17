@@ -11,7 +11,6 @@ import {
 } from './../../shared/types'
 import i18next from 'i18next'
 import { initi18n } from '../../utils/utils'
-import { watch } from 'fs'
 
 @Component({
   tag: 'ezp-printing',
