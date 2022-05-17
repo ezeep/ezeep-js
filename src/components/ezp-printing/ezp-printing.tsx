@@ -11,6 +11,7 @@ import {
 } from './../../shared/types'
 import i18next from 'i18next'
 import { initi18n } from '../../utils/utils'
+import { watch } from 'fs'
 
 @Component({
   tag: 'ezp-printing',
@@ -66,6 +67,13 @@ export class EzpPrinting {
   watchFilename(newValue: string, oldValue: string) {
     if (newValue !== oldValue && newValue.length > 0) {
       this.filename = newValue
+    }
+  }
+
+  @Watch('fileurl')
+  watchFileUrl(newValue: string, oldValue: string) {
+    if (newValue !== oldValue && newValue.length > 0) {
+      this.fileurl = newValue
     }
   }
   /**
