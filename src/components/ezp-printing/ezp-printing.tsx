@@ -203,6 +203,7 @@ export class EzpPrinting {
           authStore.state.isAuthorized = true
         }
         if (!response.ok) {
+          authStore.state.isAuthorized = true
           throw new Error('http status ' + response.status)
         }
       })
