@@ -203,13 +203,13 @@ export class EzpPrinting {
           authStore.state.isAuthorized = true
         }
         if (!response.ok) {
-          authStore.state.isAuthorized = true
+          authStore.state.isAuthorized = false
           throw new Error('http status ' + response.status)
         }
       })
       .catch(() => {
         authStore.state.isAuthorized = false
-        localStorage.setItem('isAuthorized', 'false')
+        localStorage.setItem('isAuthorized', authStore.state.isAuthorized.toString())
         return false
       })
 
@@ -220,7 +220,6 @@ export class EzpPrinting {
 
     if (localStorage.getItem('isAuthorized')) {
       authStore.state.isAuthorized = !!localStorage.getItem('isAuthorized')
-      this.authOpen = !authStore.state.isAuthorized
     }
 
       return authStore.state.isAuthorized
@@ -260,7 +259,9 @@ export class EzpPrinting {
 
     sendCodeToParentWindow()
     initi18n(this.language)
-    this.checkAuth()
+    this.checkAuth().then(() => {
+      this.authOpen = !authStore.state.isAuthorized
+    })
   }
 
   componentDidLoad() {
