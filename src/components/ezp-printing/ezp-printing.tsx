@@ -219,7 +219,7 @@ export class EzpPrinting {
     }
 
     if (localStorage.getItem('isAuthorized')) {
-      authStore.state.isAuthorized = !!localStorage.getItem('isAuthorized')
+      authStore.state.isAuthorized = (localStorage.getItem('isAuthorized')) === 'true'
     }
 
       return authStore.state.isAuthorized
