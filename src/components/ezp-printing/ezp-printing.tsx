@@ -197,7 +197,7 @@ export class EzpPrinting {
 
     let accessToken = authStore.state.accessToken
 
-    printService.getConfig(authStore.state.accessToken)
+    await printService.getConfig(authStore.state.accessToken)
       .then((response) => {
         if (response.ok) {
           authStore.state.isAuthorized = true
