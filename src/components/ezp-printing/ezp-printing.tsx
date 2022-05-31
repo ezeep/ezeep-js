@@ -197,6 +197,15 @@ export class EzpPrinting {
 
     let accessToken = authStore.state.accessToken
 
+    if (accessToken === '') {
+      accessToken = localStorage.getItem('access_token')
+      authStore.state.accessToken = accessToken
+    }
+
+    if (localStorage.getItem('isAuthorized')) {
+      authStore.state.isAuthorized = (localStorage.getItem('isAuthorized')) === 'true'
+    }
+
     await printService.getConfig(authStore.state.accessToken)
       .then((response) => {
         if (response.ok) {
@@ -209,18 +218,9 @@ export class EzpPrinting {
       })
       .catch(() => {
         authStore.state.isAuthorized = false
-        localStorage.setItem('isAuthorized', authStore.state.isAuthorized.toString())
-        return false
       })
 
-    if (accessToken === '') {
-      accessToken = localStorage.getItem('access_token')
-      authStore.state.accessToken = accessToken
-    }
-
-    if (localStorage.getItem('isAuthorized')) {
-      authStore.state.isAuthorized = (localStorage.getItem('isAuthorized')) === 'true'
-    }
+      localStorage.setItem('isAuthorized', authStore.state.isAuthorized.toString())
 
       return authStore.state.isAuthorized
   }
