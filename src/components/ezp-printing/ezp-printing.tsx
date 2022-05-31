@@ -259,9 +259,7 @@ export class EzpPrinting {
 
     sendCodeToParentWindow()
     initi18n(this.language)
-    this.checkAuth().then(() => {
-      this.authOpen = !authStore.state.isAuthorized
-    })
+    this.checkAuth()
   }
 
   componentDidLoad() {
