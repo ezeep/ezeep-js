@@ -54,13 +54,14 @@
   </head>
 
   <body>
-    <!-- für ezeep js live client: oWuvEAndErO3kKCqzaWBOAs2PhOuAbD7MZYWQ9yJ
+    <!-- für ezeep js dev client: 9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW
+
           authapihosturl="account.dev.azdev.ezeep.com"
       printapihosturl="printapi.dev.azdev.ezeep.com"
 
    -->
     <ezp-printing
-      clientid="9tMZyEvvbitZH0i7ZU8I4mmW08glNSuAAojlfLiW"
+      clientid="oWuvEAndErO3kKCqzaWBOAs2PhOuAbD7MZYWQ9yJ"
       redirecturi="https://develop.dev.azdev.ezeep.com:3333"
       theme="blue"
       appearance="system"
@@ -69,14 +70,16 @@
       fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       filename="dummypdf"
       filetype="pdf"
-      authapihosturl="account.dev.azdev.ezeep.com"
-      printapihosturl="printapi.dev.azdev.ezeep.com"
       hideheader
       seamless
     >
     </ezp-printing>
     <!-- <button class="customButton">log sas uri</button> -->
     <script>
+      // window.addEventListener("printFinished", () => {
+      //   console.log("print finished");
+      // });
+
       // const ezpPrinting = document.querySelector('ezp-printing')
       // const filearray = new Uint8Array([1, 2, 3])
       // const filestring = filearray.toString();

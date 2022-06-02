@@ -470,6 +470,10 @@ declare namespace LocalJSX {
         "hidelogin"?: boolean;
         "hidemenu"?: boolean;
         "language"?: string;
+        /**
+          * Events
+         */
+        "onPrintFinished"?: (event: CustomEvent<any>) => void;
         "printapihosturl"?: string;
         "redirecturi"?: string;
         "seamless"?: boolean;
