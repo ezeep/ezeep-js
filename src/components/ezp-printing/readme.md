@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property          | Attribute         | Description | Type                                                                               | Default     |
@@ -17,68 +16,49 @@
 | `filename`        | `filename`        |             | `string`                                                                           | `''`        |
 | `filetype`        | `filetype`        |             | `string`                                                                           | `undefined` |
 | `fileurl`         | `fileurl`         |             | `string`                                                                           | `undefined` |
+| `hideheader`      | `hideheader`      |             | `boolean`                                                                          | `false`     |
 | `hidelogin`       | `hidelogin`       |             | `boolean`                                                                          | `undefined` |
 | `hidemenu`        | `hidemenu`        |             | `boolean`                                                                          | `false`     |
 | `language`        | `language`        |             | `string`                                                                           | `''`        |
 | `printapihosturl` | `printapihosturl` |             | `string`                                                                           | `undefined` |
 | `redirecturi`     | `redirecturi`     |             | `string`                                                                           | `undefined` |
+| `seamless`        | `seamless`        |             | `boolean`                                                                          | `false`     |
 | `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "teal" \| "violet"` | `'cyan'`    |
 | `trigger`         | `trigger`         |             | `"button" \| "custom" \| "file"`                                                   | `undefined` |
-
 
 ## Methods
 
 ### `checkAuth() => Promise<boolean>`
 
-
-
 #### Returns
 
 Type: `Promise<boolean>`
 
-
-
 ### `getAuthUri() => Promise<string>`
-
-
 
 #### Returns
 
 Type: `Promise<string>`
-
-
 
 ### `getSasUri() => Promise<string>`
 
-
-
 #### Returns
 
 Type: `Promise<string>`
 
-
-
 ### `logOut() => Promise<void>`
-
-
 
 #### Returns
 
 Type: `Promise<void>`
 
-
-
 ### `open() => Promise<void>`
-
 
 Public methods
 
 #### Returns
 
 Type: `Promise<void>`
-
-
-
 
 ## Dependencies
 
@@ -91,6 +71,7 @@ Type: `Promise<void>`
 - [ezp-dialog](../ezp-dialog)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-printing --> ezp-upload
@@ -131,6 +112,4 @@ graph TD;
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

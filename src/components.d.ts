@@ -101,8 +101,10 @@ export namespace Components {
         "filename": string;
         "filetype": string;
         "fileurl": string;
+        "hideheader": boolean;
         "hidemenu": boolean;
         "redirectURI": string;
+        "seamless": boolean;
     }
     interface EzpPrinting {
         "appearance": AppearanceTypes;
@@ -118,6 +120,7 @@ export namespace Components {
         "fileurl": string;
         "getAuthUri": () => Promise<string>;
         "getSasUri": () => Promise<string>;
+        "hideheader": boolean;
         "hidelogin": boolean;
         "hidemenu": boolean;
         "language": string;
@@ -128,6 +131,7 @@ export namespace Components {
         "open": () => Promise<void>;
         "printapihosturl": string;
         "redirecturi": string;
+        "seamless": boolean;
         "theme": ThemeTypes;
         "trigger": TriggerTypes;
     }
@@ -438,6 +442,7 @@ declare namespace LocalJSX {
         "filename"?: string;
         "filetype"?: string;
         "fileurl"?: string;
+        "hideheader"?: boolean;
         "hidemenu"?: boolean;
         /**
           * Description...
@@ -448,6 +453,7 @@ declare namespace LocalJSX {
          */
         "onPrintSubmit"?: (event: CustomEvent<MouseEvent>) => void;
         "redirectURI"?: string;
+        "seamless"?: boolean;
     }
     interface EzpPrinting {
         "appearance"?: AppearanceTypes;
@@ -460,11 +466,13 @@ declare namespace LocalJSX {
         "filename"?: string;
         "filetype"?: string;
         "fileurl"?: string;
+        "hideheader"?: boolean;
         "hidelogin"?: boolean;
         "hidemenu"?: boolean;
         "language"?: string;
         "printapihosturl"?: string;
         "redirecturi"?: string;
+        "seamless"?: boolean;
         "theme"?: ThemeTypes;
         "trigger"?: TriggerTypes;
     }

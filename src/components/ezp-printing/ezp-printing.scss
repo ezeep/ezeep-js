@@ -48,8 +48,10 @@
     }
 
     #{&}(.dark) {
-      --ezp-dialog-box-boxShadow: inset 0 0 0 1px var(--ezp-core-outline), 0 0 0 1px var(--ezp-black-60);
-      --ezp-printerSelection-body-boxShadow: inset 1px 0 0 0 var(--ezp-core-outline), inset -1px 0 0 0 var(--ezp-core-outline);
+      --ezp-dialog-box-boxShadow: inset 0 0 0 1px var(--ezp-core-outline),
+        0 0 0 1px var(--ezp-black-60);
+      --ezp-printerSelection-body-boxShadow: inset 1px 0 0 0 var(--ezp-core-outline),
+        inset -1px 0 0 0 var(--ezp-core-outline);
       --ezp-printerSelection-box-boxShadow: 0 0 0 1px var(--ezp-black-60);
       --ezp-printerSelection-footer-boxShadowPosition: inset 0 0 0 1px;
       --ezp-printerSelection-header-boxShadowPosition: inset 0 0 0 1px;
@@ -57,9 +59,11 @@
       --ezp-select-wrap-boxShadowPositionLeft: inset 1px 0 0 0;
       --ezp-select-wrap-boxShadowPositionRight: inset -1px 0 0 0;
       --ezp-select-wrap-boxShadowPositionTop: inset 0 1px 0 0;
-      --ezp-status-box-boxShadow: inset 0 0 0 1px var(--ezp-core-outline), 0 0 0 1px var(--ezp-black-60);
+      --ezp-status-box-boxShadow: inset 0 0 0 1px var(--ezp-core-outline),
+        0 0 0 1px var(--ezp-black-60);
       --ezp-stepper-boxShadowPosition: inset 0 0 0 1px;
-      --ezp-userMenu-boxShadow: inset 0 0 0 1px var(--ezp-core-outline), 0 0 0 1px var(--ezp-black-60);
+      --ezp-userMenu-boxShadow: inset 0 0 0 1px var(--ezp-core-outline),
+        0 0 0 1px var(--ezp-black-60);
       --ezp-userMenu-header-boxShadowPosition: inset 0 -1px 0 0;
       --ezp-userMenu-links-boxShadowPosition: inset 0 -1px 0 0;
       --ezp-userMenu-theme-boxShadowPosition: inset 0 -1px 0 0;

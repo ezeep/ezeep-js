@@ -55,6 +55,8 @@ export class EzpPrinterSelection {
   @Prop({ mutable: true }) fileid: string
   @Prop() file: File
   @Prop() hidemenu: boolean = false
+  @Prop() hideheader: boolean = false
+  @Prop() seamless: boolean
 
   /**
    *
@@ -461,7 +463,6 @@ export class EzpPrinterSelection {
 
   /** Description... */
   async connectedCallback() {
-
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService.registerFetchInterceptor()
     await this.getUserInfo()
@@ -523,7 +524,7 @@ export class EzpPrinterSelection {
         instance="loading"
       />
     ) : (
-      <Host>
+      <Host class={{ seamless: this.seamless }}>
         <div id="box" data-backdrop-surface>
           {!this.printStopped && (
             <>
@@ -579,22 +580,24 @@ export class EzpPrinterSelection {
               ) : null}
             </>
           )}
-          <div id="header">
-            <ezp-label
-              weight="heavy"
-              text={i18next.t('printer_selection.print') + `${!this.notSupported ? ':' : ''}`}
-            />
-            <ezp-label text={!this.notSupported ? this.filename : ''} ellipsis />
-            {!this.hidemenu && (
-              <ezp-icon-button
-                level="tertiary"
-                icon="menu"
-                id="toggle-menu"
-                type="button"
-                onClick={this.handleUserMenu}
+          {!this.hideheader && (
+            <div id="header">
+              <ezp-label
+                weight="heavy"
+                text={i18next.t('printer_selection.print') + `${!this.notSupported ? ':' : ''}`}
               />
-            )}
-          </div>
+              <ezp-label text={!this.notSupported ? this.filename : ''} ellipsis />
+              {!this.hidemenu && (
+                <ezp-icon-button
+                  level="tertiary"
+                  icon="menu"
+                  id="toggle-menu"
+                  type="button"
+                  onClick={this.handleUserMenu}
+                />
+              )}
+            </div>
+          )}
           <div id="body">
             <div id="printer">
               <ezp-select
@@ -732,6 +735,8 @@ export class EzpPrinterSelection {
               level="secondary"
               onClick={this.handleCancel}
               label={i18next.t('button_actions.cancel')}
+              class="action"
+              id="cancel"
             />
             <ezp-text-button
               disabled={this.selectedPrinter.id === '' || this.printProcessing}
@@ -739,6 +744,8 @@ export class EzpPrinterSelection {
               onClick={this.handlePrint}
               label={i18next.t('button_actions.print')}
               ref={(button) => (this.printButton = button)}
+              class="action"
+              id="print"
             />
           </div>
           {!this.hidemenu && <ezp-user-menu open={this.userMenuOpen} name={this.userName} />}

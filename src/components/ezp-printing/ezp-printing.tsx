@@ -28,6 +28,7 @@ export class EzpPrinting {
   @Prop() custom: boolean
   @Prop() hidelogin: boolean
   @Prop() hidemenu: boolean = false
+  @Prop() hideheader: boolean = false
   @Prop() authapihosturl: string
   @Prop() printapihosturl: string
   @Prop() theme: ThemeTypes = 'cyan'
@@ -37,6 +38,7 @@ export class EzpPrinting {
   @Prop() language: string = ''
   @Prop() code: string
   @Prop() filedata: string
+  @Prop() seamless: boolean = false
 
   /**
    *
@@ -203,10 +205,11 @@ export class EzpPrinting {
     }
 
     if (localStorage.getItem('isAuthorized')) {
-      authStore.state.isAuthorized = (localStorage.getItem('isAuthorized')) === 'true'
+      authStore.state.isAuthorized = localStorage.getItem('isAuthorized') === 'true'
     }
 
-    await printService.getConfig(authStore.state.accessToken)
+    await printService
+      .getConfig(authStore.state.accessToken)
       .then((response) => {
         if (response.ok) {
           authStore.state.isAuthorized = true
@@ -220,9 +223,9 @@ export class EzpPrinting {
         authStore.state.isAuthorized = false
       })
 
-      localStorage.setItem('isAuthorized', authStore.state.isAuthorized.toString())
+    localStorage.setItem('isAuthorized', authStore.state.isAuthorized.toString())
 
-      return authStore.state.isAuthorized
+    return authStore.state.isAuthorized
   }
 
   refreshTokensPeriodically(seconds: number) {
@@ -314,6 +317,8 @@ export class EzpPrinting {
             fileid={this.fileid}
             file={this.file}
             hidemenu={this.hidemenu}
+            hideheader={this.hideheader}
+            seamless={this.seamless}
           />
         ) : this.noDocumentOpen ? (
           <ezp-dialog
