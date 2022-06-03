@@ -282,7 +282,7 @@ export class EzpPrinting {
           userStore.state.appearance === 'system'
             ? this.systemAppearance
             : userStore.state.appearance
-        }`}
+        } ${this.seamless ? 'seamless' : ''}`}
       >
         {this.trigger === 'custom' ? (
           <slot></slot>

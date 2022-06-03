@@ -15,7 +15,7 @@
 :host {
   align-items: center;
   background: var(--ezp-core-backdrop);
-  border-radius: 6px;
+  border-radius: var(--ezp-status-border-radius, 6px);
   box-sizing: border-box;
   display: flex;
   height: 100%;

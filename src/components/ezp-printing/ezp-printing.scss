@@ -72,6 +72,11 @@
       @include colors.colors(map.get(core.$palette, 'dark'), 'core');
     }
 
+    #{&}(.seamless) {
+      --ezp-status-border-radius: 0;
+      --ezp-backdrop-border-radius: 0;
+    }
+
     @each $theme in global.$themes {
       #{&}(.#{$theme}) {
         --ezp-theme-solid: var(--ezp-accent-#{$theme}-solid);

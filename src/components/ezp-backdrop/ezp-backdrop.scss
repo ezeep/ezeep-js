@@ -8,7 +8,7 @@
   animation: var(--ezp-backdrop-animation-name, host-in) var(--ezp-duration-3) forwards
     var(--ezp-easing-out-quart);
   background: var(--ezp-core-backdrop);
-  border-radius: 6px;
+  border-radius: var(--ezp-backdrop-border-radius, 6px);
   display: block;
   height: 100%;
   left: 0;
