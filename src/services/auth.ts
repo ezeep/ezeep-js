@@ -129,7 +129,7 @@ export class EzpAuthorizationService {
       },
       method: 'POST',
       body: encodeFormData({
-        token: authStore.state.accessToken,
+        token: authStore.state.refreshToken,
       }),
     }).then((response) => {
       console.log(response)
