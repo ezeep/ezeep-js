@@ -1,4 +1,4 @@
-import { Component, Host, State, Listen, Method, h, Prop, Watch } from '@stencil/core'
+import { Component, Host, State, Listen, Method, h, Prop, Watch, EventEmitter, Event } from '@stencil/core'
 import authStore, { EzpAuthorizationService, sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
@@ -87,6 +87,7 @@ export class EzpPrinting {
   @Listen('printCancel')
   listenPrintCancel() {
     this.printOpen = false
+    this.printFinished.emit()
     this.checkAuth()
   }
 
@@ -94,6 +95,7 @@ export class EzpPrinting {
   @Listen('printSubmit')
   listenPrintSubmit() {
     this.printOpen = false
+    this.printFinished.emit()
     this.checkAuth()
   }
 
@@ -136,6 +138,16 @@ export class EzpPrinting {
       this.noDocumentOpen = false
     }
   }
+
+  /**
+   * Events
+   */
+
+  @Event({
+    eventName: 'printFinished',
+    composed: true,
+    bubbles: true
+  }) printFinished: EventEmitter<any>
 
   /**
    *
