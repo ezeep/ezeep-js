@@ -170,6 +170,8 @@ export class EzpPrinting {
 
   @Method()
   async logOut() {
+    //implement once live
+    //this.auth.revokeRefreshToken()
     localStorage.removeItem('properties')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('access_token')
@@ -197,8 +199,6 @@ export class EzpPrinting {
 
   @Method()
   async getAuthUri(): Promise<string> {
-    this.auth = new EzpAuthorizationService(this.redirecturi, this.clientid)
-
     this.auth.generateCodeVerifier()
     await this.auth.generateCodeChallenge(authStore.state.codeVerifier)
     this.auth.buildAuthURI()
@@ -271,6 +271,8 @@ export class EzpPrinting {
     } else {
       printStore.state.printApiHostUrl = config.printingApiHostUrl
     }
+
+    this.auth = new EzpAuthorizationService(this.redirecturi, this.clientid)
 
     sendCodeToParentWindow()
     initi18n(this.language)
