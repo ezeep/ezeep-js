@@ -131,13 +131,14 @@ export class EzpAuthorizationService {
       body: encodeFormData({
         token: authStore.state.refreshToken,
       }),
-    }).then((response) => {
-      console.log(response)
-    }).catch((error) => {
-      console.log(error)
     })
+      .then((response) => {
+        console.log(response.json())
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
-
 }
 
 const authStore = createStore({
@@ -149,7 +150,7 @@ const authStore = createStore({
   devApi: false,
   authApiHostUrl: '',
   redirectUri: '',
-  authUri: ''
+  authUri: '',
 })
 
 export default authStore
@@ -161,8 +162,8 @@ export function sendCodeToParentWindow() {
   if (window.opener) {
     if (code) {
       // send them to the opening window
-    window.opener.postMessage(code, authStore.state.redirectUri)
-    window.close()
+      window.opener.postMessage(code, authStore.state.redirectUri)
+      window.close()
     }
   }
 }

@@ -125,6 +125,7 @@ export namespace Components {
         "hidemenu": boolean;
         "language": string;
         "logOut": () => Promise<void>;
+        "logOutandRevokeToken": () => Promise<void>;
         /**
           * Public methods
          */

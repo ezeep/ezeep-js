@@ -1,4 +1,15 @@
-import { Component, Host, State, Listen, Method, h, Prop, Watch, EventEmitter, Event } from '@stencil/core'
+import {
+  Component,
+  Host,
+  State,
+  Listen,
+  Method,
+  h,
+  Prop,
+  Watch,
+  EventEmitter,
+  Event,
+} from '@stencil/core'
 import authStore, { EzpAuthorizationService, sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore from '../../services/user'
@@ -146,8 +157,9 @@ export class EzpPrinting {
   @Event({
     eventName: 'printFinished',
     composed: true,
-    bubbles: true
-  }) printFinished: EventEmitter<any>
+    bubbles: true,
+  })
+  printFinished: EventEmitter<any>
 
   /**
    *
@@ -178,6 +190,12 @@ export class EzpPrinting {
     localStorage.removeItem('printer')
     localStorage.removeItem('isAuthorized')
     this.printOpen = false
+  }
+
+  @Method()
+  async logOutandRevokeToken() {
+    this.auth.revokeRefreshToken()
+    this.logOut()
   }
 
   @Method()

@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property | Attribute | Description    | Type                                                                                                                                                                                                                                                                                                                 | Default     |
@@ -12,19 +11,17 @@
 | `max`    | `max`     | Description... | `number`                                                                                                                                                                                                                                                                                                             | `undefined` |
 | `min`    | `min`     | Description... | `number`                                                                                                                                                                                                                                                                                                             | `1`         |
 
-
 ## Events
 
 | Event            | Description | Type               |
 | ---------------- | ----------- | ------------------ |
-| `stepperChanged` |  Events     | `CustomEvent<any>` |
-
+| `stepperChanged` | Events      | `CustomEvent<any>` |
 
 ## Dependencies
 
 ### Used by
 
- - [ezp-printer-selection](../ezp-printer-selection)
+- [ezp-printer-selection](../ezp-printer-selection)
 
 ### Depends on
 
@@ -32,6 +29,7 @@
 - [ezp-label](../ezp-label)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-stepper --> ezp-icon
@@ -40,6 +38,4 @@ graph TD;
   style ezp-stepper fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

@@ -37,8 +37,7 @@ export class EzpDialog {
    *
    */
 
-  componentWillLoad() {
-  }
+  componentWillLoad() {}
 
   /**
    *

@@ -5,17 +5,9 @@
  */
 
 @use 'sass:map';
-@use '@cortado-holding/colors' with (
-  $namespace: 'ezp',
-  $selector: ':host'
-);
-@use '@cortado-holding/colors/accents' with (
-  $useDeclaration: false
-);
-@use '@cortado-holding/colors/core' with (
-  $useDisplayP3: false,
-  $useDeclaration: false
-);
+@use '@cortado-holding/colors' with ($namespace: 'ezp', $selector: ':host');
+@use '@cortado-holding/colors/accents' with ($useDeclaration: false);
+@use '@cortado-holding/colors/core' with ($useDisplayP3: false, $useDeclaration: false);
 @use '@cortado-holding/colors/black';
 @use '@cortado-holding/colors/white';
 @use './../../shared/global';

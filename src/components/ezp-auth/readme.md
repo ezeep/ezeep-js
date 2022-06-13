@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property      | Attribute        | Description | Type      | Default     |
@@ -13,7 +12,6 @@
 | `redirectURI` | `redirect-u-r-i` |             | `string`  | `undefined` |
 | `trigger`     | `trigger`        |             | `string`  | `undefined` |
 
-
 ## Events
 
 | Event         | Description | Type                      |
@@ -21,12 +19,11 @@
 | `authCancel`  |             | `CustomEvent<MouseEvent>` |
 | `authSuccess` |             | `CustomEvent<any>`        |
 
-
 ## Dependencies
 
 ### Used by
 
- - [ezp-printing](../ezp-printing)
+- [ezp-printing](../ezp-printing)
 
 ### Depends on
 
@@ -35,6 +32,7 @@
 - [ezp-dialog](../ezp-dialog)
 
 ### Graph
+
 ```mermaid
 graph TD;
   ezp-auth --> ezp-status
@@ -53,6 +51,4 @@ graph TD;
   style ezp-auth fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
-
-
+---

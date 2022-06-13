@@ -56,8 +56,7 @@ export class EzpStatus {
    *
    */
 
-  componentWillLoad() {
-  }
+  componentWillLoad() {}
 
   /**
    *
@@ -86,7 +85,9 @@ export class EzpStatus {
                   small
                   onClick={this.handleCancel}
                   label={
-                    typeof this.cancel === 'string' ? this.cancel : i18next.t('button_actions.cancel')
+                    typeof this.cancel === 'string'
+                      ? this.cancel
+                      : i18next.t('button_actions.cancel')
                   }
                 />
               )}
@@ -111,7 +112,7 @@ export class EzpStatus {
                 />
               )}
             </div>
-          ) }
+          )}
         </div>
       </Host>
     )

@@ -26,6 +26,12 @@
 | `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "teal" \| "violet"` | `'cyan'`    |
 | `trigger`         | `trigger`         |             | `"button" \| "custom" \| "file"`                                                   | `undefined` |
 
+## Events
+
+| Event           | Description | Type               |
+| --------------- | ----------- | ------------------ |
+| `printFinished` | Events      | `CustomEvent<any>` |
+
 ## Methods
 
 ### `checkAuth() => Promise<boolean>`
@@ -47,6 +53,12 @@ Type: `Promise<string>`
 Type: `Promise<string>`
 
 ### `logOut() => Promise<void>`
+
+#### Returns
+
+Type: `Promise<void>`
+
+### `logOutandRevokeToken() => Promise<void>`
 
 #### Returns
 

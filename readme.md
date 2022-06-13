@@ -18,6 +18,7 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 3. Download the [ezeep Blue Connector](https://ezeep.io/blueconnectorps) and install it on a machine (e.g. your local machine) with a printer on the same network. After the installation you are prompted to authenticate with your ezeep Account. Your printers in your network will be discovered automatically and advertised to the ezeep Administration Portal.
 
 ### Angular Integration
+
 ezeep.js is available as Angular library as well. Instructions on how to setup ezeep.js with Angular can be found [here](https://github.com/ezeep/ezeep-js/tree/ngx-ezeep-js/ezeep-js-angular/projects/ngx-ezeep-js).
 
 ### JavaScript Integration
@@ -61,12 +62,12 @@ There are multiple required and optional attributes the ezp-printing element nee
 | filename        | The name of the file that is printed.                                                                                                                                                                                                                   | string  | No. Only used for trigger _button_ and _custom_.     |
 | filetype        | The type of the file that is printed.                                                                                                                                                                                                                   | string  | No. Only used for trigger _button_ and _custom_.     |
 | hidelogin       | If set to true, no additional info popup is shown before the user authentication.                                                                                                                                                                       | boolean | No                                                   |
-| hidemenu      | If set to true, the menu is not shown.                                                                                                                                                                                                         | boolean | No                                                   |
+| hidemenu        | If set to true, the menu is not shown.                                                                                                                                                                                                                  | boolean | No                                                   |
 | authapihosturl  | Overrides the default URL of the authentication API.                                                                                                                                                                                                    | string  | No                                                   |
 | printapihosturl | Overrides the default URL of the printing API.                                                                                                                                                                                                          | string  | No                                                   |
 | theme           | The overall color theme. Possible colors are pink, red, orange, green, cyan, blue and violet.                                                                                                                                                           | string  | No                                                   |
-| appearance | Sets the overall appearance to "light", "dark" or the "system" default. | string | No
-| language | Overrides the browserlanguage. Possible values are "de" for German and "en" for English. | string | No
+| appearance      | Sets the overall appearance to "light", "dark" or the "system" default.                                                                                                                                                                                 | string  | No                                                   |
+| language        | Overrides the browserlanguage. Possible values are "de" for German and "en" for English.                                                                                                                                                                | string  | No                                                   |
 
 ### Example with button trigger
 
