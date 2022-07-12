@@ -88,6 +88,14 @@ export class EzpPrinting {
       this.fileurl = newValue
     }
   }
+
+  @Watch('language')
+  watchLanguage(newValue: string, oldValue: string) {
+    if (newValue !== oldValue && newValue.length > 0) {
+      this.language = newValue
+    }
+  }
+
   /**
    *
    * Listeners
@@ -99,7 +107,7 @@ export class EzpPrinting {
   listenPrintCancel() {
     this.printOpen = false
     this.printFinished.emit()
-    this.checkAuth()
+    this.auth.revokeRefreshToken()
   }
 
   /** Description... */
@@ -361,6 +369,7 @@ export class EzpPrinting {
             instance="no-document-selected"
           />
         ) : null}
+        <button onClick={() => this.auth.refreshTokens()}>refresh tokens</button>
       </Host>
     )
   }
