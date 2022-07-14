@@ -369,7 +369,7 @@ export class EzpPrinting {
             instance="no-document-selected"
           />
         ) : null}
-        <button onClick={() => this.auth.refreshTokens()}>refresh tokens</button>
+        {/* <button onClick={() => this.auth.refreshTokens()}>refresh tokens</button> */}
       </Host>
     )
   }
