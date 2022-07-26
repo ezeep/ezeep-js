@@ -107,7 +107,6 @@ export class EzpPrinting {
   listenPrintCancel() {
     this.printOpen = false
     this.printFinished.emit()
-    this.auth.revokeRefreshToken()
   }
 
   /** Description... */
