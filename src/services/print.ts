@@ -182,12 +182,6 @@ export class EzpPrintService {
     })
 
     const client = new BlockBlobClient(sasUri, pipeline)
-    // upload
-    // for (let index = 0; index < files.length; index++) {
-    //   const file = files[index]
-
-    //   console.log(response._response.status)
-    // }
     const response = await client.uploadData(file, {
       blockSize: 4 * 1024 * 1024, //4mb blocksize
       concurrency: 20,
@@ -195,7 +189,7 @@ export class EzpPrintService {
         let progress = (100 * e.loadedBytes) / file.size
         printStore.state.uploadProgress = progress
       },
-      blobHTTPHeaders: { blobContentType: file.type },
+      blobHTTPHeaders: { blobContentType: 'application/octet-stream' },
     })
 
     return response
