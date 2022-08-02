@@ -69,9 +69,13 @@ export class EzpPrinting {
 
   @Watch('filedata')
   watchFileData(newValue: string, oldValue: string) {
+    console.log(newValue)
     if (newValue !== oldValue && newValue.length > 0) {
-      const uint8array = new TextEncoder().encode(newValue)
-      this.file = new File([uint8array], this.filename, { type: 'application/pdf' })
+      let array = new Uint8Array(newValue.length)
+      for (let i = 0; i < newValue.length; i++) {
+        array[i] = newValue.charCodeAt(i)
+      }
+      this.file = new File([array], this.filename)
     }
   }
 
