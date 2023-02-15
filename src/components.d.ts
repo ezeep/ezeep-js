@@ -125,7 +125,6 @@ export namespace Components {
         "hidemenu": boolean;
         "language": string;
         "logOut": () => Promise<void>;
-        "logOutandRevokeToken": () => Promise<void>;
         /**
           * Public methods
          */
@@ -445,6 +444,7 @@ declare namespace LocalJSX {
         "fileurl"?: string;
         "hideheader"?: boolean;
         "hidemenu"?: boolean;
+        "onLogout"?: (event: CustomEvent<MouseEvent>) => void;
         /**
           * Description...
          */

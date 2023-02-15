@@ -1,5 +1,5 @@
 import { Component, Host, Prop, Event, Element, EventEmitter, Watch, h } from '@stencil/core'
-import authStore from '../../services/auth'
+import authStore, { EzpAuthorizationService } from '../../services/auth'
 import userStore from '../../services/user'
 import { IconNameTypes, ThemeTypes, AppearanceTypes } from '../../shared/types'
 import i18next from 'i18next'
@@ -44,6 +44,7 @@ export class EzpUserMenu {
 
   @Event() userMenuClosure: EventEmitter
   @Event() logoutEmitter: EventEmitter
+  auth: EzpAuthorizationService
   /**
    *
    * Privatre methods

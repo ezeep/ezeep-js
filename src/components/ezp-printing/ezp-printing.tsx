@@ -161,6 +161,11 @@ export class EzpPrinting {
     }
   }
 
+  @Listen('logout')
+  listenLogout() {
+    this.logOut();
+  }
+
   /**
    * Events
    */
@@ -193,8 +198,7 @@ export class EzpPrinting {
 
   @Method()
   async logOut() {
-    //implement once live
-    //this.auth.revokeRefreshToken()
+    this.auth.revokeRefreshToken()
     localStorage.removeItem('properties')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('access_token')
@@ -203,11 +207,6 @@ export class EzpPrinting {
     this.printOpen = false
   }
 
-  @Method()
-  async logOutandRevokeToken() {
-    this.auth.revokeRefreshToken()
-    this.logOut()
-  }
 
   @Method()
   async getSasUri(): Promise<string> {

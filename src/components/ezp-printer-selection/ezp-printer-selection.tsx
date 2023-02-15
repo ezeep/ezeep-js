@@ -109,6 +109,8 @@ export class EzpPrinterSelection {
   /** Description... */
   @Event() printSubmit: EventEmitter<MouseEvent>
 
+  @Event() logout: EventEmitter<MouseEvent>
+
   /**
    *
    * Listeners
@@ -133,6 +135,7 @@ export class EzpPrinterSelection {
   @Listen('logoutEmitter')
   listenLogout() {
     this.printCancel.emit()
+    this.logout.emit()
   }
 
   @Listen('statusCancel')

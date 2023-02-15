@@ -131,13 +131,9 @@ export class EzpAuthorizationService {
       body: encodeFormData({
         token: authStore.state.refreshToken,
       }),
+    }).catch((error) => {
+      console.log(error)
     })
-      .then((response) => {
-        console.log(response.json())
-      })
-      .catch((error) => {
-        console.log(error)
-      })
   }
 }
 
