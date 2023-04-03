@@ -121,19 +121,20 @@ export class EzpAuthorizationService {
   }
 
   revokeRefreshToken() {
-    fetch(`https://${this.oauthUrl}/oauth/revoke/`, {
-      credentials: 'include',
-      headers: {
-        Authorization: 'Basic ' + btoa(this.clientID + ':'),
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      method: 'POST',
-      body: encodeFormData({
-        token: authStore.state.refreshToken,
-      }),
-    }).catch((error) => {
-      console.log(error)
-    })
+    if (authStore.state.refreshToken)
+      fetch(`https://${this.oauthUrl}/oauth/revoke/`, {
+        credentials: 'include',
+        headers: {
+          Authorization: 'Basic ' + btoa(this.clientID + ':'),
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        method: 'POST',
+        body: encodeFormData({
+          token: authStore.state.refreshToken,
+        }),
+      }).catch((error) => {
+        console.log(error)
+      })
   }
 }
 
