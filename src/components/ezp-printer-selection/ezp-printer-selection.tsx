@@ -455,6 +455,9 @@ export class EzpPrinterSelection {
       this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find((el) =>
         el.Name.includes(format)
       ).Id
+    } else {
+      this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats[0].Name
+      this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats[0].Id
     }
   }
 
