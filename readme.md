@@ -192,7 +192,7 @@ The stencil.config is already set up to do exactly this in your development envi
 
 You'll need a certificate and key for this aswell as a .env file placed at the root of the project.
 
-To generate a self signed certificate execute the following command:
+To generate a self signed certificate execute the following command (use (git) bash!):
 
 ```bash
 openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out certificate.pem
