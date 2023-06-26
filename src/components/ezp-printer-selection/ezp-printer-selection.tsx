@@ -14,7 +14,7 @@ import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
-import { poll, removeEmptyStrings } from '../../utils/utils'
+import { managePaperDimensions, poll, removeEmptyStrings } from '../../utils/utils'
 import { BlobUploadCommonResponse } from '@azure/storage-blob'
 
 @Component({
@@ -95,7 +95,11 @@ export class EzpPrinterSelection {
     orientation: 1,
     copies: '',
     resolution: 0,
+    paperlength : 0,
+    paperwidth : 0
   }
+
+  @State() paperid: number | string
 
   /**
    *
@@ -116,6 +120,11 @@ export class EzpPrinterSelection {
    * Listeners
    *
    */
+
+  @Listen('inputValueChanged')
+  listenInputValueChanged(event: CustomEvent) {
+    this.setSelectedProperties(event.detail)
+  }
 
   @Listen('selectSelection')
   listenSelectSelection(event: CustomEvent) {
@@ -203,10 +212,10 @@ export class EzpPrinterSelection {
   private handlePrint = async () => {
     this.printButton.blur()
     this.printProcessing = true
-
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
-    const cleanPrintProperties = removeEmptyStrings(this.selectedProperties)
+    let cleanPrintProperties = removeEmptyStrings(this.selectedProperties)
+    cleanPrintProperties = managePaperDimensions(cleanPrintProperties)
     // put it in store for further use
     printStore.state.fileUrl = this.fileurl
     printStore.state.fileID = this.fileid
@@ -305,6 +314,12 @@ export class EzpPrinterSelection {
     } else {
       this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
     }
+
+    this.setPaperid();
+  }
+
+  private setPaperid(){
+    this.paperid = this.selectedProperties.paperid
   }
 
   private getUserInfo() {
@@ -319,7 +334,8 @@ export class EzpPrinterSelection {
     type: string
     id: string
     title: string
-    is_queue: boolean
+    is_queue: boolean,
+    value?: any
   }) {
     switch (eventDetails.type) {
       case 'printer':
@@ -345,12 +361,19 @@ export class EzpPrinterSelection {
         this.selectedProperties.paper = eventDetails.title
         this.selectedProperties.paperid = eventDetails.id
         // console.log('paper selected:')
-        // console.log(this.selectedProperties.paper)
         break
       case 'quality':
         this.selectedProperties.resolution = eventDetails.title
         // console.log('quality selected:')
         // console.log(this.selectedProperties.resolution)
+        break
+      case 'length':
+        this.selectedProperties.paperlength = eventDetails.value
+        // console.log(this.selectedProperties)
+        break
+      case 'width':
+        this.selectedProperties.paperwidth = eventDetails.value
+        // console.log(this.selectedProperties)
         break
       case 'duplex':
         if (eventDetails.title === 'None') {
@@ -365,6 +388,9 @@ export class EzpPrinterSelection {
       default:
         break
     }
+
+    // setting paper id here to updated the prop for input. 
+    this.setPaperid()
   }
 
   async handleFiles(file: File, printPorperties) {
@@ -455,10 +481,12 @@ export class EzpPrinterSelection {
       this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find((el) =>
         el.Name.includes(format)
       ).Id
+      
     } else {
       this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats[0].Name
       this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats[0].Id
     }
+    this.setPaperid()
   }
 
   /**
@@ -541,8 +569,8 @@ export class EzpPrinterSelection {
                     this.preparingUpload
                       ? i18next.t('printer_selection.prepare_upload')
                       : this.uploading
-                      ? i18next.t('printer_selection.uploading')
-                      : i18next.t('printer_selection.print_processing')
+                        ? i18next.t('printer_selection.uploading')
+                        : i18next.t('printer_selection.print_processing')
                   }
                   instance="print-processing"
                   cancel
@@ -636,27 +664,27 @@ export class EzpPrinterSelection {
                 options={
                   this.selectedPrinterConfig.Color
                     ? [
-                        {
-                          id: 1,
-                          title: i18next.t('printer_selection.color_color'),
-                          meta: '',
-                          type: 'color',
-                        },
-                        {
-                          id: 0,
-                          title: i18next.t('printer_selection.color_grayscale'),
-                          meta: '',
-                          type: 'color',
-                        },
-                      ]
+                      {
+                        id: 1,
+                        title: i18next.t('printer_selection.color_color'),
+                        meta: '',
+                        type: 'color',
+                      },
+                      {
+                        id: 0,
+                        title: i18next.t('printer_selection.color_grayscale'),
+                        meta: '',
+                        type: 'color',
+                      },
+                    ]
                     : [
-                        {
-                          id: 0,
-                          title: i18next.t('printer_selection.color_grayscale'),
-                          meta: '',
-                          type: 'color',
-                        },
-                      ]
+                      {
+                        id: 0,
+                        title: i18next.t('printer_selection.color_grayscale'),
+                        meta: '',
+                        type: 'color',
+                      },
+                    ]
                 }
                 preSelected={
                   this.selectedPrinter.id
@@ -681,8 +709,8 @@ export class EzpPrinterSelection {
                 preSelected={
                   this.selectedPrinter.id && this.selectedProperties.duplex
                     ? this.duplexOptions.find(
-                        (option) => option.id === this.selectedProperties.duplexmode
-                      ).id
+                      (option) => option.id === this.selectedProperties.duplexmode
+                    ).id
                     : null
                 }
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
@@ -702,6 +730,8 @@ export class EzpPrinterSelection {
                 preSelected={this.selectedPrinter.id ? this.selectedProperties.paper : null}
                 disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
               />
+                <ezp-input paperid={this.paperid} value={this.selectedProperties.paperwidth} type="number" label={i18next.t('printer_selection.width')}></ezp-input>
+                <ezp-input paperid={this.paperid} value={this.selectedProperties.paperwidth} type="number" label={i18next.t('printer_selection.length')}></ezp-input>
               <ezp-select
                 label={i18next.t('printer_selection.orientation')}
                 icon="orientation"

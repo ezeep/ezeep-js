@@ -40,7 +40,9 @@
         "copies": "Kopien",
         "duplex_long": "auf der langen Seite umdrehen",
         "duplex_short": "auf der kurzen Seite umdrehen",
-        "pull_print_success": "Bereit zum Auslösen."
+        "pull_print_success": "Bereit zum Auslösen.",
+        "width":"Breite",
+        "length":"Länge"
     },
     "button_actions": {
         "login": "Anmelden",

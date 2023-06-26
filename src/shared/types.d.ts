@@ -60,6 +60,8 @@ export interface PrinterProperties {
   orientation?: number | string
   copies?: number | string
   resolution?: string | number
+  paperlength? : string | number
+  paperwidth? : string | number
 }
 
 export interface Printer {

@@ -6,6 +6,7 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TriggerTypes, WeightTypes } from "./shared/types";
+import { IconNameTypes as IconNameTypes1 } from "../dist/types/shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -68,6 +69,13 @@ export namespace Components {
           * Description...
          */
         "type": IconButtonTypeTypes;
+    }
+    interface EzpInput {
+        "icon": IconNameTypes;
+        "label": string;
+        "paperid": string | number;
+        "type": string;
+        "value": number | string;
     }
     interface EzpLabel {
         /**
@@ -267,6 +275,12 @@ declare global {
         prototype: HTMLEzpIconButtonElement;
         new (): HTMLEzpIconButtonElement;
     };
+    interface HTMLEzpInputElement extends Components.EzpInput, HTMLStencilElement {
+    }
+    var HTMLEzpInputElement: {
+        prototype: HTMLEzpInputElement;
+        new (): HTMLEzpInputElement;
+    };
     interface HTMLEzpLabelElement extends Components.EzpLabel, HTMLStencilElement {
     }
     var HTMLEzpLabelElement: {
@@ -327,6 +341,7 @@ declare global {
         "ezp-dialog": HTMLEzpDialogElement;
         "ezp-icon": HTMLEzpIconElement;
         "ezp-icon-button": HTMLEzpIconButtonElement;
+        "ezp-input": HTMLEzpInputElement;
         "ezp-label": HTMLEzpLabelElement;
         "ezp-printer-selection": HTMLEzpPrinterSelectionElement;
         "ezp-printing": HTMLEzpPrintingElement;
@@ -409,6 +424,14 @@ declare namespace LocalJSX {
           * Description...
          */
         "type"?: IconButtonTypeTypes;
+    }
+    interface EzpInput {
+        "icon"?: IconNameTypes;
+        "label"?: string;
+        "onInputValueChanged"?: (event: CustomEvent<any>) => void;
+        "paperid"?: string | number;
+        "type"?: string;
+        "value"?: number | string;
     }
     interface EzpLabel {
         /**
@@ -611,6 +634,7 @@ declare namespace LocalJSX {
         "ezp-dialog": EzpDialog;
         "ezp-icon": EzpIcon;
         "ezp-icon-button": EzpIconButton;
+        "ezp-input": EzpInput;
         "ezp-label": EzpLabel;
         "ezp-printer-selection": EzpPrinterSelection;
         "ezp-printing": EzpPrinting;
@@ -631,6 +655,7 @@ declare module "@stencil/core" {
             "ezp-dialog": LocalJSX.EzpDialog & JSXBase.HTMLAttributes<HTMLEzpDialogElement>;
             "ezp-icon": LocalJSX.EzpIcon & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
             "ezp-icon-button": LocalJSX.EzpIconButton & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
+            "ezp-input": LocalJSX.EzpInput & JSXBase.HTMLAttributes<HTMLEzpInputElement>;
             "ezp-label": LocalJSX.EzpLabel & JSXBase.HTMLAttributes<HTMLEzpLabelElement>;
             "ezp-printer-selection": LocalJSX.EzpPrinterSelection & JSXBase.HTMLAttributes<HTMLEzpPrinterSelectionElement>;
             "ezp-printing": LocalJSX.EzpPrinting & JSXBase.HTMLAttributes<HTMLEzpPrintingElement>;
