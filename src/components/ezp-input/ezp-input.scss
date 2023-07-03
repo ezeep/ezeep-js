@@ -1,71 +1,109 @@
 /**
  *
+ * Modules
+ *
+ */
+
+@use './../../shared/global';
+
+/**
+ *
  * Rules
  *
  */
 
- :host {
-  --ezp-select-duration: var(--ezp-duration-3);
-
-  display: block;
-  height: var(--ezp-select-toggle-height);
+:host {
+  display: grid;
+  grid-template: var(--ezp-input-grid-template, auto / auto auto 1fr);
+  height: 30px;
   position: relative;
-  transition: var(--ezp-select-transition, z-index 0s var(--ezp-select-duration));
-  z-index: var(--ezp-select-zIndex, 3);
+  gap: var(--ezp-spacing-3);
+  background: var(--ezp-input-background, var(--ezp-core-surface-tertiary));
+  padding: 0 var(--ezp-spacing-3);
+  z-index: var(--ezp-input-z-index, 3);
+  border-radius: var(--ezp-input-border-radius, 0);
+  box-shadow: var(--ezp-input-box-shadow-position-top, 0 -1px 0 0) var(--ezp-core-outline),
+    var(--ezp-input-box-shadow-position-right, 1px 0 0 0) var(--ezp-core-outline),
+    var(--ezp-input-box-shadow-position-bottom, 0 1px 0 0) var(--ezp-core-outline),
+    var(--ezp-input-box-shadow-position-left, -1px 0 0 0) var(--ezp-core-outline);
+  align-items: center;
+  cursor: pointer;
 
   @at-root {
-  
-    #{&}(:not(:last-child):not(.is-expanded)) {
-      --ezp-select-wrap-boxShadowPositionBottom: 0 0 0 0;
+    #{&}([suffix]) {
+      --ezp-input-grid-template: auto / auto auto 1fr auto;
+      --ezp-input-input-padding-right: 0;
+    }
+
+    #{&}(.focused) {
+      --ezp-input-icon-color: var(--ezp-theme-solid);
+      --ezp-input-label-color: var(--ezp-theme-solid);
+    }
+
+    #{&}(:first-child) {
+      --ezp-input-border-radius: 3px 3px 0 0;
+    }
+
+    #{&}(:last-child) {
+      --ezp-input-border-radius: 0 0 3px 3px;
+    }
+
+    #{&}(:first-child:last-child) {
+      --ezp-input-border-radius: 3px;
+    }
+
+    #{&}(:not(:last-child)) {
+      --ezp-input-box-shadow-position-bottom: 0 0 0 0;
+    }
+
+    #{&}(:hover) {
+      --ezp-input-background: linear-gradient(
+          0deg,
+          var(--ezp-core-shade-primary) 0%,
+          var(--ezp-core-shade-primary) 100%
+        ),
+        var(--ezp-core-surface-tertiary);
     }
   }
 }
 
-#wrap {
-  display: flex;
-  // justify-content: space-between;
-  align-items: center;
-  background: var(--ezp-core-surface-tertiary);
-  box-shadow: var(--ezp-select-wrap-boxShadowPositionTop, 0 -1px 0 0) var(--ezp-core-outline),
-    var(--ezp-select-wrap-boxShadowPositionRight, 1px 0 0 0) var(--ezp-core-outline),
-    var(--ezp-select-wrap-boxShadowPositionBottom, 0 1px 0 0) var(--ezp-core-outline),
-    var(--ezp-select-wrap-boxShadowPositionLeft, -1px 0 0 0) var(--ezp-core-outline);
-    
-}
-
-
-
 #label {
-  color: var(--ezp-select-label-color, var(--ezp-core-foreground-secondary));
-}
-
-
-#input{
-  background: var(--ezp-core-surface-tertiary);
-  color: var(--ezp-select-label-color, var(--ezp-core-foreground-secondary));
-  margin: calc(var(--ezp-spacing-2) * 1) calc(var(--ezp-spacing-2) * 2);
-  border-radius: 0.5em;
-  margin-left: auto;
-
+  color: var(--ezp-input-label-color, var(--ezp-core-foreground-secondary));
 }
 
 #icon {
-  color: var(--ezp-select-icon-color, var(--ezp-core-foreground-secondary));
-  margin: calc(var(--ezp-spacing-2) * 1) calc(var(--ezp-spacing-2) * 1.8);
+  color: var(--ezp-input-icon-color, var(--ezp-core-foreground-secondary));
 }
 
-.no-counter {
-  /* Webkit/Blink */
-  -webkit-appearance: none;
-  /* Firefox */
-  -moz-appearance: textfield;
+#input {
+  appearance: textfield;
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  box-shadow: none;
+  box-sizing: border-box;
+  color: var(--ezp-core-foreground-primary);
+  cursor: inherit;
+  font-family: inherit;
+  font-feature-settings: 'tnum';
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  height: 30px;
+  letter-spacing: #{global.getLetterSpacing(14px)};
+  margin: 0;
+  outline: none;
+  padding: 0 var(--ezp-input-input-padding-right, var(--ezp-spacing-1)) 0 0;
+  text-align: right;
+  width: 100%;
 
-  &::-webkit-inner-spin-button,
-  &::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  &[type='number'] {
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
   }
 }
 
-
-
+#suffix {
+  color: var(--ezp-core-foreground-tertiary);
+}

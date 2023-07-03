@@ -72,7 +72,7 @@ export namespace Components {
     interface EzpInput {
         "icon": IconNameTypes;
         "label": string;
-        "paperid": string | number;
+        "suffix": string;
         "type": string;
         "value": number | string;
     }
@@ -428,7 +428,7 @@ declare namespace LocalJSX {
         "icon"?: IconNameTypes;
         "label"?: string;
         "onInputValueChanged"?: (event: CustomEvent<any>) => void;
-        "paperid"?: string | number;
+        "suffix"?: string;
         "type"?: string;
         "value"?: number | string;
     }

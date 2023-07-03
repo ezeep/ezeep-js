@@ -16,6 +16,7 @@ import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { managePaperDimensions, poll, removeEmptyStrings } from '../../utils/utils'
 import { BlobUploadCommonResponse } from '@azure/storage-blob'
+import { PAPER_ID } from '../../utils/utils'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -389,7 +390,7 @@ export class EzpPrinterSelection {
         break
     }
 
-    // setting paper id here to updated the prop for input. 
+    // setting paper id here to updated the prop for input.
     this.setPaperid()
   }
 
@@ -481,7 +482,7 @@ export class EzpPrinterSelection {
       this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find((el) =>
         el.Name.includes(format)
       ).Id
-      
+
     } else {
       this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats[0].Name
       this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats[0].Id
@@ -730,8 +731,24 @@ export class EzpPrinterSelection {
                 preSelected={this.selectedPrinter.id ? this.selectedProperties.paper : null}
                 disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
               />
-                <ezp-input paperid={this.paperid} value={this.selectedProperties.paperwidth} type="number" label={i18next.t('printer_selection.width')}></ezp-input>
-                <ezp-input paperid={this.paperid} value={this.selectedProperties.paperwidth} type="number" label={i18next.t('printer_selection.length')}></ezp-input>
+              {this.paperid == PAPER_ID ? (
+                <>
+                  <ezp-input
+                    icon="width"
+                    suffix="mm"
+                    value={this.selectedProperties.paperwidth}
+                    type="number"
+                    label={i18next.t('printer_selection.width')}
+                  />
+                  <ezp-input
+                    icon="height"
+                    suffix="mm"
+                    value={this.selectedProperties.paperwidth}
+                    type="number"
+                    label={i18next.t('printer_selection.length')}
+                  />
+                </>
+              ) : null}
               <ezp-select
                 label={i18next.t('printer_selection.orientation')}
                 icon="orientation"
