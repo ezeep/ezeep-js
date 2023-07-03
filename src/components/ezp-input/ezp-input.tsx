@@ -1,6 +1,6 @@
 import { Component, Host, Prop, h, Fragment, EventEmitter, Event } from '@stencil/core';
 import { PAPER_ID } from '../../utils/utils';
-import { IconNameTypes } from '../../../dist/types/shared/types';
+import { IconNameTypes } from './../../shared/types';
 
 @Component({
   tag: 'ezp-input',

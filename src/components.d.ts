@@ -6,7 +6,6 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TriggerTypes, WeightTypes } from "./shared/types";
-import { IconNameTypes as IconNameTypes1 } from "../dist/types/shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;

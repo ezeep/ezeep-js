@@ -1,7 +1,7 @@
 import i18next from 'i18next'
 import translationsDE from '../data/locales/de.json'
 import translationsEN from '../data/locales/en.json'
-import { PrinterProperties } from '../../dist/types/shared/types';
+import { PrinterProperties } from './../shared/types';
 
 export function encodeFormData(data: { [x: string]: string | number | boolean }): string {
   return Object.keys(data)
