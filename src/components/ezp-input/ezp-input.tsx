@@ -10,12 +10,40 @@ export class EzpInput {
   private input?: HTMLInputElement
   private timeout = null
 
+   /**
+   *
+   * Properties
+   *
+   */
+
+  /** Description... */
   @Prop() label: string = 'Label'
+
+  /** Description... */
   @Prop({ mutable: true }) value: number | string
+
+  /** Description... */
   @Prop() type: string = 'text'
+
+  /** Description... */
   @Prop() icon: IconNameTypes = 'color'
+
+  /** Description... */
   @Prop({ reflect: true }) suffix: string
+
+   /**
+   *
+   * Events
+   *
+   */
+
   @Event() inputValueChanged: EventEmitter
+
+   /**
+   *
+   * States
+   *
+   */
   @State() focused: boolean = false
 
   handleChange(event) {

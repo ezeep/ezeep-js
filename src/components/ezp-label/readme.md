@@ -24,6 +24,7 @@
 - [ezp-text-button](../ezp-text-button)
 - [ezp-upload](../ezp-upload)
 - [ezp-user-menu](../ezp-user-menu)
+- [ezp-input](../ezp-input)
 
 ### Graph
 
@@ -37,6 +38,7 @@ graph TD;
   ezp-text-button --> ezp-label
   ezp-upload --> ezp-label
   ezp-user-menu --> ezp-label
+  ezp-input --> ezp-label
   style ezp-label fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
