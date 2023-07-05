@@ -1,6 +1,7 @@
 import i18next from 'i18next'
 import translationsDE from '../data/locales/de.json'
 import translationsEN from '../data/locales/en.json'
+import { PrinterProperties } from './../shared/types';
 
 export function encodeFormData(data: { [x: string]: string | number | boolean }): string {
   return Object.keys(data)
@@ -69,3 +70,19 @@ export const removeEmptyStrings = (obj: { [x: string]: any }) => {
   })
   return newObj
 }
+
+export const managePaperDimensions = (properties :PrinterProperties)=>{
+  if(properties.paperid != PAPER_ID){
+    delete properties.paperlength
+    delete properties.paperwidth
+  }
+
+  if(properties.paperlength && properties.paperwidth){
+    properties.paperlength = +properties.paperlength * 10
+    properties.paperwidth = +properties.paperwidth * 10
+  }
+
+  return properties
+}
+
+export const PAPER_ID = 256

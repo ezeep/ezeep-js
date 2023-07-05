@@ -51,6 +51,7 @@ graph TD;
   ezp-printer-selection --> ezp-stepper
   ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
+   ezp-printer-selection --> ezp-input
   ezp-status --> ezp-icon
   ezp-status --> ezp-label
   ezp-status --> ezp-text-button
@@ -65,6 +66,8 @@ graph TD;
   ezp-user-menu --> ezp-label
   ezp-user-menu --> ezp-icon-button
   ezp-user-menu --> ezp-icon
+  ezp-input --> ezp-icon
+  ezp-input --> ezp-label
   ezp-printing --> ezp-printer-selection
   style ezp-printer-selection fill:#f9f,stroke:#333,stroke-width:4px
 ```

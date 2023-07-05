@@ -59,6 +59,10 @@
       --ezp-userMenu-header-boxShadowPosition: inset 0 -1px 0 0;
       --ezp-userMenu-links-boxShadowPosition: inset 0 -1px 0 0;
       --ezp-userMenu-theme-boxShadowPosition: inset 0 -1px 0 0;
+      --ezp-input-box-shadow-position-top: inset 0 1px 0 0;
+      --ezp-input-box-shadow-position-right: inset -1px 0 0 0;
+      --ezp-input-box-shadow-position-bottom: inset 0 -1px 0 0;
+      --ezp-input-box-shadow-position-left: inset 1px 0 0 0;
 
       @include colors.colors(map.get(accents.$palette, 'dark'), 'accent');
       @include colors.colors(map.get(core.$palette, 'dark'), 'core');

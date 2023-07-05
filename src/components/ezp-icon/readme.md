@@ -21,6 +21,7 @@
 - [ezp-stepper](../ezp-stepper)
 - [ezp-upload](../ezp-upload)
 - [ezp-user-menu](../ezp-user-menu)
+- [ezp-input](../ezp-input)
 
 ### Graph
 
@@ -33,6 +34,7 @@ graph TD;
   ezp-stepper --> ezp-icon
   ezp-upload --> ezp-icon
   ezp-user-menu --> ezp-icon
+  ezp-input --> ezp-icon
   style ezp-icon fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

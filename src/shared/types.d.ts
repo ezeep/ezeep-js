@@ -2,15 +2,20 @@ export type IconButtonLevelTypes = 'primary' | 'secondary' | 'tertiary' | 'quate
 export type IconButtonTypeTypes = 'button'
 export type IconNameTypes =
   | 'account'
+  | 'checkmark-alt'
   | 'checkmark'
   | 'close'
   | 'color'
   | 'copies'
   | 'dark'
+  | 'drag-drop'
   | 'duplex'
+  | 'exclamation-mark'
   | 'expand'
+  | 'height'
   | 'help'
   | 'light'
+  | 'logo'
   | 'logout'
   | 'menu'
   | 'minus'
@@ -18,13 +23,10 @@ export type IconNameTypes =
   | 'plus'
   | 'printer'
   | 'quality'
+  | 'question-mark'
   | 'size'
   | 'system'
-  | 'drag-drop'
-  | 'checkmark-alt'
-  | 'question-mark'
-  | 'exclamation-mark'
-  | 'logo'
+  | 'width'
 export type IconSizeTypes = 'normal' | 'large' | 'huge'
 export type PrintOrganizationType = { id: number; name: string; printers: PrintPrinterType[] }
 export type PrintPrinterType = { id: number; name: string; location: string }
@@ -60,6 +62,8 @@ export interface PrinterProperties {
   orientation?: number | string
   copies?: number | string
   resolution?: string | number
+  paperlength? : string | number
+  paperwidth? : string | number
 }
 
 export interface Printer {

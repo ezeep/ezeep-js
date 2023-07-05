@@ -40,7 +40,9 @@
         "orientation_landscape": "Landscape",
         "unknown_location": "Unknown location",
         "no_printers": "No printers found.",
-        "copies": "Copies"
+        "copies": "Copies",
+        "width":"Width",
+        "length":"Length"
     },
     "button_actions": {
         "login": "Sign In",
