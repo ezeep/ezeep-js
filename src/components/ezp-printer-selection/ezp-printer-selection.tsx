@@ -737,13 +737,15 @@ export class EzpPrinterSelection {
                     icon="width"
                     suffix="mm"
                     value={this.selectedProperties.paperwidth}
+                    eventType="width"
                     type="number"
                     label={i18next.t('printer_selection.width')}
                   />
                   <ezp-input
                     icon="height"
                     suffix="mm"
-                    value={this.selectedProperties.paperwidth}
+                    value={this.selectedProperties.paperlength}
+                    eventType="length"
                     type="number"
                     label={i18next.t('printer_selection.length')}
                   />

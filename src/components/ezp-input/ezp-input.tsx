@@ -30,6 +30,10 @@ export class EzpInput {
 
   /** Description... */
   @Prop({ reflect: true }) suffix: string
+  
+  /** Description... */
+  @Prop() eventType: string
+
 
    /**
    *
@@ -53,7 +57,7 @@ export class EzpInput {
     this.value = event.target.value ? event.target.value : 0
     this.timeout = setTimeout(() => {
       this.inputValueChanged.emit({
-        type: this.label.toLowerCase(),
+        type: this.eventType.toLowerCase(),
         value: this.value,
       })
     }, 500)

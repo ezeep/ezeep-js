@@ -70,10 +70,29 @@ export namespace Components {
         "type": IconButtonTypeTypes;
     }
     interface EzpInput {
+        /**
+          * Description...
+         */
+        "eventType": string;
+        /**
+          * Description...
+         */
         "icon": IconNameTypes;
+        /**
+          * Description...
+         */
         "label": string;
+        /**
+          * Description...
+         */
         "suffix": string;
+        /**
+          * Description...
+         */
         "type": string;
+        /**
+          * Description...
+         */
         "value": number | string;
     }
     interface EzpLabel {
@@ -425,11 +444,33 @@ declare namespace LocalJSX {
         "type"?: IconButtonTypeTypes;
     }
     interface EzpInput {
+        /**
+          * Description...
+         */
+        "eventType"?: string;
+        /**
+          * Description...
+         */
         "icon"?: IconNameTypes;
+        /**
+          * Description...
+         */
         "label"?: string;
+        /**
+          * Events
+         */
         "onInputValueChanged"?: (event: CustomEvent<any>) => void;
+        /**
+          * Description...
+         */
         "suffix"?: string;
+        /**
+          * Description...
+         */
         "type"?: string;
+        /**
+          * Description...
+         */
         "value"?: number | string;
     }
     interface EzpLabel {
