@@ -64,6 +64,7 @@ export interface PrinterProperties {
   resolution?: string | number
   paperlength? : string | number
   paperwidth? : string | number
+  PageRanges? : string
 }
 
 export interface Printer {
