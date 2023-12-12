@@ -42,7 +42,8 @@
         "no_printers": "No printers found.",
         "copies": "Copies",
         "width":"Width",
-        "length":"Length"
+        "length":"Length",
+        "paper_ranges": "Paper Ranges"
     },
     "button_actions": {
         "login": "Sign In",

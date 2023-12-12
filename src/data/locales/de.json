@@ -42,7 +42,8 @@
         "duplex_short": "auf der kurzen Seite umdrehen",
         "pull_print_success": "Bereit zum Auslösen.",
         "width":"Breite",
-        "length":"Länge"
+        "length":"Länge",
+        "paper_ranges": "Papier-Ranges"
     },
     "button_actions": {
         "login": "Anmelden",
