@@ -85,6 +85,10 @@ export const managePaperDimensions = (properties :PrinterProperties)=>{
   return properties
 }
 
+export const formatPageRange = (pageRange) => {
+  return pageRange.replace(/,/g, ';')
+}
+
 export const validatePageRange = (pageRange) => {
   if (!pageRange) {
     return true

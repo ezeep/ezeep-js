@@ -16,7 +16,7 @@ import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { managePaperDimensions, poll, removeEmptyStrings } from '../../utils/utils'
 import { BlobUploadCommonResponse } from '@azure/storage-blob'
-import { PAPER_ID , validatePageRange } from '../../utils/utils'
+import { PAPER_ID , validatePageRange , formatPageRange } from '../../utils/utils'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -217,8 +217,11 @@ export class EzpPrinterSelection {
     this.printProcessing = true
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
-    let cleanPrintProperties = removeEmptyStrings(this.selectedProperties)
+    let cleanPrintProperties: PrinterProperties = removeEmptyStrings(this.selectedProperties)
     cleanPrintProperties = managePaperDimensions(cleanPrintProperties)
+    if (cleanPrintProperties.PageRanges)
+      cleanPrintProperties.PageRanges = formatPageRange(cleanPrintProperties.PageRanges)
+     
     // put it in store for further use
     printStore.state.fileUrl = this.fileurl
     printStore.state.fileID = this.fileid
@@ -381,6 +384,7 @@ export class EzpPrinterSelection {
       case 'paper_ranges':
           this.selectedProperties.PageRanges = eventDetails.value;
           this.pageRangeInvalid = !validatePageRange(this.selectedProperties.PageRanges);
+          
           // console.log(this.selectedProperties.PageRanges)
           break  
       case 'duplex':
