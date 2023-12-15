@@ -43,6 +43,9 @@
         "pull_print_success": "Bereit zum Auslösen.",
         "width":"Breite",
         "length":"Länge",
+        "trays": "Trays",
+        "select_trays": "Wähle Trays",
+        "page_ranges": "Page Ranges",
         "paper_ranges": "Papier-Ranges"
     },
     "button_actions": {
