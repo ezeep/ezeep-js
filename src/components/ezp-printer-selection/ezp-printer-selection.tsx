@@ -84,6 +84,7 @@ export class EzpPrinterSelection {
     Resolutions: [],
     DuplexSupported: false,
     Color: false,
+    Trays: []
   }
 
   // needs to be initialised with empty strings
@@ -97,7 +98,9 @@ export class EzpPrinterSelection {
     copies: '',
     resolution: 0,
     paperlength : 0,
-    paperwidth : 0
+    paperwidth : 0,
+    defaultSource: '',
+    trayname: ''
   }
 
   @State() paperid: number | string
@@ -215,6 +218,10 @@ export class EzpPrinterSelection {
     this.printProcessing = true
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
+    if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+      delete this.selectedProperties.trayname
+      delete this.selectedProperties.defaultSource
+    }
     let cleanPrintProperties = removeEmptyStrings(this.selectedProperties)
     cleanPrintProperties = managePaperDimensions(cleanPrintProperties)
     // put it in store for further use
@@ -310,7 +317,7 @@ export class EzpPrinterSelection {
       } else {
         this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
         localStorage.removeItem('printer')
-        localStorage.removeItem('properties')
+        localStorage.removeItem('properties')  
       }
     } else {
       this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
@@ -375,6 +382,16 @@ export class EzpPrinterSelection {
       case 'width':
         this.selectedProperties.paperwidth = eventDetails.value
         // console.log(this.selectedProperties)
+        break
+      case 'tray':
+        if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+          delete this.selectedProperties.trayname
+          delete this.selectedProperties.defaultSource
+        }
+        if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null) {
+          this.selectedProperties.trayname = eventDetails.title
+          this.selectedProperties.defaultSource = eventDetails.id
+        }
         break
       case 'duplex':
         if (eventDetails.title === 'None') {
@@ -781,6 +798,20 @@ export class EzpPrinterSelection {
                 preSelected={this.selectedPrinter.id ? this.selectedProperties.resolution : null}
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
               />
+             {this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null ? (
+              <ezp-select
+                label={i18next.t('printer_selection.trays')}
+                icon="size"
+                placeholder={i18next.t('printer_selection.select_trays')}
+                toggleFlow="horizontal"
+                optionFlow="horizontal"
+                options={this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays.map((trays) => ({
+                  title: trays.Name,
+                  id: trays.Index,
+                  meta: '',
+                  type: 'tray',
+                }))}
+              /> ) : null}
             </div>
             <ezp-stepper label={i18next.t('printer_selection.copies')} max={10} icon="copies" />
           </div>

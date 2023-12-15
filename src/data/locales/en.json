@@ -42,7 +42,10 @@
         "no_printers": "No printers found.",
         "copies": "Copies",
         "width":"Width",
-        "length":"Length"
+        "length":"Length",
+        "trays": "Trays",
+        "select_trays": "Select Trays",
+        "page_ranges": "Page Ranges"
     },
     "button_actions": {
         "login": "Sign In",
