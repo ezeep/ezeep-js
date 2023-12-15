@@ -812,7 +812,7 @@ export class EzpPrinterSelection {
              {this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null ? (
               <ezp-select
                 label={i18next.t('printer_selection.trays')}
-                icon="size"
+                icon="trays"
                 placeholder={i18next.t('printer_selection.select_trays')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
@@ -824,7 +824,7 @@ export class EzpPrinterSelection {
                 }))}
               /> ) : null}
               <ezp-input
-                  icon="width"
+                  icon="paper_range"
                   suffix=""
                   placeholder="1-2,4-5,8"
                   value={this.selectedProperties.PageRanges}
