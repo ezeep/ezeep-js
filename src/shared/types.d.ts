@@ -66,6 +66,7 @@ export interface PrinterProperties {
   paperwidth? : string | number
   defaultSource?: number | string
   trayname?: string 
+  PageRanges? : string
 }
 
 export interface Printer {

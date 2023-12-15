@@ -45,7 +45,8 @@
         "length":"Length",
         "trays": "Trays",
         "select_trays": "Select Trays",
-        "page_ranges": "Page Ranges"
+        "page_ranges": "Page Ranges",
+        "paper_ranges": "Paper Ranges"
     },
     "button_actions": {
         "login": "Sign In",

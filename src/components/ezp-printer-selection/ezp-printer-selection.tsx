@@ -16,7 +16,7 @@ import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { managePaperDimensions, poll, removeEmptyStrings } from '../../utils/utils'
 import { BlobUploadCommonResponse } from '@azure/storage-blob'
-import { PAPER_ID } from '../../utils/utils'
+import { PAPER_ID , validatePageRange , formatPageRange } from '../../utils/utils'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -66,6 +66,7 @@ export class EzpPrinterSelection {
    */
   @State() loading: boolean = true
   @State() printProcessing: boolean = false
+  @State() pageRangeInvalid: boolean = false
   @State() uploading: boolean = false
   @State() preparingUpload: boolean = false
   @State() printSuccess: boolean = false
@@ -100,7 +101,8 @@ export class EzpPrinterSelection {
     paperlength : 0,
     paperwidth : 0,
     defaultSource: '',
-    trayname: ''
+    trayname: '',
+    PageRanges : '',
   }
 
   @State() paperid: number | string
@@ -222,8 +224,11 @@ export class EzpPrinterSelection {
       delete this.selectedProperties.trayname
       delete this.selectedProperties.defaultSource
     }
-    let cleanPrintProperties = removeEmptyStrings(this.selectedProperties)
+    let cleanPrintProperties: PrinterProperties = removeEmptyStrings(this.selectedProperties)
     cleanPrintProperties = managePaperDimensions(cleanPrintProperties)
+    if (cleanPrintProperties.PageRanges)
+      cleanPrintProperties.PageRanges = formatPageRange(cleanPrintProperties.PageRanges)
+     
     // put it in store for further use
     printStore.state.fileUrl = this.fileurl
     printStore.state.fileID = this.fileid
@@ -393,6 +398,12 @@ export class EzpPrinterSelection {
           this.selectedProperties.defaultSource = eventDetails.id
         }
         break
+      case 'paper_ranges':
+          this.selectedProperties.PageRanges = eventDetails.value;
+          this.pageRangeInvalid = !validatePageRange(this.selectedProperties.PageRanges);
+          
+          // console.log(this.selectedProperties.PageRanges)
+          break  
       case 'duplex':
         if (eventDetails.title === 'None') {
           this.selectedProperties.duplex = false
@@ -812,6 +823,15 @@ export class EzpPrinterSelection {
                   type: 'tray',
                 }))}
               /> ) : null}
+              <ezp-input
+                  icon="width"
+                  suffix=""
+                  placeholder="1-2,4-5,8"
+                  value={this.selectedProperties.PageRanges}
+                  eventType="paper_ranges"
+                  type="text"
+                  label={i18next.t('printer_selection.paper_ranges')}
+              />
             </div>
             <ezp-stepper label={i18next.t('printer_selection.copies')} max={10} icon="copies" />
           </div>
@@ -825,7 +845,7 @@ export class EzpPrinterSelection {
               id="cancel"
             />
             <ezp-text-button
-              disabled={this.selectedPrinter.id === '' || this.printProcessing}
+              disabled={this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid}
               type="button"
               onClick={this.handlePrint}
               label={i18next.t('button_actions.print')}
