@@ -85,6 +85,10 @@ export namespace Components {
         /**
           * Description...
          */
+        "placeholder": string;
+        /**
+          * Description...
+         */
         "suffix": string;
         /**
           * Description...
@@ -460,6 +464,10 @@ declare namespace LocalJSX {
           * Events
          */
         "onInputValueChanged"?: (event: CustomEvent<any>) => void;
+        /**
+          * Description...
+         */
+        "placeholder"?: string;
         /**
           * Description...
          */

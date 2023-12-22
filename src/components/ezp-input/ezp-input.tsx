@@ -34,6 +34,9 @@ export class EzpInput {
   /** Description... */
   @Prop() eventType: string
 
+  /** Description... */
+  @Prop() placeholder: string = ''
+
 
    /**
    *
@@ -54,7 +57,7 @@ export class EzpInput {
     if (this.timeout) {
       clearTimeout(this.timeout)
     }
-    this.value = event.target.value ? event.target.value : 0
+    this.value = event.target.value ? event.target.value : this.type === 'number' ? 0 : ''
     this.timeout = setTimeout(() => {
       this.inputValueChanged.emit({
         type: this.eventType.toLowerCase(),
@@ -84,6 +87,7 @@ export class EzpInput {
           id="input"
           type={this.type}
           value={this.value}
+          placeholder={this.placeholder}
           onInput={(event) => this.handleChange(event)}
           ref={(input) => (this.input = input)}
           onFocus={this.handleFocus}

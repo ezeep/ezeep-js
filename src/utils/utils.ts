@@ -85,4 +85,37 @@ export const managePaperDimensions = (properties :PrinterProperties)=>{
   return properties
 }
 
+export const formatPageRange = (pageRange) => {
+  return pageRange.replace(/,/g, ';')
+}
+
+export const validatePageRange = (pageRange) => {
+  if (!pageRange) {
+    return true
+  }
+  const regex = /^(\d+(-\d+)?(,\d+(-\d+)?)*|(\d+,\d+(-\d+)?(,\d+(-\d+)?)*)+)$/;
+  const isValid = regex.test(pageRange);
+  if (!isValid) {
+    return false
+  }
+  let ranges = pageRange.split(',');
+  for (let i = 0; i < ranges.length; i++) {
+    let rng = ranges[i].trim();
+    if (rng.includes('-')) {
+      let [start, end] = rng.split('-');
+      start = parseInt(start);
+      end = parseInt(end);
+      if (isNaN(start) || isNaN(end) || start > end || start <= 0) {
+        return false;
+      }
+    } else {
+      let page = parseInt(rng);
+      if (isNaN(page) || page <= 0) {
+        return false
+      }
+    }
+  }
+  return true
+}
+
 export const PAPER_ID = 256

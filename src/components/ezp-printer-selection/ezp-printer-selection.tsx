@@ -16,7 +16,7 @@ import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { managePaperDimensions, poll, removeEmptyStrings } from '../../utils/utils'
 import { BlobUploadCommonResponse } from '@azure/storage-blob'
-import { PAPER_ID } from '../../utils/utils'
+import { PAPER_ID , validatePageRange , formatPageRange } from '../../utils/utils'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -66,6 +66,7 @@ export class EzpPrinterSelection {
    */
   @State() loading: boolean = true
   @State() printProcessing: boolean = false
+  @State() pageRangeInvalid: boolean = false
   @State() uploading: boolean = false
   @State() preparingUpload: boolean = false
   @State() printSuccess: boolean = false
@@ -84,6 +85,7 @@ export class EzpPrinterSelection {
     Resolutions: [],
     DuplexSupported: false,
     Color: false,
+    Trays: []
   }
 
   // needs to be initialised with empty strings
@@ -97,7 +99,10 @@ export class EzpPrinterSelection {
     copies: '',
     resolution: 0,
     paperlength : 0,
-    paperwidth : 0
+    paperwidth : 0,
+    defaultSource: '',
+    trayname: '',
+    PageRanges : '',
   }
 
   @State() paperid: number | string
@@ -215,8 +220,15 @@ export class EzpPrinterSelection {
     this.printProcessing = true
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
-    let cleanPrintProperties = removeEmptyStrings(this.selectedProperties)
+    if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+      delete this.selectedProperties.trayname
+      delete this.selectedProperties.defaultSource
+    }
+    let cleanPrintProperties: PrinterProperties = removeEmptyStrings(this.selectedProperties)
     cleanPrintProperties = managePaperDimensions(cleanPrintProperties)
+    if (cleanPrintProperties.PageRanges)
+      cleanPrintProperties.PageRanges = formatPageRange(cleanPrintProperties.PageRanges)
+     
     // put it in store for further use
     printStore.state.fileUrl = this.fileurl
     printStore.state.fileID = this.fileid
@@ -310,7 +322,7 @@ export class EzpPrinterSelection {
       } else {
         this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
         localStorage.removeItem('printer')
-        localStorage.removeItem('properties')
+        localStorage.removeItem('properties')  
       }
     } else {
       this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
@@ -376,6 +388,22 @@ export class EzpPrinterSelection {
         this.selectedProperties.paperwidth = eventDetails.value
         // console.log(this.selectedProperties)
         break
+      case 'tray':
+        if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+          delete this.selectedProperties.trayname
+          delete this.selectedProperties.defaultSource
+        }
+        if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null) {
+          this.selectedProperties.trayname = eventDetails.title
+          this.selectedProperties.defaultSource = eventDetails.id
+        }
+        break
+      case 'paper_ranges':
+          this.selectedProperties.PageRanges = eventDetails.value;
+          this.pageRangeInvalid = !validatePageRange(this.selectedProperties.PageRanges);
+          
+          // console.log(this.selectedProperties.PageRanges)
+          break  
       case 'duplex':
         if (eventDetails.title === 'None') {
           this.selectedProperties.duplex = false
@@ -781,6 +809,29 @@ export class EzpPrinterSelection {
                 preSelected={this.selectedPrinter.id ? this.selectedProperties.resolution : null}
                 disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
               />
+             {this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null ? (
+              <ezp-select
+                label={i18next.t('printer_selection.trays')}
+                icon="trays"
+                placeholder={i18next.t('printer_selection.select_trays')}
+                toggleFlow="horizontal"
+                optionFlow="horizontal"
+                options={this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays.map((trays) => ({
+                  title: trays.Name,
+                  id: trays.Index,
+                  meta: '',
+                  type: 'tray',
+                }))}
+              /> ) : null}
+              <ezp-input
+                  icon="paper_range"
+                  suffix=""
+                  placeholder="1-2,4-5,8"
+                  value={this.selectedProperties.PageRanges}
+                  eventType="paper_ranges"
+                  type="text"
+                  label={i18next.t('printer_selection.paper_ranges')}
+              />
             </div>
             <ezp-stepper label={i18next.t('printer_selection.copies')} max={10} icon="copies" />
           </div>
@@ -794,7 +845,7 @@ export class EzpPrinterSelection {
               id="cancel"
             />
             <ezp-text-button
-              disabled={this.selectedPrinter.id === '' || this.printProcessing}
+              disabled={this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid}
               type="button"
               onClick={this.handlePrint}
               label={i18next.t('button_actions.print')}

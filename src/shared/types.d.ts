@@ -27,6 +27,8 @@ export type IconNameTypes =
   | 'size'
   | 'system'
   | 'width'
+  | 'paper_range'
+  | 'trays'
 export type IconSizeTypes = 'normal' | 'large' | 'huge'
 export type PrintOrganizationType = { id: number; name: string; printers: PrintPrinterType[] }
 export type PrintPrinterType = { id: number; name: string; location: string }
@@ -64,6 +66,9 @@ export interface PrinterProperties {
   resolution?: string | number
   paperlength? : string | number
   paperwidth? : string | number
+  defaultSource?: number | string
+  trayname?: string 
+  PageRanges? : string
 }
 
 export interface Printer {
@@ -79,6 +84,13 @@ export interface PaperFormat {
   XRes: number
   YRes: number
 }
+
+export interface Trays {
+  Default : boolean
+  Index:  number
+  Name: string
+}
+
 export interface PrinterConfig {
   Collate?: boolean
   Color?: boolean
@@ -95,6 +107,7 @@ export interface PrinterConfig {
   PaperFormats?: Array<PaperFormat>
   Resolutions?: Array<string>
   TPUID?: number
+  Trays?: Array<Trays>
 }
 
 export interface User {
