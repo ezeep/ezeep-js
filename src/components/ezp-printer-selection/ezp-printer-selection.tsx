@@ -830,7 +830,7 @@ export class EzpPrinterSelection {
                   value={this.selectedProperties.PageRanges}
                   eventType="paper_ranges"
                   type="text"
-                  label={i18next.t('printer_selection.paper_ranges')}
+                  label={i18next.t('printer_selection.page_ranges')}
               />
             </div>
             <ezp-stepper label={i18next.t('printer_selection.copies')} max={10} icon="copies" />

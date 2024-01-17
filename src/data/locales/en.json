@@ -43,8 +43,8 @@
         "copies": "Copies",
         "width":"Width",
         "length":"Length",
-        "trays": "Trays",
-        "select_trays": "Select Trays",
+        "trays": "Tray",
+        "select_trays": "Select Tray",
         "page_ranges": "Page Ranges",
         "paper_ranges": "Paper Ranges"
     },
