@@ -92,8 +92,16 @@ export interface Trays {
 }
 
 export interface PrinterConfig {
+  Preset?: {
+    Duplex?: string
+    Color?: string
+    Resolution?: string
+    Paper?: string
+    Tray?: string
+  },
   Collate?: boolean
   Color?: boolean
+  ColorSupported?: boolean
   Driver?: string
   DuplexMode?: number
   DuplexSupported?: boolean
@@ -106,6 +114,7 @@ export interface PrinterConfig {
   OrientationsSupportedId?: Array<number>
   PaperFormats?: Array<PaperFormat>
   Resolutions?: Array<string>
+  DefaultResolution?: string
   TPUID?: number
   Trays?: Array<Trays>
 }
