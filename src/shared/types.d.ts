@@ -83,6 +83,7 @@ export interface PaperFormat {
   Name: string
   XRes: number
   YRes: number
+  Default: boolean
 }
 
 export interface Trays {
