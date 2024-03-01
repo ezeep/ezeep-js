@@ -724,7 +724,7 @@ export class EzpPrinterSelection {
                 }
                 preSelected={
                   this.selectedPrinter.id
-                    ? this.selectedPrinterConfig.Preset.Color == "color"
+                    ? this.selectedPrinterConfig.Preset && this.selectedPrinterConfig.Preset.Color == "color"
                       ? i18next.t('printer_selection.color_color')
                       : i18next.t('printer_selection.color_grayscale')
                     : null
@@ -744,11 +744,11 @@ export class EzpPrinterSelection {
                 }))}
                 preSelected={
                   this.selectedPrinter.id 
-                  && this.selectedPrinterConfig.Preset.Duplex == "duplex_simplex" 
+                  && this.selectedPrinterConfig.Preset && this.selectedPrinterConfig.Preset.Duplex == "duplex_simplex" 
                   ? i18next.t('printer_selection.duplex_none') 
-                  : this.selectedPrinterConfig.Preset.Duplex == "duplex_vertical" 
+                  : this.selectedPrinterConfig.Preset && this.selectedPrinterConfig.Preset.Duplex == "duplex_vertical" 
                   ? i18next.t('printer_selection.duplex_long') 
-                  : this.selectedPrinterConfig.Preset.Duplex == "duplex_horizontal"
+                  : this.selectedPrinterConfig.Preset && this.selectedPrinterConfig.Preset.Duplex == "duplex_horizontal"
                   ? i18next.t('printer_selection.duplex_short')
                   : null
                  }
@@ -760,15 +760,15 @@ export class EzpPrinterSelection {
                 placeholder={i18next.t('printer_selection.select_size')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
-                options={this.selectedPrinterConfig.PaperFormats.map((format) => ({
+                options={this.selectedPrinterConfig.PaperFormats && this.selectedPrinterConfig.PaperFormats.map((format) => ({
                   id: format.Id,
                   title: format.Name,
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
-                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.PaperFormats.find((el) =>
+                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.PaperFormats && this.selectedPrinterConfig.PaperFormats.find((el) =>
                   el.Name.includes(this.selectedPrinterConfig.Preset.Paper)) ? this.selectedPrinterConfig.Preset.Paper : null}
-                disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
+                disabled={!(this.selectedPrinterConfig.PaperFormats && this.selectedPrinterConfig.PaperFormats.length > 0)}
               />
               {this.paperid == PAPER_ID ? (
                 <>
@@ -811,30 +811,30 @@ export class EzpPrinterSelection {
                 icon="quality"
                 placeholder={i18next.t('printer_selection.select_quality')}
                 toggleFlow="horizontal"
-                options={this.selectedPrinterConfig.Resolutions.map((option, index) => ({
+                options={this.selectedPrinterConfig.Resolutions && this.selectedPrinterConfig.Resolutions.map((option, index) => ({
                   id: index,
                   title: option,
                   meta: '',
                   type: 'quality',
                 }))}
-                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Resolutions.includes(this.selectedPrinterConfig.Preset.Resolution) ? this.selectedPrinterConfig.Preset.Resolution : null}
-                disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
+                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Resolutions && this.selectedPrinterConfig.Resolutions.includes(this.selectedPrinterConfig.Preset.Resolution) ? this.selectedPrinterConfig.Preset.Resolution : null}
+                disabled={!(this.selectedPrinterConfig.Resolutions && this.selectedPrinterConfig.Resolutions.length > 0)}
               />
-             {this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null ? (
+             {this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null ? (
               <ezp-select
                 label={i18next.t('printer_selection.trays')}
                 icon="trays"
                 placeholder={i18next.t('printer_selection.select_trays')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
-                options={this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays.map((trays) => ({
+                options={this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays.map((trays) => ({
                   title: trays.Name,
                   id: trays.Index,
                   meta: '',
                   type: 'tray',
                 })
                 )}
-                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Trays.find((el) =>
+                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.find((el) =>
                  el.Name.includes(this.selectedPrinterConfig.Preset.Tray)) ? this.selectedPrinterConfig.Preset.Tray : null}
               /> ) : null}
               <ezp-input
