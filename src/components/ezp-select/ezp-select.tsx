@@ -115,6 +115,11 @@ export class EzpSelect {
     }
   }
 
+  @Watch('preSelected')
+  preSelectedChanged() {
+    this.preSelect();
+  }
+
   /**
    *
    * Private methods
