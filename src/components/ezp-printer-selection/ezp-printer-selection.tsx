@@ -369,7 +369,6 @@ export class EzpPrinterSelection {
             this.selectedPrinterConfig =  {...this.selectedPrinterConfig, ...data[0]}
           })
         // this.setDefaultPaperFormat()
-        console.log(this.selectedPrinterConfig)
         break
       case 'color':
         this.selectedProperties.color = !!eventDetails.id
