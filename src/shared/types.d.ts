@@ -93,9 +93,10 @@ export interface Trays {
 }
 
 export interface PrinterConfig {
-  Preset?: {
+  Profile?: {
     Duplex?: string
     Color?: string
+    Orientation?: string
     Resolution?: string
     Paper?: string
     Tray?: string

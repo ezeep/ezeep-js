@@ -150,7 +150,7 @@ export class EzpSelect {
   }
 
   private preSelect = () => {
-    this.selected = this.options.find((option) =>
+    this.selected = this.options?.find((option) =>
       typeof this.preSelected === 'number'
         ? option.id === this.preSelected
         : typeof this.preSelected === 'string'
@@ -190,7 +190,7 @@ export class EzpSelect {
 
   componentWillUpdate() {
     if (
-      this.selected.id === false &&
+      this.selected?.id === false &&
       this.preSelected !== undefined &&
       this.preSelected !== '' &&
       this.preSelected !== null
@@ -229,7 +229,7 @@ export class EzpSelect {
             <ezp-icon id="accessory" name="expand" />
           </div>
           <div id="list" ref={(element) => (this.list = element)}>
-            {this.options.map((option) => {
+            {this.options?.map((option) => {
               if (option.title !== '') {
                 return (
                   <div
