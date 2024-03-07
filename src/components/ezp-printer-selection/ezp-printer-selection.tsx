@@ -411,7 +411,7 @@ export class EzpPrinterSelection {
       case 'paper_ranges':
           this.selectedProperties.PageRanges = eventDetails.value;
           this.pageRangeInvalid = !validatePageRange(this.selectedProperties.PageRanges);
-          
+          localStorage.setItem('pageRanges', JSON.stringify(this.selectedProperties.PageRanges));
           // console.log(this.selectedProperties.PageRanges)
           break  
       case 'duplex':
@@ -848,7 +848,7 @@ export class EzpPrinterSelection {
                   icon="paper_range"
                   suffix=""
                   placeholder="1-2,4-5,8"
-                  value={this.selectedProperties.PageRanges}
+                  value={localStorage.getItem('pageRanges') ? this.selectedProperties.PageRanges : ''}
                   eventType="paper_ranges"
                   type="text"
                   label={i18next.t('printer_selection.page_ranges')}
