@@ -83,6 +83,7 @@ export interface PaperFormat {
   Name: string
   XRes: number
   YRes: number
+  Default: boolean
 }
 
 export interface Trays {
@@ -92,9 +93,10 @@ export interface Trays {
 }
 
 export interface PrinterConfig {
-  Preset?: {
+  Profile?: {
     Duplex?: string
     Color?: string
+    Orientation?: string
     Resolution?: string
     Paper?: string
     Tray?: string

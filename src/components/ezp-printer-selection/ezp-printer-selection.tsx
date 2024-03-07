@@ -27,7 +27,7 @@ export class EzpPrinterSelection {
   private sasUri = ''
   private fileExtension = ''
   private printService: EzpPrintService
-  private duplexOptions = [
+  public duplexOptions = [
     {
       id: 1,
       title: i18next.t('printer_selection.duplex_none'),
@@ -80,6 +80,14 @@ export class EzpPrinterSelection {
   @State() selectedPrinter: Printer
   @State() printerConfig: PrinterConfig[]
   @State() selectedPrinterConfig: PrinterConfig = {
+    Profile: {
+      Color: '',
+      Duplex: '',
+      Paper: '',
+      Orientation: '',
+      Resolution: '',
+      Tray: ''
+    },
     OrientationsSupported: [],
     PaperFormats: [],
     Resolutions: [],
@@ -357,8 +365,10 @@ export class EzpPrinterSelection {
         this.selectedPrinter.is_queue = eventDetails.is_queue
         await this.printService
           .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
-          .then((data) => (this.selectedPrinterConfig = data[0]))
-        this.setDefaultPaperFormat()
+          .then((data) => {
+            this.selectedPrinterConfig =  {...this.selectedPrinterConfig, ...data[0]}
+          })
+        // this.setDefaultPaperFormat()
         break
       case 'color':
         this.selectedProperties.color = !!eventDetails.id
@@ -401,7 +411,7 @@ export class EzpPrinterSelection {
       case 'paper_ranges':
           this.selectedProperties.PageRanges = eventDetails.value;
           this.pageRangeInvalid = !validatePageRange(this.selectedProperties.PageRanges);
-          
+          localStorage.setItem('pageRanges', JSON.stringify(this.selectedProperties.PageRanges));
           // console.log(this.selectedProperties.PageRanges)
           break  
       case 'duplex':
@@ -503,17 +513,17 @@ export class EzpPrinterSelection {
       format = 'A4'
     }
 
-    if (this.selectedPrinterConfig.PaperFormats.find((el) => el.Name.includes(format))) {
-      this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats.find((el) =>
+    if (this.selectedPrinterConfig.PaperFormats?.find((el) => el.Name.includes(format))) {
+      this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats?.find((el) =>
         el.Name.includes(format)
       ).Name
-      this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats.find((el) =>
+      this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats?.find((el) =>
         el.Name.includes(format)
       ).Id
 
     } else {
-      this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats[0].Name
-      this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats[0].Id
+      this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats[0]?.Name
+      this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats[0]?.Id
     }
     this.setPaperid()
   }
@@ -717,31 +727,32 @@ export class EzpPrinterSelection {
                 }
                 preSelected={
                   this.selectedPrinter.id
-                    ? this.selectedProperties.color
+                    ? this.selectedPrinterConfig.Profile?.Color == "color"
                       ? i18next.t('printer_selection.color_color')
                       : i18next.t('printer_selection.color_grayscale')
                     : null
                 }
-                disabled={!this.selectedPrinterConfig.Color}
+                disabled={!this.selectedPrinterConfig.ColorSupported}
               />
               <ezp-select
                 label={i18next.t('printer_selection.duplex')}
                 icon="duplex"
                 placeholder={i18next.t('printer_selection.select_duplex')}
                 toggleFlow="horizontal"
-                options={this.duplexOptions.map((option) => ({
+                options={this.duplexOptions?.map((option) => ({
                   id: option.id,
                   title: option.title,
                   meta: '',
                   type: 'duplex',
                 }))}
                 preSelected={
-                  this.selectedPrinter.id && this.selectedProperties.duplex
-                    ? this.duplexOptions.find(
-                      (option) => option.id === this.selectedProperties.duplexmode
-                    ).id
-                    : null
-                }
+                  this.selectedPrinter.id && this.selectedPrinterConfig.Profile?.Duplex == "duplex_simplex" 
+                  ? i18next.t('printer_selection.duplex_none') 
+                  : this.selectedPrinterConfig.Profile?.Duplex == "duplex_vertical" 
+                  ? i18next.t('printer_selection.duplex_long') 
+                  : this.selectedPrinterConfig.Profile?.Duplex == "duplex_horizontal"
+                  ? i18next.t('printer_selection.duplex_short')
+                  : null}
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
               <ezp-select
@@ -750,14 +761,17 @@ export class EzpPrinterSelection {
                 placeholder={i18next.t('printer_selection.select_size')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
-                options={this.selectedPrinterConfig.PaperFormats.map((format) => ({
+                options={this.selectedPrinterConfig.PaperFormats && this.selectedPrinterConfig.PaperFormats.map((format) => ({
                   id: format.Id,
                   title: format.Name,
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
-                preSelected={this.selectedPrinter.id ? this.selectedProperties.paper : null}
-                disabled={!(this.selectedPrinterConfig.PaperFormats.length > 0)}
+                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.PaperFormats?.find((el) =>
+                  el.Name.includes(this.selectedPrinterConfig.Profile?.Paper)) 
+                  ? this.selectedPrinterConfig.Profile?.Paper 
+                  : null}
+                disabled={!(this.selectedPrinterConfig.PaperFormats?.length > 0)}
               />
               {this.paperid == PAPER_ID ? (
                 <>
@@ -800,34 +814,41 @@ export class EzpPrinterSelection {
                 icon="quality"
                 placeholder={i18next.t('printer_selection.select_quality')}
                 toggleFlow="horizontal"
-                options={this.selectedPrinterConfig.Resolutions.map((option, index) => ({
+                options={this.selectedPrinterConfig.Resolutions?.map((option, index) => ({
                   id: index,
                   title: option,
                   meta: '',
                   type: 'quality',
                 }))}
-                preSelected={this.selectedPrinter.id ? this.selectedProperties.resolution : null}
-                disabled={!(this.selectedPrinterConfig.Resolutions.length > 0)}
+                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Resolutions?.includes(this.selectedPrinterConfig.Profile.Resolution) 
+                  ? this.selectedPrinterConfig.Profile.Resolution 
+                  : null}
+                disabled={!(this.selectedPrinterConfig.Resolutions?.length > 0)}
               />
-             {this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null ? (
+             {this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null ? (
               <ezp-select
                 label={i18next.t('printer_selection.trays')}
                 icon="trays"
                 placeholder={i18next.t('printer_selection.select_trays')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
-                options={this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays.map((trays) => ({
+                options={this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays.map((trays) => ({
                   title: trays.Name,
                   id: trays.Index,
                   meta: '',
                   type: 'tray',
-                }))}
+                })
+                )}
+                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Trays?.find((el) =>
+                 el.Name.includes(this.selectedPrinterConfig.Profile.Tray)) 
+                 ? this.selectedPrinterConfig.Profile.Tray 
+                 : null}
               /> ) : null}
               <ezp-input
                   icon="paper_range"
                   suffix=""
                   placeholder="1-2,4-5,8"
-                  value={this.selectedProperties.PageRanges}
+                  value={localStorage.getItem('pageRanges') ? this.selectedProperties.PageRanges : ''}
                   eventType="paper_ranges"
                   type="text"
                   label={i18next.t('printer_selection.page_ranges')}

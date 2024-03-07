@@ -115,6 +115,11 @@ export class EzpSelect {
     }
   }
 
+  @Watch('preSelected')
+  preSelectedChanged() {
+    this.preSelect();
+  }
+
   /**
    *
    * Private methods
@@ -134,7 +139,7 @@ export class EzpSelect {
   }
 
   private select = (id: number | string | boolean) => {
-    const delay = this.selected.id === id ? 0 : this.duration * 1000
+    const delay = this.selected?.id === id ? 0 : this.duration * 1000
 
     this.selected = this.options.find((option) => option.id === id)
     this.selectSelection.emit(this.selected)
@@ -145,7 +150,7 @@ export class EzpSelect {
   }
 
   private preSelect = () => {
-    this.selected = this.options.find((option) =>
+    this.selected = this.options?.find((option) =>
       typeof this.preSelected === 'number'
         ? option.id === this.preSelected
         : typeof this.preSelected === 'string'
@@ -185,7 +190,7 @@ export class EzpSelect {
 
   componentWillUpdate() {
     if (
-      this.selected.id === false &&
+      this.selected?.id === false &&
       this.preSelected !== undefined &&
       this.preSelected !== '' &&
       this.preSelected !== null
@@ -219,16 +224,16 @@ export class EzpSelect {
             <ezp-label
               id="value"
               ellipsis
-              text={this.selected.title !== '' ? this.selected.title : this.placeholder}
+              text={this.selected?.title !== '' ? this.selected?.title : this.placeholder}
             />
             <ezp-icon id="accessory" name="expand" />
           </div>
           <div id="list" ref={(element) => (this.list = element)}>
-            {this.options.map((option) => {
+            {this.options?.map((option) => {
               if (option.title !== '') {
                 return (
                   <div
-                    class={`option ${option.id === this.selected.id ? 'is-selected' : ''} ${
+                    class={`option ${option.id === this.selected?.id ? 'is-selected' : ''} ${
                       option.meta !== '' ? 'has-meta' : ''
                     } `}
                     onClick={() => this.select(option.id)}
