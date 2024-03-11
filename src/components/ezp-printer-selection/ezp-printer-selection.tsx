@@ -80,7 +80,7 @@ export class EzpPrinterSelection {
   @State() selectedPrinter: Printer
   @State() printerConfig: PrinterConfig[]
   @State() selectedPrinterConfig: PrinterConfig = {
-    Profile: {
+    Default: {
       Color: '',
       Duplex: '',
       Paper: '',
@@ -727,7 +727,7 @@ export class EzpPrinterSelection {
                 }
                 preSelected={
                   this.selectedPrinter.id
-                    ? this.selectedPrinterConfig.Profile?.Color == "color"
+                    ? this.selectedPrinterConfig.Default?.Color == "color"
                       ? i18next.t('printer_selection.color_color')
                       : i18next.t('printer_selection.color_grayscale')
                     : null
@@ -746,11 +746,11 @@ export class EzpPrinterSelection {
                   type: 'duplex',
                 }))}
                 preSelected={
-                  this.selectedPrinter.id && this.selectedPrinterConfig.Profile?.Duplex == "duplex_simplex" 
+                  this.selectedPrinter.id && this.selectedPrinterConfig.Default?.Duplex == "duplex_simplex" 
                   ? i18next.t('printer_selection.duplex_none') 
-                  : this.selectedPrinterConfig.Profile?.Duplex == "duplex_vertical" 
+                  : this.selectedPrinterConfig.Default?.Duplex == "duplex_vertical" 
                   ? i18next.t('printer_selection.duplex_long') 
-                  : this.selectedPrinterConfig.Profile?.Duplex == "duplex_horizontal"
+                  : this.selectedPrinterConfig.Default?.Duplex == "duplex_horizontal"
                   ? i18next.t('printer_selection.duplex_short')
                   : null}
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
@@ -768,8 +768,8 @@ export class EzpPrinterSelection {
                   type: 'format',
                 }))}
                 preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.PaperFormats?.find((el) =>
-                  el.Name.includes(this.selectedPrinterConfig.Profile?.Paper)) 
-                  ? this.selectedPrinterConfig.Profile?.Paper 
+                  el.Name.includes(this.selectedPrinterConfig.Default?.Paper)) 
+                  ? this.selectedPrinterConfig.Default?.Paper 
                   : null}
                 disabled={!(this.selectedPrinterConfig.PaperFormats?.length > 0)}
               />
@@ -820,8 +820,8 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'quality',
                 }))}
-                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Resolutions?.includes(this.selectedPrinterConfig.Profile.Resolution) 
-                  ? this.selectedPrinterConfig.Profile.Resolution 
+                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Resolutions?.includes(this.selectedPrinterConfig.Default.Resolution) 
+                  ? this.selectedPrinterConfig.Default.Resolution 
                   : null}
                 disabled={!(this.selectedPrinterConfig.Resolutions?.length > 0)}
               />
@@ -840,8 +840,8 @@ export class EzpPrinterSelection {
                 })
                 )}
                 preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Trays?.find((el) =>
-                 el.Name.includes(this.selectedPrinterConfig.Profile.Tray)) 
-                 ? this.selectedPrinterConfig.Profile.Tray 
+                 el.Name.includes(this.selectedPrinterConfig.Default.Tray)) 
+                 ? this.selectedPrinterConfig.Default.Tray 
                  : null}
               /> ) : null}
               <ezp-input

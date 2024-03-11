@@ -93,7 +93,7 @@ export interface Trays {
 }
 
 export interface PrinterConfig {
-  Profile?: {
+  Default?: {
     Duplex?: string
     Color?: string
     Orientation?: string
