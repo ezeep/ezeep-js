@@ -41,6 +41,16 @@ export class EzpPrinterSelection {
       title: i18next.t('printer_selection.duplex_short'),
     },
   ]
+  public ColorOptions = [
+    {
+      id: 1,
+      title: i18next.t('printer_selection.color_color'),
+    },
+    {
+      id: 2,
+      title: i18next.t('printer_selection.color_grayscale'),
+    }
+  ]
   private printButton?: HTMLEzpTextButtonElement
 
   /**
@@ -700,37 +710,17 @@ export class EzpPrinterSelection {
                 icon="color"
                 placeholder={i18next.t('printer_selection.select_color')}
                 toggleFlow="horizontal"
-                options={
-                  this.selectedPrinterConfig.Color
-                    ? [
-                      {
-                        id: 1,
-                        title: i18next.t('printer_selection.color_color'),
-                        meta: '',
-                        type: 'color',
-                      },
-                      {
-                        id: 0,
-                        title: i18next.t('printer_selection.color_grayscale'),
-                        meta: '',
-                        type: 'color',
-                      },
-                    ]
-                    : [
-                      {
-                        id: 0,
-                        title: i18next.t('printer_selection.color_grayscale'),
-                        meta: '',
-                        type: 'color',
-                      },
-                    ]
-                }
+                options={this.ColorOptions?.map((option) => ({
+                  id: option.id,
+                  title: option.title,
+                  meta: '',
+                  type: 'color'
+                }))}
                 preSelected={
                   this.selectedPrinter.id
-                    ? this.selectedPrinterConfig.Default?.Color == "color"
+                    && this.selectedPrinterConfig.Default?.Color == "color"
                       ? i18next.t('printer_selection.color_color')
                       : i18next.t('printer_selection.color_grayscale')
-                    : null
                 }
                 disabled={!this.selectedPrinterConfig.ColorSupported}
               />
