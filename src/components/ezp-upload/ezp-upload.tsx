@@ -74,7 +74,6 @@ export class EzpUpload {
   private handleInput = () => {
     this.filename = this.input.files[0].name
     this.uploadFile.emit(this.input.files)
-    localStorage.removeItem('pageRanges');
   }
 
   /**
