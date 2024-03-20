@@ -378,18 +378,18 @@ export class EzpPrinterSelection {
           .then((data) => {
             this.selectedPrinterConfig = {...this.selectedPrinterConfig,...data[0]}
 
-            this.selectedProperties.color = this.selectedPrinterConfig.Default.Color == "color" ? true : false;
-            this.selectedProperties.orientation = this.selectedPrinterConfig.Default.Orientation;
-            this.selectedProperties.resolution = this.selectedPrinterConfig.Default.Resolution;
+            this.selectedProperties.color = this.selectedPrinterConfig.Default?.Color == "color" ? true : false;
+            this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation;
+            this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution;
 
             let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(obj => obj.Default === true);
-            this.selectedProperties.paper = defaultPaper.Name;
-            this.selectedProperties.paperid = defaultPaper.Id;
+            this.selectedProperties.paper = defaultPaper?.Name;
+            this.selectedProperties.paperid = defaultPaper?.Id;
 
             let defaultSource = this.selectedPrinterConfig.Trays?.find(obj => obj.Default === true);
             if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null) {
-              this.selectedProperties.trayname = defaultSource.Name;
-              this.selectedProperties.defaultSource = defaultSource.Index;
+              this.selectedProperties.trayname = defaultSource?.Name;
+              this.selectedProperties.defaultSource = defaultSource?.Index;
             }
             
             if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
@@ -397,8 +397,8 @@ export class EzpPrinterSelection {
               delete this.selectedProperties.defaultSource
             }
 
-            this.selectedProperties.duplex = this.selectedPrinterConfig.DuplexSupported;
-            this.selectedProperties.duplexmode = this.selectedPrinterConfig.DuplexMode;
+            this.selectedProperties.duplex = this.selectedPrinterConfig?.DuplexSupported;
+            this.selectedProperties.duplexmode = this.selectedPrinterConfig?.DuplexMode;
             delete this.selectedProperties.PageRanges
           })
         // this.setDefaultPaperFormat()
@@ -579,18 +579,18 @@ export class EzpPrinterSelection {
         .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
         .then((data) => {
           this.selectedPrinterConfig = data[0]
-          this.selectedProperties.color = this.selectedPrinterConfig.Default.Color == "color" ? true : false;
-          this.selectedProperties.orientation = this.selectedPrinterConfig.Default.Orientation;
-          this.selectedProperties.resolution = this.selectedPrinterConfig.Default.Resolution;
+          this.selectedProperties.color = this.selectedPrinterConfig.Default?.Color == "color" ? true : false;
+          this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation;
+          this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution;
 
           let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(obj => obj.Default === true);
-          this.selectedProperties.paper = defaultPaper.Name;
-          this.selectedProperties.paperid = defaultPaper.Id;
+          this.selectedProperties.paper = defaultPaper?.Name;
+          this.selectedProperties.paperid = defaultPaper?.Id;
 
           let defaultSource = this.selectedPrinterConfig.Trays?.find(obj => obj.Default === true);
           if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null) {
-            this.selectedProperties.trayname = defaultSource.Name;
-            this.selectedProperties.defaultSource = defaultSource.Index;
+            this.selectedProperties.trayname = defaultSource?.Name;
+            this.selectedProperties.defaultSource = defaultSource?.Index;
           }
 
           if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
@@ -598,8 +598,8 @@ export class EzpPrinterSelection {
             delete this.selectedProperties.defaultSource
           }
 
-          this.selectedProperties.duplex = this.selectedPrinterConfig.DuplexSupported;
-          this.selectedProperties.duplexmode = this.selectedPrinterConfig.DuplexMode;
+          this.selectedProperties.duplex = this.selectedPrinterConfig?.DuplexSupported;
+          this.selectedProperties.duplexmode = this.selectedPrinterConfig?.DuplexMode;
           delete this.selectedProperties.PageRanges
         })
       if (this.selectedProperties.paper === '') {
