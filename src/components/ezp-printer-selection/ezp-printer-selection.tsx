@@ -376,37 +376,51 @@ export class EzpPrinterSelection {
         await this.printService
           .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
           .then((data) => {
-            this.selectedPrinterConfig =  {...this.selectedPrinterConfig, ...data[0]}
+            this.selectedPrinterConfig = {...this.selectedPrinterConfig,...data[0]}
+
+            this.selectedProperties.color = this.selectedPrinterConfig.Default?.Color == "color" ? true : false;
+            this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation;
+            this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution;
+
+            let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(obj => obj.Default === true);
+            this.selectedProperties.paper = defaultPaper?.Name;
+            this.selectedProperties.paperid = defaultPaper?.Id;
+
+            let defaultSource = this.selectedPrinterConfig.Trays?.find(obj => obj.Default === true);
+            if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null) {
+              this.selectedProperties.trayname = defaultSource?.Name;
+              this.selectedProperties.defaultSource = defaultSource?.Index;
+            }
+            
+            if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+              delete this.selectedProperties.trayname
+              delete this.selectedProperties.defaultSource
+            }
+
+            this.selectedProperties.duplex = this.selectedPrinterConfig?.DuplexSupported;
+            this.selectedProperties.duplexmode = this.selectedPrinterConfig?.DuplexMode;
+            delete this.selectedProperties.PageRanges
           })
         // this.setDefaultPaperFormat()
         break
       case 'color':
-        this.selectedProperties.color = !!eventDetails.id
-        // console.log('color selected:')
-        // console.log(this.selectedProperties.color)
+        this.selectedProperties.color = eventDetails.title == i18next.t('printer_selection.color_color') ? true : false
         break
       case 'orientation':
         this.selectedProperties.orientation = eventDetails.id
-        // console.log('orientation selected:')
-        // console.log(this.selectedProperties.orientation)
         break
       case 'format':
         this.selectedProperties.paper = eventDetails.title
         this.selectedProperties.paperid = eventDetails.id
-        // console.log('paper selected:')
         break
       case 'quality':
         this.selectedProperties.resolution = eventDetails.title
-        // console.log('quality selected:')
-        // console.log(this.selectedProperties.resolution)
         break
       case 'length':
         this.selectedProperties.paperlength = eventDetails.value
-        // console.log(this.selectedProperties)
         break
       case 'width':
         this.selectedProperties.paperwidth = eventDetails.value
-        // console.log(this.selectedProperties)
         break
       case 'tray':
         if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
@@ -421,24 +435,21 @@ export class EzpPrinterSelection {
       case 'paper_ranges':
           this.selectedProperties.PageRanges = eventDetails.value;
           this.pageRangeInvalid = !validatePageRange(this.selectedProperties.PageRanges);
-          localStorage.setItem('pageRanges', JSON.stringify(this.selectedProperties.PageRanges));
-          // console.log(this.selectedProperties.PageRanges)
           break  
       case 'duplex':
-        if (eventDetails.title === 'None') {
-          this.selectedProperties.duplex = false
-        } else {
+        if (eventDetails.title == i18next.t('printer_selection.duplex_none')
+          || eventDetails.title == i18next.t('printer_selection.duplex_long')
+          || eventDetails.title == i18next.t('printer_selection.duplex_short')) {
           this.selectedProperties.duplex = true
+        } else {
+          this.selectedProperties.duplex = false
         }
         this.selectedProperties.duplexmode = eventDetails.id
-        // console.log('duplex selected:')
-        // console.log(this.selectedProperties.duplexmode)
         break
       default:
         break
     }
 
-    // setting paper id here to updated the prop for input.
     this.setPaperid()
   }
 
@@ -545,7 +556,7 @@ export class EzpPrinterSelection {
    */
 
   /** Description... */
-  async connectedCallback() {
+  async connectedCallback() {    
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService.registerFetchInterceptor()
     await this.getUserInfo()
@@ -566,7 +577,31 @@ export class EzpPrinterSelection {
     if (this.selectedPrinter.id != '') {
       await this.printService
         .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
-        .then((data) => (this.selectedPrinterConfig = data[0]))
+        .then((data) => {
+          this.selectedPrinterConfig = data[0]
+          this.selectedProperties.color = this.selectedPrinterConfig.Default?.Color == "color" ? true : false;
+          this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation;
+          this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution;
+
+          let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(obj => obj.Default === true);
+          this.selectedProperties.paper = defaultPaper?.Name;
+          this.selectedProperties.paperid = defaultPaper?.Id;
+
+          let defaultSource = this.selectedPrinterConfig.Trays?.find(obj => obj.Default === true);
+          if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null) {
+            this.selectedProperties.trayname = defaultSource?.Name;
+            this.selectedProperties.defaultSource = defaultSource?.Index;
+          }
+
+          if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+            delete this.selectedProperties.trayname
+            delete this.selectedProperties.defaultSource
+          }
+
+          this.selectedProperties.duplex = this.selectedPrinterConfig?.DuplexSupported;
+          this.selectedProperties.duplexmode = this.selectedPrinterConfig?.DuplexMode;
+          delete this.selectedProperties.PageRanges
+        })
       if (this.selectedProperties.paper === '') {
         this.setDefaultPaperFormat()
       }
@@ -757,8 +792,7 @@ export class EzpPrinterSelection {
                   meta: `${format.XRes} x ${format.YRes}`,
                   type: 'format',
                 }))}
-                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.PaperFormats?.find((el) =>
-                  el.Name.includes(this.selectedPrinterConfig.Default?.Paper)) 
+                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.PaperFormats?.find((el) => el.Name.includes(this.selectedPrinterConfig.Default?.Paper)) 
                   ? this.selectedPrinterConfig.Default?.Paper 
                   : null}
                 disabled={!(this.selectedPrinterConfig.PaperFormats?.length > 0)}
@@ -829,8 +863,7 @@ export class EzpPrinterSelection {
                   type: 'tray',
                 })
                 )}
-                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Trays?.find((el) =>
-                 el.Name.includes(this.selectedPrinterConfig.Default.Tray)) 
+                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Trays?.find((el) => el.Name.includes(this.selectedPrinterConfig.Default.Tray)) 
                  ? this.selectedPrinterConfig.Default.Tray 
                  : null}
               /> ) : null}
@@ -838,7 +871,7 @@ export class EzpPrinterSelection {
                   icon="paper_range"
                   suffix=""
                   placeholder="1-2,4-5,8"
-                  value={localStorage.getItem('pageRanges') ? this.selectedProperties.PageRanges : ''}
+                  value={this.selectedProperties.PageRanges}
                   eventType="paper_ranges"
                   type="text"
                   label={i18next.t('printer_selection.page_ranges')}
