@@ -176,6 +176,8 @@ export class EzpPrinterSelection {
     if (event.detail === 'print-processing') {
       this.printStopped = true
       this.printProcessing = false
+      // Abort the print request
+      this.printService.abortPrint()
     }
   }
 

@@ -17,6 +17,7 @@ export class EzpPrintService {
   devApi: boolean
   printerConfig: PrinterConfig
   printingApi: string
+  abortController: AbortController | null = null;
 
   private checkStoredRefreshToken() {
     if (authStore.state.refreshToken !== '') {
@@ -107,6 +108,8 @@ export class EzpPrintService {
     filename?: string,
     printAndDelete?: boolean
   ) {
+    this.abortController = new AbortController();
+
     return fetch(`https://${this.printingApi}/sfapi/Print/`, {
       method: 'POST',
       headers: {
@@ -121,7 +124,15 @@ export class EzpPrintService {
         ...(printAndDelete && { printanddelete: printAndDelete }),
         properties,
       }),
+      signal: this.abortController.signal
     })
+  }
+
+  abortPrint() {
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
   }
 
   printByFileID(
