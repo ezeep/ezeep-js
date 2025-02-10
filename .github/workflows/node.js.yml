@@ -30,10 +30,10 @@ jobs:
     steps:
     
     - name: Checkout main branch
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     
     - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: "${{ env.NPM_REGISTRY }}"
@@ -55,13 +55,13 @@ jobs:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         
     - name: Upload npm artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         path: ${{ env.DIST_PATH }}
         name: ${{ env.ARTIFACT_NAME }}
         
     - name: Upload ng directives artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         path: ${{ env.DIST_PATH_NG }}
         name: ${{ env.ARTIFACT_NAME_NG }}        
@@ -95,7 +95,7 @@ jobs:
     steps:
   
     - name: Checkout angular branch
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         ref: ngx-ezeep-js
          
@@ -106,13 +106,13 @@ jobs:
         version: "${{ env.MODULE_VERSION }}"
     
     - name: download angular build artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
           name: ng-directives.zip
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
    
     - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: "${{ env.NPM_REGISTRY }}"
@@ -141,7 +141,7 @@ jobs:
     steps:
  
     - name: Download npm artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: ${{ env.ARTIFACT_NAME }}
         path: "artifacts/v${{ env.MODULE_VERSION }}"
