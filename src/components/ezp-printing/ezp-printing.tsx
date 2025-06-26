@@ -63,7 +63,7 @@ export class EzpPrinting {
   @State() onlyGetSasUri: boolean = false
   @State() noDocumentOpen: boolean = false
   @State() systemAppearance: SystemAppearanceTypes
-  @State() file: File
+  @State() files: File[] = []
 
   /** Watchers */
 
@@ -75,7 +75,7 @@ export class EzpPrinting {
       for (let i = 0; i < newValue.length; i++) {
         array[i] = newValue.charCodeAt(i)
       }
-      this.file = new File([array], this.filename)
+      this.files = [new File([array], this.filename)]
     }
   }
 
@@ -142,8 +142,8 @@ export class EzpPrinting {
 
   @Listen('uploadFile')
   listenUploadFile(event: CustomEvent) {
-    this.filename = event.detail[0].name
-    this.file = event.detail[0]
+    this.files = event.detail
+    this.filename = this.files.length > 0 ? this.files[0].name : ''
     this.open()
   }
 
@@ -357,7 +357,7 @@ export class EzpPrinting {
             fileurl={this.fileurl}
             filetype={this.filetype}
             fileid={this.fileid}
-            file={this.file}
+            files={this.files}
             hidemenu={this.hidemenu}
             hideheader={this.hideheader}
             seamless={this.seamless}

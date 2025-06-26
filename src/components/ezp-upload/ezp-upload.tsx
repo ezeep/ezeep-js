@@ -15,7 +15,7 @@ export class EzpUpload {
    *
    */
 
-  @State() filename: string = ''
+  @State() selectedFiles: File[] = []
   @State() dragging: boolean = false
 
   /**
@@ -55,14 +55,15 @@ export class EzpUpload {
     event.preventDefault()
 
     this.dragging = false
-    this.filename = event.dataTransfer.files[0].name
-    this.uploadFile.emit(event.dataTransfer.files)
+    const files = Array.from(event.dataTransfer.files)
+    this.selectedFiles = files
+    this.uploadFile.emit(files)
   }
 
   @Listen('printCancel', { target: 'document' })
   listenPrintCancel() {
     this.form.reset()
-    this.filename = ''
+    this.selectedFiles = []
   }
 
   /**
@@ -72,8 +73,9 @@ export class EzpUpload {
    */
 
   private handleInput = () => {
-    this.filename = this.input.files[0].name
-    this.uploadFile.emit(this.input.files)
+    const files = Array.from(this.input.files)
+    this.selectedFiles = files
+    this.uploadFile.emit(files)
   }
 
   /**
@@ -102,15 +104,18 @@ export class EzpUpload {
                 type="file"
                 name="input"
                 id="input"
+                multiple
                 ref={(input) => (this.input = input)}
                 onInput={this.handleInput}
               />
               <ezp-label level="tertiary" text={i18next.t('upload.meta_trailing')} />
             </div>
-            {this.filename != '' && (
+            {this.selectedFiles.length > 0 && (
               <>
-                <ezp-label level="secondary" text={i18next.t('upload.selected_file')} />
-                <ezp-label level="tertiary" text={this.filename} />
+                <ezp-label level="secondary" text={i18next.t('upload.selected_files')} />
+                {this.selectedFiles.map((file, index) => (
+                  <ezp-label key={index} level="tertiary" text={file.name} />
+                ))}
               </>
             )}
           </div>

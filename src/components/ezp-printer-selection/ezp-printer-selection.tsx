@@ -64,7 +64,7 @@ export class EzpPrinterSelection {
   @Prop() fileurl: string
   @Prop({ mutable: true }) filetype: string
   @Prop({ mutable: true }) fileid: string
-  @Prop() file: File
+  @Prop() files: File[]
   @Prop() hidemenu: boolean = false
   @Prop() hideheader: boolean = false
   @Prop() seamless: boolean
@@ -316,8 +316,8 @@ export class EzpPrinterSelection {
         })
     }
 
-    if (this.file) {
-      await this.handleFiles(this.file, cleanPrintProperties)
+    if (this.files && this.files.length > 0) {
+      await this.handleFiles(this.files, cleanPrintProperties)
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
@@ -455,7 +455,7 @@ export class EzpPrinterSelection {
     this.setPaperid()
   }
 
-  async handleFiles(file: File, printPorperties) {
+  async handleFiles(files: File[], printPorperties) {
     this.preparingUpload = true
     const response = await this.printService.prepareFileUpload(authStore.state.accessToken)
     this.preparingUpload = false
@@ -467,7 +467,9 @@ export class EzpPrinterSelection {
 
     this.uploading = true
     try {
-      res = await this.printService.uploadBlobFiles(this.sasUri, file)
+      // For now, we'll upload the first file. In a full implementation, 
+      // you might want to upload all files and create a batch print job
+      res = await this.printService.uploadBlobFiles(this.sasUri, files[0])
     } catch (error) {
       this.printProcessing = false
       this.printFailed = true
@@ -621,7 +623,7 @@ export class EzpPrinterSelection {
         this.printerConfig = printerConfig
       })
 
-    if (this.file) {
+    if (this.files && this.files.length > 0) {
       await this.validateFileType(this.filename).then((valid) => {
         this.notSupported = !valid ? true : false
       })
