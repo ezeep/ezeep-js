@@ -758,18 +758,14 @@ export class EzpPrinterSelection {
                 <ezp-status
                   processing
                   description={
-                    this.preparingUpload
-                      ? i18next.t('printer_selection.prepare_upload')
-                      : this.uploading
-                      ? this.totalFiles > 1
-                        ? `${i18next.t('printer_selection.uploading')} (${
-                            this.currentFileIndex + 1
-                          }/${this.totalFiles})`
-                        : i18next.t('printer_selection.uploading')
-                      : this.totalFiles > 1
+                    this.totalFiles > 1
                       ? `${i18next.t('printer_selection.print_processing')} (${
                           this.currentFileIndex + 1
                         }/${this.totalFiles})`
+                      : this.preparingUpload
+                      ? i18next.t('printer_selection.prepare_upload')
+                      : this.uploading
+                      ? i18next.t('printer_selection.uploading')
                       : i18next.t('printer_selection.print_processing')
                   }
                   instance="print-processing"
