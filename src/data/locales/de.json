@@ -41,12 +41,14 @@
         "duplex_long": "auf der langen Seite umdrehen",
         "duplex_short": "auf der kurzen Seite umdrehen",
         "pull_print_success": "Bereit zum Auslösen.",
-        "width":"Breite",
-        "length":"Länge",
+        "width": "Breite",
+        "length": "Länge",
         "trays": "Papierfach",
         "select_trays": "Wähle Papierfach",
         "page_ranges": "Druckbereich",
-        "paper_ranges": "Papier-Ranges"
+        "paper_ranges": "Papier-Ranges",
+        "files_selected": "{{count}} Dateien ausgewählt",
+        "files": "Dateien"
     },
     "button_actions": {
         "login": "Anmelden",

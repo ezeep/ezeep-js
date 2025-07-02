@@ -41,12 +41,14 @@
         "unknown_location": "Unknown location",
         "no_printers": "No printers found.",
         "copies": "Copies",
-        "width":"Width",
-        "length":"Length",
+        "width": "Width",
+        "length": "Length",
         "trays": "Tray",
         "select_trays": "Select Tray",
         "page_ranges": "Page Ranges",
-        "paper_ranges": "Paper Ranges"
+        "paper_ranges": "Paper Ranges",
+        "files_selected": "{{count}} files selected",
+        "files": "files"
     },
     "button_actions": {
         "login": "Sign In",

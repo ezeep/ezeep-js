@@ -796,10 +796,12 @@ export class EzpPrinterSelection {
                       ? this.partialSuccess
                         ? `${i18next.t('printer_selection.print_success')} (${
                             this.successfulFiles.length
-                          }/${this.totalFiles} files) - ${this.failedFiles.length} failed`
+                          }/${this.totalFiles} ${i18next.t('printer_selection.files')} - ${
+                            this.failedFiles.length
+                          } failed`
                         : `${i18next.t('printer_selection.print_success')} (${
                             this.totalFiles
-                          } files)`
+                          } ${i18next.t('printer_selection.files')})`
                       : i18next.t('printer_selection.print_success')
                   }
                   instance="print-success"
@@ -840,7 +842,7 @@ export class EzpPrinterSelection {
                 text={
                   !this.notSupported
                     ? this.files && this.files.length > 1
-                      ? `${this.files.length} files selected`
+                      ? i18next.t('printer_selection.files_selected', { count: this.files.length })
                       : this.filename
                     : ''
                 }
