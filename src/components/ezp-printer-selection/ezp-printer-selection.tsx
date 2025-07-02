@@ -124,6 +124,9 @@ export class EzpPrinterSelection {
   @State() paperid: number | string
   @State() currentFileIndex: number = 0
   @State() totalFiles: number = 0
+  @State() failedFiles: string[] = []
+  @State() successfulFiles: string[] = []
+  @State() partialSuccess: boolean = false
 
   /**
    *
@@ -186,11 +189,16 @@ export class EzpPrinterSelection {
     switch (event.detail) {
       case 'print-success':
         this.printSuccess = false
+        this.partialSuccess = false
+        this.failedFiles = []
+        this.successfulFiles = []
         this.printCancel.emit()
         break
       case 'print-failed':
         this.printProcessing = false
         this.printFailed = false
+        this.failedFiles = []
+        this.successfulFiles = []
         break
       case 'no-printers':
         this.noPrinters = false
@@ -220,6 +228,9 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handleCancel = () => {
+    this.failedFiles = []
+    this.successfulFiles = []
+    this.partialSuccess = false
     this.printCancel.emit()
   }
 
@@ -238,6 +249,9 @@ export class EzpPrinterSelection {
   private handlePrint = async () => {
     this.printButton.blur()
     this.printProcessing = true
+    this.failedFiles = []
+    this.successfulFiles = []
+    this.partialSuccess = false
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
     if (
@@ -486,6 +500,8 @@ export class EzpPrinterSelection {
   async handleFiles(files: File[], printPorperties) {
     this.totalFiles = files.length
     this.currentFileIndex = 0
+    this.failedFiles = []
+    this.successfulFiles = []
 
     // Process each file individually
     for (let i = 0; i < files.length; i++) {
@@ -494,17 +510,31 @@ export class EzpPrinterSelection {
 
       try {
         await this.processSingleFile(file, printPorperties)
+        this.successfulFiles.push(file.name)
       } catch (error) {
         console.error(`Error processing file ${file.name}:`, error)
-        this.printFailed = true
-        this.printProcessing = false
-        return
+        this.failedFiles.push(file.name)
+        // Continue with the next file instead of stopping
       }
     }
 
-    // All files processed successfully
-    this.printSuccess = true
-    this.printProcessing = false
+    // Determine final status based on results
+    if (this.failedFiles.length === 0) {
+      // All files processed successfully
+      this.printSuccess = true
+      this.partialSuccess = false
+      this.printProcessing = false
+    } else if (this.successfulFiles.length === 0) {
+      // All files failed
+      this.printFailed = true
+      this.partialSuccess = false
+      this.printProcessing = false
+    } else {
+      // Some files succeeded, some failed - show partial success
+      this.printSuccess = true
+      this.partialSuccess = true
+      this.printProcessing = false
+    }
   }
 
   private async processSingleFile(file: File, printProperties: any) {
@@ -750,9 +780,13 @@ export class EzpPrinterSelection {
                   icon="checkmark-alt"
                   description={
                     this.totalFiles > 1
-                      ? `${i18next.t('printer_selection.pull_print_success')} (${
-                          this.totalFiles
-                        } files)`
+                      ? this.failedFiles.length > 0
+                        ? `${i18next.t('printer_selection.pull_print_success')} (${
+                            this.successfulFiles.length
+                          }/${this.totalFiles} files)`
+                        : `${i18next.t('printer_selection.pull_print_success')} (${
+                            this.totalFiles
+                          } files)`
                       : i18next.t('printer_selection.pull_print_success')
                   }
                   instance="print-success"
@@ -760,10 +794,16 @@ export class EzpPrinterSelection {
                 />
               ) : this.printSuccess ? (
                 <ezp-status
-                  icon="checkmark-alt"
+                  icon={this.partialSuccess ? 'exclamation-mark' : 'checkmark-alt'}
                   description={
                     this.totalFiles > 1
-                      ? `${i18next.t('printer_selection.print_success')} (${this.totalFiles} files)`
+                      ? this.partialSuccess
+                        ? `${i18next.t('printer_selection.print_success')} (${
+                            this.successfulFiles.length
+                          }/${this.totalFiles} files) - ${this.failedFiles.length} failed`
+                        : `${i18next.t('printer_selection.print_success')} (${
+                            this.totalFiles
+                          } files)`
                       : i18next.t('printer_selection.print_success')
                   }
                   instance="print-success"
@@ -803,8 +843,8 @@ export class EzpPrinterSelection {
               <ezp-label
                 text={
                   !this.notSupported
-                    ? this.totalFiles > 1
-                      ? `${this.totalFiles} files selected`
+                    ? this.files && this.files.length > 1
+                      ? `${this.files.length} files selected`
                       : this.filename
                     : ''
                 }
