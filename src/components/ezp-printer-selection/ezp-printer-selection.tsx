@@ -15,8 +15,7 @@ import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
 import { managePaperDimensions, poll, removeEmptyStrings } from '../../utils/utils'
-import { BlobUploadCommonResponse } from '@azure/storage-blob'
-import { PAPER_ID , validatePageRange , formatPageRange } from '../../utils/utils'
+import { PAPER_ID, validatePageRange, formatPageRange } from '../../utils/utils'
 
 @Component({
   tag: 'ezp-printer-selection',
@@ -24,7 +23,6 @@ import { PAPER_ID , validatePageRange , formatPageRange } from '../../utils/util
   shadow: true,
 })
 export class EzpPrinterSelection {
-  private sasUri = ''
   private fileExtension = ''
   private printService: EzpPrintService
   public duplexOptions = [
@@ -49,7 +47,7 @@ export class EzpPrinterSelection {
     {
       id: 2,
       title: i18next.t('printer_selection.color_grayscale'),
-    }
+    },
   ]
   private printButton?: HTMLEzpTextButtonElement
 
@@ -64,7 +62,7 @@ export class EzpPrinterSelection {
   @Prop() fileurl: string
   @Prop({ mutable: true }) filetype: string
   @Prop({ mutable: true }) fileid: string
-  @Prop() file: File
+  @Prop() files: File[]
   @Prop() hidemenu: boolean = false
   @Prop() hideheader: boolean = false
   @Prop() seamless: boolean
@@ -96,14 +94,14 @@ export class EzpPrinterSelection {
       Paper: '',
       Orientation: '',
       Resolution: '',
-      Tray: ''
+      Tray: '',
     },
     OrientationsSupported: [],
     PaperFormats: [],
     Resolutions: [],
     DuplexSupported: false,
     Color: false,
-    Trays: []
+    Trays: [],
   }
 
   // needs to be initialised with empty strings
@@ -116,14 +114,19 @@ export class EzpPrinterSelection {
     orientation: 1,
     copies: '',
     resolution: 0,
-    paperlength : 0,
-    paperwidth : 0,
+    paperlength: 0,
+    paperwidth: 0,
     defaultSource: '',
     trayname: '',
-    PageRanges : '',
+    PageRanges: '',
   }
 
   @State() paperid: number | string
+  @State() currentFileIndex: number = 0
+  @State() totalFiles: number = 0
+  @State() failedFiles: string[] = []
+  @State() successfulFiles: string[] = []
+  @State() partialSuccess: boolean = false
 
   /**
    *
@@ -186,11 +189,16 @@ export class EzpPrinterSelection {
     switch (event.detail) {
       case 'print-success':
         this.printSuccess = false
+        this.partialSuccess = false
+        this.failedFiles = []
+        this.successfulFiles = []
         this.printCancel.emit()
         break
       case 'print-failed':
         this.printProcessing = false
         this.printFailed = false
+        this.failedFiles = []
+        this.successfulFiles = []
         break
       case 'no-printers':
         this.noPrinters = false
@@ -220,6 +228,9 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handleCancel = () => {
+    this.failedFiles = []
+    this.successfulFiles = []
+    this.partialSuccess = false
     this.printCancel.emit()
   }
 
@@ -238,9 +249,16 @@ export class EzpPrinterSelection {
   private handlePrint = async () => {
     this.printButton.blur()
     this.printProcessing = true
+    this.failedFiles = []
+    this.successfulFiles = []
+    this.partialSuccess = false
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
-    if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+    if (
+      this.selectedPrinterConfig.Trays &&
+      this.selectedPrinterConfig.Trays.length >= 0 &&
+      this.selectedPrinterConfig.Trays[0] == null
+    ) {
       delete this.selectedProperties.trayname
       delete this.selectedProperties.defaultSource
     }
@@ -248,7 +266,7 @@ export class EzpPrinterSelection {
     cleanPrintProperties = managePaperDimensions(cleanPrintProperties)
     if (cleanPrintProperties.PageRanges)
       cleanPrintProperties.PageRanges = formatPageRange(cleanPrintProperties.PageRanges)
-     
+
     // put it in store for further use
     printStore.state.fileUrl = this.fileurl
     printStore.state.fileID = this.fileid
@@ -316,8 +334,8 @@ export class EzpPrinterSelection {
         })
     }
 
-    if (this.file) {
-      await this.handleFiles(this.file, cleanPrintProperties)
+    if (this.files && this.files.length > 0) {
+      await this.handleFiles(this.files, cleanPrintProperties)
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
@@ -342,16 +360,16 @@ export class EzpPrinterSelection {
       } else {
         this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
         localStorage.removeItem('printer')
-        localStorage.removeItem('properties')  
+        localStorage.removeItem('properties')
       }
     } else {
       this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
     }
 
-    this.setPaperid();
+    this.setPaperid()
   }
 
-  private setPaperid(){
+  private setPaperid() {
     this.paperid = this.selectedProperties.paperid
   }
 
@@ -367,7 +385,7 @@ export class EzpPrinterSelection {
     type: string
     id: string
     title: string
-    is_queue: boolean,
+    is_queue: boolean
     value?: any
   }) {
     switch (eventDetails.type) {
@@ -378,35 +396,49 @@ export class EzpPrinterSelection {
         await this.printService
           .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
           .then((data) => {
-            this.selectedPrinterConfig = {...this.selectedPrinterConfig,...data[0]}
+            this.selectedPrinterConfig = { ...this.selectedPrinterConfig, ...data[0] }
 
-            this.selectedProperties.color = this.selectedPrinterConfig.Default?.Color == "color" ? true : false;
-            this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation;
-            this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution;
+            this.selectedProperties.color =
+              this.selectedPrinterConfig.Default?.Color == 'color' ? true : false
+            this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation
+            this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution
 
-            let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(obj => obj.Default === true);
-            this.selectedProperties.paper = defaultPaper?.Name;
-            this.selectedProperties.paperid = defaultPaper?.Id;
+            let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(
+              (obj) => obj.Default === true
+            )
+            this.selectedProperties.paper = defaultPaper?.Name
+            this.selectedProperties.paperid = defaultPaper?.Id
 
-            let defaultSource = this.selectedPrinterConfig.Trays?.find(obj => obj.Default === true);
-            if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null) {
-              this.selectedProperties.trayname = defaultSource?.Name;
-              this.selectedProperties.defaultSource = defaultSource?.Index;
+            let defaultSource = this.selectedPrinterConfig.Trays?.find(
+              (obj) => obj.Default === true
+            )
+            if (
+              this.selectedPrinterConfig.Trays &&
+              this.selectedPrinterConfig.Trays.length >= 1 &&
+              this.selectedPrinterConfig.Trays[0] != null
+            ) {
+              this.selectedProperties.trayname = defaultSource?.Name
+              this.selectedProperties.defaultSource = defaultSource?.Index
             }
-            
-            if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+
+            if (
+              this.selectedPrinterConfig.Trays &&
+              this.selectedPrinterConfig.Trays.length >= 0 &&
+              this.selectedPrinterConfig.Trays[0] == null
+            ) {
               delete this.selectedProperties.trayname
               delete this.selectedProperties.defaultSource
             }
 
-            this.selectedProperties.duplex = this.selectedPrinterConfig?.DuplexSupported;
-            this.selectedProperties.duplexmode = this.selectedPrinterConfig?.DuplexMode;
+            this.selectedProperties.duplex = this.selectedPrinterConfig?.DuplexSupported
+            this.selectedProperties.duplexmode = this.selectedPrinterConfig?.DuplexMode
             delete this.selectedProperties.PageRanges
           })
         // this.setDefaultPaperFormat()
         break
       case 'color':
-        this.selectedProperties.color = eventDetails.title == i18next.t('printer_selection.color_color') ? true : false
+        this.selectedProperties.color =
+          eventDetails.title == i18next.t('printer_selection.color_color') ? true : false
         break
       case 'orientation':
         this.selectedProperties.orientation = eventDetails.id
@@ -425,23 +457,33 @@ export class EzpPrinterSelection {
         this.selectedProperties.paperwidth = eventDetails.value
         break
       case 'tray':
-        if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+        if (
+          this.selectedPrinterConfig.Trays &&
+          this.selectedPrinterConfig.Trays.length >= 0 &&
+          this.selectedPrinterConfig.Trays[0] == null
+        ) {
           delete this.selectedProperties.trayname
           delete this.selectedProperties.defaultSource
         }
-        if(this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null) {
+        if (
+          this.selectedPrinterConfig.Trays &&
+          this.selectedPrinterConfig.Trays.length >= 1 &&
+          this.selectedPrinterConfig.Trays[0] != null
+        ) {
           this.selectedProperties.trayname = eventDetails.title
           this.selectedProperties.defaultSource = eventDetails.id
         }
         break
       case 'paper_ranges':
-          this.selectedProperties.PageRanges = eventDetails.value;
-          this.pageRangeInvalid = !validatePageRange(this.selectedProperties.PageRanges);
-          break  
+        this.selectedProperties.PageRanges = eventDetails.value
+        this.pageRangeInvalid = !validatePageRange(this.selectedProperties.PageRanges)
+        break
       case 'duplex':
-        if (eventDetails.title == i18next.t('printer_selection.duplex_none')
-          || eventDetails.title == i18next.t('printer_selection.duplex_long')
-          || eventDetails.title == i18next.t('printer_selection.duplex_short')) {
+        if (
+          eventDetails.title == i18next.t('printer_selection.duplex_none') ||
+          eventDetails.title == i18next.t('printer_selection.duplex_long') ||
+          eventDetails.title == i18next.t('printer_selection.duplex_short')
+        ) {
           this.selectedProperties.duplex = true
         } else {
           this.selectedProperties.duplex = false
@@ -455,66 +497,118 @@ export class EzpPrinterSelection {
     this.setPaperid()
   }
 
-  async handleFiles(file: File, printPorperties) {
+  async handleFiles(files: File[], printPorperties) {
+    this.totalFiles = files.length
+    this.currentFileIndex = 0
+    this.failedFiles = []
+    this.successfulFiles = []
+
+    // Process each file individually
+    for (let i = 0; i < files.length; i++) {
+      this.currentFileIndex = i
+      const file = files[i]
+
+      try {
+        await this.processSingleFile(file, printPorperties)
+        this.successfulFiles.push(file.name)
+      } catch (error) {
+        console.error(`Error processing file ${file.name}:`, error)
+        this.failedFiles.push(file.name)
+        // Continue with the next file instead of stopping
+      }
+    }
+
+    // Determine final status based on results
+    if (this.failedFiles.length === 0) {
+      // All files processed successfully
+      this.printSuccess = true
+      this.partialSuccess = false
+      this.printProcessing = false
+    } else if (this.successfulFiles.length === 0) {
+      // All files failed
+      this.printFailed = true
+      this.partialSuccess = false
+      this.printProcessing = false
+    } else {
+      // Some files succeeded, some failed - show partial success
+      this.printSuccess = true
+      this.partialSuccess = true
+      this.printProcessing = false
+    }
+  }
+
+  private async processSingleFile(file: File, printProperties: any) {
     this.preparingUpload = true
     const response = await this.printService.prepareFileUpload(authStore.state.accessToken)
     this.preparingUpload = false
 
-    this.fileid = response.fileid
-    this.sasUri = response.sasUri
-    this.filetype = this.fileExtension
-    let res: BlobUploadCommonResponse
+    const fileid = response.fileid
+    const sasUri = response.sasUri
+    const filetype = this.getFileExtension(file.name)
 
     this.uploading = true
-    try {
-      res = await this.printService.uploadBlobFiles(this.sasUri, file)
-    } catch (error) {
-      this.printProcessing = false
-      this.printFailed = true
-    }
-    this.uploading = false
 
-    if (res._response.status === 201) {
-      this.printService
-        .printByFileID(
+    try {
+      // Upload the file
+      const res = await this.printService.uploadBlobFiles(sasUri, file)
+
+      if (res._response.status === 201) {
+        // Print the file
+        const data = await this.printService.printByFileID(
           authStore.state.accessToken,
-          this.fileid,
-          this.filetype,
+          fileid,
+          filetype,
           this.selectedPrinter.id,
-          printPorperties,
-          this.filename
+          printProperties,
+          file.name
         )
-        .then((data) => {
-          if (data.code === 804) {
-            this.printFailed = true
-            this.printProcessing = false
-          }
-          if (data.jobid) {
-            printStore.state.jobID = data.jobid
-            poll({
-              fn: this.printService.getPrintStatus,
-              validate: this.validateData,
-              interval: this.POLL_INTERVAL,
-              maxAttempts: this.MAX_POLL_ATTEMPTS,
-            }).catch((err) => {
-              console.log(err)
-              this.printFailed = true
-              this.printProcessing = false
-            })
-          } else {
-            this.printFailed = true
-            this.printProcessing = false
-          }
-        })
-        .catch((error) => {
-          console.log(error)
-          this.printFailed = true
-          this.printProcessing = false
-        })
-    } else {
-      this.printFailed = true
-      this.printProcessing = false
+
+        if (data.code === 804) {
+          throw new Error(`Print failed for file: ${file.name}`)
+        }
+
+        if (data.jobid) {
+          printStore.state.jobID = data.jobid
+          // Wait for this print job to complete before processing the next file
+          await this.waitForPrintCompletion()
+        } else {
+          throw new Error(`No job ID returned for file: ${file.name}`)
+        }
+      } else {
+        throw new Error(`Upload failed for file: ${file.name}`)
+      }
+    } catch (error) {
+      this.uploading = false
+      throw error
     }
+
+    this.uploading = false
+  }
+
+  private async waitForPrintCompletion(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const poll = async () => {
+        try {
+          const data = await this.printService.getPrintStatus()
+          if (data.jobstatus === 0) {
+            resolve()
+          } else if (data.jobstatus === 1) {
+            // Still processing, continue polling
+            setTimeout(poll, this.POLL_INTERVAL)
+          } else {
+            reject(new Error('Print job failed'))
+          }
+        } catch (error) {
+          reject(error)
+        }
+      }
+      poll()
+    })
+  }
+
+  private getFileExtension(filename: string): string {
+    const extension = filename.split('.').pop()
+    return extension ? extension.toLowerCase() : ''
   }
 
   private validateFileType = async (name: string): Promise<boolean> => {
@@ -543,7 +637,6 @@ export class EzpPrinterSelection {
       this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats?.find((el) =>
         el.Name.includes(format)
       ).Id
-
     } else {
       this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats[0]?.Name
       this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats[0]?.Id
@@ -558,7 +651,7 @@ export class EzpPrinterSelection {
    */
 
   /** Description... */
-  async connectedCallback() {    
+  async connectedCallback() {
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService.registerFetchInterceptor()
     await this.getUserInfo()
@@ -581,27 +674,38 @@ export class EzpPrinterSelection {
         .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
         .then((data) => {
           this.selectedPrinterConfig = data[0]
-          this.selectedProperties.color = this.selectedPrinterConfig.Default?.Color == "color" ? true : false;
-          this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation;
-          this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution;
+          this.selectedProperties.color =
+            this.selectedPrinterConfig.Default?.Color == 'color' ? true : false
+          this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation
+          this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution
 
-          let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(obj => obj.Default === true);
-          this.selectedProperties.paper = defaultPaper?.Name;
-          this.selectedProperties.paperid = defaultPaper?.Id;
+          let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(
+            (obj) => obj.Default === true
+          )
+          this.selectedProperties.paper = defaultPaper?.Name
+          this.selectedProperties.paperid = defaultPaper?.Id
 
-          let defaultSource = this.selectedPrinterConfig.Trays?.find(obj => obj.Default === true);
-          if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null) {
-            this.selectedProperties.trayname = defaultSource?.Name;
-            this.selectedProperties.defaultSource = defaultSource?.Index;
+          let defaultSource = this.selectedPrinterConfig.Trays?.find((obj) => obj.Default === true)
+          if (
+            this.selectedPrinterConfig.Trays &&
+            this.selectedPrinterConfig.Trays.length >= 1 &&
+            this.selectedPrinterConfig.Trays[0] != null
+          ) {
+            this.selectedProperties.trayname = defaultSource?.Name
+            this.selectedProperties.defaultSource = defaultSource?.Index
           }
 
-          if (this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 0 && this.selectedPrinterConfig.Trays[0] == null) {
+          if (
+            this.selectedPrinterConfig.Trays &&
+            this.selectedPrinterConfig.Trays.length >= 0 &&
+            this.selectedPrinterConfig.Trays[0] == null
+          ) {
             delete this.selectedProperties.trayname
             delete this.selectedProperties.defaultSource
           }
 
-          this.selectedProperties.duplex = this.selectedPrinterConfig?.DuplexSupported;
-          this.selectedProperties.duplexmode = this.selectedPrinterConfig?.DuplexMode;
+          this.selectedProperties.duplex = this.selectedPrinterConfig?.DuplexSupported
+          this.selectedProperties.duplexmode = this.selectedPrinterConfig?.DuplexMode
           delete this.selectedProperties.PageRanges
         })
       if (this.selectedProperties.paper === '') {
@@ -621,10 +725,12 @@ export class EzpPrinterSelection {
         this.printerConfig = printerConfig
       })
 
-    if (this.file) {
-      await this.validateFileType(this.filename).then((valid) => {
-        this.notSupported = !valid ? true : false
-      })
+    if (this.files && this.files.length > 0) {
+      // Validate all files
+      const validationPromises = this.files.map((file) => this.validateFileType(file.name))
+      const validationResults = await Promise.all(validationPromises)
+      const allValid = validationResults.every((valid) => valid)
+      this.notSupported = !allValid
     }
 
     this.loading = false
@@ -652,11 +758,15 @@ export class EzpPrinterSelection {
                 <ezp-status
                   processing
                   description={
-                    this.preparingUpload
+                    this.totalFiles > 1
+                      ? `${i18next.t('printer_selection.print_processing')} (${
+                          this.currentFileIndex + 1
+                        }/${this.totalFiles})`
+                      : this.preparingUpload
                       ? i18next.t('printer_selection.prepare_upload')
                       : this.uploading
-                        ? i18next.t('printer_selection.uploading')
-                        : i18next.t('printer_selection.print_processing')
+                      ? i18next.t('printer_selection.uploading')
+                      : i18next.t('printer_selection.print_processing')
                   }
                   instance="print-processing"
                   cancel
@@ -664,14 +774,34 @@ export class EzpPrinterSelection {
               ) : this.selectedPrinter.is_queue && this.printSuccess ? (
                 <ezp-status
                   icon="checkmark-alt"
-                  description={i18next.t('printer_selection.pull_print_success')}
+                  description={
+                    this.totalFiles > 1
+                      ? this.failedFiles.length > 0
+                        ? `${i18next.t('printer_selection.pull_print_success')} (${
+                            this.successfulFiles.length
+                          }/${this.totalFiles} files)`
+                        : `${i18next.t('printer_selection.pull_print_success')} (${
+                            this.totalFiles
+                          } files)`
+                      : i18next.t('printer_selection.pull_print_success')
+                  }
                   instance="print-success"
                   close
                 />
               ) : this.printSuccess ? (
                 <ezp-status
-                  icon="checkmark-alt"
-                  description={i18next.t('printer_selection.print_success')}
+                  icon={this.partialSuccess ? 'exclamation-mark' : 'checkmark-alt'}
+                  description={
+                    this.totalFiles > 1
+                      ? this.partialSuccess
+                        ? `${i18next.t('printer_selection.print_success')} (${
+                            this.successfulFiles.length
+                          }/${this.totalFiles} files) - ${this.failedFiles.length} failed`
+                        : `${i18next.t('printer_selection.print_success')} (${
+                            this.totalFiles
+                          } files)`
+                      : i18next.t('printer_selection.print_success')
+                  }
                   instance="print-success"
                   close
                 />
@@ -706,7 +836,16 @@ export class EzpPrinterSelection {
                 weight="heavy"
                 text={i18next.t('printer_selection.print') + `${!this.notSupported ? ':' : ''}`}
               />
-              <ezp-label text={!this.notSupported ? this.filename : ''} ellipsis />
+              <ezp-label
+                text={
+                  !this.notSupported
+                    ? this.files && this.files.length > 1
+                      ? `${this.files.length} files selected`
+                      : this.filename
+                    : ''
+                }
+                ellipsis
+              />
               {!this.hidemenu && (
                 <ezp-icon-button
                   level="tertiary"
@@ -751,13 +890,12 @@ export class EzpPrinterSelection {
                   id: option.id,
                   title: option.title,
                   meta: '',
-                  type: 'color'
+                  type: 'color',
                 }))}
                 preSelected={
-                  this.selectedPrinter.id
-                    && this.selectedPrinterConfig.Default?.Color == "color"
-                      ? i18next.t('printer_selection.color_color')
-                      : i18next.t('printer_selection.color_grayscale')
+                  this.selectedPrinter.id && this.selectedPrinterConfig.Default?.Color == 'color'
+                    ? i18next.t('printer_selection.color_color')
+                    : i18next.t('printer_selection.color_grayscale')
                 }
                 disabled={!this.selectedPrinterConfig.ColorSupported}
               />
@@ -773,13 +911,15 @@ export class EzpPrinterSelection {
                   type: 'duplex',
                 }))}
                 preSelected={
-                  this.selectedPrinter.id && this.selectedPrinterConfig.Default?.Duplex == "duplex_simplex" 
-                  ? i18next.t('printer_selection.duplex_none') 
-                  : this.selectedPrinterConfig.Default?.Duplex == "duplex_vertical" 
-                  ? i18next.t('printer_selection.duplex_long') 
-                  : this.selectedPrinterConfig.Default?.Duplex == "duplex_horizontal"
-                  ? i18next.t('printer_selection.duplex_short')
-                  : null}
+                  this.selectedPrinter.id &&
+                  this.selectedPrinterConfig.Default?.Duplex == 'duplex_simplex'
+                    ? i18next.t('printer_selection.duplex_none')
+                    : this.selectedPrinterConfig.Default?.Duplex == 'duplex_vertical'
+                    ? i18next.t('printer_selection.duplex_long')
+                    : this.selectedPrinterConfig.Default?.Duplex == 'duplex_horizontal'
+                    ? i18next.t('printer_selection.duplex_short')
+                    : null
+                }
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
               <ezp-select
@@ -788,15 +928,23 @@ export class EzpPrinterSelection {
                 placeholder={i18next.t('printer_selection.select_size')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
-                options={this.selectedPrinterConfig.PaperFormats && this.selectedPrinterConfig.PaperFormats.map((format) => ({
-                  id: format.Id,
-                  title: format.Name,
-                  meta: `${format.XRes} x ${format.YRes}`,
-                  type: 'format',
-                }))}
-                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.PaperFormats?.find((el) => el.Name.includes(this.selectedPrinterConfig.Default?.Paper)) 
-                  ? this.selectedPrinterConfig.Default?.Paper 
-                  : null}
+                options={
+                  this.selectedPrinterConfig.PaperFormats &&
+                  this.selectedPrinterConfig.PaperFormats.map((format) => ({
+                    id: format.Id,
+                    title: format.Name,
+                    meta: `${format.XRes} x ${format.YRes}`,
+                    type: 'format',
+                  }))
+                }
+                preSelected={
+                  this.selectedPrinter.id &&
+                  this.selectedPrinterConfig.PaperFormats?.find((el) =>
+                    el.Name.includes(this.selectedPrinterConfig.Default?.Paper)
+                  )
+                    ? this.selectedPrinterConfig.Default?.Paper
+                    : null
+                }
                 disabled={!(this.selectedPrinterConfig.PaperFormats?.length > 0)}
               />
               {this.paperid == PAPER_ID ? (
@@ -846,37 +994,53 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'quality',
                 }))}
-                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Resolutions?.includes(this.selectedPrinterConfig.Default.Resolution) 
-                  ? this.selectedPrinterConfig.Default.Resolution 
-                  : null}
+                preSelected={
+                  this.selectedPrinter.id &&
+                  this.selectedPrinterConfig.Resolutions?.includes(
+                    this.selectedPrinterConfig.Default.Resolution
+                  )
+                    ? this.selectedPrinterConfig.Default.Resolution
+                    : null
+                }
                 disabled={!(this.selectedPrinterConfig.Resolutions?.length > 0)}
               />
-             {this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays[0] != null ? (
-              <ezp-select
-                label={i18next.t('printer_selection.trays')}
-                icon="trays"
-                placeholder={i18next.t('printer_selection.select_trays')}
-                toggleFlow="horizontal"
-                optionFlow="horizontal"
-                options={this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1 && this.selectedPrinterConfig.Trays.map((trays) => ({
-                  title: trays.Name,
-                  id: trays.Index,
-                  meta: '',
-                  type: 'tray',
-                })
-                )}
-                preSelected={this.selectedPrinter.id && this.selectedPrinterConfig.Trays?.find((el) => el.Name.includes(this.selectedPrinterConfig.Default.Tray)) 
-                 ? this.selectedPrinterConfig.Default.Tray 
-                 : null}
-              /> ) : null}
+              {this.selectedPrinterConfig.Trays &&
+              this.selectedPrinterConfig.Trays.length >= 1 &&
+              this.selectedPrinterConfig.Trays[0] != null ? (
+                <ezp-select
+                  label={i18next.t('printer_selection.trays')}
+                  icon="trays"
+                  placeholder={i18next.t('printer_selection.select_trays')}
+                  toggleFlow="horizontal"
+                  optionFlow="horizontal"
+                  options={
+                    this.selectedPrinterConfig.Trays &&
+                    this.selectedPrinterConfig.Trays.length >= 1 &&
+                    this.selectedPrinterConfig.Trays.map((trays) => ({
+                      title: trays.Name,
+                      id: trays.Index,
+                      meta: '',
+                      type: 'tray',
+                    }))
+                  }
+                  preSelected={
+                    this.selectedPrinter.id &&
+                    this.selectedPrinterConfig.Trays?.find((el) =>
+                      el.Name.includes(this.selectedPrinterConfig.Default.Tray)
+                    )
+                      ? this.selectedPrinterConfig.Default.Tray
+                      : null
+                  }
+                />
+              ) : null}
               <ezp-input
-                  icon="paper_range"
-                  suffix=""
-                  placeholder="1-2,4-5,8"
-                  value={this.selectedProperties.PageRanges}
-                  eventType="paper_ranges"
-                  type="text"
-                  label={i18next.t('printer_selection.page_ranges')}
+                icon="paper_range"
+                suffix=""
+                placeholder="1-2,4-5,8"
+                value={this.selectedProperties.PageRanges}
+                eventType="paper_ranges"
+                type="text"
+                label={i18next.t('printer_selection.page_ranges')}
               />
             </div>
             <ezp-stepper label={i18next.t('printer_selection.copies')} max={10} icon="copies" />
@@ -891,7 +1055,9 @@ export class EzpPrinterSelection {
               id="cancel"
             />
             <ezp-text-button
-              disabled={this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid}
+              disabled={
+                this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
+              }
               type="button"
               onClick={this.handlePrint}
               label={i18next.t('button_actions.print')}

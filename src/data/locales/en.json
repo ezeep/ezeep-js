@@ -57,11 +57,11 @@
         "select_printer": "Select Printer"
     },
     "upload": {
-        "description": "Drop a file here into the browser ",
+        "description": "Drop files here into the browser ",
         "meta_leading": "or",
-        "meta_select": "select a file",
+        "meta_select": "select files",
         "meta_trailing": "to print with ezeep Blue.",
-        "selected_file": "Selected File:"
+        "selected_files": "Selected Files:"
     },
     "user_menu": {
         "theme": "Color theme",

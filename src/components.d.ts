@@ -126,9 +126,9 @@ export namespace Components {
           * Properties
          */
         "clientID": string;
-        "file": File;
         "fileid": string;
         "filename": string;
+        "files": File[];
         "filetype": string;
         "fileurl": string;
         "hideheader": boolean;
@@ -508,9 +508,9 @@ declare namespace LocalJSX {
           * Properties
          */
         "clientID"?: string;
-        "file"?: File;
         "fileid"?: string;
         "filename"?: string;
+        "files"?: File[];
         "filetype"?: string;
         "fileurl"?: string;
         "hideheader"?: boolean;
