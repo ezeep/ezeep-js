@@ -334,8 +334,10 @@ export class EzpPrinterSelection {
         })
     }
 
-    if (this.files && this.files.length > 0) {
-      await this.handleFiles(this.files, cleanPrintProperties)
+    if (this.files && this.files.length > 1) {
+      await this.processMultipleFiles(this.files, cleanPrintProperties)
+    } else if (this.files && this.files.length === 1) {
+      await this.processSingleFile(this.files[0], cleanPrintProperties)
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
@@ -590,13 +592,20 @@ export class EzpPrinterSelection {
       const poll = async () => {
         try {
           const data = await this.printService.getPrintStatus()
+          console.log('[waitForPrintCompletion] Poll response:', data)
+
           if (data.jobstatus === 0) {
+            // Success
             resolve()
-          } else if (data.jobstatus === 1) {
-            // Still processing, continue polling
+          } else if (data.jobstatus === 1246 || data.jobstatus === 129) {
+            // Still processing, keep polling
             setTimeout(poll, this.POLL_INTERVAL)
+          } else if (data.jobstatus === 3011 || data.jobstatus === 2) {
+            // Failure
+            reject(new Error('Print job failed: ' + (data.jobstatusstring || data.jobstatus)))
           } else {
-            reject(new Error('Print job failed'))
+            // Unknown status, treat as failure for safety
+            reject(new Error('Unknown print job status: ' + data.jobstatus))
           }
         } catch (error) {
           reject(error)
@@ -642,6 +651,41 @@ export class EzpPrinterSelection {
       this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats[0]?.Id
     }
     this.setPaperid()
+  }
+
+  private async processMultipleFiles(files: File[], printProperties: any) {
+    this.totalFiles = files.length
+    this.currentFileIndex = 0
+    this.failedFiles = []
+    this.successfulFiles = []
+
+    for (let i = 0; i < files.length; i++) {
+      this.currentFileIndex = i
+      const file = files[i]
+      try {
+        await this.processSingleFile(file, printProperties)
+        this.successfulFiles.push(file.name)
+      } catch (error) {
+        console.error(`Error processing file ${file.name}:`, error)
+        this.failedFiles.push(file.name)
+        // Continue with the next file
+      }
+    }
+
+    // Set UI state
+    if (this.failedFiles.length === 0) {
+      this.printSuccess = true
+      this.partialSuccess = false
+      this.printProcessing = false
+    } else if (this.successfulFiles.length === 0) {
+      this.printFailed = true
+      this.partialSuccess = false
+      this.printProcessing = false
+    } else {
+      this.printSuccess = true
+      this.partialSuccess = true
+      this.printProcessing = false
+    }
   }
 
   /**
