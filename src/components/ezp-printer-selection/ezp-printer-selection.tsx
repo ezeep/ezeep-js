@@ -332,9 +332,7 @@ export class EzpPrinterSelection {
           this.printFailed = true
           this.printProcessing = false
         })
-    }
-
-    if (this.files && this.files.length > 1) {
+    } else if (this.files && this.files.length > 1) {
       await this.processMultipleFiles(this.files, cleanPrintProperties)
     } else if (this.files && this.files.length === 1) {
       await this.processSingleFile(this.files[0], cleanPrintProperties)
@@ -588,31 +586,28 @@ export class EzpPrinterSelection {
   }
 
   private async waitForPrintCompletion(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const poll = async () => {
-        try {
-          const data = await this.printService.getPrintStatus()
-          console.log('[waitForPrintCompletion] Poll response:', data)
+    while (true) {
+      try {
+        const data = await this.printService.getPrintStatus()
+        console.log('[waitForPrintCompletion] Poll response:', data)
 
-          if (data.jobstatus === 0) {
-            // Success
-            resolve()
-          } else if (data.jobstatus === 1246 || data.jobstatus === 129) {
-            // Still processing, keep polling
-            setTimeout(poll, this.POLL_INTERVAL)
-          } else if (data.jobstatus === 3011 || data.jobstatus === 2) {
-            // Failure
-            reject(new Error('Print job failed: ' + (data.jobstatusstring || data.jobstatus)))
-          } else {
-            // Unknown status, treat as failure for safety
-            reject(new Error('Unknown print job status: ' + data.jobstatus))
-          }
-        } catch (error) {
-          reject(error)
+        if (data.jobstatus === 0) {
+          // Success
+          return
+        } else if (data.jobstatus === 1246 || data.jobstatus === 129) {
+          // Still processing, wait before next poll
+          await new Promise((resolve) => setTimeout(resolve, this.POLL_INTERVAL))
+        } else if (data.jobstatus === 3011 || data.jobstatus === 2) {
+          // Failure
+          throw new Error('Print job failed: ' + (data.jobstatusstring || data.jobstatus))
+        } else {
+          // Unknown status, treat as failure for safety
+          throw new Error('Unknown print job status: ' + data.jobstatus)
         }
+      } catch (error) {
+        throw error
       }
-      poll()
-    })
+    }
   }
 
   private getFileExtension(filename: string): string {
