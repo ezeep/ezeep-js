@@ -81,6 +81,7 @@ export class EzpPrinterSelection {
   @State() printFailed: boolean = false
   @State() notSupported: boolean = false
   @State() noPrinters: boolean = false
+  @State() hubDriverError: boolean = false
   @State() userMenuOpen: boolean = false
   @State() printStopped: boolean = false
   @State() userName: string
@@ -195,12 +196,12 @@ export class EzpPrinterSelection {
         this.printCancel.emit()
         break
       case 'print-failed':
-        this.printProcessing = false
         this.printFailed = false
-        this.failedFiles = []
-        this.successfulFiles = []
         break
-      case 'no-printers':
+      case 'hub-driver-error':
+        this.hubDriverError = false
+        break
+      case 'not-supported':
         this.noPrinters = false
         break
     }
@@ -214,6 +215,11 @@ export class EzpPrinterSelection {
         break
       case 'print-failed':
         this.printFailed = false
+        this.printProcessing = false
+        this.handlePrint()
+        break
+      case 'hub-driver-error':
+        this.hubDriverError = false
         this.printProcessing = false
         this.handlePrint()
         break
@@ -231,6 +237,7 @@ export class EzpPrinterSelection {
     this.failedFiles = []
     this.successfulFiles = []
     this.partialSuccess = false
+    this.hubDriverError = false
     this.printCancel.emit()
   }
 
@@ -252,6 +259,7 @@ export class EzpPrinterSelection {
     this.failedFiles = []
     this.successfulFiles = []
     this.partialSuccess = false
+    this.hubDriverError = false
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
     if (
@@ -309,8 +317,14 @@ export class EzpPrinterSelection {
           if (data.code === 804) {
             this.printFailed = true
             this.printProcessing = false
-          }
-          if (data.jobid) {
+          } else if (
+            this.selectedPrinter.is_queue &&
+            (data.code === 412 || data.code === 500 || data.code === 503)
+          ) {
+            // Hub printer specific errors - likely driver not assigned
+            this.hubDriverError = true
+            this.printProcessing = false
+          } else if (data.jobid) {
             printStore.state.jobID = data.jobid
             poll({
               fn: this.printService.getPrintStatus,
@@ -319,17 +333,32 @@ export class EzpPrinterSelection {
               maxAttempts: this.MAX_POLL_ATTEMPTS,
             }).catch((err) => {
               console.warn(err)
-              this.printFailed = true
+              // Check if this is a hub printer and the error might be driver-related
+              if (this.selectedPrinter.is_queue) {
+                this.hubDriverError = true
+              } else {
+                this.printFailed = true
+              }
               this.printProcessing = false
             })
           } else {
-            this.printFailed = true
+            // No job ID returned - check if it's a hub printer
+            if (this.selectedPrinter.is_queue) {
+              this.hubDriverError = true
+            } else {
+              this.printFailed = true
+            }
             this.printProcessing = false
           }
         })
         .catch((error) => {
           console.log(error)
-          this.printFailed = true
+          // Check if this is a hub printer and the error might be driver-related
+          if (this.selectedPrinter.is_queue) {
+            this.hubDriverError = true
+          } else {
+            this.printFailed = true
+          }
           this.printProcessing = false
         })
     } else if (this.files && this.files.length > 1) {
@@ -514,7 +543,14 @@ export class EzpPrinterSelection {
       } catch (error) {
         console.error(`Error processing file ${file.name}:`, error)
         this.failedFiles.push(file.name)
-        // Continue with the next file instead of stopping
+
+        // Check if this is a hub driver error
+        if (error.message && error.message.includes('Hub printer driver error')) {
+          this.hubDriverError = true
+          this.printProcessing = false
+          return // Stop processing other files if it's a hub driver issue
+        }
+        // Continue with the next file
       }
     }
 
@@ -567,6 +603,14 @@ export class EzpPrinterSelection {
           throw new Error(`Print failed for file: ${file.name}`)
         }
 
+        // Check for hub printer driver errors
+        if (
+          this.selectedPrinter.is_queue &&
+          (data.code === 412 || data.code === 500 || data.code === 503)
+        ) {
+          throw new Error(`Hub printer driver error for file: ${file.name}`)
+        }
+
         if (data.jobid) {
           printStore.state.jobID = data.jobid
           // Wait for this print job to complete before processing the next file
@@ -600,6 +644,12 @@ export class EzpPrinterSelection {
         } else if (data.jobstatus === 3011 || data.jobstatus === 2) {
           // Failure
           throw new Error('Print job failed: ' + (data.jobstatusstring || data.jobstatus))
+        } else if (
+          this.selectedPrinter.is_queue &&
+          (data.jobstatus === 412 || data.jobstatus === 500 || data.jobstatus === 503)
+        ) {
+          // Hub printer driver error
+          throw new Error('Hub printer driver error: ' + (data.jobstatusstring || data.jobstatus))
         } else {
           // Unknown status, treat as failure for safety
           throw new Error('Unknown print job status: ' + data.jobstatus)
@@ -859,6 +909,14 @@ export class EzpPrinterSelection {
                   icon="exclamation-mark"
                   description={i18next.t('printer_selection.not_supported')}
                   instance="not-supported"
+                  retry
+                />
+              ) : this.hubDriverError ? (
+                <ezp-status
+                  icon="exclamation-mark"
+                  description={i18next.t('printer_selection.print_failed')}
+                  instance="hub-driver-error"
+                  close
                   retry
                 />
               ) : this.noPrinters ? (
