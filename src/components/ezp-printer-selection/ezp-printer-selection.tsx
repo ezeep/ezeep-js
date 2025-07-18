@@ -242,15 +242,56 @@ export class EzpPrinterSelection {
   }
 
   private validateData = (data) => {
-    if (data.jobstatus === 0) {
-      this.printSuccess = true
+    console.log('[validateData] Checking data:', data)
+
+    const { jobstatus } = data
+
+    // Define status handlers
+    const statusHandlers = {
+      0: () => {
+        // Success
+        this.printSuccess = true
+        this.printProcessing = false
+        return true
+      },
+      1246: () => false, // Still processing
+      129: () => false, // Still processing
+      3011: () => {
+        // Failure
+        this.printFailed = true
+        this.printProcessing = false
+        return true
+      },
+      2: () => {
+        // Failure
+        this.printFailed = true
+        this.printProcessing = false
+        return true
+      },
+    }
+
+    // Check for hub printer driver errors
+    const hubDriverErrorCodes = [412, 500, 503, 1048579]
+    if (hubDriverErrorCodes.includes(jobstatus) && this.selectedPrinter.is_queue) {
+      this.hubDriverError = true
       this.printProcessing = false
       return true
     }
-    return false
+
+    // Use handler if exists, otherwise treat as failure
+    const handler = statusHandlers[jobstatus]
+    if (handler) {
+      return handler()
+    }
+
+    // Unknown status, treat as failure for safety
+    this.printFailed = true
+    this.printProcessing = false
+    return true
   }
   private POLL_INTERVAL = 2000
   private MAX_POLL_ATTEMPTS = Infinity
+  private HUB_TIMEOUT = 30000 // 30 seconds timeout for hub printers
 
   /** Description... */
   private handlePrint = async () => {
@@ -260,6 +301,17 @@ export class EzpPrinterSelection {
     this.successfulFiles = []
     this.partialSuccess = false
     this.hubDriverError = false
+
+    // Set up timeout for hub printers to prevent infinite loading
+    let hubTimeout: NodeJS.Timeout
+    if (this.selectedPrinter.is_queue) {
+      hubTimeout = setTimeout(() => {
+        console.log('[handlePrint] Hub printer timeout reached, setting driver error')
+        this.hubDriverError = true
+        this.printProcessing = false
+      }, this.HUB_TIMEOUT)
+    }
+
     // we have to initialse this obj with empty strings to display the select component
     // but don't want to send any attributes with empty strings to the API
     if (
@@ -297,6 +349,7 @@ export class EzpPrinterSelection {
           if (response.status === 200 && this.selectedPrinter.is_queue) {
             this.printProcessing = false
             this.printSuccess = true
+            if (hubTimeout) clearTimeout(hubTimeout)
           }
 
           if (response.status === 412) {
@@ -317,13 +370,16 @@ export class EzpPrinterSelection {
           if (data.code === 804) {
             this.printFailed = true
             this.printProcessing = false
+            if (hubTimeout) clearTimeout(hubTimeout)
           } else if (
             this.selectedPrinter.is_queue &&
-            (data.code === 412 || data.code === 500 || data.code === 503)
+            (data.code === 412 || data.code === 500 || data.code === 503 || data.code === 1048579)
           ) {
             // Hub printer specific errors - likely driver not assigned
+            console.log('[handlePrint] Hub printer driver error detected:', data)
             this.hubDriverError = true
             this.printProcessing = false
+            if (hubTimeout) clearTimeout(hubTimeout)
           } else if (data.jobid) {
             printStore.state.jobID = data.jobid
             poll({
@@ -332,7 +388,7 @@ export class EzpPrinterSelection {
               interval: this.POLL_INTERVAL,
               maxAttempts: this.MAX_POLL_ATTEMPTS,
             }).catch((err) => {
-              console.warn(err)
+              console.warn('[handlePrint] Polling error:', err)
               // Check if this is a hub printer and the error might be driver-related
               if (this.selectedPrinter.is_queue) {
                 this.hubDriverError = true
@@ -340,6 +396,7 @@ export class EzpPrinterSelection {
                 this.printFailed = true
               }
               this.printProcessing = false
+              if (hubTimeout) clearTimeout(hubTimeout)
             })
           } else {
             // No job ID returned - check if it's a hub printer
@@ -349,10 +406,11 @@ export class EzpPrinterSelection {
               this.printFailed = true
             }
             this.printProcessing = false
+            if (hubTimeout) clearTimeout(hubTimeout)
           }
         })
         .catch((error) => {
-          console.log(error)
+          console.log('[handlePrint] Error caught:', error)
           // Check if this is a hub printer and the error might be driver-related
           if (this.selectedPrinter.is_queue) {
             this.hubDriverError = true
@@ -360,11 +418,14 @@ export class EzpPrinterSelection {
             this.printFailed = true
           }
           this.printProcessing = false
+          if (hubTimeout) clearTimeout(hubTimeout)
         })
     } else if (this.files && this.files.length > 1) {
       await this.processMultipleFiles(this.files, cleanPrintProperties)
+      if (hubTimeout) clearTimeout(hubTimeout)
     } else if (this.files && this.files.length === 1) {
       await this.processSingleFile(this.files[0], cleanPrintProperties)
+      if (hubTimeout) clearTimeout(hubTimeout)
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
