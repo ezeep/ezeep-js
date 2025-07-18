@@ -244,35 +244,50 @@ export class EzpPrinterSelection {
   private validateData = (data) => {
     console.log('[validateData] Checking data:', data)
 
-    if (data.jobstatus === 0) {
-      this.printSuccess = true
-      this.printProcessing = false
-      return true
-    } else if (data.jobstatus === 1246 || data.jobstatus === 129) {
-      // Still processing, continue polling
-      return false
-    } else if (data.jobstatus === 3011 || data.jobstatus === 2) {
-      // Failure
-      this.printFailed = true
-      this.printProcessing = false
-      return true
-    } else if (
-      this.selectedPrinter.is_queue &&
-      (data.jobstatus === 412 ||
-        data.jobstatus === 500 ||
-        data.jobstatus === 503 ||
-        data.jobstatus === 1048579)
-    ) {
-      // Hub printer driver error - including the specific error code from the API
+    const { jobstatus } = data
+
+    // Define status handlers
+    const statusHandlers = {
+      0: () => {
+        // Success
+        this.printSuccess = true
+        this.printProcessing = false
+        return true
+      },
+      1246: () => false, // Still processing
+      129: () => false, // Still processing
+      3011: () => {
+        // Failure
+        this.printFailed = true
+        this.printProcessing = false
+        return true
+      },
+      2: () => {
+        // Failure
+        this.printFailed = true
+        this.printProcessing = false
+        return true
+      },
+    }
+
+    // Check for hub printer driver errors
+    const hubDriverErrorCodes = [412, 500, 503, 1048579]
+    if (hubDriverErrorCodes.includes(jobstatus) && this.selectedPrinter.is_queue) {
       this.hubDriverError = true
       this.printProcessing = false
       return true
-    } else {
-      // Unknown status, treat as failure for safety
-      this.printFailed = true
-      this.printProcessing = false
-      return true
     }
+
+    // Use handler if exists, otherwise treat as failure
+    const handler = statusHandlers[jobstatus]
+    if (handler) {
+      return handler()
+    }
+
+    // Unknown status, treat as failure for safety
+    this.printFailed = true
+    this.printProcessing = false
+    return true
   }
   private POLL_INTERVAL = 2000
   private MAX_POLL_ATTEMPTS = Infinity
