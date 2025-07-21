@@ -424,8 +424,30 @@ export class EzpPrinterSelection {
       await this.processMultipleFiles(this.files, cleanPrintProperties)
       if (hubTimeout) clearTimeout(hubTimeout)
     } else if (this.files && this.files.length === 1) {
-      await this.processSingleFile(this.files[0], cleanPrintProperties)
+      // --- Begin: Consistent single file handling ---
+      this.totalFiles = 1
+      this.currentFileIndex = 0
+      this.failedFiles = []
+      this.successfulFiles = []
+      try {
+        await this.processSingleFile(this.files[0], cleanPrintProperties)
+        this.successfulFiles.push(this.files[0].name)
+        this.printSuccess = true
+        this.partialSuccess = false
+        this.printProcessing = false
+      } catch (error) {
+        console.error(`Error processing file ${this.files[0].name}:`, error)
+        this.failedFiles.push(this.files[0].name)
+        this.printFailed = true
+        this.partialSuccess = false
+        this.printProcessing = false
+        // Check if this is a hub driver error
+        if (error.message && error.message.includes('Hub printer driver error')) {
+          this.hubDriverError = true
+        }
+      }
       if (hubTimeout) clearTimeout(hubTimeout)
+      // --- End: Consistent single file handling ---
     }
 
     localStorage.setItem('properties', JSON.stringify(this.selectedProperties))
