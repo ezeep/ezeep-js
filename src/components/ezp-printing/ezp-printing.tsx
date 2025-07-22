@@ -132,7 +132,7 @@ export class EzpPrinting {
 
   /** Description... */
   @Listen('authCancel')
-  listenAuthCancel(event?: any) {
+  listenAuthCancel() {
     this.authOpen = false
     this.checkAuth()
   }
