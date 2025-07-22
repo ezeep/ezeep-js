@@ -56,8 +56,9 @@ export class EzpUpload {
 
     this.dragging = false
     const files = Array.from(event.dataTransfer.files)
-    this.selectedFiles = files
-    this.uploadFile.emit(files)
+    // Add new files to existing selection instead of replacing
+    this.selectedFiles = [...this.selectedFiles, ...files]
+    this.uploadFile.emit(this.selectedFiles)
   }
 
   @Listen('printCancel', { target: 'document' })
@@ -74,8 +75,9 @@ export class EzpUpload {
 
   private handleInput = () => {
     const files = Array.from(this.input.files)
-    this.selectedFiles = files
-    this.uploadFile.emit(files)
+    // Add new files to existing selection instead of replacing
+    this.selectedFiles = [...this.selectedFiles, ...files]
+    this.uploadFile.emit(this.selectedFiles)
   }
 
   /**
