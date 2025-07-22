@@ -123,8 +123,23 @@ export class EzpPrinting {
 
   /** Description... */
   @Listen('authCancel')
-  listenAuthCancel() {
+  listenAuthCancel(event?: any) {
     this.authOpen = false
+    this.checkAuth()
+  }
+
+  @Listen('userCancel')
+  listenUserCancel() {
+    this.authOpen = false
+    // Clear the selected files and reset the upload component
+    this.files = []
+    this.filename = ''
+    // Emit printCancel to reset the upload component
+    const printCancelEvent = new CustomEvent('printCancel', {
+      bubbles: true,
+      detail: {},
+    })
+    document.dispatchEvent(printCancelEvent)
     this.checkAuth()
   }
 
@@ -163,7 +178,7 @@ export class EzpPrinting {
 
   @Listen('logout')
   listenLogout() {
-    this.logOut();
+    this.logOut()
   }
 
   /**
@@ -206,7 +221,6 @@ export class EzpPrinting {
     localStorage.removeItem('isAuthorized')
     this.printOpen = false
   }
-
 
   @Method()
   async getSasUri(): Promise<string> {

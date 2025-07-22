@@ -10,3 +10,16 @@
 
   display: block;
 }
+
+.auth-actions {
+  display: flex;
+  gap: var(--ezp-spacing-3);
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  ezp-text-button {
+    flex: 1;
+    max-width: calc(50% - var(--ezp-spacing-3) / 2);
+  }
+}

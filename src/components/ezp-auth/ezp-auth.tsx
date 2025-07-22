@@ -20,6 +20,7 @@ export class EzpAuth {
 
   @Event() authCancel: EventEmitter<MouseEvent>
   @Event() authSuccess: EventEmitter
+  @Event() userCancel: EventEmitter
 
   @Listen('dialogAction')
   listenDialogAction() {
@@ -123,12 +124,20 @@ export class EzpAuth {
         {this.hidelogin && this.trigger === 'button' ? (
           <ezp-status description={i18next.t('login_dialog.action')} processing cancel></ezp-status>
         ) : this.hidelogin && this.trigger === 'file' ? (
-          <ezp-text-button
-            type="button"
-            level="primary"
-            onClick={() => this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')}
-            label={i18next.t('button_actions.select_printer')}
-          />
+          <div class="auth-actions">
+            <ezp-text-button
+              type="button"
+              level="secondary"
+              onClick={() => this.userCancel.emit()}
+              label={i18next.t('button_actions.cancel')}
+            />
+            <ezp-text-button
+              type="button"
+              level="primary"
+              onClick={() => this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')}
+              label={i18next.t('button_actions.select_printer')}
+            />
+          </div>
         ) : (
           <ezp-dialog
             heading={i18next.t('login_dialog.heading')}

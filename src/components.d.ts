@@ -382,6 +382,7 @@ declare namespace LocalJSX {
         "hidelogin"?: boolean;
         "onAuthCancel"?: (event: CustomEvent<MouseEvent>) => void;
         "onAuthSuccess"?: (event: CustomEvent<any>) => void;
+        "onUserCancel"?: (event: CustomEvent<any>) => void;
         "redirectURI"?: string;
         "trigger"?: string;
     }
