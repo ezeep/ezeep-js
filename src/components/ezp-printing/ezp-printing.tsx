@@ -110,6 +110,15 @@ export class EzpPrinting {
   @Listen('printCancel')
   listenPrintCancel() {
     this.printOpen = false
+    // Clear the selected files and reset the upload component
+    this.files = []
+    this.filename = ''
+    // Emit printCancel to reset the upload component
+    const printCancelEvent = new CustomEvent('printCancel', {
+      bubbles: true,
+      detail: {},
+    })
+    document.dispatchEvent(printCancelEvent)
     this.printFinished.emit()
   }
 
@@ -200,15 +209,9 @@ export class EzpPrinting {
 
   @Method()
   async open() {
-    if (authStore.state.isAuthorized) {
-      if (this.filename) {
-        this.printOpen = true
-      } else {
-        this.noDocumentOpen = true
-      }
-    } else {
-      this.authOpen = true
-    }
+    // Always show auth dialog when files are uploaded to give users cancel option
+    // Even if already authenticated, show the auth component for consistency
+    this.authOpen = true
   }
 
   @Method()
