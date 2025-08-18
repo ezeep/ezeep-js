@@ -204,6 +204,10 @@ export class EzpPrinterSelection {
       case 'not-supported':
         this.noPrinters = false
         break
+      case 'no-printers':
+        this.noPrinters = false
+        this.printCancel.emit()
+        break
     }
   }
 
