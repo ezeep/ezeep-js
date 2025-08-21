@@ -50,6 +50,7 @@ export class EzpPrinting {
   @Prop() code: string
   @Prop() filedata: string
   @Prop() seamless: boolean = false
+  @Prop() webview: boolean = false
 
   /**
    *
@@ -365,6 +366,7 @@ export class EzpPrinting {
             hidelogin={this.hidelogin}
             trigger={this.trigger}
             code={this.code}
+            webview={this.webview}
           ></ezp-auth>
         ) : this.printOpen ? (
           <ezp-printer-selection
