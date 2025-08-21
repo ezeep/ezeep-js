@@ -13,7 +13,7 @@ The ezeep.js JavaScript library implements the [ezeep Blue API](https://apidocs.
 1. Sign up for an ezeep Blue account. This creates an **administrator account** and a new **ezeep organization**.
    [Sign up here](https://www.ezeep.com/blue/). After successfully signup, you can manage your ezeep organization [here](https://app.ezeep.com).
 
-2. Register your web application to receive your **Client-ID**. Contact the ezeep team at <helpdesk@ezeep.com> and provide the **Redirect Uri** of your web application. This Uri must host the ezeep.js component. (Here are more details on [OAuth workflows](https://oauth.net/2/) and [Client-ID](https://www.oauth.com/oauth2-servers/client-registration/client-id-secret/)/[Redirect Uri](https://www.oauth.com/oauth2-servers/redirect-uris/))
+2. Register your web application to receive your **Client-ID**. Contact the ezeep Blue integration team via the [API Contact Form](https://www.ezeep.com/api-contact-us/) and provide the **Redirect Uri** of your web application. This Uri must host the ezeep.js component. (Here are more details on [OAuth workflows](https://oauth.net/2/) and [Client-ID](https://www.oauth.com/oauth2-servers/client-registration/client-id-secret/)/[Redirect Uri](https://www.oauth.com/oauth2-servers/redirect-uris/))
 
 3. Download the [ezeep Blue Connector](https://ezeep.io/blueconnectorps) and install it on a machine (e.g. your local machine) with a printer on the same network. After the installation you are prompted to authenticate with your ezeep Account. Your printers in your network will be discovered automatically and advertised to the ezeep Administration Portal.
 
