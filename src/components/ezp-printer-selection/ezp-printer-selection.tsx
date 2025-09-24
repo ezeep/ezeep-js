@@ -1229,7 +1229,7 @@ export class EzpPrinterSelection {
                 label={i18next.t('printer_selection.page_ranges')}
               />
             </div>
-            <ezp-stepper label={i18next.t('printer_selection.copies')} max={10} icon="copies" />
+            <ezp-stepper label={i18next.t('printer_selection.copies')} icon="copies" />
           </div>
           <div id="footer">
             <ezp-text-button
