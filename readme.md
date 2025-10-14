@@ -182,6 +182,47 @@ If you want to bind the printing process to a custom html element, you can use t
 </html>
 ```
 
+### Example with Pre-Authentication (using refresh token)
+
+If you already have a refresh token from a previous authentication session, you can pre-authenticate the user without requiring them to go through the OAuth login flow:
+
+```html
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
+    <title>ezeep-js</title>
+  </head>
+  <body>
+    <ezp-printing
+      clientid="your-client-id"
+      redirecturi="https://your-site.com/"
+      trigger="button"
+      fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+      filename="dummypdf"
+      filetype="pdf"
+    >
+    </ezp-printing>
+    <script>
+      const ezpPrinting = document.querySelector('ezp-printing')
+
+      // Set the refresh token for pre-authentication
+      // This allows users to bypass the OAuth login flow
+      const refreshToken = 'your-refresh-token-here' // Get this from your backend/session storage
+      ezpPrinting.setAuthRefreshToken(refreshToken)
+    </script>
+  </body>
+</html>
+```
+
+This approach is useful when:
+- You manage authentication through your own backend system
+- You want to provide a seamless printing experience without additional login prompts
+- You have stored refresh tokens from previous user sessions
+
 ## Contribution Guide
 
 Make sure you follow the [GitHub flow](https://guides.github.com/introduction/flow/) if you want to contribute. Clone and create a branch for your contribution. When finished, create a pull request for the main branch.

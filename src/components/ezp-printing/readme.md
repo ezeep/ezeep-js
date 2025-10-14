@@ -72,6 +72,22 @@ Public methods
 
 Type: `Promise<void>`
 
+### `setAuthRefreshToken(refreshToken: string) => Promise<void>`
+
+Sets a refresh token for pre-authentication. This method allows you to provide an existing refresh token to authenticate users without requiring them to go through the OAuth login flow.
+
+The refresh token is stored in both localStorage and the auth store, following the same pattern used by the component during self-managed authentication.
+
+#### Parameters
+
+| Name           | Type     | Description                                                |
+| -------------- | -------- | ---------------------------------------------------------- |
+| `refreshToken` | `string` | The refresh token obtained from a previous authentication |
+
+#### Returns
+
+Type: `Promise<void>`
+
 ## Dependencies
 
 ### Depends on

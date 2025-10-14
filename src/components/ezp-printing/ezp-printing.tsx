@@ -251,6 +251,17 @@ export class EzpPrinting {
   }
 
   @Method()
+  async setAuthRefreshToken(refreshToken: string) {
+    // Store the refresh token in the same way as the component does in self-managed auth
+    authStore.state.refreshToken = refreshToken
+    localStorage.setItem('refreshToken', refreshToken)
+
+    // Mark as authorized since we have a valid refresh token
+    authStore.state.isAuthorized = true
+    localStorage.setItem('isAuthorized', 'true')
+  }
+
+  @Method()
   async checkAuth(): Promise<boolean> {
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
