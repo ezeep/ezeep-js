@@ -76,7 +76,7 @@ Type: `Promise<void>`
 
 Sets a refresh token for pre-authentication. This method allows you to provide an existing refresh token to authenticate users without requiring them to go through the OAuth login flow.
 
-The refresh token is stored in both localStorage and the auth store, following the same pattern used by the component during self-managed authentication.
+The method stores the refresh token and immediately exchanges it for a valid access token by calling the OAuth token endpoint. This ensures that the user is fully authenticated and won't see the login dialog when printing.
 
 #### Parameters
 
@@ -87,6 +87,8 @@ The refresh token is stored in both localStorage and the auth store, following t
 #### Returns
 
 Type: `Promise<void>`
+
+A promise that resolves when the refresh token has been stored and exchanged for an access token.
 
 ## Dependencies
 

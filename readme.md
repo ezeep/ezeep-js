@@ -207,12 +207,18 @@ If you already have a refresh token from a previous authentication session, you 
     >
     </ezp-printing>
     <script>
-      const ezpPrinting = document.querySelector('ezp-printing')
+      // Wait for the component to be ready
+      customElements.whenDefined('ezp-printing').then(async () => {
+        const ezpPrinting = document.querySelector('ezp-printing')
 
-      // Set the refresh token for pre-authentication
-      // This allows users to bypass the OAuth login flow
-      const refreshToken = 'your-refresh-token-here' // Get this from your backend/session storage
-      ezpPrinting.setAuthRefreshToken(refreshToken)
+        // Set the refresh token for pre-authentication
+        // This automatically exchanges it for an access token
+        // and allows users to bypass the OAuth login flow
+        const refreshToken = 'your-refresh-token-here' // Get this from your backend/session storage
+        await ezpPrinting.setAuthRefreshToken(refreshToken)
+
+        console.log('User pre-authenticated successfully')
+      })
     </script>
   </body>
 </html>

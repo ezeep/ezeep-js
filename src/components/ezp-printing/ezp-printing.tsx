@@ -256,9 +256,9 @@ export class EzpPrinting {
     authStore.state.refreshToken = refreshToken
     localStorage.setItem('refreshToken', refreshToken)
 
-    // Mark as authorized since we have a valid refresh token
-    authStore.state.isAuthorized = true
-    localStorage.setItem('isAuthorized', 'true')
+    // Use the refresh token to obtain a valid access token
+    // This ensures the user doesn't see the login dialog
+    await this.auth.refreshTokens()
   }
 
   @Method()

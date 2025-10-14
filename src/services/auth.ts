@@ -91,7 +91,7 @@ export class EzpAuthorizationService {
   }
 
   refreshTokens() {
-    fetch(this.accessTokenURL, {
+    return fetch(this.accessTokenURL, {
       credentials: 'include',
       headers: {
         Authorization: 'Basic ' + btoa(this.clientID + ':'),
@@ -116,6 +116,7 @@ export class EzpAuthorizationService {
           authStore.state.refreshToken = this.refreshToken
 
           authStore.state.isAuthorized = true
+          localStorage.setItem('isAuthorized', 'true')
         }
       })
   }
