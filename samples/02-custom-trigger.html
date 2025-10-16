@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
+    <title>ezeep.js - Custom Trigger Example</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        min-height: 100vh;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .description {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #f5576c;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 4px;
+      }
+      .info-box h3 {
+        margin-top: 0;
+        color: #f5576c;
+      }
+      .info-box ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .info-box li {
+        margin: 5px 0;
+      }
+      .demo-area {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        min-height: 250px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 40px;
+        margin: 30px 0;
+      }
+      .config-note {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .config-note strong {
+        color: #856404;
+      }
+      code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+
+      /* Custom Button Styles */
+      .customButton {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 16px 32px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .customButton:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+
+      .customButton:active {
+        transform: translateY(0);
+      }
+
+      .customButton2 {
+        background: #28a745;
+        border: 2px solid #218838;
+        border-radius: 25px;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .customButton2:hover {
+        background: #218838;
+        border-color: #1e7e34;
+      }
+
+      .customButton3 {
+        background: white;
+        border: 3px solid #f5576c;
+        border-radius: 6px;
+        color: #f5576c;
+        padding: 14px 28px;
+        font-size: 17px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .customButton3:hover {
+        background: #f5576c;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎨 Custom Trigger Example</h1>
+      <p class="description">
+        This example shows how you can use your own HTML elements as triggers for the print dialog.
+        You have full control over the design and behavior of the buttons.
+      </p>
+
+      <div class="info-box">
+        <h3>How it Works</h3>
+        <ul>
+          <li>The ezeep component is initialized with <code>trigger="custom"</code></li>
+          <li>You create your own HTML elements (buttons, links, etc.)</li>
+          <li>With JavaScript, you call <code>ezpPrinting.open()</code> to open the print dialog</li>
+          <li>Complete design freedom for your own custom styling</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>Attributes Used</h3>
+        <ul>
+          <li><code>clientid</code>: Your registered Client-ID</li>
+          <li><code>redirecturi</code>: Your registered Redirect URI</li>
+          <li><code>trigger="custom"</code>: No predefined element is rendered</li>
+          <li><code>fileurl</code>: URL to the file to be printed</li>
+          <li><code>filename</code>: Name of the file to be printed</li>
+          <li><code>filetype</code>: File type (e.g. "pdf")</li>
+        </ul>
+      </div>
+
+      <div class="demo-area">
+        <h3 style="margin: 0 0 20px 0; color: #333;">Different Custom Button Styles:</h3>
+
+        <ezp-printing
+          id="ezp1"
+          clientid="78KYzeX5wS8r0FYz9KdvNt9xHMRA61PJK80IHwNj"
+          redirecturi="https://localhost:3333/"
+          trigger="custom"
+          filename="dummypdf"
+          fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+          filetype="pdf"
+        >
+        </ezp-printing>
+
+        <button class="customButton" id="btn1">
+          Gradient Print Button
+        </button>
+
+        <button class="customButton2" id="btn2">
+          <span style="font-size: 20px;">✓</span>
+          Success Style Button
+        </button>
+
+        <button class="customButton3" id="btn3">
+          Outlined Print Button
+        </button>
+      </div>
+
+      <div class="info-box">
+        <h3>💡 Benefits</h3>
+        <ul>
+          <li><strong>Design Freedom:</strong> Fully customize the appearance to match your corporate design</li>
+          <li><strong>Flexibility:</strong> Use any HTML elements as triggers</li>
+          <li><strong>Integration:</strong> Seamless integration into existing UI frameworks</li>
+          <li><strong>Control:</strong> Full control over event handling and user experience</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>📝 Usage Notes</h3>
+        <ul>
+          <li>Open this file via an HTTPS server</li>
+          <li>All three buttons open the same print dialog</li>
+          <li>You can create as many custom triggers as you want</li>
+          <li>The <code>open()</code> method is asynchronous and returns a Promise</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Wait until the component is fully loaded
+      customElements.whenDefined('ezp-printing').then(() => {
+        const ezpPrinting = document.getElementById('ezp1')
+        const button1 = document.getElementById('btn1')
+        const button2 = document.getElementById('btn2')
+        const button3 = document.getElementById('btn3')
+
+        // Event listeners for all custom buttons
+        button1.onclick = async () => {
+          console.log('Gradient Button clicked')
+          await ezpPrinting.open()
+        }
+
+        button2.onclick = async () => {
+          console.log('Success Button clicked')
+          await ezpPrinting.open()
+        }
+
+        button3.onclick = async () => {
+          console.log('Outlined Button clicked')
+          await ezpPrinting.open()
+        }
+
+        console.log('Custom trigger example initialized successfully')
+      })
+    </script>
+  </body>
+</html>

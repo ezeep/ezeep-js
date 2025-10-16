@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <title>ezeep.js - Interactive Examples</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 50px;
+      }
+
+      .header h1 {
+        font-size: 3em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .header p {
+        font-size: 1.2em;
+        opacity: 0.95;
+      }
+
+      .intro-box {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .intro-box h2 {
+        color: #667eea;
+        margin-bottom: 15px;
+      }
+
+      .intro-box p {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 10px;
+      }
+
+      .intro-box ul {
+        color: #666;
+        line-height: 1.8;
+        margin-left: 20px;
+      }
+
+      .examples-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .example-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .example-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+      }
+
+      .example-card .icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+      }
+
+      .example-card h3 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 1.5em;
+      }
+
+      .example-card p {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        flex-grow: 1;
+      }
+
+      .example-card .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .example-card .tag {
+        background: #f0f0f0;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        color: #555;
+      }
+
+      .example-card .button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 600;
+        text-decoration: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .example-card .button:hover {
+        opacity: 0.9;
+      }
+
+      /* Different gradient colors for each card */
+      .example-card:nth-child(1) .button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .example-card:nth-child(2) .button {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+
+      .example-card:nth-child(3) .button {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+
+      .example-card:nth-child(4) .button {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      }
+
+      .resources-box {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .resources-box h2 {
+        color: #667eea;
+        margin-bottom: 20px;
+      }
+
+      .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .resource-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #333;
+        transition: background 0.3s ease;
+      }
+
+      .resource-link:hover {
+        background: #e9ecef;
+      }
+
+      .resource-link .icon {
+        font-size: 1.5em;
+      }
+
+      .resource-link .text {
+        flex-grow: 1;
+      }
+
+      .resource-link .title {
+        font-weight: 600;
+        color: #667eea;
+        margin-bottom: 3px;
+      }
+
+      .resource-link .description {
+        font-size: 0.9em;
+        color: #666;
+      }
+
+      .footer {
+        text-align: center;
+        color: white;
+        margin-top: 50px;
+        opacity: 0.9;
+      }
+
+      .footer a {
+        color: white;
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .examples-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🖨️ ezeep.js Interactive Examples</h1>
+        <p>Explore different integration scenarios for the ezeep.js web component</p>
+      </div>
+
+      <div class="intro-box">
+        <h2>Welcome!</h2>
+        <p>
+          This collection showcases various ways to integrate ezeep.js into your web application.
+          Each example is fully functional and demonstrates a specific use case.
+        </p>
+        <p><strong>Before you start:</strong></p>
+        <ul>
+          <li>Make sure you have an ezeep Blue account (<a href="https://www.ezeep.com/free-trial/" target="_blank">sign up here</a>)</li>
+          <li>Install the ezeep Blue Connector on a device with printer access</li>
+          <li>Examples are pre-configured with a test Client-ID for localhost:8443</li>
+          <li>Serve these files over HTTPS (required for OAuth)</li>
+        </ul>
+      </div>
+
+      <div class="examples-grid">
+        <a href="01-button-trigger.html" class="example-card">
+          <div class="icon">🖨️</div>
+          <h3>Button Trigger</h3>
+          <p>
+            The simplest integration with a predefined print button. Perfect for getting started
+            quickly with minimal configuration.
+          </p>
+          <div class="tags">
+            <span class="tag">Simple</span>
+            <span class="tag">Quick Start</span>
+            <span class="tag">Beginner</span>
+          </div>
+          <div class="button">View Example →</div>
+        </a>
+
+        <a href="02-custom-trigger.html" class="example-card">
+          <div class="icon">🎨</div>
+          <h3>Custom Trigger</h3>
+          <p>
+            Use your own styled buttons and elements to trigger printing. Demonstrates three
+            different custom button styles with full design control.
+          </p>
+          <div class="tags">
+            <span class="tag">Customizable</span>
+            <span class="tag">Flexible</span>
+            <span class="tag">Design</span>
+          </div>
+          <div class="button">View Example →</div>
+        </a>
+
+        <a href="03-file-trigger.html" class="example-card">
+          <div class="icon">📁</div>
+          <h3>Drag & Drop Upload</h3>
+          <p>
+            Interactive drag & drop file upload area. Users can drag files directly or click
+            to select them from their device.
+          </p>
+          <div class="tags">
+            <span class="tag">Interactive</span>
+            <span class="tag">File Upload</span>
+            <span class="tag">Kiosk</span>
+          </div>
+          <div class="button">View Example →</div>
+        </a>
+
+        <a href="04-pre-authentication.html" class="example-card">
+          <div class="icon">🔐</div>
+          <h3>Pre-Authentication</h3>
+          <p>
+            Bypass the OAuth login flow using refresh tokens. Ideal for SSO integration
+            and seamless user experiences.
+          </p>
+          <div class="tags">
+            <span class="tag">SSO</span>
+            <span class="tag">Enterprise</span>
+            <span class="tag">Advanced</span>
+          </div>
+          <div class="button">View Example →</div>
+        </a>
+      </div>
+
+      <div class="resources-box">
+        <h2>📚 Additional Resources</h2>
+        <div class="resources-grid">
+          <a href="README.md" class="resource-link" target="_blank">
+            <div class="icon">📖</div>
+            <div class="text">
+              <div class="title">Documentation</div>
+              <div class="description">Detailed setup guide</div>
+            </div>
+          </a>
+
+          <a href="https://apidocs.ezeep.com/" class="resource-link" target="_blank">
+            <div class="icon">🔧</div>
+            <div class="text">
+              <div class="title">API Docs</div>
+              <div class="description">ezeep Blue API reference</div>
+            </div>
+          </a>
+
+          <a href="https://github.com/ezeep/ezeep-js" class="resource-link" target="_blank">
+            <div class="icon">💻</div>
+            <div class="text">
+              <div class="title">GitHub</div>
+              <div class="description">Source code & issues</div>
+            </div>
+          </a>
+
+          <a href="mailto:helpdesk@ezeep.com" class="resource-link">
+            <div class="icon">📧</div>
+            <div class="text">
+              <div class="title">Support</div>
+              <div class="description">helpdesk@ezeep.com</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>
+          Made with ❤️ by <a href="https://www.ezeep.com" target="_blank">ezeep</a> |
+          <a href="https://github.com/ezeep/ezeep-js" target="_blank">View on GitHub</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

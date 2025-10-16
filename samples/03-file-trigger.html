@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
+    <title>ezeep.js - Drag & Drop Example</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        min-height: 100vh;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .description {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #4facfe;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 4px;
+      }
+      .info-box h3 {
+        margin-top: 0;
+        color: #4facfe;
+      }
+      .info-box ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .info-box li {
+        margin: 5px 0;
+      }
+      .demo-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 40px;
+        margin: 30px 0;
+      }
+      .config-note {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .config-note strong {
+        color: #856404;
+      }
+      code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+
+      /* Custom Upload Area Styling */
+      :root {
+        --ezp-upload-width: calc(100%);
+        --ezp-upload-height: 400px;
+      }
+
+      .supported-files {
+        background: #e7f3ff;
+        border: 1px solid #4facfe;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .supported-files h4 {
+        margin-top: 0;
+        color: #0066cc;
+      }
+      .file-types {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .file-type {
+        background: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📁 Drag & Drop File Trigger Example</h1>
+      <p class="description">
+        This example demonstrates the drag & drop functionality of the ezeep.js component.
+        Users can drag files directly into the upload area or select them by clicking.
+      </p>
+
+      <div class="info-box">
+        <h3>How it Works</h3>
+        <ul>
+          <li>Renders a drag & drop upload area</li>
+          <li>Users can drag files into it or select them by clicking</li>
+          <li>No <code>fileurl</code> required - files are uploaded from the user's device</li>
+          <li>Print dialog opens automatically after upload</li>
+          <li>Supports various file formats (PDF, images, documents, etc.)</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>Attributes Used</h3>
+        <ul>
+          <li><code>clientid</code>: Your registered Client-ID</li>
+          <li><code>redirecturi</code>: Your registered Redirect URI</li>
+          <li><code>trigger="file"</code>: Renders the drag & drop area</li>
+          <li><code>theme</code>: Color scheme (e.g. "blue", "green", "pink")</li>
+          <li><code>appearance</code>: "light", "dark" or "system"</li>
+        </ul>
+      </div>
+
+      <div class="supported-files">
+        <h4>🗂️ Supported File Formats</h4>
+        <div class="file-types">
+          <span class="file-type">.pdf</span>
+          <span class="file-type">.doc / .docx</span>
+          <span class="file-type">.xls / .xlsx</span>
+          <span class="file-type">.ppt / .pptx</span>
+          <span class="file-type">.jpg / .jpeg</span>
+          <span class="file-type">.png</span>
+          <span class="file-type">.gif</span>
+          <span class="file-type">.txt</span>
+          <span class="file-type">and more...</span>
+        </div>
+      </div>
+
+      <div class="demo-area">
+        <ezp-printing
+          clientid="78KYzeX5wS8r0FYz9KdvNt9xHMRA61PJK80IHwNj"
+          redirecturi="https://localhost:3333/"
+          trigger="file"
+          theme="blue"
+          appearance="light"
+        >
+        </ezp-printing>
+      </div>
+
+      <div class="info-box">
+        <h3>🎨 Customizing the Upload Area</h3>
+        <p>You can customize the size of the upload area with CSS variables:</p>
+        <pre style="background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; overflow-x: auto;">:root {
+  --ezp-upload-width: calc(80vw);
+  --ezp-upload-height: calc(60vh);
+}</pre>
+      </div>
+
+      <div class="info-box">
+        <h3>💡 Use Cases</h3>
+        <ul>
+          <li><strong>Self-Service Print Stations:</strong> Ideal for public terminals or kiosk systems</li>
+          <li><strong>Document Management:</strong> Integration into existing document workflows</li>
+          <li><strong>Quick Print:</strong> Fast access to print functionality without navigation</li>
+          <li><strong>Mobile Apps:</strong> Touch-friendly file selection for mobile devices</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>📝 Usage Notes</h3>
+        <ul>
+          <li>Open this file via an HTTPS server</li>
+          <li>Maximum file size depends on your ezeep configuration</li>
+          <li>Multiple files can be uploaded one after another</li>
+          <li>Upload progress is displayed automatically</li>
+        </ul>
+      </div>
+
+      <div class="info-box" style="border-left-color: #28a745;">
+        <h3 style="color: #28a745;">✨ Try it Out!</h3>
+        <p style="margin-bottom: 0;">
+          Drag a file from your desktop into the upload area above,
+          or click on the area to select a file.
+          After upload, you can adjust print settings and print.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <script type="module" src="https://cdn.ezeep.com/ezeep-js/ezeep.esm.js"></script>
+    <script nomodule src="https://cdn.ezeep.com/ezeep-js/ezeep.js"></script>
+    <title>ezeep.js - Pre-Authentication Example</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        min-height: 100vh;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .description {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #38f9d7;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 4px;
+      }
+      .info-box h3 {
+        margin-top: 0;
+        color: #38f9d7;
+      }
+      .info-box ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .info-box li {
+        margin: 5px 0;
+      }
+      .demo-area {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 40px;
+        margin: 30px 0;
+      }
+      .config-note {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .config-note strong {
+        color: #856404;
+      }
+      .security-note {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .security-note strong {
+        color: #721c24;
+      }
+      code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+      .token-input-area {
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 20px;
+      }
+      .token-input-area label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+      .token-input-area input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: 'Courier New', monospace;
+        transition: border-color 0.3s;
+      }
+      .token-input-area input:focus {
+        outline: none;
+        border-color: #38f9d7;
+      }
+      .auth-button {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 14px 28px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(56, 249, 215, 0.4);
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+      .auth-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(56, 249, 215, 0.6);
+      }
+      .auth-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
+      .status-message {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        display: none;
+      }
+      .status-message.success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+        display: block;
+      }
+      .status-message.error {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        display: block;
+      }
+      .status-message.info {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        display: block;
+      }
+      .workflow-diagram {
+        background: white;
+        border: 2px solid #38f9d7;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .workflow-step {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 6px;
+      }
+      .workflow-step-number {
+        background: #38f9d7;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔐 Pre-Authentication Example</h1>
+      <p class="description">
+        This example shows how to pre-authenticate users with an existing refresh token,
+        bypassing the OAuth login flow to provide a seamless printing experience.
+      </p>
+
+      <div class="security-note">
+        <strong>🔒 Security Notice:</strong> Refresh tokens are highly sensitive data and should NEVER
+        be hard-coded in client code. In a production environment, you should:
+        <ul style="margin: 10px 0 0 20px;">
+          <li>Store tokens securely on your backend</li>
+          <li>Retrieve tokens via secure API endpoints</li>
+          <li>Use HTTPS for all communication</li>
+          <li>Implement token rotation</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>How it Works</h3>
+        <ul>
+          <li>An existing refresh token is used to obtain an access token</li>
+          <li>The <code>setAuthRefreshToken()</code> method handles token exchange automatically</li>
+          <li>Users don't need to log in again via OAuth</li>
+          <li>Print dialog can be opened immediately</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>Workflow Diagram</h3>
+        <div class="workflow-diagram">
+          <div class="workflow-step">
+            <div class="workflow-step-number">1</div>
+            <div>User authenticates initially via your backend system</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">2</div>
+            <div>Backend receives and stores refresh token securely</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">3</div>
+            <div>Frontend loads ezeep.js component</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">4</div>
+            <div>Frontend retrieves refresh token from backend</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">5</div>
+            <div><code>setAuthRefreshToken()</code> is called</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">6</div>
+            <div>ezeep.js exchanges refresh token for access token</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">7</div>
+            <div>User is authenticated - print dialog can be opened</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-area">
+        <div class="token-input-area">
+          <label for="refreshToken">
+            Enter Refresh Token (for demo purposes):
+          </label>
+          <input
+            type="text"
+            id="refreshToken"
+            placeholder="Enter your refresh token here..."
+          />
+          <label for="refreshToken">
+            (you can get one at <a href=https://app.ezeep.com/api-token-generator target=”_blank> https://app.ezeep.com/api-token-generator </a>)
+          </label>
+          <button class="auth-button" id="authButton">
+            🔑 Pre-Authenticate
+          </button>
+          <div id="statusMessage" class="status-message"></div>
+        </div>
+
+        <ezp-printing
+          id="ezpPrinting"
+          clientid="yjavNwKpd4HgbQes0ekYHBGjxIoszJgayIc0JkdB"
+          redirecturi="https://localhost:3333/"
+          trigger="button"
+          fileurl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+          filename="dummypdf"
+          filetype="pdf"
+        >
+        </ezp-printing>
+      </div>
+
+      <div class="info-box">
+        <h3>💡 Use Cases</h3>
+        <ul>
+          <li><strong>Single Sign-On (SSO):</strong> Integration with existing authentication systems</li>
+          <li><strong>Enterprise Solutions:</strong> Centralized user management via backend</li>
+          <li><strong>Mobile Apps:</strong> Seamless print integration without repeated logins</li>
+          <li><strong>Kiosk Systems:</strong> Pre-authenticated sessions for quick access</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>🔧 Backend Integration Code Example</h3>
+        <pre style="background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; overflow-x: auto;">// Frontend - Retrieve token from backend
+async function getRefreshToken() {
+  const response = await fetch('/api/auth/refresh-token', {
+    credentials: 'include' // Session cookies
+  })
+  const data = await response.json()
+  return data.refreshToken
+}
+
+// Perform pre-authentication
+customElements.whenDefined('ezp-printing').then(async () => {
+  const ezpPrinting = document.querySelector('ezp-printing')
+  const refreshToken = await getRefreshToken()
+
+  await ezpPrinting.setAuthRefreshToken(refreshToken)
+  console.log('User pre-authenticated successfully')
+})</pre>
+      </div>
+
+      <div class="info-box">
+        <h3>📝 Usage Notes</h3>
+        <ul>
+          <li>Open this file via an HTTPS server</li>
+          <li>The refresh token must come from a previous successful authentication</li>
+          <li>Tokens should have an expiration date and be renewed regularly</li>
+          <li>With invalid tokens, the system falls back to the normal OAuth flow</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Wait until the component is fully loaded
+      customElements.whenDefined('ezp-printing').then(() => {
+        const ezpPrinting = document.getElementById('ezpPrinting')
+        const authButton = document.getElementById('authButton')
+        const refreshTokenInput = document.getElementById('refreshToken')
+        const statusMessage = document.getElementById('statusMessage')
+
+        function showStatus(message, type) {
+          statusMessage.textContent = message
+          statusMessage.className = `status-message ${type}`
+        }
+
+        authButton.onclick = async () => {
+          const refreshToken = refreshTokenInput.value.trim()
+
+          if (!refreshToken) {
+            showStatus('⚠️ Please enter a refresh token', 'error')
+            return
+          }
+
+          try {
+            authButton.disabled = true
+            showStatus('🔄 Authentication in progress...', 'info')
+
+            // Perform pre-authentication
+            await ezpPrinting.setAuthRefreshToken(refreshToken)
+
+            showStatus('✅ Successfully authenticated! You can now print.', 'success')
+            console.log('Pre-authentication successful')
+          } catch (error) {
+            console.error('Pre-authentication failed:', error)
+            showStatus(
+              '❌ Authentication failed. Please check the token.',
+              'error'
+            )
+          } finally {
+            authButton.disabled = false
+          }
+        }
+
+        // Show info message on load
+        showStatus(
+          'ℹ️ Enter a valid refresh token and click "Pre-Authenticate"',
+          'info'
+        )
+
+        console.log('Pre-authentication example initialized')
+      })
+    </script>
+  </body>
+</html>
