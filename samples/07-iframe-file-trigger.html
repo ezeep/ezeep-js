@@ -250,10 +250,7 @@
     </div>
 
     <script>
-      // Read configuration from localStorage
-      // To customize: localStorage.setItem('stage', '');
-      const stage = localStorage.getItem('stage') || '';
-      const hostUrl = `https://app.${stage}ezeep.com/ezprinting`;
+      const hostUrl = `https://app.${stage}ezeep.com/ezprinting/`;
 
       console.log('Configuration:', { stage, hostUrl });
 
