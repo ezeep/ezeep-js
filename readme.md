@@ -172,7 +172,7 @@ If you want to bind the printing process to a custom html element, you can use t
   <body>
     <ezp-printing
       clientid="oWuvEAndErO3kKCqzaWBOAs2PhOuAbD7MZYWQ9yJ"
-      redirecturi="https://develop.dev.azdev.ezeep.com:3333"
+      redirecturi="https://develop.ezeep.com:3333"
       trigger="file"
       theme="blue"
       appearance="system"

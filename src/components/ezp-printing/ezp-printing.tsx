@@ -296,6 +296,30 @@ export class EzpPrinting {
     return authStore.state.isAuthorized
   }
 
+  /**
+   * Normalizes a URL or hostname to just the hostname without protocol
+   * Accepts both "hostname" and "https://hostname" formats
+   */
+  private normalizeHostUrl(hostUrl: string): string {
+    if (!hostUrl) {
+      return hostUrl
+    }
+
+    // If it starts with http:// or https://, extract just the hostname
+    try {
+      if (hostUrl.startsWith('http://') || hostUrl.startsWith('https://')) {
+        const url = new URL(hostUrl)
+        return url.host
+      }
+    } catch (e) {
+      // If URL parsing fails, return the original value
+      console.warn('Failed to parse URL:', hostUrl, e)
+    }
+
+    // Return as-is if it's already just a hostname
+    return hostUrl
+  }
+
   refreshTokensPeriodically(seconds: number) {
     const authService = new EzpAuthorizationService(this.redirecturi, this.clientid)
     setInterval(() => {
@@ -317,13 +341,13 @@ export class EzpPrinting {
     userStore.state.appearance = this.appearance
 
     if (this.authapihosturl) {
-      authStore.state.authApiHostUrl = this.authapihosturl
+      authStore.state.authApiHostUrl = this.normalizeHostUrl(this.authapihosturl)
     } else {
       authStore.state.authApiHostUrl = config.authApiHostUrl
     }
 
     if (this.printapihosturl) {
-      printStore.state.printApiHostUrl = this.printapihosturl
+      printStore.state.printApiHostUrl = this.normalizeHostUrl(this.printapihosturl)
     } else {
       printStore.state.printApiHostUrl = config.printingApiHostUrl
     }

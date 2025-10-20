@@ -243,14 +243,24 @@
           This collection showcases various ways to integrate ezeep.js into your web application.
           Each example is fully functional and demonstrates a specific use case.
         </p>
+        <p>
+          We provide two integration methods:
+        </p>
+        <ul>
+          <li><strong>Direct Integration (01-04):</strong> Use ezeep-js web component directly with your Client ID</li>
+          <li><strong>iframe Embed (05-08):</strong> Use hosted service via iframe - no Client ID needed!</li>
+        </ul>
         <p><strong>Before you start:</strong></p>
         <ul>
           <li>Make sure you have an ezeep Blue account (<a href="https://www.ezeep.com/free-trial/" target="_blank">sign up here</a>)</li>
           <li>Install the ezeep Blue Connector on a device with printer access</li>
-          <li>Examples are pre-configured with a test Client-ID for localhost:8443</li>
-          <li>Serve these files over HTTPS (required for OAuth)</li>
+          <li>Direct examples are pre-configured with a test Client-ID for localhost:3333</li>
+          <li>iframe examples work from any domain without configuration!</li>
+          <li>Serve direct examples over HTTPS (required for OAuth)</li>
         </ul>
       </div>
+
+      <h2 style="color: white; margin: 40px 0 20px 0; text-align: center;">📦 Direct Integration Examples</h2>
 
       <div class="examples-grid">
         <a href="01-button-trigger.html" class="example-card">
@@ -263,7 +273,7 @@
           <div class="tags">
             <span class="tag">Simple</span>
             <span class="tag">Quick Start</span>
-            <span class="tag">Beginner</span>
+            <span class="tag">Direct</span>
           </div>
           <div class="button">View Example →</div>
         </a>
@@ -278,7 +288,7 @@
           <div class="tags">
             <span class="tag">Customizable</span>
             <span class="tag">Flexible</span>
-            <span class="tag">Design</span>
+            <span class="tag">Direct</span>
           </div>
           <div class="button">View Example →</div>
         </a>
@@ -293,7 +303,7 @@
           <div class="tags">
             <span class="tag">Interactive</span>
             <span class="tag">File Upload</span>
-            <span class="tag">Kiosk</span>
+            <span class="tag">Direct</span>
           </div>
           <div class="button">View Example →</div>
         </a>
@@ -308,7 +318,71 @@
           <div class="tags">
             <span class="tag">SSO</span>
             <span class="tag">Enterprise</span>
-            <span class="tag">Advanced</span>
+            <span class="tag">Direct</span>
+          </div>
+          <div class="button">View Example →</div>
+        </a>
+      </div>
+
+      <h2 style="color: white; margin: 40px 0 20px 0; text-align: center;">🌐 iframe Embed Examples (No Client ID Needed!)</h2>
+
+      <div class="examples-grid">
+        <a href="05-iframe-button-trigger.html" class="example-card">
+          <div class="icon">🖨️</div>
+          <h3>iframe Button Trigger</h3>
+          <p>
+            Same as button trigger but using iframe embedding. No OAuth configuration needed,
+            works from any domain!
+          </p>
+          <div class="tags">
+            <span class="tag">Simple</span>
+            <span class="tag">iframe</span>
+            <span class="tag">No Config</span>
+          </div>
+          <div class="button">View Example →</div>
+        </a>
+
+        <a href="06-iframe-custom-trigger.html" class="example-card">
+          <div class="icon">🎨</div>
+          <h3>iframe Custom Trigger</h3>
+          <p>
+            Custom styled buttons with iframe embedding. Full design freedom without
+            the OAuth complexity!
+          </p>
+          <div class="tags">
+            <span class="tag">Customizable</span>
+            <span class="tag">iframe</span>
+            <span class="tag">Easy</span>
+          </div>
+          <div class="button">View Example →</div>
+        </a>
+
+        <a href="07-iframe-file-trigger.html" class="example-card">
+          <div class="icon">📁</div>
+          <h3>iframe File Upload</h3>
+          <p>
+            File upload with iframe embedding. Upload files from any domain without
+            CORS issues or configuration!
+          </p>
+          <div class="tags">
+            <span class="tag">File Upload</span>
+            <span class="tag">iframe</span>
+            <span class="tag">Portable</span>
+          </div>
+          <div class="button">View Example →</div>
+        </a>
+
+        <a href="08-iframe-pre-authentication.html" class="example-card">
+          <div class="icon">🔐</div>
+          <h3>iframe Pre-Auth</h3>
+          <p>
+            Pre-authentication via iframe. Perfect for SSO integration with backend-managed
+            tokens. No OAuth setup needed!
+          </p>
+          <div class="tags">
+            <span class="tag">SSO</span>
+            <span class="tag">iframe</span>
+            <span class="tag">Enterprise</span>
           </div>
           <div class="button">View Example →</div>
         </a>

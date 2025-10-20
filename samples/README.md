@@ -2,7 +2,14 @@
 
 This directory contains interactive examples for the ezeep.js component. Each example demonstrates a specific use case and can be tested directly in the browser.
 
+We provide **two integration methods**:
+
+1. **Direct Integration (01-04)**: Use the ezeep-js web component directly with your Client ID
+2. **iframe Embed (05-08)**: Use the hosted service via iframe - **no Client ID needed!**
+
 ## 📋 Overview of Examples
+
+### Direct Integration Examples (01-04)
 
 ### 1. Button Trigger Example (`01-button-trigger.html`)
 Shows the simplest integration with a predefined print button.
@@ -57,9 +64,97 @@ Shows pre-authentication with refresh token.
 
 ---
 
+### iframe Embed Examples (05-08)
+
+These examples use the **iframe embedding method** which offers:
+- ✅ **No Client ID needed** - Configuration handled in hosted service
+- ✅ **Works from any domain** - No OAuth registration required
+- ✅ **No CORS issues** - Communication via postMessage
+- ✅ **Simple integration** - Just include one script file
+- ✅ **Automatic updates** - Hosted service updated independently
+
+---
+
+### 5. iframe Button Trigger Example (`05-iframe-button-trigger.html`)
+Button trigger using iframe embedding method.
+
+**Features:**
+- No Client ID or Redirect URI configuration needed
+- Print button in hosted iframe modal
+- Works from any domain (HTTP or HTTPS)
+- Simple JavaScript API
+
+**Ideal for:** Third-party integrations, quick prototypes, portable solutions
+
+**Comparison with Direct:** Same functionality as #1, but no OAuth setup needed!
+
+---
+
+### 6. iframe Custom Trigger Example (`06-iframe-custom-trigger.html`)
+Custom buttons with iframe embedding.
+
+**Features:**
+- Custom styled buttons
+- Full design control
+- No OAuth complexity
+- Event-driven API
+- Multiple button examples
+
+**Ideal for:** Custom UIs, branded experiences, framework integration
+
+**Comparison with Direct:** Same as #2, but works without Client ID!
+
+---
+
+### 7. iframe File Upload Example (`07-iframe-file-trigger.html`)
+File upload with iframe embedding.
+
+**Features:**
+- Standard HTML file input
+- Automatic base64 conversion
+- No file size limits from CORS
+- Works from any domain
+- Supports all file formats
+
+**Ideal for:** Document management, ad-hoc printing, self-service kiosks
+
+**Comparison with Direct:** Easier file handling without CORS restrictions!
+
+---
+
+### 8. iframe Pre-Authentication Example (`08-iframe-pre-authentication.html`)
+Pre-authentication via iframe.
+
+**Features:**
+- Backend-managed tokens
+- SSO integration
+- No OAuth configuration
+- Secure token transmission via postMessage
+- Works from any domain
+
+**Ideal for:** Enterprise SSO, backend auth systems, mobile apps
+
+**Comparison with Direct:** Same as #4, plus works without OAuth registration!
+
+---
+
 ## 🚀 Quick Start
 
-### Prerequisites
+### Choosing an Integration Method
+
+**Use Direct Integration (01-04) when:**
+- You have a registered Client ID
+- You control the domain/redirect URI
+- You want direct access to ezeep-js API
+- Your app is served over HTTPS
+
+**Use iframe Embed (05-08) when:**
+- You don't want to manage OAuth configuration
+- You need to integrate from multiple domains
+- You want zero-configuration setup
+- HTTP support is acceptable for testing
+
+### Prerequisites for Direct Integration (01-04)
 
 1. **ezeep Blue Account**
    - Sign up at: https://www.ezeep.com/free-trial/
@@ -79,7 +174,25 @@ Shows pre-authentication with refresh token.
    - Examples must be served over HTTPS
    - HTTP is not sufficient (OAuth requirement)
 
+### Prerequisites for iframe Embed (05-08)
+
+1. **ezeep Blue Account**
+   - Sign up at: https://www.ezeep.com/free-trial/
+   - You will receive administrator access to your ezeep organization
+
+2. **ezeep Blue Connector**
+   - Download: https://ezeep.io/blueconnectorps
+   - Install the Connector on a device with printer access
+   - Authenticate with your ezeep account
+
+3. **No Client ID needed!**
+   - iframe examples use a centralized hosted service
+   - Client ID is configured in the hosted service
+   - Works from any domain without registration
+
 ### Using the Examples
+
+#### Direct Integration Examples (01-04)
 
 1. **Adjust Configuration:**
    The examples are pre-configured with a test Client-ID for `https://localhost:3333/`.
@@ -145,6 +258,52 @@ Shows pre-authentication with refresh token.
    **Browser Security Warning:** You'll see a security warning about the self-signed certificate. This is normal for local development:
    - Click "Advanced" or "Show Details"
    - Click "Proceed to localhost" or "Accept the Risk and Continue"
+
+#### iframe Embed Examples (05-08)
+
+The iframe embed examples are **much simpler** to run:
+
+1. **Start a Simple HTTP Server:**
+
+   You can use any HTTP server - HTTPS is NOT required for iframe examples!
+
+   ```bash
+   cd samples
+
+   # Python 3
+   python -m http.server 3333
+
+   # Python 2
+   python -m SimpleHTTPServer 3333
+
+   # Node.js (http-server)
+   npx http-server -p 3333
+
+   # PHP
+   php -S localhost:3333
+   ```
+
+2. **Open in Browser:**
+
+   Just navigate to:
+   ```
+   http://localhost:3333/05-iframe-button-trigger.html
+   http://localhost:3333/06-iframe-custom-trigger.html
+   http://localhost:3333/07-iframe-file-trigger.html
+   http://localhost:3333/08-iframe-pre-authentication.html
+   ```
+
+3. **How it Works:**
+   - Examples load `ezeep-embed.js` client library
+   - Client library creates an iframe pointing to hosted service
+   - Hosted service (running at `http://localhost:3333/ezprinting`) handles OAuth
+   - All communication happens via secure postMessage
+
+4. **Important Notes:**
+   - The **hosted service** (`ezprinting/index.html`) must also be served by your HTTP server
+   - iframe examples reference `../ezprinting/ezeep-embed.js`
+   - Update `hostUrl` in examples if your server runs on a different port
+   - No SSL certificates needed for local testing!
 
 5. **Test Interaction:**
    - Click on the print button

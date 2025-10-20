@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <title>ezeep Embed - Button Trigger Example</title>
+    <script>
+      // Load configuration from localStorage
+      const stage = localStorage.getItem('stage') || '';
+      const embedScriptUrl = `https://app.${stage}ezeep.com/ezprinting/ezeep-embed.js`;
+
+      // Dynamically load the embed script
+      const script = document.createElement('script');
+      script.src = embedScriptUrl;
+      document.head.appendChild(script);
+
+      console.log('Loading ezeep-embed.js from:', embedScriptUrl);
+    </script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .description {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #667eea;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 4px;
+      }
+      .info-box h3 {
+        margin-top: 0;
+        color: #667eea;
+      }
+      .info-box ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .info-box li {
+        margin: 5px 0;
+      }
+      .demo-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 40px;
+        margin: 30px 0;
+      }
+      .iframe-note {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .iframe-note strong {
+        color: #0c5460;
+      }
+      code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+      .print-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 16px 32px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+      }
+      .print-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+      .print-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🖨️ Button Trigger Example (iframe Embed)</h1>
+      <p class="description">
+        This example demonstrates the iframe embedding method with a button trigger.
+        Third-party apps can integrate printing without OAuth configuration!
+      </p>
+
+      <div class="iframe-note">
+        <strong>📦 iframe Embed Method:</strong> This example uses the new iframe embedding approach where:
+        <ul style="margin: 10px 0 0 20px;">
+          <li>No Client ID or Redirect URI needed in your code</li>
+          <li>Authentication is handled in the hosted service</li>
+          <li>No CORS issues - communication via postMessage</li>
+          <li>Simple integration - just include one script</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>How it Works</h3>
+        <ul>
+          <li>Include the <code>ezeep-embed.js</code> library</li>
+          <li>Create an <code>EzeepEmbed</code> instance with trigger="button"</li>
+          <li>The print button appears in a modal when you call <code>print()</code></li>
+          <li>File is provided via a URL (<code>fileurl</code>)</li>
+          <li>All authentication happens in the hosted service iframe</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>Configuration Used</h3>
+        <ul>
+          <li><code>trigger: "button"</code>: Shows ezeep print button in iframe</li>
+          <li><code>theme: "violet"</code>: UI color theme</li>
+          <li><code>appearance: "system"</code>: Matches system light/dark mode</li>
+          <li>No <code>clientId</code> required - configured in hosted service!</li>
+        </ul>
+      </div>
+
+      <div class="demo-area">
+        <button class="print-button" id="printBtn" disabled>
+          🖨️ Print Document
+        </button>
+      </div>
+
+      <div class="info-box">
+        <h3>📝 Usage Notes</h3>
+        <ul>
+          <li>This can run on any domain - no OAuth registration needed</li>
+          <li>First time users will see an authentication dialog in the iframe</li>
+          <li>Authentication is saved for future use</li>
+          <li>Print dialog appears in a modal overlay</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>💡 Benefits vs Direct Integration</h3>
+        <ul>
+          <li><strong>Simpler:</strong> No Client ID management</li>
+          <li><strong>Portable:</strong> Works from any domain</li>
+          <li><strong>Secure:</strong> OAuth handled in isolated iframe</li>
+          <li><strong>Maintained:</strong> Updates happen automatically</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Read configuration from localStorage
+      // To customize: localStorage.setItem('stage', '');
+      const stage = localStorage.getItem('stage') || '';
+      const hostUrl = `https://app.${stage}ezeep.com/ezprinting`;
+
+      console.log('Configuration:', { stage, hostUrl });
+
+      // Wait for EzeepEmbed to be loaded
+      function initializePrinter() {
+        if (typeof EzeepEmbed === 'undefined') {
+          setTimeout(initializePrinter, 100);
+          return;
+        }
+
+        // Initialize the ezeep embed with button trigger
+        window.printer = new EzeepEmbed({
+          hostUrl: hostUrl,  // Use configured hosted service URL
+          trigger: 'button',  // Show print button in iframe
+          theme: 'violet',
+          appearance: 'system'
+        });
+
+        setupEventHandlers();
+      }
+
+      function setupEventHandlers() {
+        const printer = window.printer;
+
+        // Wait for printer to be ready
+        printer.on('ready', () => {
+          console.log('Printer ready!');
+          document.getElementById('printBtn').disabled = false;
+        });
+
+        // Handle print complete
+        printer.on('printComplete', (data) => {
+          console.log('Print completed:', data.filename);
+          alert('Print completed: ' + data.filename);
+        });
+
+        // Handle errors
+        printer.on('printError', (data) => {
+          console.error('Print error:', data.error);
+          alert('Print error: ' + data.error);
+        });
+
+        // Print button click handler
+        document.getElementById('printBtn').onclick = async () => {
+          try {
+            await printer.print({
+              fileurl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+              filename: 'dummypdf.pdf',
+              filetype: 'pdf'
+            });
+          } catch (error) {
+            console.error('Print failed:', error);
+            alert('Print cancelled or failed');
+          }
+        };
+      }
+
+      console.log('Button trigger example (iframe embed) - starting initialization');
+      initializePrinter();
+    </script>
+  </body>
+</html>

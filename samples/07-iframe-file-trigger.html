@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <script>
+      // Load configuration from localStorage
+      const stage = localStorage.getItem('stage') || '';
+      const embedScriptUrl = `https://app.${stage}ezeep.com/ezprinting/ezeep-embed.js`;
+
+      // Dynamically load the embed script
+      const script = document.createElement('script');
+      script.src = embedScriptUrl;
+      document.head.appendChild(script);
+
+      console.log('Loading ezeep-embed.js from:', embedScriptUrl);
+    </script>
+    <title>ezeep Embed - File Upload Example</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        min-height: 100vh;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .description {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #4facfe;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 4px;
+      }
+      .info-box h3 {
+        margin-top: 0;
+        color: #4facfe;
+      }
+      .info-box ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .info-box li {
+        margin: 5px 0;
+      }
+      .demo-area {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 300px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 40px;
+        margin: 30px 0;
+      }
+      .iframe-note {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .iframe-note strong {
+        color: #0c5460;
+      }
+      .supported-files {
+        background: #e7f3ff;
+        border: 1px solid #4facfe;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .supported-files h4 {
+        margin-top: 0;
+        color: #0066cc;
+      }
+      .file-types {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .file-type {
+        background: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+      code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+      .file-input-area {
+        width: 100%;
+        max-width: 600px;
+      }
+      .file-input-area label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #333;
+      }
+      .file-input-area input[type="file"] {
+        width: 100%;
+        padding: 12px;
+        border: 2px dashed #4facfe;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .file-input-area input[type="file"]:hover {
+        border-color: #0097e0;
+        background: #f0f9ff;
+      }
+      .print-btn {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 14px 28px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        transition: all 0.3s ease;
+        margin-top: 15px;
+      }
+      .print-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
+      }
+      .print-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📁 File Upload Example (iframe Embed)</h1>
+      <p class="description">
+        This example demonstrates file upload with the iframe embedding method.
+        Users can select files from their device and print them directly!
+      </p>
+
+      <div class="iframe-note">
+        <strong>📦 iframe Embed Method:</strong> With iframe embedding:
+        <ul style="margin: 10px 0 0 20px;">
+          <li>Upload files directly from the user's device</li>
+          <li>No file size limits from postMessage (uses base64)</li>
+          <li>Works on any domain without CORS issues</li>
+          <li>Secure file transfer through isolated iframe</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>How it Works</h3>
+        <ul>
+          <li>User selects a file using standard HTML file input</li>
+          <li>File is converted to base64 automatically by <code>ezeep-embed.js</code></li>
+          <li>File data is transmitted to iframe via postMessage</li>
+          <li>Print dialog opens in modal overlay</li>
+          <li>File is uploaded to ezeep and printed</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>Configuration Used</h3>
+        <ul>
+          <li><code>trigger: "custom"</code>: Use custom file input</li>
+          <li><code>theme: "blue"</code>: UI color theme</li>
+          <li><code>appearance: "light"</code>: Force light mode</li>
+        </ul>
+      </div>
+
+      <div class="supported-files">
+        <h4>🗂️ Supported File Formats</h4>
+        <div class="file-types">
+          <span class="file-type">.pdf</span>
+          <span class="file-type">.doc / .docx</span>
+          <span class="file-type">.xls / .xlsx</span>
+          <span class="file-type">.ppt / .pptx</span>
+          <span class="file-type">.jpg / .jpeg</span>
+          <span class="file-type">.png</span>
+          <span class="file-type">.gif</span>
+          <span class="file-type">.txt</span>
+          <span class="file-type">and more...</span>
+        </div>
+      </div>
+
+      <div class="demo-area">
+        <div class="file-input-area">
+          <label for="fileInput">
+            📄 Select a file to print:
+          </label>
+          <input
+            type="file"
+            id="fileInput"
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.txt"
+          />
+          <button class="print-btn" id="printBtn" disabled>
+            🖨️ Print Selected File
+          </button>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <h3>💡 Use Cases</h3>
+        <ul>
+          <li><strong>Document Management:</strong> Print files from your DMS</li>
+          <li><strong>Self-Service Kiosks:</strong> Allow users to upload and print</li>
+          <li><strong>Mobile-Friendly:</strong> Touch-friendly file selection</li>
+          <li><strong>Ad-Hoc Printing:</strong> Quick print from any file</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>📝 Usage Notes</h3>
+        <ul>
+          <li>Works from any domain - no special configuration</li>
+          <li>File size limited to ~50MB (base64 encoding overhead)</li>
+          <li>For larger files, upload to server first and use <code>fileurl</code></li>
+          <li>File is not stored permanently - only used for printing</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Read configuration from localStorage
+      // To customize: localStorage.setItem('stage', '');
+      const stage = localStorage.getItem('stage') || '';
+      const hostUrl = `https://app.${stage}ezeep.com/ezprinting`;
+
+      console.log('Configuration:', { stage, hostUrl });
+
+      // Wait for EzeepEmbed to be loaded
+      function initializePrinter() {
+        if (typeof EzeepEmbed === 'undefined') {
+          setTimeout(initializePrinter, 100);
+          return;
+        }
+
+        // Initialize the ezeep embed
+        window.printer = new EzeepEmbed({
+          hostUrl: hostUrl,  // Use configured hosted service URL
+          trigger: 'custom',  // We'll handle file selection ourselves
+          theme: 'blue',
+          appearance: 'light'
+        });
+
+        setupEventHandlers();
+      }
+
+      function setupEventHandlers() {
+        const printer = window.printer;
+        const fileInput = document.getElementById('fileInput');
+        const printBtn = document.getElementById('printBtn');
+
+        // Wait for printer to be ready
+        printer.on('ready', () => {
+          console.log('Printer ready!');
+        });
+
+        // Enable print button when file is selected
+        fileInput.addEventListener('change', (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            printBtn.disabled = false;
+            console.log('File selected:', file.name, '(' + (file.size / 1024).toFixed(2) + ' KB)');
+          } else {
+            printBtn.disabled = true;
+          }
+        });
+
+        // Handle print events
+        printer.on('printStarted', (data) => {
+          console.log('Print started:', data);
+          printBtn.disabled = true;
+          printBtn.textContent = '🖨️ Printing...';
+        });
+
+        printer.on('printComplete', (data) => {
+          console.log('Print completed:', data.filename);
+          alert('✅ Print completed: ' + data.filename);
+          // Reset
+          fileInput.value = '';
+          printBtn.disabled = true;
+          printBtn.textContent = '🖨️ Print Selected File';
+        });
+
+        printer.on('printCancelled', () => {
+          console.log('Print cancelled');
+          alert('❌ Print cancelled');
+          // Reset
+          printBtn.disabled = fileInput.files.length === 0;
+          printBtn.textContent = '🖨️ Print Selected File';
+        });
+
+        printer.on('printError', (data) => {
+          console.error('Print error:', data.error);
+          alert('⚠️ Print error: ' + data.error);
+          // Reset
+          printBtn.disabled = fileInput.files.length === 0;
+          printBtn.textContent = '🖨️ Print Selected File';
+        });
+
+        // Print button click handler
+        printBtn.onclick = async () => {
+          const file = fileInput.files[0];
+          if (!file) {
+            alert('Please select a file first');
+            return;
+          }
+
+          try {
+            console.log('Printing file:', file.name);
+            await printer.print({
+              file: file,  // The library will convert to base64 automatically
+              filename: file.name,
+              filetype: file.name.split('.').pop()
+            });
+          } catch (error) {
+            console.error('Print failed:', error);
+          }
+        };
+      }
+
+      console.log('File trigger example (iframe embed) - starting initialization');
+      initializePrinter();
+    </script>
+  </body>
+</html>

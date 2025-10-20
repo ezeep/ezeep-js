@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <script>
+      // Load configuration from localStorage
+      const stage = localStorage.getItem('stage') || '';
+      const embedScriptUrl = `https://app.${stage}ezeep.com/ezprinting/ezeep-embed.js`;
+
+      // Dynamically load the embed script
+      const script = document.createElement('script');
+      script.src = embedScriptUrl;
+      document.head.appendChild(script);
+
+      console.log('Loading ezeep-embed.js from:', embedScriptUrl);
+    </script>
+    <title>ezeep Embed - Custom Trigger Example</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        min-height: 100vh;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .description {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #f5576c;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 4px;
+      }
+      .info-box h3 {
+        margin-top: 0;
+        color: #f5576c;
+      }
+      .info-box ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .info-box li {
+        margin: 5px 0;
+      }
+      .demo-area {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        min-height: 250px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 40px;
+        margin: 30px 0;
+      }
+      .iframe-note {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .iframe-note strong {
+        color: #0c5460;
+      }
+      code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+
+      /* Custom Button Styles */
+      .customButton {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 16px 32px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .customButton:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+
+      .customButton:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      .customButton2 {
+        background: #28a745;
+        border: 2px solid #218838;
+        border-radius: 25px;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .customButton2:hover:not(:disabled) {
+        background: #218838;
+        border-color: #1e7e34;
+      }
+
+      .customButton3 {
+        background: white;
+        border: 3px solid #f5576c;
+        border-radius: 6px;
+        color: #f5576c;
+        padding: 14px 28px;
+        font-size: 17px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .customButton3:hover:not(:disabled) {
+        background: #f5576c;
+        color: white;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎨 Custom Trigger Example (iframe Embed)</h1>
+      <p class="description">
+        This example shows how to use your own custom-styled buttons with the iframe embedding method.
+        You have full control over the button design while ezeep handles all the printing!
+      </p>
+
+      <div class="iframe-note">
+        <strong>📦 iframe Embed Method:</strong> Using the iframe approach gives you:
+        <ul style="margin: 10px 0 0 20px;">
+          <li>Custom button design - total freedom!</li>
+          <li>No OAuth complexity - handled in iframe</li>
+          <li>Print from any domain</li>
+          <li>Simple JavaScript API</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>How it Works</h3>
+        <ul>
+          <li>Create <code>EzeepEmbed</code> instance with <code>trigger="custom"</code></li>
+          <li>Design your own buttons with any style you want</li>
+          <li>Call <code>printer.print()</code> when button is clicked</li>
+          <li>Print dialog appears in a modal overlay</li>
+          <li>Complete design freedom for your branding</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>Configuration Used</h3>
+        <ul>
+          <li><code>trigger: "custom"</code>: No default UI, you control everything</li>
+          <li><code>theme: "pink"</code>: UI color theme for the print dialog</li>
+          <li><code>appearance: "system"</code>: Matches system light/dark mode</li>
+        </ul>
+      </div>
+
+      <div class="demo-area">
+        <h3 style="margin: 0 0 20px 0; color: #333;">Different Custom Button Styles:</h3>
+
+        <button class="customButton" id="btn1" disabled>
+          Gradient Print Button
+        </button>
+
+        <button class="customButton2" id="btn2" disabled>
+          <span style="font-size: 20px;">✓</span>
+          Success Style Button
+        </button>
+
+        <button class="customButton3" id="btn3" disabled>
+          Outlined Print Button
+        </button>
+      </div>
+
+      <div class="info-box">
+        <h3>💡 Benefits</h3>
+        <ul>
+          <li><strong>Design Freedom:</strong> Fully customize to match your corporate design</li>
+          <li><strong>No OAuth Setup:</strong> Works without client registration</li>
+          <li><strong>Framework Friendly:</strong> Easy to integrate with React, Vue, Angular</li>
+          <li><strong>Event-Driven:</strong> Listen to print events for feedback</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>📝 Usage Notes</h3>
+        <ul>
+          <li>Works on any domain - HTTP or HTTPS</li>
+          <li>All three buttons trigger the same printer instance</li>
+          <li>You can create unlimited custom triggers</li>
+          <li>Print events allow real-time status updates</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Read configuration from localStorage
+      // To customize: localStorage.setItem('stage', '');
+      const stage = localStorage.getItem('stage') || '';
+      const hostUrl = `https://app.${stage}ezeep.com/ezprinting`;
+
+      console.log('Configuration:', { stage, hostUrl });
+
+      // Wait for EzeepEmbed to be loaded
+      function initializePrinter() {
+        if (typeof EzeepEmbed === 'undefined') {
+          setTimeout(initializePrinter, 100);
+          return;
+        }
+
+        // Initialize the ezeep embed with custom trigger
+        window.printer = new EzeepEmbed({
+          hostUrl: hostUrl,  // Use configured hosted service URL
+          trigger: 'custom',  // No default UI
+          theme: 'pink',
+          appearance: 'system'
+        });
+
+        setupEventHandlers();
+      }
+
+      function setupEventHandlers() {
+        const printer = window.printer;
+
+        // Wait for printer to be ready
+        printer.on('ready', () => {
+          console.log('Printer ready!');
+          // Enable all buttons
+          document.getElementById('btn1').disabled = false;
+          document.getElementById('btn2').disabled = false;
+          document.getElementById('btn3').disabled = false;
+        });
+
+        // Handle print events
+        printer.on('printStarted', (data) => {
+          console.log('Print started:', data);
+        });
+
+        printer.on('printComplete', (data) => {
+          console.log('Print completed:', data.filename);
+          alert('✅ Print completed: ' + data.filename);
+        });
+
+        printer.on('printCancelled', () => {
+          console.log('Print cancelled');
+          alert('❌ Print cancelled');
+        });
+
+        printer.on('printError', (data) => {
+          console.error('Print error:', data.error);
+          alert('⚠️ Print error: ' + data.error);
+        });
+
+        // Print function for all buttons
+        async function printDocument() {
+          try {
+            await printer.print({
+              fileurl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+              filename: 'dummypdf.pdf',
+              filetype: 'pdf'
+            });
+          } catch (error) {
+            console.error('Print failed:', error);
+          }
+        }
+
+        // Attach click handlers to all custom buttons
+        document.getElementById('btn1').onclick = () => {
+          console.log('Gradient Button clicked');
+          printDocument();
+        };
+
+        document.getElementById('btn2').onclick = () => {
+          console.log('Success Button clicked');
+          printDocument();
+        };
+
+        document.getElementById('btn3').onclick = () => {
+          console.log('Outlined Button clicked');
+          printDocument();
+        };
+      }
+
+      console.log('Custom trigger example (iframe embed) - starting initialization');
+      initializePrinter();
+    </script>
+  </body>
+</html>

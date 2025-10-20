@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <script>
+      // Load configuration from localStorage
+      const stage = localStorage.getItem('stage') || '';
+      const embedScriptUrl = `https://app.${stage}ezeep.com/ezprinting/ezeep-embed.js`;
+
+      // Dynamically load the embed script
+      const script = document.createElement('script');
+      script.src = embedScriptUrl;
+      document.head.appendChild(script);
+
+      console.log('Loading ezeep-embed.js from:', embedScriptUrl);
+    </script>
+    <title>ezeep Embed - Pre-Authentication Example</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        min-height: 100vh;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .description {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #38f9d7;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 4px;
+      }
+      .info-box h3 {
+        margin-top: 0;
+        color: #38f9d7;
+      }
+      .info-box ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .info-box li {
+        margin: 5px 0;
+      }
+      .demo-area {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 40px;
+        margin: 30px 0;
+      }
+      .iframe-note {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .iframe-note strong {
+        color: #0c5460;
+      }
+      .security-note {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .security-note strong {
+        color: #721c24;
+      }
+      code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+      .token-input-area {
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 20px;
+      }
+      .token-input-area label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+      .token-input-area input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: 'Courier New', monospace;
+        transition: border-color 0.3s;
+      }
+      .token-input-area input:focus {
+        outline: none;
+        border-color: #38f9d7;
+      }
+      .auth-button {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 14px 28px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(56, 249, 215, 0.4);
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+      .auth-button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(56, 249, 215, 0.6);
+      }
+      .auth-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
+      .print-button {
+        background: #28a745;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 14px 28px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+      }
+      .print-button:hover:not(:disabled) {
+        background: #218838;
+      }
+      .print-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      .status-message {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        display: none;
+      }
+      .status-message.success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+        display: block;
+      }
+      .status-message.error {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        display: block;
+      }
+      .status-message.info {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        display: block;
+      }
+      .workflow-diagram {
+        background: white;
+        border: 2px solid #38f9d7;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .workflow-step {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 6px;
+      }
+      .workflow-step-number {
+        background: #38f9d7;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔐 Pre-Authentication Example (iframe Embed)</h1>
+      <p class="description">
+        This example shows how to pre-authenticate users with a refresh token using the iframe embedding method.
+        Perfect for SSO integration and enterprise solutions!
+      </p>
+
+      <div class="iframe-note">
+        <strong>📦 iframe Embed Method:</strong> Pre-authentication with iframe embedding:
+        <ul style="margin: 10px 0 0 20px;">
+          <li>Call <code>setAuthRefreshToken()</code> to bypass OAuth login</li>
+          <li>Token is sent securely to iframe via postMessage</li>
+          <li>Works from any domain without configuration</li>
+          <li>Perfect for SSO and backend-managed auth</li>
+        </ul>
+      </div>
+
+      <div class="security-note">
+        <strong>🔒 Security Notice:</strong> Refresh tokens are highly sensitive! In production:
+        <ul style="margin: 10px 0 0 20px;">
+          <li>Store tokens securely on your backend</li>
+          <li>Retrieve tokens via secure API endpoints</li>
+          <li>Use HTTPS for all communication</li>
+          <li>Implement token rotation and expiration</li>
+          <li>Never hard-code tokens in client code</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>How it Works</h3>
+        <ul>
+          <li>Your backend manages user authentication</li>
+          <li>Frontend retrieves refresh token from backend API</li>
+          <li>Call <code>printer.setAuthRefreshToken(token)</code></li>
+          <li>Token is transmitted securely to iframe</li>
+          <li>ezeep exchanges refresh token for access token</li>
+          <li>User is authenticated - no login dialog needed!</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>Workflow Diagram</h3>
+        <div class="workflow-diagram">
+          <div class="workflow-step">
+            <div class="workflow-step-number">1</div>
+            <div>User authenticates via your backend/SSO system</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">2</div>
+            <div>Backend securely stores ezeep refresh token</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">3</div>
+            <div>Frontend initializes EzeepEmbed</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">4</div>
+            <div>Frontend retrieves token from backend API</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">5</div>
+            <div><code>setAuthRefreshToken()</code> sends token to iframe</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">6</div>
+            <div>Iframe exchanges token for access token</div>
+          </div>
+          <div class="workflow-step">
+            <div class="workflow-step-number">7</div>
+            <div>User authenticated - ready to print!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-area">
+        <div class="token-input-area">
+          <label for="refreshToken">
+            Enter Refresh Token (for demo purposes):
+          </label>
+          <input
+            type="text"
+            id="refreshToken"
+            placeholder="Enter your refresh token here..."
+          />
+          <small style="display: block; margin-top: 5px; color: #666;">
+            (Get one at <a href="https://app.ezeep.com/api-token-generator" target="_blank">https://app.ezeep.com/api-token-generator</a>)
+          </small>
+          <button class="auth-button" id="authButton">
+            🔑 Pre-Authenticate
+          </button>
+          <div id="statusMessage" class="status-message"></div>
+        </div>
+
+        <button class="print-button" id="printButton" disabled>
+          🖨️ Print Document
+        </button>
+      </div>
+
+      <div class="info-box">
+        <h3>💡 Use Cases</h3>
+        <ul>
+          <li><strong>Single Sign-On (SSO):</strong> Integrate with existing auth systems</li>
+          <li><strong>Enterprise Solutions:</strong> Centralized user management</li>
+          <li><strong>Mobile Apps:</strong> Seamless print without repeated logins</li>
+          <li><strong>Kiosk Systems:</strong> Pre-authenticated sessions</li>
+          <li><strong>Backend Integration:</strong> Server-side token management</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3>🔧 Backend Integration Example</h3>
+        <pre style="background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; overflow-x: auto;">// Frontend - Retrieve token from backend
+async function getRefreshToken() {
+  const response = await fetch('/api/auth/ezeep-token', {
+    credentials: 'include'  // Include session cookies
+  });
+  const data = await response.json();
+  return data.refreshToken;
+}
+
+// Initialize printer with pre-authentication
+const printer = new EzeepEmbed({
+  hostUrl: 'http://app.ezeep.com/ezprinting'
+});
+
+// Pre-authenticate when ready
+printer.on('ready', async () => {
+  try {
+    const token = await getRefreshToken();
+    await printer.setAuthRefreshToken(token);
+    console.log('✅ User pre-authenticated!');
+    // Enable print functionality
+    enablePrintButton();
+  } catch (error) {
+    console.error('❌ Pre-auth failed:', error);
+    // Fallback to normal OAuth flow
+  }
+});</pre>
+      </div>
+
+      <div class="info-box">
+        <h3>📝 Usage Notes</h3>
+        <ul>
+          <li>Works from any domain - no special configuration</li>
+          <li>Token must be valid and not expired</li>
+          <li>Invalid tokens fall back to normal OAuth flow</li>
+          <li>Implement token refresh in your backend</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Read configuration from localStorage
+      // To customize: localStorage.setItem('stage', '');
+      const stage = localStorage.getItem('stage') || '';
+      const hostUrl = `https://app.${stage}ezeep.com/ezprinting`;
+
+      console.log('Configuration:', { stage, hostUrl });
+
+      // Wait for EzeepEmbed to be loaded
+      function initializePrinter() {
+        if (typeof EzeepEmbed === 'undefined') {
+          setTimeout(initializePrinter, 100);
+          return;
+        }
+
+        // Initialize the ezeep embed
+        window.printer = new EzeepEmbed({
+          hostUrl: hostUrl,  // Use configured hosted service URL
+          trigger: 'custom',
+          theme: 'green',
+          appearance: 'system'
+        });
+
+        setupEventHandlers();
+      }
+
+      function setupEventHandlers() {
+        const printer = window.printer;
+        const refreshTokenInput = document.getElementById('refreshToken');
+        const authButton = document.getElementById('authButton');
+        const printButton = document.getElementById('printButton');
+        const statusMessage = document.getElementById('statusMessage');
+
+        function showStatus(message, type) {
+          statusMessage.textContent = message;
+          statusMessage.className = `status-message ${type}`;
+        }
+
+        // Wait for printer to be ready
+        printer.on('ready', () => {
+          console.log('Printer ready!');
+          showStatus('ℹ️ Enter a refresh token and click "Pre-Authenticate"', 'info');
+        });
+
+        // Pre-authenticate button click
+        authButton.onclick = async () => {
+          const refreshToken = refreshTokenInput.value.trim();
+
+          if (!refreshToken) {
+            showStatus('⚠️ Please enter a refresh token', 'error');
+            return;
+          }
+
+          try {
+            authButton.disabled = true;
+            showStatus('🔄 Authenticating...', 'info');
+
+            // Call setAuthRefreshToken to pre-authenticate
+            await printer.setAuthRefreshToken(refreshToken);
+
+            showStatus('✅ Successfully authenticated! You can now print.', 'success');
+            printButton.disabled = false;
+            console.log('Pre-authentication successful');
+          } catch (error) {
+            console.error('Pre-authentication failed:', error);
+            showStatus('❌ Authentication failed. Please check the token.', 'error');
+          } finally {
+            authButton.disabled = false;
+          }
+        };
+
+        // Print button click
+        printButton.onclick = async () => {
+          try {
+            printButton.disabled = true;
+            printButton.textContent = '🖨️ Printing...';
+
+            await printer.print({
+              fileurl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+              filename: 'dummypdf.pdf',
+              filetype: 'pdf'
+            });
+          } catch (error) {
+            console.error('Print failed:', error);
+            printButton.disabled = false;
+            printButton.textContent = '🖨️ Print Document';
+          }
+        };
+
+        // Handle print events
+        printer.on('printComplete', (data) => {
+          console.log('Print completed:', data.filename);
+          alert('✅ Print completed: ' + data.filename);
+          printButton.disabled = false;
+          printButton.textContent = '🖨️ Print Document';
+        });
+
+        printer.on('printCancelled', () => {
+          console.log('Print cancelled');
+          printButton.disabled = false;
+          printButton.textContent = '🖨️ Print Document';
+        });
+
+        printer.on('printError', (data) => {
+          console.error('Print error:', data.error);
+          alert('⚠️ Print error: ' + data.error);
+          printButton.disabled = false;
+          printButton.textContent = '🖨️ Print Document';
+        });
+      }
+
+      console.log('Pre-authentication example (iframe embed) - starting initialization');
+      initializePrinter();
+    </script>
+  </body>
+</html>
