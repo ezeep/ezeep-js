@@ -162,6 +162,7 @@ export namespace Components {
         "printapihosturl": string;
         "redirecturi": string;
         "seamless": boolean;
+        "setAuthRefreshToken": (refreshToken: string) => Promise<void>;
         "theme": ThemeTypes;
         "trigger": TriggerTypes;
     }
