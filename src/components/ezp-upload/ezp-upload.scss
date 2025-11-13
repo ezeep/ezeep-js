@@ -74,3 +74,31 @@
   position: absolute;
   width: 0;
 }
+
+#file-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ezp-spacing-3);
+  width: 100%;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ezp-spacing-3);
+  padding: var(--ezp-spacing-2);
+  background: var(--ezp-core-background-secondary);
+  border-radius: 3px;
+
+  ezp-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  ezp-icon-button {
+    flex-shrink: 0;
+  }
+}
