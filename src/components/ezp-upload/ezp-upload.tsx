@@ -120,15 +120,19 @@ export class EzpUpload {
             {this.selectedFiles.length > 0 && (
               <>
                 <ezp-label level="secondary" text={i18next.t('upload.selected_files')} />
-                {this.selectedFiles.map((file, index) => (
-                  <ezp-label 
-                    key={index} 
-                    level="tertiary" 
-                    text={`${file.name} ✕`}
-                    onClick={() => this.removeFile(index)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                ))}
+                <div id="file-list">
+                  {this.selectedFiles.map((file, index) => (
+                    <div key={index} class="file-item">
+                      <ezp-label level="tertiary" text={file.name} />
+                      <ezp-icon-button
+                        icon="close"
+                        type="button"
+                        level="tertiary"
+                        onClick={() => this.removeFile(index)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </>
             )}
           </div>
