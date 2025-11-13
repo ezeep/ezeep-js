@@ -80,6 +80,11 @@ export class EzpUpload {
     this.uploadFile.emit(this.selectedFiles)
   }
 
+  private removeFile = (index: number) => {
+    this.selectedFiles = this.selectedFiles.filter((_, i) => i !== index)
+    this.uploadFile.emit(this.selectedFiles)
+  }
+
   /**
    *
    * Render method
@@ -116,7 +121,13 @@ export class EzpUpload {
               <>
                 <ezp-label level="secondary" text={i18next.t('upload.selected_files')} />
                 {this.selectedFiles.map((file, index) => (
-                  <ezp-label key={index} level="tertiary" text={file.name} />
+                  <ezp-label 
+                    key={index} 
+                    level="tertiary" 
+                    text={`${file.name} ✕`}
+                    onClick={() => this.removeFile(index)}
+                    style={{ cursor: 'pointer' }}
+                  />
                 ))}
               </>
             )}
