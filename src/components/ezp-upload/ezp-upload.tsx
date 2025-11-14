@@ -78,11 +78,21 @@ export class EzpUpload {
     // Add new files to existing selection instead of replacing
     this.selectedFiles = [...this.selectedFiles, ...files]
     this.uploadFile.emit(this.selectedFiles)
+    // Reset the input so the same file can be selected again
+    if (this.input) {
+      this.input.value = ''
+    }
   }
 
-  private removeFile = (index: number) => {
+  private removeFile = (event: MouseEvent, index: number) => {
+    event.preventDefault()
+    event.stopPropagation()
     this.selectedFiles = this.selectedFiles.filter((_, i) => i !== index)
     this.uploadFile.emit(this.selectedFiles)
+    // Reset the input so it's ready for new selections
+    if (this.input) {
+      this.input.value = ''
+    }
   }
 
   /**
@@ -123,13 +133,17 @@ export class EzpUpload {
                 <div id="file-list">
                   {this.selectedFiles.map((file, index) => (
                     <div key={index} class="file-item">
-                      <ezp-label level="tertiary" text={file.name} />
-                      <ezp-icon-button
-                        icon="close"
-                        type="button"
-                        level="tertiary"
-                        onClick={() => this.removeFile(index)}
-                      />
+                      <div class="file-name">
+                        <ezp-label level="tertiary" text={file.name} />
+                      </div>
+                      <div class="file-remove">
+                        <ezp-icon-button
+                          icon="close"
+                          type="button"
+                          level="tertiary"
+                          onClick={(event) => this.removeFile(event, index)}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
