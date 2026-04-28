@@ -12,8 +12,12 @@
   box-sizing: border-box;
   color: var(--ezp-core-foreground-primary);
   display: grid;
-  grid-template: auto / minmax(auto, 280px);
+  grid-template-columns: minmax(auto, 480px);
+  grid-template-rows: minmax(0, 1fr);
   height: var(--ezp-upload-height, auto);
+  /* Allow shrinking when constrained by a flex parent (e.g. inside ezp-printing in a small modal). */
+  max-height: 100%;
+  min-height: 0;
   justify-content: center;
   padding: var(--ezp-spacing-3);
   position: relative;
@@ -31,18 +35,47 @@
   }
 }
 
+#form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
 #header {
   --ezp-icon-fill: var(--ezp-theme-solid);
 
   align-items: center;
   display: flex;
   filter: blur(var(--ezp-upload-header-blur, 0));
+  flex: 1 1 auto;
   flex-direction: column;
   gap: var(--ezp-spacing-5);
+  /* Center the content vertically when the host is taller than content
+     (e.g. standalone with --ezp-upload-height: 80vh). When the host is
+     constrained smaller than content (e.g. inside a modal), file-list's
+     overflow-y handles overflow gracefully. */
+  justify-content: center;
+  min-height: 0;
   opacity: var(--ezp-upload-header-opacity, 1);
   text-align: center;
   transition: filter var(--ezp-duration-3) var(--ezp-easing-out-quart),
     opacity var(--ezp-duration-3) var(--ezp-easing-out-quart);
+
+  /* When files are selected, collapse the drop-zone icon and primary description
+     so the file list has more breathing room (especially inside small modals).
+     The "select files" link stays so users can still add more files. */
+  &:has(#file-list) {
+    gap: var(--ezp-spacing-3);
+
+    > ezp-icon {
+      display: none;
+    }
+
+    > ezp-label:first-of-type {
+      display: none;
+    }
+  }
 }
 
 #meta {
@@ -78,9 +111,31 @@
 #file-list {
   display: flex;
   flex-direction: column;
+  gap: var(--ezp-spacing-3);
   width: 100%;
-  height: 35vh;
+  flex: 0 1 auto;       /* can shrink when #header runs out of vertical space */
+  max-height: 240px;
+  min-height: 0;
   overflow-y: auto;
+
+  /* Cross-platform thin scrollbar — Windows default is too chunky for this size. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ezp-core-foreground-tertiary) transparent;
+
+  /* WebKit fallback for older Safari / Chrome that don't honor scrollbar-width. */
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ezp-core-foreground-tertiary);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 .file-item {
