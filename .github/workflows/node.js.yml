@@ -30,19 +30,17 @@ jobs:
     steps:
     
     - name: Checkout main branch
-      uses: actions/checkout@v4
-    
+      uses: actions/checkout@v5
+
     - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: "${{ env.NPM_REGISTRY }}"
         cache: 'npm'
-   
+
     - name: Bump package.json version of npm package
-      uses: reedyuk/npm-version@1.1.1
-      with:
-        version: "${{ env.MODULE_VERSION }}"
+      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
     
     - name: Build
       run: |
@@ -95,24 +93,22 @@ jobs:
     steps:
   
     - name: Checkout angular branch
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         ref: ngx-ezeep-js
-         
+
     - name: Bump package.json version for angular component
-      uses: reedyuk/npm-version@1.1.1
-      with:
-        package: 'ezeep-js-angular/projects/ngx-ezeep-js'
-        version: "${{ env.MODULE_VERSION }}"
-    
+      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
+      working-directory: ezeep-js-angular/projects/ngx-ezeep-js
+
     - name: download angular build artifact
       uses: actions/download-artifact@v4
       with:
           name: ng-directives.zip
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
-   
+
     - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: "${{ env.NPM_REGISTRY }}"
