@@ -12,7 +12,7 @@
   box-sizing: border-box;
   color: var(--ezp-core-foreground-primary);
   display: grid;
-  grid-template-columns: minmax(auto, 480px);
+  grid-template-columns: minmax(auto, 280px);
   grid-template-rows: minmax(0, 1fr);
   height: var(--ezp-upload-height, auto);
   /* Allow shrinking when constrained by a flex parent (e.g. inside ezp-printing in a small modal). */
@@ -114,7 +114,7 @@
   gap: var(--ezp-spacing-3);
   width: 100%;
   flex: 0 1 auto;       /* can shrink when #header runs out of vertical space */
-  max-height: 240px;
+  max-height: var(--ezp-upload-fileList-maxHeight, 240px);
   min-height: 0;
   overflow-y: auto;
 
