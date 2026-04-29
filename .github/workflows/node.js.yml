@@ -25,24 +25,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
     
     - name: Checkout main branch
-      uses: actions/checkout@v4
-    
+      uses: actions/checkout@v5
+
     - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: "${{ env.NPM_REGISTRY }}"
         cache: 'npm'
-   
+
     - name: Bump package.json version of npm package
-      uses: reedyuk/npm-version@1.1.1
-      with:
-        version: "${{ env.MODULE_VERSION }}"
+      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
     
     - name: Build
       run: |
@@ -55,19 +53,19 @@ jobs:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         
     - name: Upload npm artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         path: ${{ env.DIST_PATH }}
         name: ${{ env.ARTIFACT_NAME }}
-        
+
     - name: Upload ng directives artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         path: ${{ env.DIST_PATH_NG }}
-        name: ${{ env.ARTIFACT_NAME_NG }}        
+        name: ${{ env.ARTIFACT_NAME_NG }}
 
     - name: Zip npm artifact for release
-      uses: thedoctor0/zip-release@master
+      uses: thedoctor0/zip-release@b57d897cb5d60cb78b51a507f63fa184cfe35554 # 0.7.6
       with:
         type: 'zip'
         directory: ${{ env.DIST_PATH }}
@@ -89,30 +87,28 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
   
     steps:
   
     - name: Checkout angular branch
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         ref: ngx-ezeep-js
-         
+
     - name: Bump package.json version for angular component
-      uses: reedyuk/npm-version@1.1.1
-      with:
-        package: 'ezeep-js-angular/projects/ngx-ezeep-js'
-        version: "${{ env.MODULE_VERSION }}"
-    
+      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
+      working-directory: ezeep-js-angular/projects/ngx-ezeep-js
+
     - name: download angular build artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
           name: ng-directives.zip
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
-   
+
     - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: "${{ env.NPM_REGISTRY }}"
@@ -141,13 +137,13 @@ jobs:
     steps:
  
     - name: Download npm artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: ${{ env.ARTIFACT_NAME }}
         path: "artifacts/v${{ env.MODULE_VERSION }}"
 
     - name: Login to Azure CLI
-      uses: azure/login@v1
+      uses: azure/login@v3
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
