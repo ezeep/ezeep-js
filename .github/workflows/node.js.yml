@@ -19,7 +19,6 @@ on:
     branches: [ main ]
 
 jobs:
-  
   build-npm:
     environment: Production
     runs-on: ubuntu-latest
@@ -42,6 +41,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
         registry-url: "${{ env.NPM_REGISTRY }}"
         cache: 'npm'
+
+    # NEU: Das npm CLI muss aktuell sein für Trusted Publishing (v11+)
+    - name: Update npm to latest version
+      run: npm install -g npm@latest
 
     - name: Bump package.json version of npm package
       run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
@@ -102,6 +105,10 @@ jobs:
       uses: actions/checkout@v5
       with:
         ref: ngx-ezeep-js
+
+    # NEU: Das npm CLI muss aktuell sein für Trusted Publishing (v11+)
+    - name: Update npm to latest version
+      run: npm install -g npm@latest
 
     - name: Bump package.json version for angular component
       run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
