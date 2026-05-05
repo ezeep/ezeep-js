@@ -13,6 +13,7 @@ env:
   NPM_REGISTRY: 'https://registry.npmjs.org'       # npm registry url
   
   PRERELEASE: false                                # true if marked as pre-release, false if production-ready
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true         # suppress node 20 deprecation warnings
 
 on:
   push:
