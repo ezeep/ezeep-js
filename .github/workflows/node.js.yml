@@ -137,19 +137,25 @@ jobs:
     environment: Production
     needs: build-npm
     runs-on: ubuntu-latest
+    # WICHTIG: Die id-token Permission wird hier für Azure benötigt
+    permissions:
+      contents: read
+      id-token: write
+      
     steps:
- 
     - name: Download npm artifact
       uses: actions/download-artifact@v5
       with:
         name: ${{ env.ARTIFACT_NAME }}
         path: "artifacts/v${{ env.MODULE_VERSION }}"
 
-    - name: Login to Azure CLI
+    - name: Login to Azure CLI via OIDC
       uses: azure/login@v3
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        
     - name: Upload artifact to blob storage
       run: |
           azenv='${{ secrets.AZURE_ENVIRONMENT }}'
