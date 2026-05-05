@@ -42,10 +42,6 @@ jobs:
         registry-url: "${{ env.NPM_REGISTRY }}"
         cache: 'npm'
 
-    # NEU: Das npm CLI muss aktuell sein für Trusted Publishing (v11+)
-    - name: Update npm to latest version
-      run: npm install -g npm@latest
-
     - name: Bump package.json version of npm package
       run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
     
@@ -55,8 +51,8 @@ jobs:
         npm run build
 
     - name: Publish npm package to npm registry
-      # HINWEIS: NODE_AUTH_TOKEN wird hier nicht mehr benötigt
-      run: npm publish --access public
+      # npx -p npm@latest sorgt dafür, dass die aktuellste npm-Version geladen wird (OIDC Auth)
+      run: npx -p npm@latest npm publish --access public --provenance
         
     - name: Upload npm artifact
       uses: actions/upload-artifact@v5
@@ -106,10 +102,6 @@ jobs:
       with:
         ref: ngx-ezeep-js
 
-    # NEU: Das npm CLI muss aktuell sein für Trusted Publishing (v11+)
-    - name: Update npm to latest version
-      run: npm install -g npm@latest
-
     - name: Bump package.json version for angular component
       run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
       working-directory: ezeep-js-angular/projects/ngx-ezeep-js
@@ -138,7 +130,8 @@ jobs:
         cd ../..
         ng build ngx-ezeep-js --prod
         cd dist/ngx-ezeep-js
-        npm publish --access public
+        # Hier ebenfalls npx nutzen, um die OIDC-kompatible npm Version zu erzwingen
+        npx -p npm@latest npm publish --access public --provenance
   
   cdn-upload-npm:
     environment: Production
