@@ -23,6 +23,10 @@ jobs:
   build-npm:
     environment: Production
     runs-on: ubuntu-latest
+    # NEU: Erforderlich für Trusted Publishing
+    permissions:
+      contents: write
+      id-token: write
     strategy:
       matrix:
         node-version: [22.x]
@@ -48,9 +52,8 @@ jobs:
         npm run build
 
     - name: Publish npm package to npm registry
+      # HINWEIS: NODE_AUTH_TOKEN wird hier nicht mehr benötigt
       run: npm publish --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         
     - name: Upload npm artifact
       uses: actions/upload-artifact@v5
@@ -85,13 +88,16 @@ jobs:
     environment: Production
     needs: build-npm
     runs-on: ubuntu-latest
+    # NEU: Erforderlich für Trusted Publishing
+    permissions:
+      contents: write
+      id-token: write
     strategy:
       matrix:
         node-version: [22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
   
     steps:
-  
     - name: Checkout angular branch
       uses: actions/checkout@v5
       with:
@@ -126,9 +132,6 @@ jobs:
         ng build ngx-ezeep-js --prod
         cd dist/ngx-ezeep-js
         npm publish --access public
-      env: 
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  
   
   cdn-upload-npm:
     environment: Production
