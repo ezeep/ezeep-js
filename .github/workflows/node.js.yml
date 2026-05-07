@@ -13,36 +13,34 @@ env:
   NPM_REGISTRY: 'https://registry.npmjs.org'       # npm registry url
   
   PRERELEASE: false                                # true if marked as pre-release, false if production-ready
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true         # suppress node 20 deprecation warnings
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  
   build-npm:
     environment: Production
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    # NEU: Erforderlich für Trusted Publishing
+    permissions:
+      contents: write
+      id-token: write
+
     steps:
-    
     - name: Checkout main branch
-      uses: actions/checkout@v4
-    
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/checkout@v5
+
+    - name: Setup Node.js 22
+      uses: actions/setup-node@v5
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '22'
         registry-url: "${{ env.NPM_REGISTRY }}"
         cache: 'npm'
-   
+
     - name: Bump package.json version of npm package
-      uses: reedyuk/npm-version@1.1.1
-      with:
-        version: "${{ env.MODULE_VERSION }}"
+      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
     
     - name: Build
       run: |
@@ -50,24 +48,23 @@ jobs:
         npm run build
 
     - name: Publish npm package to npm registry
-      run: npm publish --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # npx -p npm@latest sorgt dafür, dass die aktuellste npm-Version geladen wird (OIDC Auth)
+      run: npx -p npm@latest npm publish --access public --provenance
         
     - name: Upload npm artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         path: ${{ env.DIST_PATH }}
         name: ${{ env.ARTIFACT_NAME }}
-        
+
     - name: Upload ng directives artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         path: ${{ env.DIST_PATH_NG }}
-        name: ${{ env.ARTIFACT_NAME_NG }}        
+        name: ${{ env.ARTIFACT_NAME_NG }}
 
     - name: Zip npm artifact for release
-      uses: thedoctor0/zip-release@master
+      uses: thedoctor0/zip-release@b57d897cb5d60cb78b51a507f63fa184cfe35554 # 0.7.6
       with:
         type: 'zip'
         directory: ${{ env.DIST_PATH }}
@@ -87,38 +84,35 @@ jobs:
     environment: Production
     needs: build-npm
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    # NEU: Erforderlich für Trusted Publishing
+    permissions:
+      contents: write
+      id-token: write
   
     steps:
-  
     - name: Checkout angular branch
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         ref: ngx-ezeep-js
-         
-    - name: Bump package.json version for angular component
-      uses: reedyuk/npm-version@1.1.1
+
+    - name: Setup Node.js 22
+      uses: actions/setup-node@v5
       with:
-        package: 'ezeep-js-angular/projects/ngx-ezeep-js'
-        version: "${{ env.MODULE_VERSION }}"
-    
-    - name: download angular build artifact
-      uses: actions/download-artifact@v4
-      with:
-          name: ng-directives.zip
-          path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
-   
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '22'
         registry-url: "${{ env.NPM_REGISTRY }}"
         cache: 'npm'
         cache-dependency-path: 'ezeep-js-angular/projects/ngx-ezeep-js'
               
+    - name: Bump package.json version for angular component
+      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
+      working-directory: ezeep-js-angular/projects/ngx-ezeep-js
+
+    - name: download angular build artifact
+      uses: actions/download-artifact@v5
+      with:
+          name: ng-directives.zip
+          path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
+
     - name: build angular library and publish
       run: |
         cd ezeep-js-angular
@@ -129,28 +123,37 @@ jobs:
         cd ../..
         ng build ngx-ezeep-js --prod
         cd dist/ngx-ezeep-js
-        npm publish --access public
-      env: 
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  
+        # Hier ebenfalls npx nutzen, um die OIDC-kompatible npm Version zu erzwingen
+        npx -p npm@latest npm publish --access public --provenance
   
   cdn-upload-npm:
     environment: Production
     needs: build-npm
     runs-on: ubuntu-latest
+    # WICHTIG: Die id-token Permission wird hier für Azure benötigt
+    permissions:
+      contents: read
+      id-token: write
+      
     steps:
- 
+    - name: Setup Node.js 22
+      uses: actions/setup-node@v5
+      with:
+        node-version: '22'
+        
     - name: Download npm artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: ${{ env.ARTIFACT_NAME }}
         path: "artifacts/v${{ env.MODULE_VERSION }}"
 
-    - name: Login to Azure CLI
-      uses: azure/login@v1
+    - name: Login to Azure CLI via OIDC
+      uses: azure/login@v3
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        
     - name: Upload artifact to blob storage
       run: |
           azenv='${{ secrets.AZURE_ENVIRONMENT }}'
