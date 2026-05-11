@@ -29,13 +29,6 @@
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: none;
 
-  /* Layout: stack ezp-upload and ezp-auth vertically inside parent's bounds.
-     ezp-upload takes available space (and scrolls internally if needed),
-     ezp-auth stays pinned at the bottom and is always visible. */
-  display: flex;
-  flex-direction: column;
-  max-height: 100%;
-  min-height: 0;
   box-sizing: border-box;
 
   @include global.duration-declaration;
@@ -43,6 +36,28 @@
   @include global.easing-declaration;
 
   @at-root {
+    /* Opt-in layout: stack ezp-upload and ezp-auth vertically inside parent's bounds.
+       Consumers that render ezp-printing inside a height-constrained container
+       (e.g. a modal) set the `fit-parent` attribute to keep ezp-auth pinned
+       at the bottom and let ezp-upload scroll internally. Off by default so
+       the component still renders with natural height inside auto-height
+       parents (e.g. flex-column wrappers in host apps). */
+    #{&}([fit-parent]) {
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      min-height: 0;
+
+      ezp-upload {
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+
+      ezp-auth {
+        flex-shrink: 0;
+      }
+    }
+
     #{&}(.light) {
       @include colors.colors(map.get(accents.$palette, 'light'), 'accent');
       @include colors.colors(map.get(core.$palette, 'light'), 'core');
@@ -89,13 +104,4 @@
       }
     }
   }
-}
-
-ezp-upload {
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
-ezp-auth {
-  flex-shrink: 0;
 }
