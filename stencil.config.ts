@@ -1,4 +1,4 @@
-require('dotenv').config()
+import 'dotenv/config'
 
 import { Config } from '@stencil/core'
 import { sass } from '@stencil/sass'
@@ -7,6 +7,8 @@ import { angularOutputTarget } from '@stencil/angular-output-target'
 // Use the actively-maintained fork. The old `rollup-plugin-node-polyfills`
 // doesn't intercept modern Rollup's resolution order in Stencil 4.
 import nodePolyfills from 'rollup-plugin-polyfill-node'
+// Uncomment together with the `devServer` block below for local HTTPS dev.
+// import fs from 'fs'
 
 export const config: Config = {
   namespace: 'ezeep',
