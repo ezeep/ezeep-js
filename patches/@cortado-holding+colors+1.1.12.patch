@@ -1,0 +1,23 @@
+diff --git a/node_modules/@cortado-holding/colors/library/utils.scss b/node_modules/@cortado-holding/colors/library/utils.scss
+index 04dd76a..c438f54 100644
+--- a/node_modules/@cortado-holding/colors/library/utils.scss
++++ b/node_modules/@cortado-holding/colors/library/utils.scss
+@@ -7,6 +7,7 @@
+ @use 'sass:map';
+ @use 'sass:math';
+ @use 'sass:meta';
++@use 'sass:string';
+ @use './config';
+ 
+ /// Convert an absolute RGB channel value to a relative decimal value.
+@@ -60,7 +61,9 @@
+     $blue: calcColorChannelRelative(color.blue($color));
+     $alpha: color.alpha($color) * 100%;
+ 
+-    @return color(display-p3 #{$red} #{$green} #{$blue} / #{$alpha});
++    // sass-embedded parses `/` inside color() as Sass division; wrap the
++    // whole CSS value as an unquoted string so Sass emits it verbatim.
++    @return string.unquote('color(display-p3 #{$red} #{$green} #{$blue} / #{$alpha})');
+   }
+ }
+ 
