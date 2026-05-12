@@ -67,7 +67,13 @@ $themes: ('blue', 'cyan', 'green', 'teal', 'orange', 'pink', 'red', 'violet');
 }
 
 @mixin media-input($device) {
-  @media (pointer: #{if($device == 'touch', 'coarse', 'fine')}) {
+  $pointer: 'fine';
+
+  @if $device == 'touch' {
+    $pointer: 'coarse';
+  }
+
+  @media (pointer: #{$pointer}) {
     @content;
   }
 }
