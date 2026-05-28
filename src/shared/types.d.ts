@@ -97,6 +97,7 @@ export interface PrinterConfig {
     Duplex?: string
     Color?: string
     Orientation?: string
+    OrientationIndex?: number
     Resolution?: string
     Paper?: string
     Tray?: string

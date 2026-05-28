@@ -516,7 +516,8 @@ export class EzpPrinterSelection {
 
             this.selectedProperties.color =
               this.selectedPrinterConfig.Default?.Color == 'color' ? true : false
-            this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation
+            this.selectedProperties.orientation =
+              this.selectedPrinterConfig.Default?.OrientationIndex
             this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution
 
             let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(
