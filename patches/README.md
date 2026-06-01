@@ -1,6 +1,8 @@
 # Patches
 
-Patches in this directory are applied via [`patch-package`](https://github.com/ds300/patch-package) on `postinstall` (see `package.json` → `scripts.postinstall`).
+Patches in this directory are applied via [`patch-package`](https://github.com/ds300/patch-package) on `prepare` (see `package.json` → `scripts.prepare`).
+
+`prepare` runs after `npm install`/`npm ci` in this repo and before `npm pack`/`npm publish`, so the patch is applied for local development and at publish time. It deliberately does **not** run when `@ezeep/ezeep-js` is installed as a dependency by a downstream consumer (npm runs `prepare` only for the package's own install and for git installs, not for registry/tarball deps). That matters because `patch-package` is a `devDependency`, so a `postinstall` here would fail every consumer install with `patch-package: not found` (exit 127). The patch only touches build-time SCSS and never ships in `dist/`, so consumers never need it.
 
 ## Version coupling — read before bumping a patched dependency
 

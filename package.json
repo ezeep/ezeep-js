@@ -28,7 +28,7 @@
     "stylelint": "stylelint \"**/*.scss\" --fix",
     "prettier": "prettier \"**/*.{json,ts,tsx,md,html}\" --write",
     "format": "npm run stylelint && npm run prettier",
-    "postinstall": "patch-package"
+    "prepare": "patch-package"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.8.0",
