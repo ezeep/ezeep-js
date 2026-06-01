@@ -861,7 +861,15 @@ export class EzpPrinterSelection {
           this.selectedPrinterConfig = data[0]
           this.selectedProperties.color =
             this.selectedPrinterConfig.Default?.Color == 'color' ? true : false
-          this.selectedProperties.orientation = this.selectedPrinterConfig.Default?.Orientation
+          const defaultOrientation = this.selectedPrinterConfig.Default?.Orientation
+          const defaultOrientationIndex = this.selectedPrinterConfig.Default?.OrientationIndex
+          let orientationFallback: number | undefined
+          if (defaultOrientation) {
+            const idx =
+              this.selectedPrinterConfig.OrientationsSupported?.indexOf(defaultOrientation)
+            if (typeof idx === 'number' && idx >= 0) orientationFallback = idx + 1
+          }
+          this.selectedProperties.orientation = defaultOrientationIndex ?? orientationFallback
           this.selectedProperties.resolution = this.selectedPrinterConfig.Default?.Resolution
 
           let defaultPaper = this.selectedPrinterConfig.PaperFormats?.find(
