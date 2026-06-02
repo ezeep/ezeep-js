@@ -626,8 +626,6 @@ declare global {
     }
 }
 declare namespace LocalJSX {
-    type OneOf<K extends string, PropT, AttrT = PropT> = { [P in K]: PropT } & { [P in `attr:${K}` | `prop:${K}`]?: never } | { [P in `attr:${K}`]: AttrT } & { [P in K | `prop:${K}`]?: never } | { [P in `prop:${K}`]: PropT } & { [P in K | `attr:${K}`]?: never };
-
     interface EzpAuth {
         "clientID"?: string;
         "code"?: string;
@@ -1002,162 +1000,43 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
     }
-
-    interface EzpAuthAttributes {
-        "clientID": string;
-        "redirectURI": string;
-        "hidelogin": boolean;
-        "trigger": string;
-        "code": string;
-    }
-    interface EzpBackdropAttributes {
-        "visible": boolean;
-    }
-    interface EzpDialogAttributes {
-        "heading": string;
-        "description": string;
-        "action": string;
-        "iconName": IconNameTypes;
-        "iconSize": IconSizeTypes;
-        "iconFramed": boolean;
-        "instance": string;
-    }
-    interface EzpIconAttributes {
-        "name": IconNameTypes;
-        "size": IconSizeTypes;
-        "framed": boolean;
-    }
-    interface EzpIconButtonAttributes {
-        "blank": boolean;
-        "disabled": boolean;
-        "href": string;
-        "icon": IconNameTypes;
-        "level": IconButtonLevelTypes;
-        "type": IconButtonTypeTypes;
-    }
-    interface EzpInputAttributes {
-        "label": string;
-        "value": string;
-        "type": string;
-        "icon": IconNameTypes;
-        "suffix": string;
-        "eventType": string;
-        "placeholder": string;
-    }
-    interface EzpLabelAttributes {
-        "ellipsis": boolean;
-        "level": LabelLevelTypes;
-        "noWrap": boolean;
-        "text": string;
-        "weight": WeightTypes;
-    }
-    interface EzpPrinterSelectionAttributes {
-        "clientID": string;
-        "redirectURI": string;
-        "filename": string;
-        "fileurl": string;
-        "filetype": string;
-        "fileid": string;
-        "hidemenu": boolean;
-        "hideheader": boolean;
-        "seamless": boolean;
-    }
-    interface EzpPrintingAttributes {
-        "clientid": string;
-        "redirecturi": string;
-        "filename": string;
-        "fileurl": string;
-        "filetype": string;
-        "custom": boolean;
-        "hidelogin": boolean;
-        "hidemenu": boolean;
-        "hideheader": boolean;
-        "authapihosturl": string;
-        "printapihosturl": string;
-        "theme": ThemeTypes;
-        "fileid": string;
-        "appearance": AppearanceTypes;
-        "trigger": TriggerTypes;
-        "language": string;
-        "code": string;
-        "filedata": string;
-        "seamless": boolean;
-    }
-    interface EzpSelectAttributes {
-        "icon": IconNameTypes;
-        "label": string;
-        "optionFlow": SelectFlowTypes;
-        "placeholder": string;
-        "preSelected": string;
-        "toggleFlow": SelectFlowTypes;
-        "disabled": boolean;
-    }
-    interface EzpStatusAttributes {
-        "description": string;
-        "processing": boolean;
-        "instance": string;
-        "icon": IconNameTypes;
-        "cancel": string;
-        "close": string;
-        "retry": string;
-    }
-    interface EzpStepperAttributes {
-        "icon": IconNameTypes;
-        "label": string;
-        "max": number;
-        "min": number;
-    }
-    interface EzpTextButtonAttributes {
-        "blank": boolean;
-        "disabled": boolean;
-        "href": string;
-        "level": TextButtonLevelTypes;
-        "label": string;
-        "type": TextButtonTypeTypes;
-        "small": boolean;
-    }
-    interface EzpUserMenuAttributes {
-        "name": string;
-        "open": boolean;
-    }
-
     interface IntrinsicElements {
-        "ezp-auth": Omit<EzpAuth, keyof EzpAuthAttributes> & { [K in keyof EzpAuth & keyof EzpAuthAttributes]?: EzpAuth[K] } & { [K in keyof EzpAuth & keyof EzpAuthAttributes as `attr:${K}`]?: EzpAuthAttributes[K] } & { [K in keyof EzpAuth & keyof EzpAuthAttributes as `prop:${K}`]?: EzpAuth[K] };
-        "ezp-backdrop": Omit<EzpBackdrop, keyof EzpBackdropAttributes> & { [K in keyof EzpBackdrop & keyof EzpBackdropAttributes]?: EzpBackdrop[K] } & { [K in keyof EzpBackdrop & keyof EzpBackdropAttributes as `attr:${K}`]?: EzpBackdropAttributes[K] } & { [K in keyof EzpBackdrop & keyof EzpBackdropAttributes as `prop:${K}`]?: EzpBackdrop[K] };
-        "ezp-dialog": Omit<EzpDialog, keyof EzpDialogAttributes> & { [K in keyof EzpDialog & keyof EzpDialogAttributes]?: EzpDialog[K] } & { [K in keyof EzpDialog & keyof EzpDialogAttributes as `attr:${K}`]?: EzpDialogAttributes[K] } & { [K in keyof EzpDialog & keyof EzpDialogAttributes as `prop:${K}`]?: EzpDialog[K] };
-        "ezp-icon": Omit<EzpIcon, keyof EzpIconAttributes> & { [K in keyof EzpIcon & keyof EzpIconAttributes]?: EzpIcon[K] } & { [K in keyof EzpIcon & keyof EzpIconAttributes as `attr:${K}`]?: EzpIconAttributes[K] } & { [K in keyof EzpIcon & keyof EzpIconAttributes as `prop:${K}`]?: EzpIcon[K] } & OneOf<"name", EzpIcon["name"], EzpIconAttributes["name"]>;
-        "ezp-icon-button": Omit<EzpIconButton, keyof EzpIconButtonAttributes> & { [K in keyof EzpIconButton & keyof EzpIconButtonAttributes]?: EzpIconButton[K] } & { [K in keyof EzpIconButton & keyof EzpIconButtonAttributes as `attr:${K}`]?: EzpIconButtonAttributes[K] } & { [K in keyof EzpIconButton & keyof EzpIconButtonAttributes as `prop:${K}`]?: EzpIconButton[K] } & OneOf<"icon", EzpIconButton["icon"], EzpIconButtonAttributes["icon"]>;
-        "ezp-input": Omit<EzpInput, keyof EzpInputAttributes> & { [K in keyof EzpInput & keyof EzpInputAttributes]?: EzpInput[K] } & { [K in keyof EzpInput & keyof EzpInputAttributes as `attr:${K}`]?: EzpInputAttributes[K] } & { [K in keyof EzpInput & keyof EzpInputAttributes as `prop:${K}`]?: EzpInput[K] };
-        "ezp-label": Omit<EzpLabel, keyof EzpLabelAttributes> & { [K in keyof EzpLabel & keyof EzpLabelAttributes]?: EzpLabel[K] } & { [K in keyof EzpLabel & keyof EzpLabelAttributes as `attr:${K}`]?: EzpLabelAttributes[K] } & { [K in keyof EzpLabel & keyof EzpLabelAttributes as `prop:${K}`]?: EzpLabel[K] };
-        "ezp-printer-selection": Omit<EzpPrinterSelection, keyof EzpPrinterSelectionAttributes> & { [K in keyof EzpPrinterSelection & keyof EzpPrinterSelectionAttributes]?: EzpPrinterSelection[K] } & { [K in keyof EzpPrinterSelection & keyof EzpPrinterSelectionAttributes as `attr:${K}`]?: EzpPrinterSelectionAttributes[K] } & { [K in keyof EzpPrinterSelection & keyof EzpPrinterSelectionAttributes as `prop:${K}`]?: EzpPrinterSelection[K] };
-        "ezp-printing": Omit<EzpPrinting, keyof EzpPrintingAttributes> & { [K in keyof EzpPrinting & keyof EzpPrintingAttributes]?: EzpPrinting[K] } & { [K in keyof EzpPrinting & keyof EzpPrintingAttributes as `attr:${K}`]?: EzpPrintingAttributes[K] } & { [K in keyof EzpPrinting & keyof EzpPrintingAttributes as `prop:${K}`]?: EzpPrinting[K] };
-        "ezp-select": Omit<EzpSelect, keyof EzpSelectAttributes> & { [K in keyof EzpSelect & keyof EzpSelectAttributes]?: EzpSelect[K] } & { [K in keyof EzpSelect & keyof EzpSelectAttributes as `attr:${K}`]?: EzpSelectAttributes[K] } & { [K in keyof EzpSelect & keyof EzpSelectAttributes as `prop:${K}`]?: EzpSelect[K] };
-        "ezp-status": Omit<EzpStatus, keyof EzpStatusAttributes> & { [K in keyof EzpStatus & keyof EzpStatusAttributes]?: EzpStatus[K] } & { [K in keyof EzpStatus & keyof EzpStatusAttributes as `attr:${K}`]?: EzpStatusAttributes[K] } & { [K in keyof EzpStatus & keyof EzpStatusAttributes as `prop:${K}`]?: EzpStatus[K] };
-        "ezp-stepper": Omit<EzpStepper, keyof EzpStepperAttributes> & { [K in keyof EzpStepper & keyof EzpStepperAttributes]?: EzpStepper[K] } & { [K in keyof EzpStepper & keyof EzpStepperAttributes as `attr:${K}`]?: EzpStepperAttributes[K] } & { [K in keyof EzpStepper & keyof EzpStepperAttributes as `prop:${K}`]?: EzpStepper[K] };
-        "ezp-text-button": Omit<EzpTextButton, keyof EzpTextButtonAttributes> & { [K in keyof EzpTextButton & keyof EzpTextButtonAttributes]?: EzpTextButton[K] } & { [K in keyof EzpTextButton & keyof EzpTextButtonAttributes as `attr:${K}`]?: EzpTextButtonAttributes[K] } & { [K in keyof EzpTextButton & keyof EzpTextButtonAttributes as `prop:${K}`]?: EzpTextButton[K] };
+        "ezp-auth": EzpAuth;
+        "ezp-backdrop": EzpBackdrop;
+        "ezp-dialog": EzpDialog;
+        "ezp-icon": EzpIcon;
+        "ezp-icon-button": EzpIconButton;
+        "ezp-input": EzpInput;
+        "ezp-label": EzpLabel;
+        "ezp-printer-selection": EzpPrinterSelection;
+        "ezp-printing": EzpPrinting;
+        "ezp-select": EzpSelect;
+        "ezp-status": EzpStatus;
+        "ezp-stepper": EzpStepper;
+        "ezp-text-button": EzpTextButton;
         "ezp-upload": EzpUpload;
-        "ezp-user-menu": Omit<EzpUserMenu, keyof EzpUserMenuAttributes> & { [K in keyof EzpUserMenu & keyof EzpUserMenuAttributes]?: EzpUserMenu[K] } & { [K in keyof EzpUserMenu & keyof EzpUserMenuAttributes as `attr:${K}`]?: EzpUserMenuAttributes[K] } & { [K in keyof EzpUserMenu & keyof EzpUserMenuAttributes as `prop:${K}`]?: EzpUserMenu[K] };
+        "ezp-user-menu": EzpUserMenu;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "ezp-auth": LocalJSX.IntrinsicElements["ezp-auth"] & JSXBase.HTMLAttributes<HTMLEzpAuthElement>;
-            "ezp-backdrop": LocalJSX.IntrinsicElements["ezp-backdrop"] & JSXBase.HTMLAttributes<HTMLEzpBackdropElement>;
-            "ezp-dialog": LocalJSX.IntrinsicElements["ezp-dialog"] & JSXBase.HTMLAttributes<HTMLEzpDialogElement>;
-            "ezp-icon": LocalJSX.IntrinsicElements["ezp-icon"] & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
-            "ezp-icon-button": LocalJSX.IntrinsicElements["ezp-icon-button"] & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
-            "ezp-input": LocalJSX.IntrinsicElements["ezp-input"] & JSXBase.HTMLAttributes<HTMLEzpInputElement>;
-            "ezp-label": LocalJSX.IntrinsicElements["ezp-label"] & JSXBase.HTMLAttributes<HTMLEzpLabelElement>;
-            "ezp-printer-selection": LocalJSX.IntrinsicElements["ezp-printer-selection"] & JSXBase.HTMLAttributes<HTMLEzpPrinterSelectionElement>;
-            "ezp-printing": LocalJSX.IntrinsicElements["ezp-printing"] & JSXBase.HTMLAttributes<HTMLEzpPrintingElement>;
-            "ezp-select": LocalJSX.IntrinsicElements["ezp-select"] & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
-            "ezp-status": LocalJSX.IntrinsicElements["ezp-status"] & JSXBase.HTMLAttributes<HTMLEzpStatusElement>;
-            "ezp-stepper": LocalJSX.IntrinsicElements["ezp-stepper"] & JSXBase.HTMLAttributes<HTMLEzpStepperElement>;
-            "ezp-text-button": LocalJSX.IntrinsicElements["ezp-text-button"] & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
-            "ezp-upload": LocalJSX.IntrinsicElements["ezp-upload"] & JSXBase.HTMLAttributes<HTMLEzpUploadElement>;
-            "ezp-user-menu": LocalJSX.IntrinsicElements["ezp-user-menu"] & JSXBase.HTMLAttributes<HTMLEzpUserMenuElement>;
+            "ezp-auth": LocalJSX.EzpAuth & JSXBase.HTMLAttributes<HTMLEzpAuthElement>;
+            "ezp-backdrop": LocalJSX.EzpBackdrop & JSXBase.HTMLAttributes<HTMLEzpBackdropElement>;
+            "ezp-dialog": LocalJSX.EzpDialog & JSXBase.HTMLAttributes<HTMLEzpDialogElement>;
+            "ezp-icon": LocalJSX.EzpIcon & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
+            "ezp-icon-button": LocalJSX.EzpIconButton & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
+            "ezp-input": LocalJSX.EzpInput & JSXBase.HTMLAttributes<HTMLEzpInputElement>;
+            "ezp-label": LocalJSX.EzpLabel & JSXBase.HTMLAttributes<HTMLEzpLabelElement>;
+            "ezp-printer-selection": LocalJSX.EzpPrinterSelection & JSXBase.HTMLAttributes<HTMLEzpPrinterSelectionElement>;
+            "ezp-printing": LocalJSX.EzpPrinting & JSXBase.HTMLAttributes<HTMLEzpPrintingElement>;
+            "ezp-select": LocalJSX.EzpSelect & JSXBase.HTMLAttributes<HTMLEzpSelectElement>;
+            "ezp-status": LocalJSX.EzpStatus & JSXBase.HTMLAttributes<HTMLEzpStatusElement>;
+            "ezp-stepper": LocalJSX.EzpStepper & JSXBase.HTMLAttributes<HTMLEzpStepperElement>;
+            "ezp-text-button": LocalJSX.EzpTextButton & JSXBase.HTMLAttributes<HTMLEzpTextButtonElement>;
+            "ezp-upload": LocalJSX.EzpUpload & JSXBase.HTMLAttributes<HTMLEzpUploadElement>;
+            "ezp-user-menu": LocalJSX.EzpUserMenu & JSXBase.HTMLAttributes<HTMLEzpUserMenuElement>;
         }
     }
 }

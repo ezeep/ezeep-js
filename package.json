@@ -34,7 +34,7 @@
     "@azure/storage-blob": "^12.8.0",
     "@cortado-holding/colors": "1.1.12",
     "@cortado-holding/utils": "^1.0.1",
-    "@stencil/core": "^4.43.4",
+    "@stencil/core": "4.38.0",
     "fetch-intercept": "^2.4.0",
     "i18next": "21.2.4",
     "whatwg-fetch": "^3.6.2"
