@@ -121,7 +121,7 @@ jobs:
         cd projects/ngx-ezeep-js
         npm install
         cd ../..
-        ng build ngx-ezeep-js --prod
+        ng build ngx-ezeep-js
         cd dist/ngx-ezeep-js
         # Hier ebenfalls npx nutzen, um die OIDC-kompatible npm Version zu erzwingen
         npx -p npm@latest npm publish --access public --provenance
