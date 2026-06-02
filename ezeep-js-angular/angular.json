@@ -23,17 +23,8 @@
             }
           },
           "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/ngx-ezeep-js/src/test.ts",
-            "tsConfig": "projects/ngx-ezeep-js/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-ezeep-js/karma.conf.js"
-          }
         }
       }
     }
-  },
-  "defaultProject": "ngx-ezeep-js"
+  }
 }
