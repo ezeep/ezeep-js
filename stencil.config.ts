@@ -18,6 +18,14 @@ export const config: Config = {
     angularOutputTarget({
       componentCorePackage: '@ezeep/ezeep-js',
       directivesProxyFile: 'dist/directives/proxies.ts',
+      // Generate proxies that import each component from the custom-elements
+      // build and self-define it, instead of the lazy `defineCustomElements`
+      // loader. The lazy loader fetches per-component chunks at runtime, which
+      // does not resolve inside a bundler (Angular/esbuild), so the components
+      // never render in a consumer app. Importing from dist/components lets the
+      // consumer's bundler include the component code statically.
+      includeImportCustomElements: true,
+      customElementsDir: 'dist/components',
     }),
     {
       type: 'dist',
