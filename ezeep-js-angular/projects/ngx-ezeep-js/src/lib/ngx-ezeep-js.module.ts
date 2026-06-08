@@ -1,9 +1,10 @@
 import { NgModule } from "@angular/core";
-import { defineCustomElements } from "@ezeep/ezeep-js";
 
 import {EzpAuth, EzpBackdrop, EzpIcon, EzpIconButton, EzpPrinterSelection, EzpPrinting, EzpStatus, EzpSelect, EzpTextButton, EzpUserMenu } from "./directives/proxies";
 
-defineCustomElements(window);
+// No defineCustomElements(window) here: with includeImportCustomElements the
+// generated proxies import and define their own element from the
+// custom-elements build, so the consumer's bundler includes the code statically.
 
 const DECLARATIONS = [
   // proxies
@@ -21,9 +22,9 @@ const DECLARATIONS = [
 ];
 
 @NgModule({
-  declarations: DECLARATIONS,
+  // Stencil's generated proxies are standalone components under Angular 14+,
+  // so they are imported (and re-exported) rather than declared.
+  imports: DECLARATIONS,
   exports: DECLARATIONS,
-  imports: [],
-  providers: []
 })
 export class EzeepJSAngularModule { }
