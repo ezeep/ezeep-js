@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, State, Event, EventEmitter, Listen } from '@stencil/core'
+import { Component, Host, h, Prop, State, Event, EventEmitter, Listen, Watch } from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
 import i18next from 'i18next'
@@ -13,6 +13,7 @@ export class EzpAuth {
   @Prop() hidelogin: boolean
   @Prop() trigger: string
   @Prop() code: string
+  @Prop() webview: boolean = false
 
   @State() auth: EzpAuthorizationService
   @State() authURI: string
@@ -37,6 +38,17 @@ export class EzpAuth {
     this.authCancel.emit()
   }
 
+  @Watch('code')
+  async watchCode(newCode: string) {
+    if (newCode && newCode.length > 0) {
+      authStore.state.code = newCode
+      this.auth.getAccessToken().then(() => {
+        this.authCancel.emit()
+        this.authSuccess.emit()
+      })
+    }
+  }
+
   oauthPopupWindow: Window = null
   previousUrl = null
 
@@ -44,6 +56,12 @@ export class EzpAuth {
     if (authStore.state.isAuthorized) {
       this.authCancel.emit()
       this.authSuccess.emit()
+      return
+    }
+
+    // WebView mode: redirect current window instead of opening popup
+    if (this.webview) {
+      window.location.href = url
       return
     }
 
