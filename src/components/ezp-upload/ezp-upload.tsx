@@ -24,7 +24,7 @@ export class EzpUpload {
    *
    */
 
-  @Event() uploadFile: EventEmitter
+  @Event() uploadFile: EventEmitter<File[]>
 
   /**
    *

@@ -8,8 +8,8 @@ import { Component, Element, Host, Prop, Listen, Event, EventEmitter, h } from '
 export class EzpBackdrop {
   @Element() component!: HTMLEzpBackdropElement
   @Prop({ mutable: true }) visible: boolean = true
-  @Event() backdropHideStart: EventEmitter
-  @Event() backdropHideEnd: EventEmitter
+  @Event() backdropHideStart: EventEmitter<void>
+  @Event() backdropHideEnd: EventEmitter<void>
 
   private handleClick() {
     this.visible = false

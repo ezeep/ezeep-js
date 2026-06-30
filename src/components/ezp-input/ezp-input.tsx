@@ -44,7 +44,7 @@ export class EzpInput {
    *
    */
 
-  @Event() inputValueChanged: EventEmitter
+  @Event() inputValueChanged: EventEmitter<{ type: string; value: string | number }>
 
    /**
    *

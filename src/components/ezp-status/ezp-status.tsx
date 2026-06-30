@@ -28,9 +28,9 @@ export class EzpStatus {
    *
    */
 
-  @Event() statusCancel: EventEmitter
-  @Event() statusClose: EventEmitter
-  @Event() statusRetry: EventEmitter
+  @Event() statusCancel: EventEmitter<string>
+  @Event() statusClose: EventEmitter<string>
+  @Event() statusRetry: EventEmitter<string>
 
   /**
    *

@@ -43,8 +43,8 @@ export class EzpUserMenu {
    *
    */
 
-  @Event() userMenuClosure: EventEmitter
-  @Event() logoutEmitter: EventEmitter
+  @Event() userMenuClosure: EventEmitter<void>
+  @Event() logoutEmitter: EventEmitter<void>
   auth: EzpAuthorizationService
   /**
    *

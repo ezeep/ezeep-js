@@ -13,7 +13,7 @@ import i18next from 'i18next'
 import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
-import { Printer, PrinterConfig, PrinterProperties } from '../../shared/types'
+import { Printer, PrinterConfig, PrinterProperties, JobStatusResponse } from '../../shared/types'
 import { managePaperDimensions, poll, removeEmptyStrings } from '../../utils/utils'
 import { PAPER_ID, validatePageRange, formatPageRange } from '../../utils/utils'
 import { applyPrinterDefaults, classifyJobStatus, hasTrays, hasNoTrays } from '../../utils/printer'
@@ -257,7 +257,7 @@ export class EzpPrinterSelection {
   }
 
   /** Poll `validate` callback: maps a job status to component state, returns `true` to stop polling. */
-  private validateData = (data) => {
+  private validateData = (data: JobStatusResponse) => {
     const outcome = classifyJobStatus(data.jobstatus, this.selectedPrinter.is_queue)
     switch (outcome) {
       case 'processing':
@@ -463,7 +463,7 @@ export class EzpPrinterSelection {
     id: string
     title: string
     is_queue: boolean
-    value?: any
+    value?: string | number
   }) {
     switch (eventDetails.type) {
       case 'printer':
@@ -508,7 +508,8 @@ export class EzpPrinterSelection {
         }
         break
       case 'paper_ranges':
-        this.selectedProperties.PageRanges = eventDetails.value
+        // The page-range field is a text input, so the value is always a string.
+        this.selectedProperties.PageRanges = eventDetails.value as string
         this.pageRangeInvalid = !validatePageRange(this.selectedProperties.PageRanges)
         break
       case 'duplex':
@@ -530,7 +531,7 @@ export class EzpPrinterSelection {
     this.setPaperid()
   }
 
-  private async processSingleFile(file: File, printProperties: any) {
+  private async processSingleFile(file: File, printProperties: PrinterProperties) {
     this.preparingUpload = true
     const response = await this.printService.prepareFileUpload(authStore.state.accessToken)
     this.preparingUpload = false
@@ -641,7 +642,7 @@ export class EzpPrinterSelection {
     this.setPaperid()
   }
 
-  private async processMultipleFiles(files: File[], printProperties: any) {
+  private async processMultipleFiles(files: File[], printProperties: PrinterProperties) {
     this.totalFiles = files.length
     this.currentFileIndex = 0
     this.failedFiles = []

@@ -1,7 +1,14 @@
 import { createStore } from '@stencil/store'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
-import { PrinterConfig, PrinterProperties } from '../shared/types'
+import {
+  PrinterConfig,
+  PrinterProperties,
+  Printer,
+  PrintResponse,
+  JobStatusResponse,
+  PrepareUploadResponse,
+} from '../shared/types'
 import { AnonymousCredential, BlockBlobClient, newPipeline } from '@azure/storage-blob'
 import { authGetJson, bearer } from './http'
 import { storage } from '../shared/storage'
@@ -65,7 +72,7 @@ export class EzpPrintService {
   }
 
   getPrinterList(accessToken: string) {
-    return authGetJson(`https://${this.printingApi}/sfapi/GetPrinter/`, accessToken)
+    return authGetJson<Printer[]>(`https://${this.printingApi}/sfapi/GetPrinter/`, accessToken)
   }
 
   async getConfig(accessToken: string) {
@@ -76,14 +83,17 @@ export class EzpPrintService {
   }
 
   getPrinterProperties(accessToken: string, printerID: string) {
-    return authGetJson(
+    return authGetJson<PrinterConfig[]>(
       `https://${this.printingApi}/sfapi/GetPrinterProperties/?id=${printerID}`,
       accessToken
     )
   }
 
   getAllPrinterProperties(accessToken: string) {
-    return authGetJson(`https://${this.printingApi}/sfapi/GetPrinterProperties/`, accessToken)
+    return authGetJson<PrinterConfig[]>(
+      `https://${this.printingApi}/sfapi/GetPrinterProperties/`,
+      accessToken
+    )
   }
 
   printFileByUrl(
@@ -158,11 +168,14 @@ export class EzpPrintService {
       ...(filename && { alias: filename }),
       ...(printAndDelete && { printanddelete: printAndDelete }),
       properties,
-    }).then((response) => response.json())
+    }).then((response) => response.json() as Promise<PrintResponse>)
   }
 
   prepareFileUpload(accessToken: string) {
-    return authGetJson(`https://${this.printingApi}/sfapi/PrepareUpload/`, accessToken)
+    return authGetJson<PrepareUploadResponse>(
+      `https://${this.printingApi}/sfapi/PrepareUpload/`,
+      accessToken
+    )
   }
 
   uploadFile(sasURI: string, formData: FormData) {
@@ -202,7 +215,7 @@ export class EzpPrintService {
   }
 
   getPrintStatus = () => {
-    return authGetJson(
+    return authGetJson<JobStatusResponse>(
       `https://${this.printingApi}/sfapi/Status/?id=${encodeURIComponent(printStore.state.jobID)}`,
       authStore.state.accessToken
     )

@@ -19,8 +19,8 @@ export class EzpAuth {
   @State() accessToken: string
 
   @Event() authCancel: EventEmitter<MouseEvent>
-  @Event() authSuccess: EventEmitter
-  @Event() userCancel: EventEmitter
+  @Event() authSuccess: EventEmitter<void>
+  @Event() userCancel: EventEmitter<void>
 
   @Listen('dialogAction')
   listenDialogAction() {

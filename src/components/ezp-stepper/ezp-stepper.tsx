@@ -65,7 +65,7 @@ export class EzpStepper {
    *
    */
 
-  @Event() stepperChanged: EventEmitter
+  @Event() stepperChanged: EventEmitter<number>
 
   /**
    *

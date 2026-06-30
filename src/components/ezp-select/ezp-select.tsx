@@ -44,7 +44,10 @@ export class EzpSelect {
   /** Description... */
   @Prop() placeholder: string = 'Placeholder'
 
-  /** Description... */
+  // The currently-selected option, matched by title (string) or id (number).
+  // Kept as `any` because callers pass `i18next.t(...)`, whose return type
+  // (TFunctionResult) includes `object`; tighten to `string | number | null`
+  // once i18next is upgraded so `t()` returns `string`.
   @Prop() preSelected: any
 
   /** Description... */
@@ -71,8 +74,8 @@ export class EzpSelect {
    *
    */
 
-  @Event() selectToggle: EventEmitter
-  @Event() selectSelection: EventEmitter
+  @Event() selectToggle: EventEmitter<boolean>
+  @Event() selectSelection: EventEmitter<SelectOptionType>
 
   /**
    *

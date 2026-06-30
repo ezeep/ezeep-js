@@ -26,9 +26,19 @@ Landed and verified (`npm run build` + `npm run lint` + `npm test` all green):
   (`applyPrinterDefaults`, `classifyJobStatus`); the 9-branch render ternary extracted to
   `renderStatus()`; dead `handleFiles` removed. `ezp-printer-selection` logic 1277 → ~1100 lines.
 
-Still open: **Phase 2** store/service split · **Phase 4** typing (`strict`, reduce `any`) ·
-**Phase 5** dependency bumps (notably `@types/node` 22, which removes the `AbortSignal`
-workaround in [print.ts](src/services/print.ts)). e2e tests not yet added.
+- **Phase 4 (typing):** API responses typed ([types.d.ts](src/shared/types.d.ts):
+  `PrintResponse`, `JobStatusResponse`, `PrepareUploadResponse`); service methods + the
+  `authGetJson` generic now return real types; **all `@Event()` emitters typed** (status/dialog
+  `<string>`, upload `<File[]>`, stepper `<number>`, etc.). Net effect: the **generated
+  `components.d.ts` went from 36 `any` → 2** (consumers now get fully-typed custom events with
+  zero runtime change). Source `any` is down to one generic helper plus the deferred
+  `preSelected` prop.
+
+Still open: **Phase 2** store/service split · **Phase 4** flip `tsconfig` to `strict` ·
+**Phase 5** dependency bumps. Note: `@types/node` 22 was attempted and reverted — it resolves
+the `AbortSignal`/`node:stream` issues but surfaces an i18next `t()` → `TFunctionResult` typing
+problem, so it must be done **together with an i18next upgrade** (which also unblocks tightening
+the `ezp-select` `preSelected` prop from `any`). e2e tests not yet added.
 
 ---
 

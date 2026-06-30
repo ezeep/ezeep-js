@@ -200,7 +200,7 @@ export class EzpPrinting {
     composed: true,
     bubbles: true,
   })
-  printFinished: EventEmitter<any>
+  printFinished: EventEmitter<void>
 
   /**
    *

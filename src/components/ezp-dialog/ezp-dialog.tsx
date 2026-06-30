@@ -14,8 +14,8 @@ export class EzpDialog {
    *
    */
 
-  @Event() dialogClose: EventEmitter
-  @Event() dialogAction: EventEmitter
+  @Event() dialogClose: EventEmitter<string>
+  @Event() dialogAction: EventEmitter<string>
 
   /**
    *
