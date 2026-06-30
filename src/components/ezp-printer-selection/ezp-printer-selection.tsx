@@ -17,12 +17,12 @@ import { Printer, PrinterConfig, PrinterProperties, JobStatusResponse } from '..
 import { managePaperDimensions, poll, removeEmptyStrings } from '../../utils/utils'
 import { PAPER_ID, validatePageRange, formatPageRange } from '../../utils/utils'
 import { applyPrinterDefaults, classifyJobStatus, hasTrays, hasNoTrays } from '../../utils/printer'
+import { uploadAndPrintFile } from '../../services/print-job'
 import { storage } from '../../shared/storage'
 import {
   HUB_DRIVER_ERROR_CODES,
   PRINT_REJECTED_CODE,
   FILE_EXPIRED_STATUS,
-  BLOB_UPLOAD_CREATED,
   POLL_INTERVAL_MS,
   MAX_POLL_ATTEMPTS,
   HUB_TIMEOUT_MS,
@@ -531,82 +531,24 @@ export class EzpPrinterSelection {
     this.setPaperid()
   }
 
+  /** Upload + print a single file, reflecting progress into component state. */
   private async processSingleFile(file: File, printProperties: PrinterProperties) {
-    this.preparingUpload = true
-    const response = await this.printService.prepareFileUpload(authStore.state.accessToken)
-    this.preparingUpload = false
-
-    const fileid = response.fileid
-    const sasUri = response.sasUri
-    const filetype = this.getFileExtension(file.name)
-
-    this.uploading = true
-
-    try {
-      // Upload the file
-      const res = await this.printService.uploadBlobFiles(sasUri, file)
-
-      if (res._response.status === BLOB_UPLOAD_CREATED) {
-        // Print the file
-        const data = await this.printService.printByFileID(
-          authStore.state.accessToken,
-          fileid,
-          filetype,
-          this.selectedPrinter.id,
-          printProperties,
-          file.name
-        )
-
-        if (data.code === PRINT_REJECTED_CODE) {
-          throw new Error(`Print failed for file: ${file.name}`)
-        }
-
-        // Check for hub printer driver errors
-        if (this.selectedPrinter.is_queue && HUB_DRIVER_ERROR_CODES.includes(data.code)) {
-          throw new Error(`Hub printer driver error for file: ${file.name}`)
-        }
-
-        if (data.jobid) {
-          printStore.state.jobID = data.jobid
-          // Wait for this print job to complete before processing the next file
-          await this.waitForPrintCompletion()
-        } else {
-          throw new Error(`No job ID returned for file: ${file.name}`)
-        }
-      } else {
-        throw new Error(`Upload failed for file: ${file.name}`)
+    await uploadAndPrintFile(
+      {
+        service: this.printService,
+        accessToken: authStore.state.accessToken,
+        printerId: this.selectedPrinter.id,
+        isQueue: this.selectedPrinter.is_queue,
+        properties: printProperties,
+        pollIntervalMs: POLL_INTERVAL_MS,
+      },
+      file,
+      {
+        onPreparing: (value) => (this.preparingUpload = value),
+        onUploading: (value) => (this.uploading = value),
+        onJobId: (jobId) => (printStore.state.jobID = jobId),
       }
-    } catch (error) {
-      this.uploading = false
-      throw error
-    }
-
-    this.uploading = false
-  }
-
-  private async waitForPrintCompletion(): Promise<void> {
-    while (true) {
-      const data = await this.printService.getPrintStatus()
-      const outcome = classifyJobStatus(data.jobstatus, this.selectedPrinter.is_queue)
-
-      switch (outcome) {
-        case 'success':
-          return
-        case 'processing':
-          await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
-          break
-        case 'hub-error':
-          throw new Error('Hub printer driver error: ' + (data.jobstatusstring || data.jobstatus))
-        case 'failed':
-        default:
-          throw new Error('Print job failed: ' + (data.jobstatusstring || data.jobstatus))
-      }
-    }
-  }
-
-  private getFileExtension(filename: string): string {
-    const extension = filename.split('.').pop()
-    return extension ? extension.toLowerCase() : ''
+    )
   }
 
   private validateFileType = async (name: string): Promise<boolean> => {
