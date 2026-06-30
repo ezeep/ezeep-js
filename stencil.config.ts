@@ -14,6 +14,12 @@ export const config: Config = {
   namespace: 'ezeep',
   globalScript: 'src/shared/global.ts',
   plugins: [sass({ includePaths: ['node_modules'] })],
+  testing: {
+    // The e2e test server inherits the HTTPS dev-server config (self-signed
+    // cert), so Chromium must be told to accept the insecure localhost origin.
+    // `--no-sandbox` is required for headless Chromium in CI containers.
+    browserArgs: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-insecure-localhost'],
+  },
   outputTargets: [
     angularOutputTarget({
       componentCorePackage: '@ezeep/ezeep-js',

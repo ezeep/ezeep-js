@@ -8,7 +8,13 @@ export default async () => {
     }
   )
 
-  font.load().then(() => {
-    document.fonts.add(font)
-  })
+  font
+    .load()
+    .then(() => {
+      document.fonts.add(font)
+    })
+    .catch(() => {
+      // The remote webfont is a progressive enhancement; if it can't be
+      // fetched (offline, blocked, CI without egress) fall back silently.
+    })
 }
