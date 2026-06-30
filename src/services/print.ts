@@ -178,17 +178,6 @@ export class EzpPrintService {
     )
   }
 
-  uploadFile(sasURI: string, formData: FormData) {
-    return fetch(`${sasURI}`, {
-      method: 'PUT',
-      headers: {
-        'x-ms-blob-type': 'BlockBlob',
-        'Content-Type:': 'multipart/form-data', // try and not set it, see if it does it automatically
-      },
-      body: formData,
-    }).then((response) => response.json())
-  }
-
   async uploadBlobFiles(sasUri: string, file: File) {
     printStore.state.uploadProgress = 0
     const pipeline = newPipeline(new AnonymousCredential(), {

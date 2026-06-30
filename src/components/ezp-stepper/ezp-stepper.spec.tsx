@@ -18,6 +18,12 @@ describe('ezp-stepper', () => {
     expect(stepper.canIncrease).toBe(true)
   })
 
+  it('clamps the initial value up to a higher min on load', async () => {
+    const { stepper } = await setup('min="3" max="5"')
+    expect(stepper.value).toBe(3)
+    expect(stepper.canDecrease).toBe(false)
+  })
+
   it('increments up to max, then blocks', async () => {
     const { page, stepper } = await setup('min="1" max="3"')
     stepper.handleIncrease()

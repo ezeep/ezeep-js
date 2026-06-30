@@ -180,6 +180,11 @@ export class EzpStepper {
    */
 
   componentWillLoad() {
+    // The default value (1) can sit below a higher `min`; clamp it on load so
+    // the stepper never starts in an out-of-range state.
+    if (this.min !== undefined && this.value < this.min) {
+      this.value = this.min
+    }
     this.watchValue()
   }
 
