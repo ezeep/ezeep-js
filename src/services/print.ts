@@ -1,5 +1,5 @@
 import { createStore } from '@stencil/store'
-import authStore, { EzpAuthorizationService } from './auth'
+import authStore from './auth'
 import fetchIntercept from 'fetch-intercept'
 import {
   PrinterConfig,
@@ -10,7 +10,7 @@ import {
   PrepareUploadResponse,
 } from '../shared/types'
 import { AnonymousCredential, BlockBlobClient, newPipeline } from '@azure/storage-blob'
-import { authGetJson, bearer } from './http'
+import { authGetJson, bearer, refreshAccessToken } from './http'
 import { storage } from '../shared/storage'
 
 export class EzpPrintService {
@@ -28,8 +28,6 @@ export class EzpPrintService {
   printerConfig: PrinterConfig
   printingApi: string
   abortController: AbortController | null = null
-  /** Guards against overlapping token refreshes when several requests 401 at once. */
-  private refreshing: Promise<void> | null = null
 
   private checkStoredRefreshToken() {
     if (authStore.state.refreshToken !== '') {
@@ -51,15 +49,10 @@ export class EzpPrintService {
       // check for response status here
       response: (response) => {
         if (response.status === 401 && authStore.state.refreshToken !== '') {
-          // Refresh the token so the *next* request carries a valid one. Reuse a
-          // single in-flight refresh so a burst of 401s doesn't fire a storm of
-          // refresh calls. (Retrying the original request is a follow-up.)
-          if (!this.refreshing) {
-            const authService = new EzpAuthorizationService(this.redirectURI, this.clientID)
-            this.refreshing = Promise.resolve(authService.refreshTokens()).finally(() => {
-              this.refreshing = null
-            })
-          }
+          // Kick off a (shared, single-flight) refresh so the next request
+          // carries a valid token. GET helpers additionally retry themselves;
+          // this covers POSTs that don't go through `authGetJson`.
+          refreshAccessToken()
         }
         // Modify the reponse object
         return response

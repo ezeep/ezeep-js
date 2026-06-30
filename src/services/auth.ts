@@ -17,6 +17,9 @@ export class EzpAuthorizationService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
     this.clientID = clientID
+    // Mirror the client id into the store so a token refresh can be triggered
+    // centrally (e.g. from the fetch helper) without a service instance.
+    authStore.state.clientID = clientID
 
     this.oauthUrl = authStore.state.authApiHostUrl
     this.authURI = new URL(`https://${this.oauthUrl}/oauth/authorize/`)
@@ -151,6 +154,7 @@ const authStore = createStore({
   authApiHostUrl: '',
   redirectUri: '',
   authUri: '',
+  clientID: '',
 })
 
 export default authStore
