@@ -37,7 +37,9 @@ export class EzpIcon {
       .then((result) => {
         this.glyph = result
       })
-      .catch((error) => console.log(error))
+      .catch(() => {
+        // Missing/unfetchable glyph — render nothing rather than crash.
+      })
   }
 
   /**

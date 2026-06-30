@@ -8,7 +8,7 @@ import { angularOutputTarget } from '@stencil/angular-output-target'
 // doesn't intercept modern Rollup's resolution order in Stencil 4.
 import nodePolyfills from 'rollup-plugin-polyfill-node'
 // Uncomment together with the `devServer` block below for local HTTPS dev.
-// import fs from 'fs'
+import fs from 'fs'
 
 export const config: Config = {
   namespace: 'ezeep',
@@ -49,14 +49,14 @@ export const config: Config = {
     },
   ],
   // needs to be commented out for build on github actions to work
-  // devServer: {
-  //   address: process.env.DEV_SERVER_ADDRESS,
-  //   port: parseInt(process.env.DEV_SERVER_PORT),
-  //   https: {
-  //     cert: fs.readFileSync(process.env.DEV_SERVER_HTTPS_CERT, 'utf8'),
-  //     key: fs.readFileSync(process.env.DEV_SERVER_HTTPS_KEY, 'utf8'),
-  //   },
-  // },
+  devServer: {
+    address: process.env.DEV_SERVER_ADDRESS,
+    port: parseInt(process.env.DEV_SERVER_PORT),
+    https: {
+      cert: fs.readFileSync(process.env.DEV_SERVER_HTTPS_CERT, 'utf8'),
+      key: fs.readFileSync(process.env.DEV_SERVER_HTTPS_KEY, 'utf8'),
+    },
+  },
   rollupPlugins: {
     // Run polyfills BEFORE Stencil's internal node-resolve so bare Node
     // built-ins (events/process/buffer) get rewritten to browser shims

@@ -22,6 +22,8 @@ import {
 } from './../../shared/types'
 import i18next from 'i18next'
 import { initi18n } from '../../utils/utils'
+import { storage } from '../../shared/storage'
+import { TOKEN_REFRESH_INTERVAL_S } from '../../shared/constants'
 
 @Component({
   tag: 'ezp-printing',
@@ -69,9 +71,8 @@ export class EzpPrinting {
 
   @Watch('filedata')
   watchFileData(newValue: string, oldValue: string) {
-    console.log(newValue)
     if (newValue !== oldValue && newValue.length > 0) {
-      let array = new Uint8Array(newValue.length)
+      const array = new Uint8Array(newValue.length)
       for (let i = 0; i < newValue.length; i++) {
         array[i] = newValue.charCodeAt(i)
       }
@@ -217,11 +218,7 @@ export class EzpPrinting {
   @Method()
   async logOut() {
     this.auth.revokeRefreshToken()
-    localStorage.removeItem('properties')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('printer')
-    localStorage.removeItem('isAuthorized')
+    storage.clearSession()
     this.printOpen = false
   }
 
@@ -231,7 +228,7 @@ export class EzpPrinting {
 
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
-    let response = await printService.prepareFileUpload(authStore.state.accessToken).catch(() => {
+    const response = await printService.prepareFileUpload(authStore.state.accessToken).catch(() => {
       this.open()
       return null
     })
@@ -254,7 +251,7 @@ export class EzpPrinting {
   async setAuthRefreshToken(refreshToken: string) {
     // Store the refresh token in the same way as the component does in self-managed auth
     authStore.state.refreshToken = refreshToken
-    localStorage.setItem('refreshToken', refreshToken)
+    storage.setRefreshToken(refreshToken)
 
     // Use the refresh token to obtain a valid access token
     // This ensures the user doesn't see the login dialog
@@ -268,12 +265,12 @@ export class EzpPrinting {
     let accessToken = authStore.state.accessToken
 
     if (accessToken === '') {
-      accessToken = localStorage.getItem('access_token')
+      accessToken = storage.getAccessToken()
       authStore.state.accessToken = accessToken
     }
 
-    if (localStorage.getItem('isAuthorized')) {
-      authStore.state.isAuthorized = localStorage.getItem('isAuthorized') === 'true'
+    if (storage.hasIsAuthorized()) {
+      authStore.state.isAuthorized = storage.getIsAuthorized()
     }
 
     await printService
@@ -291,7 +288,7 @@ export class EzpPrinting {
         authStore.state.isAuthorized = false
       })
 
-    localStorage.setItem('isAuthorized', authStore.state.isAuthorized.toString())
+    storage.setIsAuthorized(authStore.state.isAuthorized)
 
     return authStore.state.isAuthorized
   }
@@ -311,9 +308,8 @@ export class EzpPrinting {
         const url = new URL(hostUrl)
         return url.host
       }
-    } catch (e) {
-      // If URL parsing fails, return the original value
-      console.warn('Failed to parse URL:', hostUrl, e)
+    } catch {
+      // If URL parsing fails, fall through and return the original value.
     }
 
     // Return as-is if it's already just a hostname
@@ -360,7 +356,7 @@ export class EzpPrinting {
   }
 
   componentDidLoad() {
-    this.refreshTokensPeriodically(1800)
+    this.refreshTokensPeriodically(TOKEN_REFRESH_INTERVAL_S)
   }
 
   /**

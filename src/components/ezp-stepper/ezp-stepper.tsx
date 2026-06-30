@@ -107,7 +107,7 @@ export class EzpStepper {
   private handleInput = () => {
     if (!this.input) return
 
-    let inputString = this.input.value.trim()
+    const inputString = this.input.value.trim()
 
     // If the input is empty, set the value to the minimum
     if (inputString === '') {

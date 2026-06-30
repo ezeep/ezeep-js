@@ -2,6 +2,7 @@ import { Component, Host, Prop, Event, Element, EventEmitter, Watch, h } from '@
 import authStore, { EzpAuthorizationService } from '../../services/auth'
 import userStore from '../../services/user'
 import { IconNameTypes, ThemeTypes, AppearanceTypes } from '../../shared/types'
+import { storage } from '../../shared/storage'
 import i18next from 'i18next'
 
 @Component({
@@ -73,11 +74,7 @@ export class EzpUserMenu {
   }
 
   private logOut = () => {
-    localStorage.removeItem('properties')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('printer')
-    localStorage.removeItem('isAuthorized')
+    storage.clearSession()
     authStore.state.isAuthorized = false
     this.logoutEmitter.emit()
   }

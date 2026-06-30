@@ -1,5 +1,17 @@
 import { createStore } from '@stencil/store'
 import { encodeFormData } from '../utils/utils'
+import { storage } from '../shared/storage'
+
+/** base64url-encode raw bytes (RFC 4648 §5, no padding) for PKCE values. */
+function base64UrlEncode(bytes: Uint8Array): string {
+  let binary = ''
+  // Build the binary string in a loop rather than `String.fromCharCode.apply`,
+  // which overflows the call stack for large inputs.
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+}
 
 export class EzpAuthorizationService {
   constructor(redirectURI: string, clientID: string) {
@@ -27,20 +39,18 @@ export class EzpAuthorizationService {
     if (authStore.state.codeVerifier !== '') {
       this.codeVerifier = authStore.state.codeVerifier
     } else {
-      const arr = new Uint8Array(128)
-      const randomValueArray = crypto.getRandomValues(arr)
-      const codeVerifier = btoa(randomValueArray.toString()).substr(0, 128)
-      this.codeVerifier = codeVerifier
+      // High-entropy, spec-compliant PKCE verifier: 64 random bytes encoded as
+      // base64url yields ~86 chars (within the 43-128 char range of RFC 7636).
+      const randomBytes = crypto.getRandomValues(new Uint8Array(64))
+      this.codeVerifier = base64UrlEncode(randomBytes)
       authStore.state.codeVerifier = this.codeVerifier
     }
   }
 
   async generateCodeChallenge(codeVerifier: string) {
-    const encoder = new TextEncoder()
-    const codeData = encoder.encode(codeVerifier)
+    const codeData = new TextEncoder().encode(codeVerifier)
     const digest = await crypto.subtle.digest('SHA-256', codeData)
-    const base64Digest = btoa(String.fromCharCode.apply(null, new Uint8Array(digest)))
-    this.codeChallenge = base64Digest.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+    this.codeChallenge = base64UrlEncode(new Uint8Array(digest))
   }
 
   buildAuthURI() {
@@ -53,13 +63,33 @@ export class EzpAuthorizationService {
     authStore.state.authUri = this.authURI.toString()
   }
 
+  /** Shared auth headers for the OAuth token endpoints (Basic auth, form body). */
+  private oauthHeaders() {
+    return {
+      Authorization: 'Basic ' + btoa(this.clientID + ':'),
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }
+  }
+
+  /** Persist tokens to the auth store, instance fields and localStorage. */
+  private persistTokens(accessToken: string, refreshToken: string) {
+    this.accessToken = accessToken
+    authStore.state.accessToken = accessToken
+    storage.setAccessToken(accessToken)
+
+    this.refreshToken = refreshToken
+    authStore.state.refreshToken = refreshToken
+    storage.setRefreshToken(refreshToken)
+
+    this.isAuthorized = true
+    authStore.state.isAuthorized = true
+    storage.setIsAuthorized(true)
+  }
+
   getAccessToken() {
     return fetch(this.accessTokenURL, {
       credentials: 'include',
-      headers: {
-        Authorization: 'Basic ' + btoa(this.clientID + ':'),
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: this.oauthHeaders(),
       method: 'POST',
       body: encodeFormData({
         grant_type: 'authorization_code',
@@ -69,23 +99,10 @@ export class EzpAuthorizationService {
         code_verifier: authStore.state.codeVerifier,
       }),
     })
-      .then((response) => {
-        return response.json() // parse response
-      })
+      .then((response) => response.json())
       .then((data) => {
-        // actual object
         if (data.access_token) {
-          authStore.state.isAuthorized = true
-          this.isAuthorized = authStore.state.isAuthorized
-          localStorage.setItem('isAuthorized', this.isAuthorized.toString())
-
-          this.accessToken = data.access_token
-          localStorage.setItem('access_token', this.accessToken)
-          authStore.state.accessToken = this.accessToken
-
-          this.refreshToken = data.refresh_token
-          localStorage.setItem('refreshToken', this.refreshToken)
-          authStore.state.refreshToken = this.refreshToken
+          this.persistTokens(data.access_token, data.refresh_token)
         }
       })
   }
@@ -93,10 +110,7 @@ export class EzpAuthorizationService {
   refreshTokens() {
     return fetch(this.accessTokenURL, {
       credentials: 'include',
-      headers: {
-        Authorization: 'Basic ' + btoa(this.clientID + ':'),
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: this.oauthHeaders(),
       method: 'POST',
       body: encodeFormData({
         grant_type: 'refresh_token',
@@ -107,16 +121,7 @@ export class EzpAuthorizationService {
       .then((response) => response.json())
       .then((data) => {
         if (data.access_token) {
-          this.accessToken = data.access_token
-          localStorage.setItem('access_token', this.accessToken)
-          authStore.state.accessToken = this.accessToken
-
-          this.refreshToken = data.refresh_token
-          localStorage.setItem('refreshToken', this.refreshToken)
-          authStore.state.refreshToken = this.refreshToken
-
-          authStore.state.isAuthorized = true
-          localStorage.setItem('isAuthorized', 'true')
+          this.persistTokens(data.access_token, data.refresh_token)
         }
       })
   }
@@ -125,16 +130,13 @@ export class EzpAuthorizationService {
     if (authStore.state.refreshToken)
       fetch(`https://${this.oauthUrl}/oauth/revoke/`, {
         credentials: 'include',
-        headers: {
-          Authorization: 'Basic ' + btoa(this.clientID + ':'),
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        headers: this.oauthHeaders(),
         method: 'POST',
         body: encodeFormData({
           token: authStore.state.refreshToken,
         }),
-      }).catch((error) => {
-        console.log(error)
+      }).catch(() => {
+        // Revocation is best-effort; ignore network failures.
       })
   }
 }

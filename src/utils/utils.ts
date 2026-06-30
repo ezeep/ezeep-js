@@ -1,7 +1,10 @@
 import i18next from 'i18next'
 import translationsDE from '../data/locales/de.json'
 import translationsEN from '../data/locales/en.json'
-import { PrinterProperties } from './../shared/types';
+import { PrinterProperties } from './../shared/types'
+import { PAPER_ID } from '../shared/constants'
+
+export { PAPER_ID } from '../shared/constants'
 
 export function encodeFormData(data: { [x: string]: string | number | boolean }): string {
   return Object.keys(data)
@@ -62,7 +65,7 @@ export const poll = async ({ fn, validate, interval, maxAttempts }) => {
 }
 
 export const removeEmptyStrings = (obj: { [x: string]: any }) => {
-  let newObj = {}
+  const newObj = {}
   Object.keys(obj).forEach((prop) => {
     if (obj[prop] !== '') {
       newObj[prop] = obj[prop]
@@ -98,9 +101,9 @@ export const validatePageRange = (pageRange) => {
   if (!isValid) {
     return false
   }
-  let ranges = pageRange.split(',');
+  const ranges = pageRange.split(',');
   for (let i = 0; i < ranges.length; i++) {
-    let rng = ranges[i].trim();
+    const rng = ranges[i].trim();
     if (rng.includes('-')) {
       let [start, end] = rng.split('-');
       start = parseInt(start);
@@ -109,7 +112,7 @@ export const validatePageRange = (pageRange) => {
         return false;
       }
     } else {
-      let page = parseInt(rng);
+      const page = parseInt(rng);
       if (isNaN(page) || page <= 0) {
         return false
       }
@@ -117,5 +120,3 @@ export const validatePageRange = (pageRange) => {
   }
   return true
 }
-
-export const PAPER_ID = 256
