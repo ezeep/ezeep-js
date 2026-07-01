@@ -83,18 +83,36 @@ export class EzpAuth {
       this.oauthPopupWindow.focus()
     }
 
-    // add the listener for receiving a message from the popup
-    window.addEventListener('message', (event) => this.receiveMessage(event), false)
+    // Add the listener for receiving a message from the popup. Use the bound
+    // property (not an inline arrow) so the matching removeEventListener above
+    // actually removes it — otherwise a listener leaks on every sign-in.
+    window.addEventListener('message', this.receiveMessage, false)
 
     this.previousUrl = this.auth.authURI
   }
 
-  receiveMessage(event: MessageEvent) {
+  receiveMessage = (event: MessageEvent) => {
+    // Only accept the auth code from the expected redirect origin. Without this
+    // check any page could postMessage a forged code into the token exchange.
+    let expectedOrigin: string
+    try {
+      expectedOrigin = new URL(this.redirectURI).origin
+    } catch {
+      return
+    }
+    if (event.origin !== expectedOrigin) {
+      return
+    }
+
     authStore.state.code = event.data
     this.auth.getAccessToken().then(() => {
       this.authCancel.emit()
       this.authSuccess.emit()
     })
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('message', this.receiveMessage)
   }
 
   async componentWillLoad() {

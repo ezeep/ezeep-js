@@ -33,6 +33,11 @@ import { TOKEN_REFRESH_INTERVAL_S } from '../../shared/constants'
 export class EzpPrinting {
   auth: EzpAuthorizationService
 
+  // Handles retained so they can be torn down in disconnectedCallback.
+  private tokenRefreshInterval?: ReturnType<typeof setInterval>
+  private systemAppearanceQuery?: MediaQueryList
+  private systemAppearanceListener?: (event: MediaQueryListEvent) => void
+
   @Prop() clientid: string
   @Prop() redirecturi: string
   @Prop({ mutable: true }) filename: string = ''
@@ -320,7 +325,7 @@ export class EzpPrinting {
 
   refreshTokensPeriodically(seconds: number) {
     const authService = new EzpAuthorizationService(this.redirecturi, this.clientid)
-    setInterval(() => {
+    this.tokenRefreshInterval = setInterval(() => {
       authService.refreshTokens()
     }, seconds * 1000)
   }
@@ -330,9 +335,11 @@ export class EzpPrinting {
 
     this.systemAppearance = systemAppearanceDark.matches ? 'dark' : 'light'
 
-    systemAppearanceDark.addEventListener('change', (event) => {
+    this.systemAppearanceQuery = systemAppearanceDark
+    this.systemAppearanceListener = (event: MediaQueryListEvent) => {
       this.systemAppearance = event.matches ? 'dark' : 'light'
-    })
+    }
+    systemAppearanceDark.addEventListener('change', this.systemAppearanceListener)
 
     authStore.state.redirectUri = this.redirecturi
     userStore.state.theme = this.theme
@@ -359,6 +366,17 @@ export class EzpPrinting {
 
   componentDidLoad() {
     this.refreshTokensPeriodically(TOKEN_REFRESH_INTERVAL_S)
+  }
+
+  disconnectedCallback() {
+    // Stop the periodic token refresh and the colour-scheme listener so they
+    // don't leak (and keep firing) after the component is removed.
+    if (this.tokenRefreshInterval) {
+      clearInterval(this.tokenRefreshInterval)
+    }
+    if (this.systemAppearanceQuery && this.systemAppearanceListener) {
+      this.systemAppearanceQuery.removeEventListener('change', this.systemAppearanceListener)
+    }
   }
 
   /**

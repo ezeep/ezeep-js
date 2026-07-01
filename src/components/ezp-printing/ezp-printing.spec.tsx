@@ -249,4 +249,20 @@ describe('ezp-printing public methods', () => {
     await setup('trigger="button" authapihosturl="https://auth.example.com"')
     expect(authStore.state.authApiHostUrl).toBe('auth.example.com')
   })
+
+  it('disconnectedCallback clears the refresh interval and colour-scheme listener', async () => {
+    const clearSpy = jest.spyOn(global, 'clearInterval')
+    const { el } = await setup('trigger="button"')
+    el.refreshTokensPeriodically(1800)
+    const intervalId = el.tokenRefreshInterval
+    // Spy on the actual stored MediaQueryList (mock-doc provides matchMedia).
+    const removeSpy = jest.spyOn(el.systemAppearanceQuery, 'removeEventListener')
+
+    el.disconnectedCallback()
+
+    expect(clearSpy).toHaveBeenCalledWith(intervalId)
+    expect(removeSpy).toHaveBeenCalledWith('change', el.systemAppearanceListener)
+    clearSpy.mockRestore()
+    removeSpy.mockRestore()
+  })
 })
