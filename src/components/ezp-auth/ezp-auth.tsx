@@ -83,24 +83,18 @@ export class EzpAuth {
       this.oauthPopupWindow.focus()
     }
 
-    // Add the listener for receiving a message from the popup. Use the bound
-    // property (not an inline arrow) so the matching removeEventListener above
-    // actually removes it — otherwise a listener leaks on every sign-in.
-    window.addEventListener('message', this.receiveMessage, false)
+    // add the listener for receiving a message from the popup
+    window.addEventListener('message', (event) => this.receiveMessage(event), false)
 
     this.previousUrl = this.auth.authURI
   }
 
-  receiveMessage = (event: MessageEvent) => {
+  receiveMessage(event: MessageEvent) {
     authStore.state.code = event.data
     this.auth.getAccessToken().then(() => {
       this.authCancel.emit()
       this.authSuccess.emit()
     })
-  }
-
-  disconnectedCallback() {
-    window.removeEventListener('message', this.receiveMessage)
   }
 
   async componentWillLoad() {

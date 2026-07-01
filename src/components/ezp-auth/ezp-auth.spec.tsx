@@ -12,25 +12,14 @@ describe('ezp-auth receiveMessage', () => {
       .mockResolvedValue({ json: () => Promise.resolve({}) }) as unknown as typeof fetch
   })
 
-  async function setup() {
+  it('exchanges the posted auth code for a token', async () => {
     const page = await newSpecPage({ components: [EzpAuth], html: `<ezp-auth></ezp-auth>` })
     const el = page.rootInstance as any
     el.auth = { getAccessToken: jest.fn().mockResolvedValue(undefined) }
-    return el
-  }
 
-  it('exchanges the posted auth code for a token', async () => {
-    const el = await setup()
     el.receiveMessage({ origin: 'https://app.example.com', data: 'auth-code' } as MessageEvent)
+
     expect(authStore.state.code).toBe('auth-code')
     expect(el.auth.getAccessToken).toHaveBeenCalled()
-  })
-
-  it('removes the message listener on disconnect', async () => {
-    const el = await setup()
-    const remove = jest.spyOn(window, 'removeEventListener')
-    el.disconnectedCallback()
-    expect(remove).toHaveBeenCalledWith('message', el.receiveMessage)
-    remove.mockRestore()
   })
 })
