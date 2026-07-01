@@ -92,18 +92,6 @@ export class EzpAuth {
   }
 
   receiveMessage = (event: MessageEvent) => {
-    // Only accept the auth code from the expected redirect origin. Without this
-    // check any page could postMessage a forged code into the token exchange.
-    let expectedOrigin: string
-    try {
-      expectedOrigin = new URL(this.redirectURI).origin
-    } catch {
-      return
-    }
-    if (event.origin !== expectedOrigin) {
-      return
-    }
-
     authStore.state.code = event.data
     this.auth.getAccessToken().then(() => {
       this.authCancel.emit()
