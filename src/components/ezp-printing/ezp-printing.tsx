@@ -228,10 +228,12 @@ export class EzpPrinting {
 
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
-    const response = await printService.prepareFileUpload(authStore.state.accessToken).catch(() => {
-      this.open()
-      return null
-    })
+    const response = await printService
+      .prepareFileUpload(authStore.state.accessToken)
+      .catch((): null => {
+        this.open()
+        return null
+      })
 
     if (response) {
       const sasUri = response.sasUri

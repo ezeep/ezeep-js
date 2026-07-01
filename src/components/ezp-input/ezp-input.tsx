@@ -8,7 +8,7 @@ import { IconNameTypes } from './../../shared/types'
 })
 export class EzpInput {
   private input?: HTMLInputElement
-  private timeout = null
+  private timeout: ReturnType<typeof setTimeout> | null = null
 
    /**
    *
@@ -53,11 +53,12 @@ export class EzpInput {
    */
   @State() focused: boolean = false
 
-  handleChange(event) {
+  handleChange(event: Event) {
     if (this.timeout) {
       clearTimeout(this.timeout)
     }
-    this.value = event.target.value ? event.target.value : this.type === 'number' ? 0 : ''
+    const target = event.target as HTMLInputElement
+    this.value = target.value ? target.value : this.type === 'number' ? 0 : ''
     this.timeout = setTimeout(() => {
       this.inputValueChanged.emit({
         type: this.eventType.toLowerCase(),

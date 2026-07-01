@@ -38,7 +38,7 @@ export class EzpAuth {
   }
 
   oauthPopupWindow: Window = null
-  previousUrl = null
+  previousUrl: string | URL | null = null
 
   openSignInWindow(url: string, name: string) {
     if (authStore.state.isAuthorized) {
@@ -89,7 +89,7 @@ export class EzpAuth {
     this.previousUrl = this.auth.authURI
   }
 
-  receiveMessage(event) {
+  receiveMessage(event: MessageEvent) {
     authStore.state.code = event.data
     this.auth.getAccessToken().then(() => {
       this.authCancel.emit()

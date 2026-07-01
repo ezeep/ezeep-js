@@ -45,10 +45,25 @@ export function initi18n(language?: string) {
   }
 }
 
-export const poll = async ({ fn, validate, interval, maxAttempts }) => {
+interface PollOptions<T> {
+  fn: () => Promise<T>
+  validate: (result: T) => boolean
+  interval: number
+  maxAttempts: number
+}
+
+export const poll = async <T = any>({
+  fn,
+  validate,
+  interval,
+  maxAttempts,
+}: PollOptions<T>): Promise<T> => {
   let attempts = 0
 
-  const executePoll = async (resolve, reject) => {
+  const executePoll = async (
+    resolve: (value: T) => void,
+    reject: (reason?: unknown) => void
+  ) => {
     const result = await fn()
     attempts++
 
@@ -61,11 +76,11 @@ export const poll = async ({ fn, validate, interval, maxAttempts }) => {
     }
   }
 
-  return new Promise(executePoll)
+  return new Promise<T>(executePoll)
 }
 
 export const removeEmptyStrings = (obj: { [x: string]: any }) => {
-  const newObj = {}
+  const newObj: { [key: string]: any } = {}
   Object.keys(obj).forEach((prop) => {
     if (obj[prop] !== '') {
       newObj[prop] = obj[prop]
@@ -88,11 +103,11 @@ export const managePaperDimensions = (properties :PrinterProperties)=>{
   return properties
 }
 
-export const formatPageRange = (pageRange) => {
+export const formatPageRange = (pageRange: string) => {
   return pageRange.replace(/,/g, ';')
 }
 
-export const validatePageRange = (pageRange) => {
+export const validatePageRange = (pageRange: string) => {
   if (!pageRange) {
     return true
   }
@@ -105,9 +120,9 @@ export const validatePageRange = (pageRange) => {
   for (let i = 0; i < ranges.length; i++) {
     const rng = ranges[i].trim();
     if (rng.includes('-')) {
-      let [start, end] = rng.split('-');
-      start = parseInt(start);
-      end = parseInt(end);
+      const [startStr, endStr] = rng.split('-');
+      const start = parseInt(startStr);
+      const end = parseInt(endStr);
       if (isNaN(start) || isNaN(end) || start > end || start <= 0) {
         return false;
       }
