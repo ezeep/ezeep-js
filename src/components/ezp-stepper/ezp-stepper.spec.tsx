@@ -108,3 +108,44 @@ describe('ezp-stepper input sanitization', () => {
     expect(stepper.value).toBe(7)
   })
 })
+
+describe('ezp-stepper keyboard + focus', () => {
+  function keydown(key: string, mods: Partial<KeyboardEvent> = {}) {
+    return { key, ctrlKey: false, metaKey: false, preventDefault: jest.fn(), ...mods } as unknown as KeyboardEvent
+  }
+
+  it('blocks non-digit keys', async () => {
+    const { stepper } = await setup()
+    const event = keydown('a')
+    stepper.handleKeyDown(event)
+    expect(event.preventDefault).toHaveBeenCalled()
+  })
+
+  it('allows digit keys', async () => {
+    const { stepper } = await setup()
+    const event = keydown('5')
+    stepper.handleKeyDown(event)
+    expect(event.preventDefault).not.toHaveBeenCalled()
+  })
+
+  it('allows editing/navigation keys and Ctrl/Cmd shortcuts', async () => {
+    const { stepper } = await setup()
+    const backspace = keydown('Backspace')
+    stepper.handleKeyDown(backspace)
+    expect(backspace.preventDefault).not.toHaveBeenCalled()
+
+    const paste = keydown('v', { ctrlKey: true })
+    stepper.handleKeyDown(paste)
+    expect(paste.preventDefault).not.toHaveBeenCalled()
+  })
+
+  it('tracks focus state', async () => {
+    const { page, stepper } = await setup()
+    stepper.handleFocus()
+    await page.waitForChanges()
+    expect(stepper.focused).toBe(true)
+    stepper.handleBlur()
+    await page.waitForChanges()
+    expect(stepper.focused).toBe(false)
+  })
+})

@@ -212,4 +212,33 @@ describe('ezp-printing public methods', () => {
     expect(el.files).toHaveLength(1)
     expect(el.files[0].name).toBe('report.pdf')
   })
+
+  it('setAuthRefreshToken stores the token and attempts a refresh', async () => {
+    const { el } = await setup('trigger="button"')
+    global.fetch = jest.fn().mockResolvedValue({ json: () => Promise.resolve({}) }) as unknown as typeof fetch
+
+    await el.setAuthRefreshToken('injected-RT')
+
+    expect(authStore.state.refreshToken).toBe('injected-RT')
+    expect(localStorage.getItem('refreshToken')).toBe('injected-RT')
+    expect(global.fetch).toHaveBeenCalled()
+  })
+
+  it('listenUserCancel closes auth and clears the selected files', async () => {
+    const { page, el } = await setup('trigger="file"')
+    el.listenUploadFile({ detail: [new File(['x'], 'report.pdf')] })
+    await page.waitForChanges()
+    expect(el.authOpen).toBe(true)
+
+    el.listenUserCancel()
+    await page.waitForChanges()
+    expect(el.authOpen).toBe(false)
+    expect(el.files).toEqual([])
+    expect(el.filename).toBe('')
+  })
+
+  it('normalizes protocol-prefixed API host props down to the hostname', async () => {
+    await setup('trigger="button" authapihosturl="https://auth.example.com"')
+    expect(authStore.state.authApiHostUrl).toBe('auth.example.com')
+  })
 })
