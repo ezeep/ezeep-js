@@ -133,7 +133,7 @@ export class EzpPrinterSelection {
     PageRanges: '',
   }
 
-  @State() paperid: number | string
+  @State() paperid: number | string | undefined
   @State() currentFileIndex: number = 0
   @State() totalFiles: number = 0
   @State() failedFiles: string[] = []
@@ -280,7 +280,7 @@ export class EzpPrinterSelection {
 
   /** Description... */
   private handlePrint = async () => {
-    this.printButton.blur()
+    this.printButton?.blur()
     this.printProcessing = true
     this.failedFiles = []
     this.successfulFiles = []
@@ -288,7 +288,7 @@ export class EzpPrinterSelection {
     this.hubDriverError = false
 
     // Set up timeout for hub printers to prevent infinite loading
-    let hubTimeout: NodeJS.Timeout
+    let hubTimeout: NodeJS.Timeout | undefined
     if (this.selectedPrinter.is_queue) {
       hubTimeout = setTimeout(() => {
         this.hubDriverError = true
@@ -552,7 +552,7 @@ export class EzpPrinterSelection {
   }
 
   private validateFileType = async (name: string): Promise<boolean> => {
-    const extension = name.split('.').pop()
+    const extension = name.split('.').pop() ?? ''
     this.fileExtension = extension.toLowerCase()
 
     return printStore.state.supportedFileExtensions.includes(`${this.fileExtension}`)
@@ -570,16 +570,13 @@ export class EzpPrinterSelection {
       format = 'A4'
     }
 
-    if (this.selectedPrinterConfig.PaperFormats?.find((el) => el.Name.includes(format))) {
-      this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats?.find((el) =>
-        el.Name.includes(format)
-      ).Name
-      this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats?.find((el) =>
-        el.Name.includes(format)
-      ).Id
+    const matched = this.selectedPrinterConfig.PaperFormats?.find((el) => el.Name.includes(format))
+    if (matched) {
+      this.selectedProperties.paper = matched.Name
+      this.selectedProperties.paperid = matched.Id
     } else {
-      this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats[0]?.Name
-      this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats[0]?.Id
+      this.selectedProperties.paper = this.selectedPrinterConfig.PaperFormats?.[0]?.Name
+      this.selectedProperties.paperid = this.selectedPrinterConfig.PaperFormats?.[0]?.Id
     }
     this.setPaperid()
   }
@@ -916,12 +913,12 @@ export class EzpPrinterSelection {
                 preSelected={
                   this.selectedPrinter.id &&
                   this.selectedPrinterConfig.PaperFormats?.find((el) =>
-                    el.Name.includes(this.selectedPrinterConfig.Default?.Paper)
+                    el.Name.includes(this.selectedPrinterConfig.Default?.Paper as string)
                   )
                     ? this.selectedPrinterConfig.Default?.Paper
                     : null
                 }
-                disabled={!(this.selectedPrinterConfig.PaperFormats?.length > 0)}
+                disabled={!((this.selectedPrinterConfig.PaperFormats?.length ?? 0) > 0)}
               />
               {this.paperid == PAPER_ID ? (
                 <>
@@ -948,7 +945,7 @@ export class EzpPrinterSelection {
                 icon="orientation"
                 placeholder={i18next.t('printer_selection.select_orientation')}
                 toggleFlow="horizontal"
-                options={this.selectedPrinterConfig.OrientationsSupported.map(
+                options={this.selectedPrinterConfig.OrientationsSupported?.map(
                   (orientation, index) => ({
                     id: index + 1,
                     title: i18next.t(`printer_selection.orientation_${orientation}`),
@@ -957,7 +954,7 @@ export class EzpPrinterSelection {
                   })
                 )}
                 preSelected={this.selectedPrinter.id ? this.selectedProperties.orientation : null}
-                disabled={!(this.selectedPrinterConfig.OrientationsSupported.length > 0)}
+                disabled={!((this.selectedPrinterConfig.OrientationsSupported?.length ?? 0) > 0)}
               />
               <ezp-select
                 label={i18next.t('printer_selection.quality')}
@@ -973,12 +970,12 @@ export class EzpPrinterSelection {
                 preSelected={
                   this.selectedPrinter.id &&
                   this.selectedPrinterConfig.Resolutions?.includes(
-                    this.selectedPrinterConfig.Default.Resolution
+                    this.selectedPrinterConfig.Default?.Resolution as string
                   )
-                    ? this.selectedPrinterConfig.Default.Resolution
+                    ? this.selectedPrinterConfig.Default?.Resolution
                     : null
                 }
-                disabled={!(this.selectedPrinterConfig.Resolutions?.length > 0)}
+                disabled={!((this.selectedPrinterConfig.Resolutions?.length ?? 0) > 0)}
               />
               {this.selectedPrinterConfig.Trays &&
               this.selectedPrinterConfig.Trays.length >= 1 &&
@@ -991,20 +988,21 @@ export class EzpPrinterSelection {
                   optionFlow="horizontal"
                   options={
                     this.selectedPrinterConfig.Trays &&
-                    this.selectedPrinterConfig.Trays.length >= 1 &&
-                    this.selectedPrinterConfig.Trays.map((trays) => ({
-                      title: trays.Name,
-                      id: trays.Index,
-                      meta: '',
-                      type: 'tray',
-                    }))
+                    this.selectedPrinterConfig.Trays.length >= 1
+                      ? this.selectedPrinterConfig.Trays.map((trays) => ({
+                          title: trays.Name,
+                          id: trays.Index,
+                          meta: '',
+                          type: 'tray',
+                        }))
+                      : undefined
                   }
                   preSelected={
                     this.selectedPrinter.id &&
                     this.selectedPrinterConfig.Trays?.find((el) =>
-                      el.Name.includes(this.selectedPrinterConfig.Default.Tray)
+                      el.Name.includes(this.selectedPrinterConfig.Default?.Tray as string)
                     )
-                      ? this.selectedPrinterConfig.Default.Tray
+                      ? this.selectedPrinterConfig.Default?.Tray
                       : null
                   }
                 />

@@ -65,7 +65,9 @@ describe('ezp-stepper', () => {
   it('emits stepperChanged with the new value', async () => {
     const { page, stepper } = await setup('min="1" max="5"')
     const detail: number[] = []
-    page.root.addEventListener('stepperChanged', (e: CustomEvent<number>) => detail.push(e.detail))
+    page.root!.addEventListener('stepperChanged', ((e: CustomEvent<number>) => {
+      detail.push(e.detail)
+    }) as EventListener)
     stepper.handleIncrease()
     await page.waitForChanges()
     expect(detail).toContain(2)

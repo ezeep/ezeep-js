@@ -223,7 +223,7 @@ export class EzpPrinting {
   }
 
   @Method()
-  async getSasUri(): Promise<string> {
+  async getSasUri(): Promise<string | undefined> {
     this.onlyGetSasUri = true
 
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
@@ -267,7 +267,7 @@ export class EzpPrinting {
     let accessToken = authStore.state.accessToken
 
     if (accessToken === '') {
-      accessToken = storage.getAccessToken()
+      accessToken = storage.getAccessToken() ?? ''
       authStore.state.accessToken = accessToken
     }
 

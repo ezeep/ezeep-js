@@ -40,9 +40,6 @@ clean).
 The largest runtime modernisation (i18next + `@types/node`) is now done. Remaining,
 in rough priority:
 
-- **`strictNullChecks`** (tsconfig) — not a dependency, but the natural next
-  hardening step (~27 null-guards; `noImplicitAny`/`noImplicitThis`/`alwaysStrict`
-  are already on).
 - **`@cortado-holding/colors` 2.x** — re-evaluate the local patch, then bump.
 - **Stencil v5 + `@stencil/vitest`/`@stencil/playwright`** — the test-runner is
   deprecated; this also lets `jest`/`puppeteer` move forward (see [TESTING.md](TESTING.md)).

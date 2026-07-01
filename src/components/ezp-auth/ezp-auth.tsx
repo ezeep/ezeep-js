@@ -37,7 +37,7 @@ export class EzpAuth {
     this.authCancel.emit()
   }
 
-  oauthPopupWindow: Window = null
+  oauthPopupWindow: Window | null = null
   previousUrl: string | URL | null = null
 
   openSignInWindow(url: string, name: string) {
@@ -73,7 +73,7 @@ export class EzpAuth {
         alert('popup blocked')
       }
 
-      this.oauthPopupWindow.focus()
+      this.oauthPopupWindow?.focus()
     } else {
       /* else the window reference must exist and the window
      is not closed; therefore, we can bring it back on top of any other

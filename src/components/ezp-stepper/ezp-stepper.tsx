@@ -147,7 +147,7 @@ export class EzpStepper {
   }
 
   private setFocus = () => {
-    this.input.focus()
+    this.input?.focus()
   }
 
   private handleBlur = () => {

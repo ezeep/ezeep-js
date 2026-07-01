@@ -68,7 +68,7 @@ export class EzpInput {
   }
 
   private setFocus = () => {
-    this.input.focus()
+    this.input?.focus()
   }
 
   private handleBlur = () => {

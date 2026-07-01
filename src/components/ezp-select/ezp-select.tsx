@@ -141,7 +141,8 @@ export class EzpSelect {
   private select = (id: number | string | boolean) => {
     const delay = this.selected?.id === id ? 0 : this.duration * 1000
 
-    this.selected = this.options.find((option) => option.id === id)
+    // The id always comes from an existing option, so a match is guaranteed.
+    this.selected = this.options.find((option) => option.id === id)!
     this.selectSelection.emit(this.selected)
 
     window.setTimeout(() => {
@@ -150,13 +151,16 @@ export class EzpSelect {
   }
 
   private preSelect = () => {
-    this.selected = this.options?.find((option) =>
+    const match = this.options?.find((option) =>
       typeof this.preSelected === 'number'
         ? option.id === this.preSelected
         : typeof this.preSelected === 'string'
         ? option.title === this.preSelected
         : null
     )
+    if (match) {
+      this.selected = match
+    }
   }
 
   /**
@@ -166,7 +170,7 @@ export class EzpSelect {
    */
 
   componentWillLoad() {
-    this.container = this.component.closest('[data-backdrop-surface]')
+    this.container = this.component.closest('[data-backdrop-surface]') as HTMLDivElement
 
     this.backdrop.addEventListener('backdropHideStart', () => {
       this.expanded = false
@@ -228,7 +232,7 @@ export class EzpSelect {
             />
             <ezp-icon id="accessory" name="expand" />
           </div>
-          <div id="list" ref={(element) => (this.list = element)}>
+          <div id="list" ref={(element) => (this.list = element as HTMLDivElement)}>
             {this.options?.map((option) => {
               if (option.title !== '') {
                 return (

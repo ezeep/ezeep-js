@@ -94,7 +94,7 @@ export class EzpUserMenu {
    */
 
   componentWillLoad() {
-    this.container = this.component.closest('[data-backdrop-surface]')
+    this.container = this.component.closest('[data-backdrop-surface]') as HTMLDivElement
 
     this.backdrop.addEventListener('backdropHideStart', () => {
       this.open = false
