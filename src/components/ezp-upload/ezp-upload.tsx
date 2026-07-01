@@ -124,6 +124,7 @@ export class EzpUpload {
                 name="input"
                 id="input"
                 multiple
+                aria-label={i18next.t('upload.description')}
                 ref={(input) => (this.input = input)}
                 onInput={this.handleInput}
               />

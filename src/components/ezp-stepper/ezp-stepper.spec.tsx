@@ -145,6 +145,14 @@ describe('ezp-stepper keyboard + focus', () => {
     expect(paste.preventDefault).not.toHaveBeenCalled()
   })
 
+  it('labels the +/- controls and the input for screen readers', async () => {
+    const { page } = await setup('min="1" max="9"')
+    const markup = page.root!.shadowRoot!.innerHTML
+    expect(markup).toContain('aria-label="Decrease Label"')
+    expect(markup).toContain('aria-label="Increase Label"')
+    expect(markup).toContain('aria-label="Label"')
+  })
+
   it('tracks focus state', async () => {
     const { page, stepper } = await setup()
     stepper.handleFocus()

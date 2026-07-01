@@ -66,10 +66,17 @@ export class EzpStatus {
 
   render() {
     return (
-      <Host>
+      // Live region so screen readers announce status changes (loading,
+      // processing, success, error) as they render.
+      <Host role="status" aria-live="polite">
         <div id="box">
           {this.processing ? (
-            <svg id="indicator" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              id="indicator"
+              viewBox="0 0 42 42"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
               <circle id="track" cx="21" cy="21" r="18" />
               <circle id="value" cx="21" cy="21" r="18" />
             </svg>

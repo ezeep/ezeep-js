@@ -163,6 +163,27 @@ export class EzpSelect {
     }
   }
 
+  // Open the list on Enter/Space/ArrowDown; close it on Escape.
+  private handleToggleKeydown = (event: KeyboardEvent) => {
+    if (this.disabled) return
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+      event.preventDefault()
+      if (!this.expanded) this.toggle()
+    } else if (event.key === 'Escape' && this.expanded) {
+      this.toggle()
+    }
+  }
+
+  // Select an option with Enter/Space; Escape closes the list.
+  private handleOptionKeydown = (event: KeyboardEvent, id: number | string | boolean) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      this.select(id)
+    } else if (event.key === 'Escape' && this.expanded) {
+      this.toggle()
+    }
+  }
+
   /**
    *
    * Lifecycle methods
@@ -222,7 +243,18 @@ export class EzpSelect {
     return (
       <Host class={hostClasses.join(' ')}>
         <div id="wrap">
-          <div id="toggle" onClick={() => !this.disabled && this.toggle()}>
+          <div
+            id="toggle"
+            role="combobox"
+            aria-haspopup="listbox"
+            aria-controls="list"
+            aria-expanded={this.expanded ? 'true' : 'false'}
+            aria-label={this.label}
+            aria-disabled={this.disabled ? 'true' : 'false'}
+            tabindex={this.disabled ? -1 : 0}
+            onClick={() => !this.disabled && this.toggle()}
+            onKeyDown={this.handleToggleKeydown}
+          >
             {this.icon ? <ezp-icon id="icon" name={this.icon} /> : null}
             <ezp-label id="label" noWrap level={labelLevel} text={this.label} />
             <ezp-label
@@ -232,7 +264,12 @@ export class EzpSelect {
             />
             <ezp-icon id="accessory" name="expand" />
           </div>
-          <div id="list" ref={(element) => (this.list = element as HTMLDivElement)}>
+          <div
+            id="list"
+            role="listbox"
+            aria-label={this.label}
+            ref={(element) => (this.list = element as HTMLDivElement)}
+          >
             {this.options?.map((option) => {
               if (option.title !== '') {
                 return (
@@ -240,7 +277,11 @@ export class EzpSelect {
                     class={`option ${option.id === this.selected?.id ? 'is-selected' : ''} ${
                       option.meta !== '' ? 'has-meta' : ''
                     } `}
+                    role="option"
+                    aria-selected={option.id === this.selected?.id ? 'true' : 'false'}
+                    tabindex={this.expanded ? 0 : -1}
                     onClick={() => this.select(option.id)}
+                    onKeyDown={(event) => this.handleOptionKeydown(event, option.id)}
                   >
                     <ezp-icon name="checkmark" class="indicator" />
                     <div class="details">

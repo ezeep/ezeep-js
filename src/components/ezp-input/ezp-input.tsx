@@ -88,6 +88,7 @@ export class EzpInput {
           type={this.type}
           value={this.value}
           placeholder={this.placeholder}
+          aria-label={this.label}
           onInput={(event) => this.handleChange(event)}
           ref={(input) => (this.input = input)}
           onFocus={this.handleFocus}

@@ -50,9 +50,13 @@ export class EzpIconButton {
             target: this.blank ? '_blank' : '_self',
           }
 
+    // Icon-only control: derive an accessible name from the icon so screen
+    // readers announce something meaningful (e.g. "menu", "printer").
+    const label = this.icon.replace(/[-_]/g, ' ')
+
     return (
       <Host class={`${this.level}`}>
-        <TagType id="button" {...attributes}>
+        <TagType id="button" aria-label={label} {...attributes}>
           <ezp-icon name={this.icon} />
         </TagType>
       </Host>

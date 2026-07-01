@@ -211,16 +211,29 @@ export class EzpStepper {
           min={this.min.toString()}
           max={this.max !== undefined ? this.max.toString() : undefined}
           value={this.value.toString()}
+          aria-label={this.label}
           onInput={this.handleInput}
           onKeyDown={this.handleKeyDown}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
         />
         <div class="buttons">
-          <button class="button" disabled={!this.canDecrease} onClick={this.handleDecrease}>
+          <button
+            class="button"
+            type="button"
+            aria-label={`Decrease ${this.label}`}
+            disabled={!this.canDecrease}
+            onClick={this.handleDecrease}
+          >
             <ezp-icon name="minus" />
           </button>
-          <button class="button" disabled={!this.canIncrease} onClick={this.handleIncrease}>
+          <button
+            class="button"
+            type="button"
+            aria-label={`Increase ${this.label}`}
+            disabled={!this.canIncrease}
+            onClick={this.handleIncrease}
+          >
             <ezp-icon name="plus" />
           </button>
         </div>

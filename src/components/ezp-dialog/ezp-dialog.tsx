@@ -1,4 +1,4 @@
-import { Component, Host, Prop, Event, EventEmitter, h } from '@stencil/core'
+import { Component, Host, Prop, Event, EventEmitter, Listen, h } from '@stencil/core'
 import i18next from 'i18next'
 import { IconNameTypes, IconSizeTypes } from '../../shared/types'
 
@@ -37,13 +37,25 @@ export class EzpDialog {
    *
    */
 
-  componentWillLoad() {}
+  private box?: HTMLDivElement
+
+  componentDidLoad() {
+    // Move focus into the dialog so keyboard/screen-reader users land here.
+    this.box?.focus()
+  }
 
   /**
    *
    * Private methods
    *
    */
+
+  @Listen('keydown', { target: 'window' })
+  handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.handleClose()
+    }
+  }
 
   private handleClose = () => {
     this.dialogClose.emit(this.instance)
@@ -62,7 +74,14 @@ export class EzpDialog {
   render() {
     return (
       <Host>
-        <div id="box">
+        <div
+          id="box"
+          role="dialog"
+          aria-modal="true"
+          aria-label={this.heading}
+          tabindex={-1}
+          ref={(el) => (this.box = el)}
+        >
           <div id="header">
             <ezp-icon-button
               level="tertiary"

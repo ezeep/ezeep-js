@@ -28,6 +28,15 @@ describe('ezp-status', () => {
     expect(page.root!.shadowRoot!.querySelectorAll('ezp-text-button').length).toBe(3)
   })
 
+  it('is a polite live region so status changes are announced', async () => {
+    const page = await newSpecPage({
+      components: [EzpStatus],
+      html: `<ezp-status description="Printing…"></ezp-status>`,
+    })
+    expect(page.root!.getAttribute('role')).toBe('status')
+    expect(page.root!.getAttribute('aria-live')).toBe('polite')
+  })
+
   it('emits statusClose carrying the instance name', async () => {
     const page = await newSpecPage({
       components: [EzpStatus],

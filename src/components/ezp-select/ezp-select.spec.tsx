@@ -56,4 +56,27 @@ describe('ezp-select', () => {
     sel.preSelect()
     expect(sel.selected).toBe(before)
   })
+
+  it('exposes combobox / listbox / option roles', async () => {
+    const { page } = await setup()
+    const markup = page.root!.shadowRoot!.innerHTML
+    expect(markup).toContain('role="combobox"')
+    expect(markup).toContain('role="listbox"')
+    expect(markup).toContain('role="option"')
+    expect(markup).toContain('aria-expanded="false"')
+  })
+
+  it('opens the list from the keyboard (ArrowDown)', async () => {
+    const { sel } = await setup()
+    const toggleSpy = jest.fn()
+    sel.toggle = toggleSpy
+    sel.handleToggleKeydown({ key: 'ArrowDown', preventDefault: () => undefined })
+    expect(toggleSpy).toHaveBeenCalled()
+  })
+
+  it('selects an option from the keyboard (Enter)', async () => {
+    const { sel } = await setup()
+    sel.handleOptionKeydown({ key: 'Enter', preventDefault: () => undefined }, 2)
+    expect(sel.selected).toEqual({ id: 2, title: 'Letter', meta: '' })
+  })
 })
