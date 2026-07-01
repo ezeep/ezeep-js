@@ -64,11 +64,23 @@ removed in **Stencil v5**. The migration path is:
 
 - Spec/unit → [`@stencil/vitest`](https://github.com/stenciljs/vitest)
 - E2E / browser → [`@stencil/playwright`](https://github.com/stenciljs/playwright)
-  or `@stencil/vitest`
 
-When upgrading Stencil, plan to migrate the existing `*.spec`/`*.e2e` files to
-Vitest/Playwright. The test *content* (assertions, `newSpecPage` usage) largely
-carries over; mostly the runner config and a few imports change.
+**Status (2026-07): deliberately deferred.** Investigated and it is *not* a
+runner swap:
+
+- Stencil 5 is **alpha-only** (`5.0.0-alpha.*`); latest stable core is `4.43.5`.
+  We will not put an alpha framework into production.
+- `@stencil/vitest` replaces `newSpecPage` with a different `render()` API and
+  requires loading **built** components — it does **not** support `newSpecPage`.
+  Running our current specs under plain Vitest fails at the `@Prop` decorator
+  (the Stencil compiler transform isn't applied), so ~100 component tests would
+  need a full rewrite to the black-box `render()` model (no private-method
+  access).
+- `@stencil/playwright` is still `0.4.x`.
+
+Plan: revisit when **Stencil 5 ships stable**, and do the Vitest/Playwright test
+rewrite as its own dedicated effort. Until then the integrated jest runner works
+and all 111 spec + 3 e2e tests pass on stable Stencil 4.
 
 ### Next coverage to add
 
