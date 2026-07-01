@@ -1,44 +1,84 @@
 # ezeep-js — Refactoring Plan
 
-> **Status:** In progress — Phases 0–3 substantially landed (see Progress below)
+> **Status:** ✅ Core refactor complete — all phases landed except a few deliberately
+> deferred items (see below). Verified green on a cold build: `npm run build` (0 errors),
+> `npm run lint` (clean), `npm test` (**111 spec + 3 e2e**), `npm audit` (**0 vulnerabilities**).
 > **Author:** Engineering
-> **Date:** 2026-06-30
+> **Date:** 2026-06-30 → last updated 2026-07-01
 
-## Progress (2026-06-30)
+## Completed
 
-Landed and verified (`npm run build` + `npm run lint` + `npm test` all green):
+Everything below is landed on `feature/refactor` and verified green. **No public API changed** —
+component tags, props, events, `@Method`s and the published npm surface are unchanged.
 
-- **Safety net:** Jest wired via `stencil test --spec`; **18 unit tests** covering the
-  extracted pure functions ([printer.spec.ts](src/utils/printer.spec.ts),
-  [utils.spec.ts](src/utils/utils.spec.ts)). A test immediately caught a latent
-  null-tray crash, now fixed. ESLint added ([.eslintrc.json](.eslintrc.json),
-  `npm run lint`, **0 problems**). CI now has a **`verify` job** (lint+test+build) gating
-  every PR, and publishing is restricted to push-to-main.
-- **Phase 1:** [constants.ts](src/shared/constants.ts) (all job/hub status magic numbers),
-  [storage.ts](src/shared/storage.ts) (typed wrapper replacing ~31 scattered `localStorage`
-  calls), **all 13 `console.*` removed** (0 remain). `.gitignore` fixed (no longer ignores
-  the tracked `stencil.config.ts`); confirmed no secrets are git-tracked.
-- **Phase 2:** PKCE hardened (spec-compliant 64-byte base64url verifier, safe challenge
-  encoding); [http.ts](src/services/http.ts) shared bearer/JSON helper; 401 interceptor now
-  single-flight (no refresh storms); token-persistence de-duplicated.
-- **Phase 3:** the verbatim-duplicated printer-config→properties mapping and the 3 job-status
-  state machines extracted into tested [printer.ts](src/utils/printer.ts)
-  (`applyPrinterDefaults`, `classifyJobStatus`); the 9-branch render ternary extracted to
-  `renderStatus()`; dead `handleFiles` removed. `ezp-printer-selection` logic 1277 → ~1100 lines.
+**Safety net & CI**
 
-- **Phase 4 (typing):** API responses typed ([types.d.ts](src/shared/types.d.ts):
-  `PrintResponse`, `JobStatusResponse`, `PrepareUploadResponse`); service methods + the
-  `authGetJson` generic now return real types; **all `@Event()` emitters typed** (status/dialog
-  `<string>`, upload `<File[]>`, stepper `<number>`, etc.). Net effect: the **generated
-  `components.d.ts` went from 36 `any` → 2** (consumers now get fully-typed custom events with
-  zero runtime change). Source `any` is down to one generic helper plus the deferred
-  `preSelected` prop.
+- **114 tests** (111 spec + 3 e2e), ~88% statement coverage; `auth.ts`, `storage.ts`,
+  `constants.ts`, `printer.ts`, `print-job.ts`, `http.ts` ~100%. Includes the real print
+  path, the `ezp-printing` journey (upload→auth→print), PKCE, and per-component logic. See
+  [TESTING.md](TESTING.md).
+- **ESLint 9** flat config ([eslint.config.mjs](eslint.config.mjs), `npm run lint`, 0 problems).
+- CI **`verify` job** runs lint + spec + e2e + build on every PR; publishing restricted to
+  push-to-main.
 
-Still open: **Phase 2** store/service split · **Phase 4** flip `tsconfig` to `strict` ·
-**Phase 5** dependency bumps. Note: `@types/node` 22 was attempted and reverted — it resolves
-the `AbortSignal`/`node:stream` issues but surfaces an i18next `t()` → `TFunctionResult` typing
-problem, so it must be done **together with an i18next upgrade** (which also unblocks tightening
-the `ezp-select` `preSelected` prop from `any`). e2e tests not yet added.
+**Phase 1 — cleanup**
+
+- [constants.ts](src/shared/constants.ts) (all job/hub status magic numbers),
+  [storage.ts](src/shared/storage.ts) (typed wrapper, was ~31 scattered `localStorage` calls),
+  **all 13 `console.*` removed**. Confirmed no secrets git-tracked; `coverage/` untracked +
+  gitignored.
+
+**Phase 2 — service hardening**
+
+- PKCE hardened (spec-compliant 64-byte base64url verifier, stack-safe challenge encoding).
+- [http.ts](src/services/http.ts) shared bearer/JSON helper; **401s now self-heal** —
+  `authGetJson` refreshes once and retries with the fresh token (single-flight refresh shared
+  with the interceptor). Token persistence de-duplicated.
+
+**Phase 3 — decomposition**
+
+- Duplicated printer-config→properties mapping and 3 job-status state machines → tested
+  [printer.ts](src/utils/printer.ts). The upload→print→poll flow extracted to a decoupled,
+  mockable [print-job.ts](src/services/print-job.ts). 9-branch render ternary → `renderStatus()`.
+  Dead code removed. `ezp-printer-selection` 1277 → ~1050 lines.
+
+**Phase 4 — typing**
+
+- API responses typed; `@Event()` emitters typed. **Generated `components.d.ts`: 36 `any` → 0.**
+- **6/8 `tsconfig` strict flags on**: `noImplicitAny`, `noImplicitThis`, `alwaysStrict`,
+  `strictNullChecks`, `strictFunctionTypes`, `strictBindCallApply` (22 null-safety issues fixed).
+
+**Phase 5 — dependencies (`npm audit` = 0)**
+
+- Runtime: `i18next` 21→26, `@cortado-holding/colors` 1.1.12→2.0.5 (patch regenerated),
+  `@azure/storage-blob` minor, `@stencil/core` patch.
+- Tooling: `@types/node` 15→22 (removed the `AbortSignal` workaround), ESLint 8→9 flat config,
+  `typescript-eslint` 6→8, `prettier` 2→3, **stylelint fixed** (was broken — parsed SCSS as CSS)
+  - bumped 16→17, `dotenv` 10→17. Details in [DEPENDENCIES.md](DEPENDENCIES.md).
+
+**Small correctness fixes**
+
+- Dead `uploadFile` service method (+ its header typo) removed; stepper value clamps to `min`
+  on load; user flow typed (`display_name`).
+
+## Deferred (with rationale)
+
+- **Store/service split** (Phase 2 remainder) — the `@stencil/store` stores are still co-located
+  with their service classes. Architectural churn with low payoff; not done.
+- **`strictPropertyInitialization`** — clashes with idiomatic Stencil `@Prop`/`@State` (runtime
+  initialized). **`useUnknownInCatchVariables`** — would break `catch` blocks that read
+  `error.message`. Both left off intentionally.
+- **Stencil 5 + `@stencil/vitest`/`@stencil/playwright` test migration** — Stencil 5 is
+  alpha-only; the migration is a full test rewrite (not a runner swap). Deferred until Stencil 5
+  ships stable — see [TESTING.md](TESTING.md).
+- **`stencil.config.ts` env-safe `devServer`** — still reads HTTPS cert files at eval time; only
+  matters for local HTTPS dev, harmless in CI/build.
+- Low-value/risky dep majors left pinned: `jest` 30 (Stencil wants 29), `eslint` 10
+  (typescript-eslint 8 lag), `@rollup/plugin-replace` 6, `puppeteer` 25, `@types/node` 26.
+
+---
+
+_The original phased plan follows for reference._
 
 ---
 
