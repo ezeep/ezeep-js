@@ -14,6 +14,8 @@ Last reviewed: 2026-06-30. After this pass: **`npm audit` → 0 vulnerabilities*
 | `eslint` | 8 → 9 (+ flat config) | Removed transitive vulns; modernised to `eslint.config.mjs`. |
 | `typescript-eslint` | 6 → 8 | Required for ESLint 9; replaces the split parser/plugin packages. |
 | `dotenv` | 10 → 17 | Dev-only (`stencil.config.ts`); stable `dotenv/config` API. |
+| `i18next` | 21 → 26 | **Runtime.** Done under a new `i18n.spec.ts` safety net (init, translation, language switch, dotted keys — identical behaviour). `t()` now returns `string`, which cleared the old typing blocker. |
+| `@types/node` | 15 → 22 | Unblocked by the i18next bump; also let us drop the `AbortSignal` workaround in `print.ts` and tighten `ezp-select`'s `preSelected` to `string \| number \| null` (generated `components.d.ts` is now 0 `any`). |
 | _lockfile_ | `npm audit fix` | Bumped transitive `js-yaml`/`tmp` to non-vulnerable versions. |
 
 ## Deliberately NOT upgraded (and why)
@@ -24,8 +26,7 @@ clean).
 
 | Package | Available | Reason held back |
 | --- | --- | --- |
-| `i18next` | 21 → 26 | **Runtime, 5 majors.** Changes `t()` return typing (`TFunctionResult`) and init/namespace behaviour that drives *every* translation. Needs its own fully-tested PR. |
-| `@types/node` | 15 → 26 | Surfaces the same i18next `t()` typing issue — **must be done together with the i18next upgrade** (also unblocks tightening `ezp-select`'s `preSelected` from `any`). |
+| `@types/node` | 22 → 26 | Now on 22 (see above); 26 offers no runtime benefit and 22 matches the CI Node line closely enough. |
 | `@cortado-holding/colors` | 1.1.12 → 2.0.5 | **Major + locally patched** ([patches/](patches/) is pinned to 1.1.12). A major bump breaks the patch; needs the patch re-evaluated against 2.x. |
 | `jest` / `jest-cli` / `@types/jest` | 29 → 30 | Stencil 4's integrated test runner **requires jest 29** (it errors asking for `jest@29`). Moves with the `@stencil/vitest` migration (Stencil v5). |
 | `puppeteer` | 23 → 25 | E2E browser; 23 is proven. Moves with the `@stencil/playwright` migration. |
@@ -34,10 +35,15 @@ clean).
 | `stylelint` (+ `-config-prettier`/`-order`/`-prettier`) | 16 → 17 | Current config relies on `stylelint-config-prettier`, which is deprecated/removed in newer stylelint; needs a config rework. Dev-only (SCSS). |
 | `@rollup/plugin-replace` | 3 → 6 | Build-time `<% %>` replacement works at 3; a major bump risks changing replace behaviour for no clear gain. |
 
-## Recommended next dependency PR
+## Recommended next dependency work
 
-A single focused **"i18next + @types/node" upgrade**: bump both together, fix the
-`t()` typing fallout (it's a contained set of `i18next.t(...)` call sites), re-run
-the full suite, and then tighten the deferred `preSelected: any`. That one change
-clears the largest remaining modernisation item and the `AbortSignal` workaround in
-[src/services/print.ts](src/services/print.ts).
+The largest runtime modernisation (i18next + `@types/node`) is now done. Remaining,
+in rough priority:
+
+- **`strictNullChecks`** (tsconfig) — not a dependency, but the natural next
+  hardening step (~27 null-guards; `noImplicitAny`/`noImplicitThis`/`alwaysStrict`
+  are already on).
+- **`@cortado-holding/colors` 2.x** — re-evaluate the local patch, then bump.
+- **Stencil v5 + `@stencil/vitest`/`@stencil/playwright`** — the test-runner is
+  deprecated; this also lets `jest`/`puppeteer` move forward (see [TESTING.md](TESTING.md)).
+- **`prettier` 3** / **`stylelint` 17** — dev formatting; do as isolated commits.

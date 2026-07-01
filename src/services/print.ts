@@ -110,7 +110,7 @@ export class EzpPrintService {
         ...(printAndDelete && { printanddelete: printAndDelete }),
         properties,
       },
-      this.abortController
+      this.abortController.signal
     )
   }
 
@@ -121,18 +121,11 @@ export class EzpPrintService {
     }
   }
 
-  /**
-   * Shared POST to the `Print` endpoint. Returns the raw response.
-   *
-   * Takes the `AbortController` (rather than an `AbortSignal`) deliberately:
-   * naming the `AbortSignal` type explicitly surfaces a global-declaration
-   * conflict between `@types/node` and the DOM lib. Reading `.signal` as a
-   * property avoids it. (Resolved properly when `@types/node` is bumped.)
-   */
+  /** Shared POST to the `Print` endpoint. Returns the raw response. */
   private printRequest(
     accessToken: string,
     body: Record<string, unknown>,
-    controller?: AbortController
+    signal?: AbortSignal
   ) {
     return fetch(`https://${this.printingApi}/sfapi/Print/`, {
       method: 'POST',
@@ -141,7 +134,7 @@ export class EzpPrintService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-      signal: controller?.signal,
+      signal,
     })
   }
 

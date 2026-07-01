@@ -248,7 +248,10 @@ export namespace Components {
           * @default 'Placeholder'
          */
         "placeholder": string;
-        "preSelected": any;
+        /**
+          * The currently-selected option, matched by title (string) or id (number).
+         */
+        "preSelected": string | number | null;
         /**
           * Description...
           * @default 'horizontal'
@@ -888,7 +891,10 @@ declare namespace LocalJSX {
           * @default 'Placeholder'
          */
         "placeholder"?: string;
-        "preSelected"?: any;
+        /**
+          * The currently-selected option, matched by title (string) or id (number).
+         */
+        "preSelected"?: string | number | null;
         /**
           * Description...
           * @default 'horizontal'
