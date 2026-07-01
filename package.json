@@ -31,7 +31,7 @@
     "test.all": "stencil test --spec --e2e",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "generate": "stencil generate",
-    "stylelint": "stylelint \"**/*.scss\" --fix",
+    "stylelint": "stylelint \"src/**/*.scss\" --fix",
     "prettier": "prettier \"**/*.{json,ts,tsx,md,html}\" --write",
     "format": "npm run stylelint && npm run prettier",
     "prepare": "patch-package"
@@ -60,13 +60,13 @@
     "jest": "^29.7.0",
     "jest-cli": "^29.7.0",
     "patch-package": "^8.0.1",
-    "prettier": "^2.4.1",
+    "postcss-scss": "^4.0.9",
+    "prettier": "^3.9.4",
     "puppeteer": "^23.11.1",
     "rollup-plugin-polyfill-node": "^0.13.0",
-    "stylelint": "^16.25.0",
-    "stylelint-config-prettier": "^8.0.2",
-    "stylelint-order": "^7.0.0",
-    "stylelint-prettier": "^1.2.0",
+    "stylelint": "^17.14.0",
+    "stylelint-order": "^8.1.1",
+    "stylelint-prettier": "^5.0.3",
     "typescript-eslint": "^8.62.1"
   },
   "prettier": {
@@ -84,9 +84,7 @@
     ]
   },
   "stylelint": {
-    "extends": [
-      "stylelint-config-prettier"
-    ],
+    "customSyntax": "postcss-scss",
     "plugins": [
       "stylelint-prettier",
       "stylelint-order"

@@ -21,7 +21,7 @@ export interface PrintApi {
     fileType: string,
     printerID: string,
     properties: PrinterProperties,
-    filename?: string
+    filename?: string,
   ): Promise<PrintResponse>
   getPrintStatus(): Promise<JobStatusResponse>
 }
@@ -42,7 +42,7 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
 export async function waitForJobCompletion(
   getStatus: () => Promise<JobStatusResponse>,
   isQueue: boolean,
-  pollIntervalMs: number = POLL_INTERVAL_MS
+  pollIntervalMs: number = POLL_INTERVAL_MS,
 ): Promise<void> {
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -85,7 +85,7 @@ export interface PrintJobHooks {
 export async function uploadAndPrintFile(
   ctx: PrintJobContext,
   file: File,
-  hooks: PrintJobHooks = {}
+  hooks: PrintJobHooks = {},
 ): Promise<void> {
   hooks.onPreparing?.(true)
   const response = await ctx.service.prepareFileUpload(ctx.accessToken)
@@ -108,7 +108,7 @@ export async function uploadAndPrintFile(
       filetype,
       ctx.printerId,
       ctx.properties,
-      file.name
+      file.name,
     )
 
     if (data.code === PRINT_REJECTED_CODE) {

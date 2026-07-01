@@ -95,11 +95,11 @@ export interface PrinterProperties {
   orientation?: number | string
   copies?: number | string
   resolution?: string | number
-  paperlength? : string | number
-  paperwidth? : string | number
+  paperlength?: string | number
+  paperwidth?: string | number
   defaultSource?: number | string
-  trayname?: string 
-  PageRanges? : string
+  trayname?: string
+  PageRanges?: string
 }
 
 export interface Printer {
@@ -118,8 +118,8 @@ export interface PaperFormat {
 }
 
 export interface Trays {
-  Default : boolean
-  Index:  number
+  Default: boolean
+  Index: number
   Name: string
 }
 
@@ -132,7 +132,7 @@ export interface PrinterConfig {
     Resolution?: string
     Paper?: string
     Tray?: string
-  },
+  }
   Collate?: boolean
   Color?: boolean
   ColorSupported?: boolean

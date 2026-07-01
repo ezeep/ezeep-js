@@ -16,7 +16,7 @@ export class EzpUserService {
   getUserInfo() {
     return authGetJson<UserInfo>(
       `https://${authStore.state.authApiHostUrl}/v1/users/me`,
-      authStore.state.accessToken
+      authStore.state.accessToken,
     )
   }
 }

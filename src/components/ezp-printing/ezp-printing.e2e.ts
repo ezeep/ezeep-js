@@ -10,7 +10,7 @@ describe('ezp-printing (e2e)', () => {
   it('renders the button trigger and opens the auth dialog on click', async () => {
     const page = await newE2EPage()
     await page.setContent(
-      '<ezp-printing trigger="button" clientid="demo" redirecturi="https://example.com/cb"></ezp-printing>'
+      '<ezp-printing trigger="button" clientid="demo" redirecturi="https://example.com/cb"></ezp-printing>',
     )
 
     const trigger = await page.find('ezp-printing >>> #print-trigger')

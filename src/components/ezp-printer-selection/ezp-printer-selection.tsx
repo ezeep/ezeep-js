@@ -335,7 +335,7 @@ export class EzpPrinterSelection {
           this.filetype,
           this.selectedPrinter.id,
           cleanPrintProperties,
-          this.filename
+          this.filename,
         )
         .then((response) => {
           if (response.status === 200 && this.selectedPrinter.is_queue) {
@@ -352,7 +352,7 @@ export class EzpPrinterSelection {
               this.filetype,
               this.selectedPrinter.id,
               cleanPrintProperties,
-              this.filename
+              this.filename,
             )
           } else {
             return response.json()
@@ -547,7 +547,7 @@ export class EzpPrinterSelection {
         onPreparing: (value) => (this.preparingUpload = value),
         onUploading: (value) => (this.uploading = value),
         onJobId: (jobId) => (printStore.state.jobID = jobId),
-      }
+      },
     )
   }
 
@@ -652,7 +652,9 @@ export class EzpPrinterSelection {
       }
     }
 
-    await (await this.printService.getConfig(authStore.state.accessToken))
+    await (
+      await this.printService.getConfig(authStore.state.accessToken)
+    )
       .json()
       .then((response) => {
         printStore.state.supportedFileExtensions = response.System.FILEEXT
@@ -888,10 +890,10 @@ export class EzpPrinterSelection {
                   this.selectedPrinterConfig.Default?.Duplex == 'duplex_simplex'
                     ? i18next.t('printer_selection.duplex_none')
                     : this.selectedPrinterConfig.Default?.Duplex == 'duplex_vertical'
-                    ? i18next.t('printer_selection.duplex_long')
-                    : this.selectedPrinterConfig.Default?.Duplex == 'duplex_horizontal'
-                    ? i18next.t('printer_selection.duplex_short')
-                    : null
+                      ? i18next.t('printer_selection.duplex_long')
+                      : this.selectedPrinterConfig.Default?.Duplex == 'duplex_horizontal'
+                        ? i18next.t('printer_selection.duplex_short')
+                        : null
                 }
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
@@ -913,7 +915,7 @@ export class EzpPrinterSelection {
                 preSelected={
                   this.selectedPrinter.id &&
                   this.selectedPrinterConfig.PaperFormats?.find((el) =>
-                    el.Name.includes(this.selectedPrinterConfig.Default?.Paper as string)
+                    el.Name.includes(this.selectedPrinterConfig.Default?.Paper as string),
                   )
                     ? this.selectedPrinterConfig.Default?.Paper
                     : null
@@ -951,7 +953,7 @@ export class EzpPrinterSelection {
                     title: i18next.t(`printer_selection.orientation_${orientation}`),
                     meta: '',
                     type: 'orientation',
-                  })
+                  }),
                 )}
                 preSelected={this.selectedPrinter.id ? this.selectedProperties.orientation : null}
                 disabled={!((this.selectedPrinterConfig.OrientationsSupported?.length ?? 0) > 0)}
@@ -970,7 +972,7 @@ export class EzpPrinterSelection {
                 preSelected={
                   this.selectedPrinter.id &&
                   this.selectedPrinterConfig.Resolutions?.includes(
-                    this.selectedPrinterConfig.Default?.Resolution as string
+                    this.selectedPrinterConfig.Default?.Resolution as string,
                   )
                     ? this.selectedPrinterConfig.Default?.Resolution
                     : null
@@ -987,8 +989,7 @@ export class EzpPrinterSelection {
                   toggleFlow="horizontal"
                   optionFlow="horizontal"
                   options={
-                    this.selectedPrinterConfig.Trays &&
-                    this.selectedPrinterConfig.Trays.length >= 1
+                    this.selectedPrinterConfig.Trays && this.selectedPrinterConfig.Trays.length >= 1
                       ? this.selectedPrinterConfig.Trays.map((trays) => ({
                           title: trays.Name,
                           id: trays.Index,
@@ -1000,7 +1001,7 @@ export class EzpPrinterSelection {
                   preSelected={
                     this.selectedPrinter.id &&
                     this.selectedPrinterConfig.Trays?.find((el) =>
-                      el.Name.includes(this.selectedPrinterConfig.Default?.Tray as string)
+                      el.Name.includes(this.selectedPrinterConfig.Default?.Tray as string),
                     )
                       ? this.selectedPrinterConfig.Default?.Tray
                       : null

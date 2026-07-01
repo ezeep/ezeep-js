@@ -22,9 +22,11 @@ function stubEnvironment() {
     removeEventListener: () => undefined,
   })
   // checkAuth() calls GetConfiguration; resolve it as unauthenticated.
-  global.fetch = jest
-    .fn()
-    .mockResolvedValue({ ok: false, status: 401, json: () => Promise.resolve({}) }) as unknown as typeof fetch
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: false,
+    status: 401,
+    json: () => Promise.resolve({}),
+  }) as unknown as typeof fetch
 }
 
 async function setup(props: string) {
@@ -157,9 +159,11 @@ describe('ezp-printing public methods', () => {
   })
 
   it('checkAuth marks the session authorized when GetConfiguration is OK', async () => {
-    global.fetch = jest
-      .fn()
-      .mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve({}) }) as unknown as typeof fetch
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({}),
+    }) as unknown as typeof fetch
     const { el } = await setup('trigger="button"')
 
     const authorized = await el.checkAuth()
@@ -170,9 +174,11 @@ describe('ezp-printing public methods', () => {
 
   it('checkAuth reports unauthorized when GetConfiguration fails', async () => {
     const { el } = await setup('trigger="button"')
-    global.fetch = jest
-      .fn()
-      .mockResolvedValue({ ok: false, status: 401, json: () => Promise.resolve({}) }) as unknown as typeof fetch
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 401,
+      json: () => Promise.resolve({}),
+    }) as unknown as typeof fetch
 
     const authorized = await el.checkAuth()
 
@@ -215,7 +221,9 @@ describe('ezp-printing public methods', () => {
 
   it('setAuthRefreshToken stores the token and attempts a refresh', async () => {
     const { el } = await setup('trigger="button"')
-    global.fetch = jest.fn().mockResolvedValue({ json: () => Promise.resolve({}) }) as unknown as typeof fetch
+    global.fetch = jest
+      .fn()
+      .mockResolvedValue({ json: () => Promise.resolve({}) }) as unknown as typeof fetch
 
     await el.setAuthRefreshToken('injected-RT')
 

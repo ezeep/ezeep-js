@@ -17,9 +17,9 @@ the patch against the new version.
 
 ### Currently patched
 
-| Dependency | Pinned version | Patch | Why |
-|---|---|---|---|
-| `@cortado-holding/colors` | `2.0.5` | `@cortado-holding+colors+2.0.5.patch` | `library/utils.scss` returns `color(display-p3 … / …)`; `sass-embedded` parses the `/` as Sass division and fails the build. The patch wraps the value in `string.unquote(...)` so Sass emits it verbatim. Still required in 2.0.5 (upstream unchanged from 1.1.12). |
+| Dependency                | Pinned version | Patch                                 | Why                                                                                                                                                                                                                                                                  |
+| ------------------------- | -------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@cortado-holding/colors` | `2.0.5`        | `@cortado-holding+colors+2.0.5.patch` | `library/utils.scss` returns `color(display-p3 … / …)`; `sass-embedded` parses the `/` as Sass division and fails the build. The patch wraps the value in `string.unquote(...)` so Sass emits it verbatim. Still required in 2.0.5 (upstream unchanged from 1.1.12). |
 
 ### To bump a patched dependency
 

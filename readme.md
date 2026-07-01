@@ -225,6 +225,7 @@ If you already have a refresh token from a previous authentication session, you 
 ```
 
 This approach is useful when:
+
 - You manage authentication through your own backend system
 - You want to provide a seamless printing experience without additional login prompts
 - You have stored refresh tokens from previous user sessions

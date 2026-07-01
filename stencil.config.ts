@@ -36,9 +36,7 @@ export const config: Config = {
     {
       type: 'dist',
       esmLoaderPath: '../loader',
-      copy: [
-        { src: 'shared/types.d.ts', dest: 'types/shared/types.d.ts' }
-      ]
+      copy: [{ src: 'shared/types.d.ts', dest: 'types/shared/types.d.ts' }],
     },
     {
       // Stencil 4 replacement for `dist-custom-elements-bundle`.

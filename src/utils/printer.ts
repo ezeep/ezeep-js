@@ -16,7 +16,7 @@ import {
  */
 export function applyPrinterDefaults(
   config: PrinterConfig,
-  properties: PrinterProperties
+  properties: PrinterProperties,
 ): PrinterProperties {
   properties.color = config.Default?.Color == 'color' ? true : false
 

@@ -58,12 +58,16 @@ describe('waitForJobCompletion', () => {
 
   it('throws on a terminal failure status', async () => {
     const getStatus = jest.fn().mockResolvedValue({ jobstatus: 3011, jobstatusstring: 'boom' })
-    await expect(waitForJobCompletion(getStatus, false, 0)).rejects.toThrow('Print job failed: boom')
+    await expect(waitForJobCompletion(getStatus, false, 0)).rejects.toThrow(
+      'Print job failed: boom',
+    )
   })
 
   it('throws a hub-driver error for queue printers', async () => {
     const getStatus = jest.fn().mockResolvedValue({ jobstatus: 412 })
-    await expect(waitForJobCompletion(getStatus, true, 0)).rejects.toThrow('Hub printer driver error')
+    await expect(waitForJobCompletion(getStatus, true, 0)).rejects.toThrow(
+      'Hub printer driver error',
+    )
   })
 })
 
@@ -89,7 +93,7 @@ describe('uploadAndPrintFile', () => {
       'pdf',
       'printer-1',
       { copies: 1 },
-      'Report.PDF'
+      'Report.PDF',
     )
   })
 
@@ -109,20 +113,22 @@ describe('uploadAndPrintFile', () => {
   it('throws a hub-driver error for a queue printer driver code', async () => {
     const service = mockService({ printByFileID: jest.fn().mockResolvedValue({ code: 412 }) })
     await expect(uploadAndPrintFile(context(service, true), aFile())).rejects.toThrow(
-      'Hub printer driver error'
+      'Hub printer driver error',
     )
   })
 
   it('throws when no job id is returned', async () => {
     const service = mockService({ printByFileID: jest.fn().mockResolvedValue({}) })
-    await expect(uploadAndPrintFile(context(service), aFile())).rejects.toThrow('No job ID returned')
+    await expect(uploadAndPrintFile(context(service), aFile())).rejects.toThrow(
+      'No job ID returned',
+    )
   })
 
   it('always clears the uploading state, even on failure', async () => {
     const service = mockService({ printByFileID: jest.fn().mockResolvedValue({ code: 804 }) })
     const uploading: boolean[] = []
     await expect(
-      uploadAndPrintFile(context(service), aFile(), { onUploading: (v) => uploading.push(v) })
+      uploadAndPrintFile(context(service), aFile(), { onUploading: (v) => uploading.push(v) }),
     ).rejects.toThrow()
     expect(uploading).toEqual([true, false])
   })

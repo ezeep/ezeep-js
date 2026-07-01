@@ -60,10 +60,7 @@ export const poll = async <T = any>({
 }: PollOptions<T>): Promise<T> => {
   let attempts = 0
 
-  const executePoll = async (
-    resolve: (value: T) => void,
-    reject: (reason?: unknown) => void
-  ) => {
+  const executePoll = async (resolve: (value: T) => void, reject: (reason?: unknown) => void) => {
     const result = await fn()
     attempts++
 
@@ -89,13 +86,13 @@ export const removeEmptyStrings = (obj: { [x: string]: any }) => {
   return newObj
 }
 
-export const managePaperDimensions = (properties :PrinterProperties)=>{
-  if(properties.paperid != PAPER_ID){
+export const managePaperDimensions = (properties: PrinterProperties) => {
+  if (properties.paperid != PAPER_ID) {
     delete properties.paperlength
     delete properties.paperwidth
   }
 
-  if(properties.paperlength && properties.paperwidth){
+  if (properties.paperlength && properties.paperwidth) {
     properties.paperlength = +properties.paperlength * 10
     properties.paperwidth = +properties.paperwidth * 10
   }
@@ -111,23 +108,23 @@ export const validatePageRange = (pageRange: string) => {
   if (!pageRange) {
     return true
   }
-  const regex = /^(\d+(-\d+)?(,\d+(-\d+)?)*|(\d+,\d+(-\d+)?(,\d+(-\d+)?)*)+)$/;
-  const isValid = regex.test(pageRange);
+  const regex = /^(\d+(-\d+)?(,\d+(-\d+)?)*|(\d+,\d+(-\d+)?(,\d+(-\d+)?)*)+)$/
+  const isValid = regex.test(pageRange)
   if (!isValid) {
     return false
   }
-  const ranges = pageRange.split(',');
+  const ranges = pageRange.split(',')
   for (let i = 0; i < ranges.length; i++) {
-    const rng = ranges[i].trim();
+    const rng = ranges[i].trim()
     if (rng.includes('-')) {
-      const [startStr, endStr] = rng.split('-');
-      const start = parseInt(startStr);
-      const end = parseInt(endStr);
+      const [startStr, endStr] = rng.split('-')
+      const start = parseInt(startStr)
+      const end = parseInt(endStr)
       if (isNaN(start) || isNaN(end) || start > end || start <= 0) {
-        return false;
+        return false
       }
     } else {
-      const page = parseInt(rng);
+      const page = parseInt(rng)
       if (isNaN(page) || page <= 0) {
         return false
       }

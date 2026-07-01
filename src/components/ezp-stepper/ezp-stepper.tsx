@@ -75,7 +75,8 @@ export class EzpStepper {
 
   @Watch('value')
   watchValue() {
-    const effectiveMax = this.max !== undefined ? Math.min(this.max, Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER
+    const effectiveMax =
+      this.max !== undefined ? Math.min(this.max, Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER
     this.canIncrease = this.value < effectiveMax
     this.canDecrease = this.min !== undefined ? this.value > this.min : true
     this.stepperChanged.emit(this.value)
@@ -97,7 +98,8 @@ export class EzpStepper {
 
   private handleIncrease = () => {
     const newValue = this.value + 1
-    const effectiveMax = this.max !== undefined ? Math.min(this.max, Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER
+    const effectiveMax =
+      this.max !== undefined ? Math.min(this.max, Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER
     // Only increase if within safe range and below maximum
     if (newValue <= Number.MAX_SAFE_INTEGER && newValue <= effectiveMax) {
       this.value = newValue
@@ -138,7 +140,8 @@ export class EzpStepper {
 
     // Ensure the value is between min and max
     if (this.min !== undefined && inputValue < this.min) inputValue = this.min
-    const effectiveMax = this.max !== undefined ? Math.min(this.max, Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER
+    const effectiveMax =
+      this.max !== undefined ? Math.min(this.max, Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER
     if (inputValue > effectiveMax) inputValue = effectiveMax
 
     // Update component state and input field
@@ -161,7 +164,8 @@ export class EzpStepper {
     // If key is allowed or a Ctrl/Cmd combination, do nothing
     if (
       EzpStepper.ALLOWED_KEYS.includes(event.key) ||
-      ((event.ctrlKey || event.metaKey) && EzpStepper.CTRL_CMD_KEYS.includes(event.key.toLowerCase()))
+      ((event.ctrlKey || event.metaKey) &&
+        EzpStepper.CTRL_CMD_KEYS.includes(event.key.toLowerCase()))
     ) {
       return
     }

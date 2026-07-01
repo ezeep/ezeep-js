@@ -111,7 +111,13 @@ describe('ezp-stepper input sanitization', () => {
 
 describe('ezp-stepper keyboard + focus', () => {
   function keydown(key: string, mods: Partial<KeyboardEvent> = {}) {
-    return { key, ctrlKey: false, metaKey: false, preventDefault: jest.fn(), ...mods } as unknown as KeyboardEvent
+    return {
+      key,
+      ctrlKey: false,
+      metaKey: false,
+      preventDefault: jest.fn(),
+      ...mods,
+    } as unknown as KeyboardEvent
   }
 
   it('blocks non-digit keys', async () => {

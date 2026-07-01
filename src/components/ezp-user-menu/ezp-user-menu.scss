@@ -36,7 +36,8 @@
     #{&}(.is-open) {
       --ezp-userMenu-opacity: 1;
       --ezp-userMenu-scale: 1, 1;
-      --ezp-userMenu-transition: opacity var(--ezp-duration-3) var(--ezp-easing-out-quart),
+      --ezp-userMenu-transition:
+        opacity var(--ezp-duration-3) var(--ezp-easing-out-quart),
         transform var(--ezp-duration-3) var(--ezp-easing-out-quart), visibility 0s 0s;
       --ezp-userMenu-visibility: visible;
     }

@@ -21,7 +21,7 @@ describe('poll', () => {
   it('rejects after exceeding maxAttempts', async () => {
     const fn = jest.fn(async () => 0)
     await expect(
-      poll<number>({ fn, validate: () => false, interval: 0, maxAttempts: 3 })
+      poll<number>({ fn, validate: () => false, interval: 0, maxAttempts: 3 }),
     ).rejects.toThrow('Exceeded max attempts')
     expect(fn).toHaveBeenCalledTimes(3)
   })
@@ -30,7 +30,7 @@ describe('poll', () => {
 describe('encodeFormData', () => {
   it('url-encodes keys and values and joins with &', () => {
     expect(encodeFormData({ grant_type: 'refresh_token', scope: 'printing' })).toBe(
-      'grant_type=refresh_token&scope=printing'
+      'grant_type=refresh_token&scope=printing',
     )
     expect(encodeFormData({ 'a b': 'c&d' })).toBe('a%20b=c%26d')
   })
@@ -45,7 +45,11 @@ describe('capitalize', () => {
 
 describe('removeEmptyStrings', () => {
   it('drops keys whose value is an empty string but keeps falsy non-strings', () => {
-    expect(removeEmptyStrings({ a: '', b: 'x', c: 0, d: false })).toEqual({ b: 'x', c: 0, d: false })
+    expect(removeEmptyStrings({ a: '', b: 'x', c: 0, d: false })).toEqual({
+      b: 'x',
+      c: 0,
+      d: false,
+    })
   })
 })
 

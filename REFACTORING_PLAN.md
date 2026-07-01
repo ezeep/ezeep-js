@@ -90,17 +90,17 @@ data/      locales/{en,de}.json · options.json · file-types.json
 
 Measured signals across `src/`:
 
-| Signal | Count / Location | Problem |
-| --- | --- | --- |
-| Largest component | `ezp-printer-selection.tsx` — **1277 lines** | God component: state + upload + polling + config-mapping + 9-way render ternary. |
-| `console.*` in shipped code | **13** | Debug logging left in (e.g. `validateData`, `handlePrint`, `watchFileData`). |
-| `any` / `as any` / `<any>` | **44** | Weak typing; defeats the point of TS. |
-| Direct `localStorage` access | **31**, scattered | No persistence abstraction; string-literal keys, inconsistent names. |
-| Tests | **0** | No Jest spec / e2e anywhere. Refactoring is unguarded. |
-| ESLint | **none** | Only Prettier + Stylelint; no static analysis. |
-| Duplicated logic | printer-config→properties mapping appears **twice verbatim** (`ezp-printer-selection.tsx:512-561` & `:860-902`) | Same default-derivation logic in `setSelectedProperties` and `connectedCallback`. |
-| Duplicated polling | `poll()` util **and** hand-rolled `waitForPrintCompletion()` `while(true)` loop | Two job-status state machines with the **same magic numbers**. |
-| Magic numbers | job statuses `0,129,1246,3011,2`; hub errors `412,500,503,1048579` repeated in 3 places | No enum/constants; meaning is implicit. |
+| Signal                       | Count / Location                                                                                                | Problem                                                                           |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Largest component            | `ezp-printer-selection.tsx` — **1277 lines**                                                                    | God component: state + upload + polling + config-mapping + 9-way render ternary.  |
+| `console.*` in shipped code  | **13**                                                                                                          | Debug logging left in (e.g. `validateData`, `handlePrint`, `watchFileData`).      |
+| `any` / `as any` / `<any>`   | **44**                                                                                                          | Weak typing; defeats the point of TS.                                             |
+| Direct `localStorage` access | **31**, scattered                                                                                               | No persistence abstraction; string-literal keys, inconsistent names.              |
+| Tests                        | **0**                                                                                                           | No Jest spec / e2e anywhere. Refactoring is unguarded.                            |
+| ESLint                       | **none**                                                                                                        | Only Prettier + Stylelint; no static analysis.                                    |
+| Duplicated logic             | printer-config→properties mapping appears **twice verbatim** (`ezp-printer-selection.tsx:512-561` & `:860-902`) | Same default-derivation logic in `setSelectedProperties` and `connectedCallback`. |
+| Duplicated polling           | `poll()` util **and** hand-rolled `waitForPrintCompletion()` `while(true)` loop                                 | Two job-status state machines with the **same magic numbers**.                    |
+| Magic numbers                | job statuses `0,129,1246,3011,2`; hub errors `412,500,503,1048579` repeated in 3 places                         | No enum/constants; meaning is implicit.                                           |
 
 **Security / hygiene:**
 
@@ -136,7 +136,7 @@ Measured signals across `src/`:
 
 ## 5. Phased plan
 
-### Phase 0 — Safety net & guardrails *(do first; unblocks everything)*
+### Phase 0 — Safety net & guardrails _(do first; unblocks everything)_
 
 Goal: be able to change code with confidence and catch regressions automatically.
 
@@ -144,7 +144,7 @@ Goal: be able to change code with confidence and catch regressions automatically
 - [ ] Add **ESLint** (`@stencil-community/eslint-plugin`, `@typescript-eslint`) wired to the same
       Prettier config; add `npm run lint`.
 - [ ] Write **characterization tests** (spec + e2e) for the highest-risk, hardest-to-change paths,
-      capturing *current* behavior exactly:
+      capturing _current_ behavior exactly:
   - PKCE: verifier/challenge generation, auth-URI build.
   - Print status polling: each job-status → UI-state transition (success/processing/failed/hub).
   - Multi-file upload orchestration: all-success / all-fail / partial-success outcomes.
@@ -155,7 +155,7 @@ Goal: be able to change code with confidence and catch regressions automatically
 
 > Acceptance: `npm run lint` and `npm test` pass in CI; coverage exists for auth + print flows.
 
-### Phase 1 — Foundational cleanup *(low risk, high signal)*
+### Phase 1 — Foundational cleanup _(low risk, high signal)_
 
 - [ ] Introduce a typed **constants module** for status codes:
       `JobStatus` (Success=0, Processing=[129,1246], Failed=[2,3011]) and

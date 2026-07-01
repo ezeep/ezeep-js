@@ -3,7 +3,10 @@ import authStore from './auth'
 
 /** Minimal fetch Response stub exposing the fields the service reads. */
 function jsonResponse(body: unknown, status = 200) {
-  return Promise.resolve({ status, json: () => Promise.resolve(body) }) as unknown as Promise<Response>
+  return Promise.resolve({
+    status,
+    json: () => Promise.resolve(body),
+  }) as unknown as Promise<Response>
 }
 
 describe('EzpPrintService request shaping', () => {
@@ -34,7 +37,7 @@ describe('EzpPrintService request shaping', () => {
     const svc = new EzpPrintService('https://r', 'client')
     await svc.getPrinterProperties('tok', 'printer-9')
     expect(fetchMock.mock.calls[0][0]).toBe(
-      'https://printapi.test/sfapi/GetPrinterProperties/?id=printer-9'
+      'https://printapi.test/sfapi/GetPrinterProperties/?id=printer-9',
     )
   })
 
@@ -42,7 +45,14 @@ describe('EzpPrintService request shaping', () => {
     fetchMock.mockReturnValue(jsonResponse({ jobid: 'j1' }))
     const svc = new EzpPrintService('https://r', 'client')
 
-    const data = await svc.printByFileID('tok', 'file1', 'pdf', 'printer1', { copies: 2 }, 'doc.pdf')
+    const data = await svc.printByFileID(
+      'tok',
+      'file1',
+      'pdf',
+      'printer1',
+      { copies: 2 },
+      'doc.pdf',
+    )
 
     const [url, init] = fetchMock.mock.calls[0]
     expect(url).toBe('https://printapi.test/sfapi/Print/')

@@ -78,14 +78,14 @@ export class EzpPrintService {
   getPrinterProperties(accessToken: string, printerID: string) {
     return authGetJson<PrinterConfig[]>(
       `https://${this.printingApi}/sfapi/GetPrinterProperties/?id=${printerID}`,
-      accessToken
+      accessToken,
     )
   }
 
   getAllPrinterProperties(accessToken: string) {
     return authGetJson<PrinterConfig[]>(
       `https://${this.printingApi}/sfapi/GetPrinterProperties/`,
-      accessToken
+      accessToken,
     )
   }
 
@@ -96,7 +96,7 @@ export class EzpPrintService {
     printerID: string,
     properties: PrinterProperties,
     filename?: string,
-    printAndDelete?: boolean
+    printAndDelete?: boolean,
   ) {
     this.abortController = new AbortController()
 
@@ -110,7 +110,7 @@ export class EzpPrintService {
         ...(printAndDelete && { printanddelete: printAndDelete }),
         properties,
       },
-      this.abortController.signal
+      this.abortController.signal,
     )
   }
 
@@ -122,11 +122,7 @@ export class EzpPrintService {
   }
 
   /** Shared POST to the `Print` endpoint. Returns the raw response. */
-  private printRequest(
-    accessToken: string,
-    body: Record<string, unknown>,
-    signal?: AbortSignal
-  ) {
+  private printRequest(accessToken: string, body: Record<string, unknown>, signal?: AbortSignal) {
     return fetch(`https://${this.printingApi}/sfapi/Print/`, {
       method: 'POST',
       headers: {
@@ -145,7 +141,7 @@ export class EzpPrintService {
     printerID: string,
     properties: PrinterProperties,
     filename?: string,
-    printAndDelete?: boolean
+    printAndDelete?: boolean,
   ) {
     return this.printRequest(accessToken, {
       fileid: fileID,
@@ -160,7 +156,7 @@ export class EzpPrintService {
   prepareFileUpload(accessToken: string) {
     return authGetJson<PrepareUploadResponse>(
       `https://${this.printingApi}/sfapi/PrepareUpload/`,
-      accessToken
+      accessToken,
     )
   }
 
@@ -192,7 +188,7 @@ export class EzpPrintService {
   getPrintStatus = () => {
     return authGetJson<JobStatusResponse>(
       `https://${this.printingApi}/sfapi/Status/?id=${encodeURIComponent(printStore.state.jobID)}`,
-      authStore.state.accessToken
+      authStore.state.accessToken,
     )
   }
 }

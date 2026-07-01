@@ -5,13 +5,13 @@ Puppeteer for e2e). Tests live next to the code they cover.
 
 ## Running tests
 
-| Command | What it runs |
-| --- | --- |
-| `npm test` | Unit + component **spec** tests (`*.spec.ts`/`*.spec.tsx`). Fast, no browser. |
-| `npm run test.watch` | Spec tests in watch mode. |
-| `npm run test.coverage` | Spec tests with a coverage report. |
-| `npm run test.e2e` | **E2E** tests (`*.e2e.ts`) in headless Chromium via Puppeteer. |
-| `npm run test.all` | Spec + e2e together. |
+| Command                 | What it runs                                                                  |
+| ----------------------- | ----------------------------------------------------------------------------- |
+| `npm test`              | Unit + component **spec** tests (`*.spec.ts`/`*.spec.tsx`). Fast, no browser. |
+| `npm run test.watch`    | Spec tests in watch mode.                                                     |
+| `npm run test.coverage` | Spec tests with a coverage report.                                            |
+| `npm run test.e2e`      | **E2E** tests (`*.e2e.ts`) in headless Chromium via Puppeteer.                |
+| `npm run test.all`      | Spec + e2e together.                                                          |
 
 CI runs `npm run lint`, `npm test`, `npm run test.e2e`, and `npm run build` on
 every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
@@ -65,7 +65,7 @@ removed in **Stencil v5**. The migration path is:
 - Spec/unit → [`@stencil/vitest`](https://github.com/stenciljs/vitest)
 - E2E / browser → [`@stencil/playwright`](https://github.com/stenciljs/playwright)
 
-**Status (2026-07): deliberately deferred.** Investigated and it is *not* a
+**Status (2026-07): deliberately deferred.** Investigated and it is _not_ a
 runner swap:
 
 - Stencil 5 is **alpha-only** (`5.0.0-alpha.*`); latest stable core is `4.43.5`.

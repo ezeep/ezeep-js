@@ -5,7 +5,7 @@ export default async () => {
     {
       style: 'normal',
       weight: '400 600',
-    }
+    },
   )
 
   font

@@ -85,25 +85,25 @@ export class EzpSelect {
     if (this.expandCover) {
       this.component.style.setProperty(
         '--ezp-select-list-height',
-        this.expanded ? `${this.containerHeight - this.toggleHeight}px` : '0px'
+        this.expanded ? `${this.containerHeight - this.toggleHeight}px` : '0px',
       )
       this.component.style.setProperty(
         '--ezp-select-wrap-translateY',
-        this.expanded ? `${this.wrapTop * -1 + this.spacing}px` : '0px'
+        this.expanded ? `${this.wrapTop * -1 + this.spacing}px` : '0px',
       )
     } else if (this.expandRise) {
       this.component.style.setProperty(
         '--ezp-select-list-height',
-        this.expanded ? `${this.listHeight}px` : '0px'
+        this.expanded ? `${this.listHeight}px` : '0px',
       )
       this.component.style.setProperty(
         '--ezp-select-wrap-translateY',
-        this.expanded ? `${this.wrapDiff + this.spacing}px` : '0px'
+        this.expanded ? `${this.wrapDiff + this.spacing}px` : '0px',
       )
     } else {
       this.component.style.setProperty(
         '--ezp-select-list-height',
-        this.expanded ? `${this.listHeight}px` : '0px'
+        this.expanded ? `${this.listHeight}px` : '0px',
       )
     }
 
@@ -117,7 +117,7 @@ export class EzpSelect {
 
   @Watch('preSelected')
   preSelectedChanged() {
-    this.preSelect();
+    this.preSelect()
   }
 
   /**
@@ -155,8 +155,8 @@ export class EzpSelect {
       typeof this.preSelected === 'number'
         ? option.id === this.preSelected
         : typeof this.preSelected === 'string'
-        ? option.title === this.preSelected
-        : null
+          ? option.title === this.preSelected
+          : null,
     )
     if (match) {
       this.selected = match

@@ -2,7 +2,10 @@ import { authGetJson, bearer } from './http'
 import authStore from './auth'
 
 function jsonResponse(body: unknown, status = 200) {
-  return Promise.resolve({ status, json: () => Promise.resolve(body) }) as unknown as Promise<Response>
+  return Promise.resolve({
+    status,
+    json: () => Promise.resolve(body),
+  }) as unknown as Promise<Response>
 }
 
 describe('bearer', () => {

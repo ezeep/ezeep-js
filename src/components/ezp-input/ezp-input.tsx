@@ -10,7 +10,7 @@ export class EzpInput {
   private input?: HTMLInputElement
   private timeout: ReturnType<typeof setTimeout> | null = null
 
-   /**
+  /**
    *
    * Properties
    *
@@ -30,15 +30,14 @@ export class EzpInput {
 
   /** Description... */
   @Prop({ reflect: true }) suffix: string
-  
+
   /** Description... */
   @Prop() eventType: string
 
   /** Description... */
   @Prop() placeholder: string = ''
 
-
-   /**
+  /**
    *
    * Events
    *
@@ -46,7 +45,7 @@ export class EzpInput {
 
   @Event() inputValueChanged: EventEmitter<{ type: string; value: string | number }>
 
-   /**
+  /**
    *
    * States
    *
