@@ -5,6 +5,7 @@ import {
   PRINT_REJECTED_CODE,
   HUB_DRIVER_ERROR_CODES,
   POLL_INTERVAL_MS,
+  MAX_POLL_ATTEMPTS,
 } from '../shared/constants'
 
 /**
@@ -36,28 +37,35 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
 
 /**
  * Poll the print status until the job reaches a terminal state. Resolves on
- * success; throws on failure or a hub-driver error. Unknown statuses are treated
- * as failures for safety.
+ * success; throws on failure, a hub-driver error, or when the polling budget is
+ * exhausted (so a stuck job fails instead of polling forever). Unknown statuses
+ * are treated as failures for safety.
  */
 export async function waitForJobCompletion(
   getStatus: () => Promise<JobStatusResponse>,
   isQueue: boolean,
   pollIntervalMs: number = POLL_INTERVAL_MS,
+  maxAttempts: number = MAX_POLL_ATTEMPTS,
 ): Promise<void> {
+  let attempts = 0
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const data = await getStatus()
+    attempts++
     const outcome = classifyJobStatus(data.jobstatus, isQueue)
 
     if (outcome === 'success') return
-    if (outcome === 'processing') {
-      await sleep(pollIntervalMs)
-      continue
-    }
     if (outcome === 'hub-error') {
       throw new Error('Hub printer driver error: ' + (data.jobstatusstring || data.jobstatus))
     }
-    throw new Error('Print job failed: ' + (data.jobstatusstring || data.jobstatus))
+    if (outcome === 'failed') {
+      throw new Error('Print job failed: ' + (data.jobstatusstring || data.jobstatus))
+    }
+    // 'processing' — keep waiting until the polling budget is exhausted.
+    if (attempts >= maxAttempts) {
+      throw new Error(`Print job timed out after ${attempts} status checks`)
+    }
+    await sleep(pollIntervalMs)
   }
 }
 

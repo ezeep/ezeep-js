@@ -49,7 +49,14 @@ export const PAPER_ID = 256
 
 /** Print-status polling cadence and bounds. */
 export const POLL_INTERVAL_MS = 2000
-export const MAX_POLL_ATTEMPTS = Infinity
+/**
+ * Overall polling budget before a still-processing job is treated as failed.
+ * Prevents polling the status endpoint indefinitely on a stuck job (only hub
+ * printers had a timeout before). Generous — 10 minutes — to tolerate slow
+ * server-side rendering of large documents.
+ */
+export const POLL_TIMEOUT_MS = 10 * 60 * 1000
+export const MAX_POLL_ATTEMPTS = Math.ceil(POLL_TIMEOUT_MS / POLL_INTERVAL_MS)
 /** Fallback timeout for hub printers so the UI never hangs indefinitely. */
 export const HUB_TIMEOUT_MS = 30000
 

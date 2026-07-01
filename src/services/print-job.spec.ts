@@ -69,6 +69,12 @@ describe('waitForJobCompletion', () => {
       'Hub printer driver error',
     )
   })
+
+  it('times out instead of polling forever on a stuck (always-processing) job', async () => {
+    const getStatus = jest.fn().mockResolvedValue({ jobstatus: 1246 }) // never leaves processing
+    await expect(waitForJobCompletion(getStatus, false, 0, 5)).rejects.toThrow('timed out')
+    expect(getStatus).toHaveBeenCalledTimes(5)
+  })
 })
 
 describe('uploadAndPrintFile', () => {
