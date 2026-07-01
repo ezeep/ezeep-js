@@ -1,5 +1,5 @@
 import { createStore } from '@stencil/store'
-import authStore from './auth'
+import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
 import {
   PrinterConfig,
@@ -10,7 +10,7 @@ import {
   PrepareUploadResponse,
 } from '../shared/types'
 import { AnonymousCredential, BlockBlobClient, newPipeline } from '@azure/storage-blob'
-import { authGetJson, bearer, refreshAccessToken } from './http'
+import { authGetJson, bearer } from './http'
 import { storage } from '../shared/storage'
 
 export class EzpPrintService {
@@ -48,11 +48,12 @@ export class EzpPrintService {
       },
       // check for response status here
       response: (response) => {
-        if (response.status === 401 && authStore.state.refreshToken !== '') {
-          // Kick off a (shared, single-flight) refresh so the next request
-          // carries a valid token. GET helpers additionally retry themselves;
-          // this covers POSTs that don't go through `authGetJson`.
-          refreshAccessToken()
+        if (response.status === 401) {
+          if (authStore.state.refreshToken === '') {
+            return response
+          }
+          const authService = new EzpAuthorizationService(this.redirectURI, this.clientID)
+          authService.refreshTokens()
         }
         // Modify the reponse object
         return response

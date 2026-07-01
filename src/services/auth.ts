@@ -2,17 +2,6 @@ import { createStore } from '@stencil/store'
 import { encodeFormData } from '../utils/utils'
 import { storage } from '../shared/storage'
 
-/** base64url-encode raw bytes (RFC 4648 §5, no padding) for PKCE values. */
-function base64UrlEncode(bytes: Uint8Array): string {
-  let binary = ''
-  // Build the binary string in a loop rather than `String.fromCharCode.apply`,
-  // which overflows the call stack for large inputs.
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i])
-  }
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-}
-
 export class EzpAuthorizationService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
@@ -42,18 +31,20 @@ export class EzpAuthorizationService {
     if (authStore.state.codeVerifier !== '') {
       this.codeVerifier = authStore.state.codeVerifier
     } else {
-      // High-entropy, spec-compliant PKCE verifier: 64 random bytes encoded as
-      // base64url yields ~86 chars (within the 43-128 char range of RFC 7636).
-      const randomBytes = crypto.getRandomValues(new Uint8Array(64))
-      this.codeVerifier = base64UrlEncode(randomBytes)
+      const arr = new Uint8Array(128)
+      const randomValueArray = crypto.getRandomValues(arr)
+      const codeVerifier = btoa(randomValueArray.toString()).substr(0, 128)
+      this.codeVerifier = codeVerifier
       authStore.state.codeVerifier = this.codeVerifier
     }
   }
 
   async generateCodeChallenge(codeVerifier: string) {
-    const codeData = new TextEncoder().encode(codeVerifier)
+    const encoder = new TextEncoder()
+    const codeData = encoder.encode(codeVerifier)
     const digest = await crypto.subtle.digest('SHA-256', codeData)
-    this.codeChallenge = base64UrlEncode(new Uint8Array(digest))
+    const base64Digest = btoa(String.fromCharCode(...new Uint8Array(digest)))
+    this.codeChallenge = base64Digest.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
   }
 
   buildAuthURI() {

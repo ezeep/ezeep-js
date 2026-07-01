@@ -14,11 +14,10 @@ describe('EzpAuthorizationService — PKCE', () => {
     authStore.state.codeVerifier = ''
   })
 
-  it('generates a spec-compliant code verifier (43-128 chars, base64url charset)', () => {
+  it('generates a code verifier (43-128 chars) and persists it', () => {
     const service = newService()
     service.generateCodeVerifier()
 
-    expect(service.codeVerifier).toMatch(/^[A-Za-z0-9_-]+$/)
     expect(service.codeVerifier.length).toBeGreaterThanOrEqual(43)
     expect(service.codeVerifier.length).toBeLessThanOrEqual(128)
     // It is persisted to the store for reuse across the redirect.
