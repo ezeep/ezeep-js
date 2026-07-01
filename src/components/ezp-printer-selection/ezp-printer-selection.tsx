@@ -685,13 +685,18 @@ export class EzpPrinterSelection {
 
   /** Description shown while a print job is in progress. */
   private processingDescription(): string {
+    if (this.preparingUpload) return i18next.t('printer_selection.prepare_upload')
+    if (this.uploading) {
+      // Surface the live blob-upload progress (reactive via the print store).
+      const percent = Math.round(printStore.state.uploadProgress)
+      const detail = this.totalFiles > 1 ? `${this.currentFileIndex + 1}/${this.totalFiles} · ` : ''
+      return `${i18next.t('printer_selection.uploading')} (${detail}${percent}%)`
+    }
     if (this.totalFiles > 1) {
       return `${i18next.t('printer_selection.print_processing')} (${this.currentFileIndex + 1}/${
         this.totalFiles
       })`
     }
-    if (this.preparingUpload) return i18next.t('printer_selection.prepare_upload')
-    if (this.uploading) return i18next.t('printer_selection.uploading')
     return i18next.t('printer_selection.print_processing')
   }
 
