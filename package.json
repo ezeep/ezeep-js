@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.33.0",
-    "@cortado-holding/colors": "1.1.12",
+    "@cortado-holding/colors": "2.0.5",
     "@cortado-holding/utils": "^1.0.1",
     "@stencil/core": "^4.43.5",
     "fetch-intercept": "^2.4.0",
