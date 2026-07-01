@@ -15,6 +15,7 @@ export class EzpSelect {
   private expandCover: boolean = false
   private expandRise: boolean = false
   private list: HTMLDivElement
+  private toggleEl?: HTMLDivElement
   private listHeight: number = 0
   private spacing: number = 6
   private toggleHeight: number = 0
@@ -163,24 +164,66 @@ export class EzpSelect {
     }
   }
 
-  // Open the list on Enter/Space/ArrowDown; close it on Escape.
+  private getOptionElements(): HTMLElement[] {
+    return this.list ? Array.from(this.list.querySelectorAll<HTMLElement>('[role="option"]')) : []
+  }
+
+  /** Move focus onto the option at `index` (clamped to the list bounds). */
+  private focusOption(index: number) {
+    const options = this.getOptionElements()
+    const target = options[Math.max(0, Math.min(index, options.length - 1))]
+    target?.focus()
+  }
+
+  // Open the list on Enter/Space/ArrowDown (moving focus to the first option);
+  // close it on Escape.
   private handleToggleKeydown = (event: KeyboardEvent) => {
     if (this.disabled) return
     if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
       event.preventDefault()
-      if (!this.expanded) this.toggle()
+      if (!this.expanded) {
+        this.toggle()
+        // Focus the first option once the expanded list has rendered.
+        window.setTimeout(() => this.focusOption(0), 0)
+      }
     } else if (event.key === 'Escape' && this.expanded) {
       this.toggle()
     }
   }
 
-  // Select an option with Enter/Space; Escape closes the list.
+  // Full listbox keyboard support: arrows/Home/End roam the options, Enter/Space
+  // selects, Escape closes and returns focus to the toggle.
   private handleOptionKeydown = (event: KeyboardEvent, id: number | string | boolean) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      this.select(id)
-    } else if (event.key === 'Escape' && this.expanded) {
-      this.toggle()
+    const options = this.getOptionElements()
+    const current = options.indexOf(event.currentTarget as HTMLElement)
+    switch (event.key) {
+      case 'Enter':
+      case ' ':
+        event.preventDefault()
+        this.select(id)
+        break
+      case 'ArrowDown':
+        event.preventDefault()
+        this.focusOption(current + 1)
+        break
+      case 'ArrowUp':
+        event.preventDefault()
+        this.focusOption(current - 1)
+        break
+      case 'Home':
+        event.preventDefault()
+        this.focusOption(0)
+        break
+      case 'End':
+        event.preventDefault()
+        this.focusOption(options.length - 1)
+        break
+      case 'Escape':
+        if (this.expanded) {
+          this.toggle()
+          this.toggleEl?.focus()
+        }
+        break
     }
   }
 
@@ -252,6 +295,7 @@ export class EzpSelect {
             aria-label={this.label}
             aria-disabled={this.disabled ? 'true' : 'false'}
             tabindex={this.disabled ? -1 : 0}
+            ref={(el) => (this.toggleEl = el as HTMLDivElement)}
             onClick={() => !this.disabled && this.toggle()}
             onKeyDown={this.handleToggleKeydown}
           >

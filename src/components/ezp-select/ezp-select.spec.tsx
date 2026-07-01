@@ -79,4 +79,45 @@ describe('ezp-select', () => {
     sel.handleOptionKeydown({ key: 'Enter', preventDefault: () => undefined }, 2)
     expect(sel.selected).toEqual({ id: 2, title: 'Letter', meta: '' })
   })
+
+  it('roves to the next/previous option with the arrow keys', async () => {
+    const { sel } = await setup()
+    const first = { focus: jest.fn() }
+    const second = { focus: jest.fn() }
+    sel.getOptionElements = () => [first, second]
+
+    sel.handleOptionKeydown({ key: 'ArrowDown', preventDefault: () => undefined, currentTarget: first }, 1)
+    expect(second.focus).toHaveBeenCalled()
+
+    sel.handleOptionKeydown({ key: 'ArrowUp', preventDefault: () => undefined, currentTarget: second }, 2)
+    expect(first.focus).toHaveBeenCalled()
+  })
+
+  it('jumps to first/last with Home/End', async () => {
+    const { sel } = await setup()
+    const a = { focus: jest.fn() }
+    const b = { focus: jest.fn() }
+    const c = { focus: jest.fn() }
+    sel.getOptionElements = () => [a, b, c]
+
+    sel.handleOptionKeydown({ key: 'End', preventDefault: () => undefined, currentTarget: a }, 1)
+    expect(c.focus).toHaveBeenCalled()
+    sel.handleOptionKeydown({ key: 'Home', preventDefault: () => undefined, currentTarget: c }, 3)
+    expect(a.focus).toHaveBeenCalled()
+  })
+
+  it('Escape from an option closes the list and returns focus to the toggle', async () => {
+    const { sel } = await setup()
+    sel.expanded = true
+    const toggleSpy = jest.fn()
+    sel.toggle = toggleSpy
+    const toggleFocus = jest.fn()
+    sel.toggleEl = { focus: toggleFocus }
+    sel.getOptionElements = () => []
+
+    sel.handleOptionKeydown({ key: 'Escape', preventDefault: () => undefined, currentTarget: null }, 1)
+
+    expect(toggleSpy).toHaveBeenCalled()
+    expect(toggleFocus).toHaveBeenCalled()
+  })
 })
