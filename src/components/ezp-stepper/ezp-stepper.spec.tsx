@@ -73,3 +73,38 @@ describe('ezp-stepper', () => {
     expect(detail).toContain(2)
   })
 })
+
+describe('ezp-stepper input sanitization', () => {
+  async function typeInto(attrs: string, raw: string, prep?: (s: any) => void) {
+    const { page, stepper } = await setup(attrs)
+    if (prep) {
+      prep(stepper)
+      await page.waitForChanges()
+    }
+    stepper.input.value = raw
+    stepper.handleInput()
+    await page.waitForChanges()
+    return stepper
+  }
+
+  it('reverts non-numeric input to the current value', async () => {
+    const stepper = await typeInto('min="1" max="9"', 'abc', (s) => s.handleIncrease())
+    expect(stepper.value).toBe(2)
+    expect(stepper.input.value).toBe('2')
+  })
+
+  it('clamps a value above max down to max', async () => {
+    const stepper = await typeInto('min="1" max="3"', '9')
+    expect(stepper.value).toBe(3)
+  })
+
+  it('resets an empty input to the minimum', async () => {
+    const stepper = await typeInto('min="2" max="8"', '')
+    expect(stepper.value).toBe(2)
+  })
+
+  it('strips non-digits and parses the numeric remainder', async () => {
+    const stepper = await typeInto('min="1" max="99"', '0a7')
+    expect(stepper.value).toBe(7)
+  })
+})

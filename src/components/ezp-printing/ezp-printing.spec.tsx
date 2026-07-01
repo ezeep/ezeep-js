@@ -1,5 +1,6 @@
 import { newSpecPage } from '@stencil/core/testing'
 import { EzpPrinting } from './ezp-printing'
+import authStore from '../../services/auth'
 
 /**
  * Integration test of the print-flow orchestration in <ezp-printing>: the
@@ -126,5 +127,89 @@ describe('ezp-printing journey', () => {
     el.listenDialogClose({ detail: 'no-document-selected' })
     await page.waitForChanges()
     expect(el.noDocumentOpen).toBe(false)
+  })
+})
+
+describe('ezp-printing public methods', () => {
+  beforeEach(stubEnvironment)
+
+  it('getAuthUri builds a PKCE authorization URL', async () => {
+    const { el } = await setup('trigger="button"')
+    const uri = await el.getAuthUri()
+    const url = new URL(uri)
+    expect(url.pathname).toBe('/oauth/authorize/')
+    expect(url.searchParams.get('code_challenge_method')).toBe('S256')
+    expect(url.searchParams.get('code_challenge')).toBeTruthy()
+  })
+
+  it('logOut revokes the token, clears the session and closes the flow', async () => {
+    const { el } = await setup('trigger="button"')
+    localStorage.setItem('access_token', 'AT')
+    localStorage.setItem('refreshToken', 'RT')
+    authStore.state.refreshToken = 'RT'
+    el.printOpen = true
+
+    await el.logOut()
+
+    expect(localStorage.getItem('access_token')).toBeNull()
+    expect(localStorage.getItem('refreshToken')).toBeNull()
+    expect(el.printOpen).toBe(false)
+  })
+
+  it('checkAuth marks the session authorized when GetConfiguration is OK', async () => {
+    global.fetch = jest
+      .fn()
+      .mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve({}) }) as unknown as typeof fetch
+    const { el } = await setup('trigger="button"')
+
+    const authorized = await el.checkAuth()
+
+    expect(authorized).toBe(true)
+    expect(authStore.state.isAuthorized).toBe(true)
+  })
+
+  it('checkAuth reports unauthorized when GetConfiguration fails', async () => {
+    const { el } = await setup('trigger="button"')
+    global.fetch = jest
+      .fn()
+      .mockResolvedValue({ ok: false, status: 401, json: () => Promise.resolve({}) }) as unknown as typeof fetch
+
+    const authorized = await el.checkAuth()
+
+    expect(authorized).toBe(false)
+    expect(authStore.state.isAuthorized).toBe(false)
+  })
+
+  it('getSasUri returns the SAS URI when the upload is prepared', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve({ sasUri: 'https://blob/sas', fileid: 'f1' }),
+    }) as unknown as typeof fetch
+    const { el } = await setup('trigger="button"')
+
+    const uri = await el.getSasUri()
+
+    expect(uri).toBe('https://blob/sas')
+    expect(el.onlyGetSasUri).toBe(true)
+  })
+
+  it('getSasUri opens the auth dialog and returns nothing when preparing fails', async () => {
+    const { el } = await setup('trigger="button"')
+    global.fetch = jest.fn().mockRejectedValue(new Error('network')) as unknown as typeof fetch
+
+    const uri = await el.getSasUri()
+
+    expect(uri).toBeUndefined()
+    expect(el.authOpen).toBe(true)
+  })
+
+  it('watchFileData turns a raw data string into a File named after filename', async () => {
+    const { el } = await setup('trigger="button"')
+    el.filename = 'report.pdf'
+
+    el.watchFileData('PDFDATA', '')
+
+    expect(el.files).toHaveLength(1)
+    expect(el.files[0].name).toBe('report.pdf')
   })
 })

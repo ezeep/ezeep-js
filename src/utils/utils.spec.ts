@@ -5,8 +5,27 @@ import {
   managePaperDimensions,
   formatPageRange,
   validatePageRange,
+  poll,
   PAPER_ID,
 } from './utils'
+
+describe('poll', () => {
+  it('resolves once validate passes', async () => {
+    let n = 0
+    const fn = jest.fn(async () => ++n)
+    const result = await poll<number>({ fn, validate: (r) => r >= 3, interval: 0, maxAttempts: 10 })
+    expect(result).toBe(3)
+    expect(fn).toHaveBeenCalledTimes(3)
+  })
+
+  it('rejects after exceeding maxAttempts', async () => {
+    const fn = jest.fn(async () => 0)
+    await expect(
+      poll<number>({ fn, validate: () => false, interval: 0, maxAttempts: 3 })
+    ).rejects.toThrow('Exceeded max attempts')
+    expect(fn).toHaveBeenCalledTimes(3)
+  })
+})
 
 describe('encodeFormData', () => {
   it('url-encodes keys and values and joins with &', () => {

@@ -92,4 +92,34 @@ describe('EzpPrintService request shaping', () => {
     svc.abortPrint()
     expect(init.signal.aborted).toBe(true)
   })
+
+  it('printFileByUrl POSTs the file URL body to the Print endpoint', async () => {
+    const svc = new EzpPrintService('https://r', 'client')
+    svc.printFileByUrl('tok', 'https://files/x.pdf', 'pdf', 'printer1', { copies: 3 }, 'x.pdf')
+
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('https://printapi.test/sfapi/Print/')
+    expect(init.method).toBe('POST')
+    expect(JSON.parse(init.body)).toMatchObject({
+      fileurl: 'https://files/x.pdf',
+      type: 'pdf',
+      printerid: 'printer1',
+      alias: 'x.pdf',
+      properties: { copies: 3 },
+    })
+  })
+
+  it('getConfig GETs GetConfiguration and returns the raw response', async () => {
+    const rawResponse = { ok: true, status: 200 }
+    fetchMock.mockReturnValue(Promise.resolve(rawResponse) as unknown as Promise<Response>)
+    const svc = new EzpPrintService('https://r', 'client')
+
+    const response = await svc.getConfig('tok')
+
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('https://printapi.test/sfapi/GetConfiguration/')
+    expect(init.headers).toEqual({ Authorization: 'Bearer tok' })
+    // getConfig deliberately returns the Response itself (callers read .ok).
+    expect(response).toBe(rawResponse)
+  })
 })
