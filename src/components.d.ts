@@ -188,7 +188,7 @@ export namespace Components {
         "filetype": string;
         "fileurl": string;
         "getAuthUri": () => Promise<string>;
-        "getSasUri": () => Promise<string>;
+        "getSasUri": () => Promise<string | undefined>;
         /**
           * @default false
          */
