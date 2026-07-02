@@ -99,8 +99,6 @@ export class EzpAuthorizationService {
     })
       .then((response) => response.json())
       .then((data) => {
-        // eslint-disable-next-line no-console
-        console.log('[ezp:diag] token exchange response: access_token=', !!data.access_token, data)
         if (data.access_token) {
           this.persistTokens(data.access_token, data.refresh_token)
         }
