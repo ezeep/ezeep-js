@@ -41,6 +41,8 @@ export class EzpAuth {
   previousUrl: string | URL | null = null
 
   openSignInWindow(url: string, name: string) {
+    // eslint-disable-next-line no-console
+    console.log('[ezp:diag] openSignInWindow isAuthorized=', authStore.state.isAuthorized)
     if (authStore.state.isAuthorized) {
       this.authCancel.emit()
       this.authSuccess.emit()
@@ -90,11 +92,21 @@ export class EzpAuth {
   }
 
   receiveMessage(event: MessageEvent) {
+    // eslint-disable-next-line no-console
+    console.log('[ezp:diag] receiveMessage got code=', !!event.data, 'origin=', event.origin)
     authStore.state.code = event.data
-    this.auth.getAccessToken().then(() => {
-      this.authCancel.emit()
-      this.authSuccess.emit()
-    })
+    this.auth
+      .getAccessToken()
+      .then(() => {
+        // eslint-disable-next-line no-console
+        console.log('[ezp:diag] getAccessToken done, isAuthorized=', authStore.state.isAuthorized)
+        this.authCancel.emit()
+        this.authSuccess.emit()
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.log('[ezp:diag] getAccessToken FAILED', err)
+      })
   }
 
   async componentWillLoad() {

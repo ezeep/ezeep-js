@@ -139,6 +139,8 @@ export class EzpPrinting {
   /** Description... */
   @Listen('authCancel')
   listenAuthCancel() {
+    // eslint-disable-next-line no-console
+    console.log('[ezp:diag] authCancel -> authOpen=false')
     this.authOpen = false
     this.checkAuth()
   }
@@ -160,6 +162,13 @@ export class EzpPrinting {
 
   @Listen('authSuccess')
   listenAuthSuccess() {
+    // eslint-disable-next-line no-console
+    console.log('[ezp:diag] authSuccess', {
+      filename: this.filename,
+      onlyGetSasUri: this.onlyGetSasUri,
+      isAuthorized: authStore.state.isAuthorized,
+      hasAccessToken: authStore.state.accessToken !== '',
+    })
     if (this.onlyGetSasUri) {
       this.printOpen = false
       this.onlyGetSasUri = false
@@ -298,6 +307,8 @@ export class EzpPrinting {
 
     storage.setIsAuthorized(authStore.state.isAuthorized)
 
+    // eslint-disable-next-line no-console
+    console.log('[ezp:diag] checkAuth ->', authStore.state.isAuthorized)
     return authStore.state.isAuthorized
   }
 
