@@ -92,7 +92,7 @@ describe('EzpAuthorizationService — token exchange', () => {
   const tokenResponse = (body: unknown) =>
     Promise.resolve({ json: () => Promise.resolve(body) }) as unknown as Promise<Response>
 
-  it('getAccessToken exchanges the auth code and persists tokens everywhere', async () => {
+  it('getAccessToken exchanges the auth code and persists tokens', async () => {
     authStore.state.code = 'auth-code'
     authStore.state.codeVerifier = 'verifier-x'
     fetchMock.mockReturnValue(tokenResponse({ access_token: 'AT', refresh_token: 'RT' }))
@@ -108,7 +108,8 @@ describe('EzpAuthorizationService — token exchange', () => {
     expect(authStore.state.accessToken).toBe('AT')
     expect(authStore.state.refreshToken).toBe('RT')
     expect(authStore.state.isAuthorized).toBe(true)
-    expect(localStorage.getItem('access_token')).toBe('AT')
+    // Access token is in-memory only; refresh token + isAuthorized are persisted.
+    expect(localStorage.getItem('access_token')).toBeNull()
     expect(localStorage.getItem('refreshToken')).toBe('RT')
     expect(localStorage.getItem('isAuthorized')).toBe('true')
   })

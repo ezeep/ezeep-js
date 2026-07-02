@@ -267,13 +267,14 @@ export class EzpPrinting {
 
   @Method()
   async checkAuth(): Promise<boolean> {
+    // Constructing the print service also loads any persisted refresh token.
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
-    let accessToken = authStore.state.accessToken
-
-    if (accessToken === '') {
-      accessToken = storage.getAccessToken() ?? ''
-      authStore.state.accessToken = accessToken
+    // The access token is kept in memory only (never written to localStorage),
+    // to limit XSS exposure. If it's missing — e.g. after a page reload — obtain
+    // a fresh one from the persisted refresh token so the user stays signed in.
+    if (authStore.state.accessToken === '' && authStore.state.refreshToken !== '') {
+      await new EzpAuthorizationService(this.redirecturi, this.clientid).refreshTokens()
     }
 
     if (storage.hasIsAuthorized()) {

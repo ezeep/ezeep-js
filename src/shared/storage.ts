@@ -29,12 +29,8 @@ function getJSON<T>(key: string): T | null {
 }
 
 export const storage = {
-  getAccessToken(): string | null {
-    return localStorage.getItem(KEY.accessToken)
-  },
-  setAccessToken(token: string): void {
-    localStorage.setItem(KEY.accessToken, token)
-  },
+  // Note: the access token is intentionally NOT persisted (kept in memory only,
+  // for XSS defense-in-depth). `clearSession` still removes any legacy value.
 
   getRefreshToken(): string | null {
     return localStorage.getItem(KEY.refreshToken)

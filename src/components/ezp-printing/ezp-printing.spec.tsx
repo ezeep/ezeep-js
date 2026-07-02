@@ -172,6 +172,33 @@ describe('ezp-printing public methods', () => {
     expect(authStore.state.isAuthorized).toBe(true)
   })
 
+  it('refreshes the in-memory access token from the refresh token on reload', async () => {
+    const { el } = await setup('trigger="button"')
+    // Simulate a fresh page load: no in-memory access token, but a persisted
+    // refresh token. checkAuth should silently obtain a new access token.
+    authStore.state.accessToken = ''
+    authStore.state.refreshToken = 'stored-RT'
+    authStore.state.authApiHostUrl = 'account.ezeep.com'
+
+    const urls: string[] = []
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      urls.push(url)
+      if (url.includes('/oauth/access_token/')) {
+        return Promise.resolve({
+          json: () => Promise.resolve({ access_token: 'new-AT', refresh_token: 'new-RT' }),
+        })
+      }
+      return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({}) })
+    }) as unknown as typeof fetch
+
+    await el.checkAuth()
+
+    expect(urls.some((u) => u.includes('/oauth/access_token/'))).toBe(true)
+    expect(authStore.state.accessToken).toBe('new-AT')
+    // The refreshed access token is NOT written to localStorage.
+    expect(localStorage.getItem('access_token')).toBeNull()
+  })
+
   it('checkAuth reports unauthorized when GetConfiguration fails', async () => {
     const { el } = await setup('trigger="button"')
     global.fetch = jest.fn().mockResolvedValue({

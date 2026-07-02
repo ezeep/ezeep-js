@@ -3,18 +3,14 @@ import { storage } from './storage'
 describe('storage', () => {
   beforeEach(() => localStorage.clear())
 
-  it('round-trips the access and refresh tokens using the legacy key names', () => {
-    storage.setAccessToken('abc')
+  it('round-trips the refresh token using the legacy key name', () => {
     storage.setRefreshToken('def')
-    expect(storage.getAccessToken()).toBe('abc')
     expect(storage.getRefreshToken()).toBe('def')
-    // The literal key strings must not change (existing sessions depend on them).
-    expect(localStorage.getItem('access_token')).toBe('abc')
+    // The literal key string must not change (existing sessions depend on it).
     expect(localStorage.getItem('refreshToken')).toBe('def')
   })
 
-  it('returns null for unset tokens', () => {
-    expect(storage.getAccessToken()).toBeNull()
+  it('returns null for an unset refresh token', () => {
     expect(storage.getRefreshToken()).toBeNull()
   })
 
@@ -49,8 +45,8 @@ describe('storage', () => {
     expect(storage.getProperties()).toBeNull()
   })
 
-  it('clearSession removes every session key', () => {
-    storage.setAccessToken('a')
+  it('clearSession removes every session key (incl. any legacy access_token)', () => {
+    localStorage.setItem('access_token', 'a') // legacy value from before in-memory tokens
     storage.setRefreshToken('r')
     storage.setIsAuthorized(true)
     storage.setProperties({ copies: 1 })
@@ -66,7 +62,7 @@ describe('storage', () => {
   })
 
   it('clearSavedPrinter removes only the printer + its properties', () => {
-    storage.setAccessToken('keep-me')
+    storage.setRefreshToken('keep-me')
     storage.setProperties({ copies: 1 })
     storage.setPrinter({ id: 'p', name: 'n', location: 'l', is_queue: false })
 
@@ -74,6 +70,6 @@ describe('storage', () => {
 
     expect(storage.getPrinter()).toBeNull()
     expect(storage.getProperties()).toBeNull()
-    expect(storage.getAccessToken()).toBe('keep-me')
+    expect(storage.getRefreshToken()).toBe('keep-me')
   })
 })

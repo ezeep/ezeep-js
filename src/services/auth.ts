@@ -65,11 +65,15 @@ export class EzpAuthorizationService {
     }
   }
 
-  /** Persist tokens to the auth store, instance fields and localStorage. */
+  /**
+   * Persist tokens. The access token is kept in memory only (auth store +
+   * instance field) — it is deliberately NOT written to localStorage, so an XSS
+   * on the host page can't read it. Only the refresh token (needed to re-auth
+   * after a reload) and the isAuthorized hint are persisted.
+   */
   private persistTokens(accessToken: string, refreshToken: string) {
     this.accessToken = accessToken
     authStore.state.accessToken = accessToken
-    storage.setAccessToken(accessToken)
 
     this.refreshToken = refreshToken
     authStore.state.refreshToken = refreshToken
