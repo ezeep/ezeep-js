@@ -1,6 +1,7 @@
 import { Component, Host, Prop, Event, EventEmitter, Listen, h } from '@stencil/core'
 import i18next from 'i18next'
 import { IconNameTypes, IconSizeTypes } from '../../shared/types'
+import { subscribeToLanguageChange } from '../../utils/utils'
 
 @Component({
   tag: 'ezp-dialog',
@@ -38,10 +39,19 @@ export class EzpDialog {
    */
 
   private box?: HTMLDivElement
+  private unsubscribeLanguage?: () => void
+
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
 
   componentDidLoad() {
     // Move focus into the dialog so keyboard/screen-reader users land here.
     this.box?.focus()
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
   }
 
   /**

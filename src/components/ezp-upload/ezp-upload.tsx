@@ -1,4 +1,5 @@
 import { Component, Host, Listen, Event, EventEmitter, State, h, Fragment } from '@stencil/core'
+import { subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
 @Component({
   tag: 'ezp-upload',
@@ -8,6 +9,15 @@ import i18next from 'i18next'
 export class EzpUpload {
   private input?: HTMLInputElement
   private form?: HTMLFormElement
+  private unsubscribeLanguage?: () => void
+
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
+  }
 
   /**
    *

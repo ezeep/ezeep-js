@@ -1,6 +1,7 @@
 import { Component, Host, h, Prop, State, Event, EventEmitter, Listen } from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
+import { subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
 @Component({
   tag: 'ezp-auth',
@@ -39,6 +40,15 @@ export class EzpAuth {
 
   oauthPopupWindow: Window | null = null
   previousUrl: string | URL | null = null
+  private unsubscribeLanguage?: () => void
+
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
+  }
 
   openSignInWindow(url: string, name: string) {
     if (authStore.state.isAuthorized) {

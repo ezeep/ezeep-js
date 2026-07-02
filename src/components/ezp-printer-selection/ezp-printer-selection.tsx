@@ -14,7 +14,7 @@ import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties, JobStatusResponse } from '../../shared/types'
-import { managePaperDimensions, poll, removeEmptyStrings } from '../../utils/utils'
+import { managePaperDimensions, poll, removeEmptyStrings, subscribeToLanguageChange } from '../../utils/utils'
 import { PAPER_ID, validatePageRange, formatPageRange } from '../../utils/utils'
 import { applyPrinterDefaults, classifyJobStatus, hasTrays, hasNoTrays } from '../../utils/printer'
 import { uploadAndPrintFile } from '../../services/print-job'
@@ -36,6 +36,7 @@ import {
 export class EzpPrinterSelection {
   private fileExtension = ''
   private printService: EzpPrintService
+  private unsubscribeLanguage?: () => void
   public duplexOptions = [
     {
       id: 1,
@@ -623,6 +624,7 @@ export class EzpPrinterSelection {
 
   /** Description... */
   async connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService.registerFetchInterceptor()
     await this.getUserInfo()
@@ -675,6 +677,10 @@ export class EzpPrinterSelection {
     }
 
     this.loading = false
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
   }
 
   /**

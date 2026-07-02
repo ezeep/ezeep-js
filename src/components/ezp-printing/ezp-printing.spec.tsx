@@ -1,4 +1,5 @@
 import { newSpecPage } from '@stencil/core/testing'
+import i18next from 'i18next'
 import { EzpPrinting } from './ezp-printing'
 import authStore from '../../services/auth'
 
@@ -41,9 +42,10 @@ const html = (page: any): string => page.root!.shadowRoot!.innerHTML
 
 // On a successful login ezp-auth emits BOTH authCancel (which closes the auth
 // dialog) and authSuccess; replicate that pairing.
-function authSucceeds(el: any) {
+async function authSucceeds(el: any) {
   el.listenAuthCancel()
-  el.listenAuthSuccess()
+  // listenAuthSuccess is async (it syncs the account language before opening).
+  await el.listenAuthSuccess()
 }
 
 describe('ezp-printing trigger rendering', () => {
@@ -74,7 +76,7 @@ describe('ezp-printing journey', () => {
     expect(html(page)).toContain('ezp-auth')
 
     // Auth succeeds with a document present -> printer selection opens.
-    authSucceeds(el)
+    await authSucceeds(el)
     await page.waitForChanges()
     expect(el.printOpen).toBe(true)
     expect(el.authOpen).toBe(false)
@@ -84,7 +86,7 @@ describe('ezp-printing journey', () => {
   it('shows the "no document" dialog when auth succeeds without a file', async () => {
     const { page, el } = await setup('trigger="button"')
 
-    authSucceeds(el) // filename is still ''
+    await authSucceeds(el) // filename is still ''
     await page.waitForChanges()
     expect(el.noDocumentOpen).toBe(true)
     expect(el.printOpen).toBe(false)
@@ -94,7 +96,7 @@ describe('ezp-printing journey', () => {
   it('printCancel closes the flow and clears the selected files', async () => {
     const { page, el } = await setup('trigger="file"')
     el.listenUploadFile({ detail: [new File(['x'], 'report.pdf')] })
-    authSucceeds(el)
+    await authSucceeds(el)
     await page.waitForChanges()
     expect(el.printOpen).toBe(true)
 
@@ -122,7 +124,7 @@ describe('ezp-printing journey', () => {
 
   it('dismisses the no-document dialog on its close action', async () => {
     const { page, el } = await setup('trigger="button"')
-    authSucceeds(el)
+    await authSucceeds(el)
     await page.waitForChanges()
     expect(el.noDocumentOpen).toBe(true)
 
@@ -291,5 +293,37 @@ describe('ezp-printing public methods', () => {
     expect(removeSpy).toHaveBeenCalledWith('change', el.systemAppearanceListener)
     clearSpy.mockRestore()
     removeSpy.mockRestore()
+  })
+})
+
+describe('ezp-printing language sync', () => {
+  beforeEach(stubEnvironment)
+
+  it('adopts the account preferred_language from /v1/users/me', async () => {
+    const { el } = await setup('trigger="button"')
+    authStore.state.accessToken = 'AT'
+    authStore.state.authApiHostUrl = 'account.ezeep.com'
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/v1/users/me')) {
+        return Promise.resolve({ json: () => Promise.resolve({ preferred_language: 'de' }) })
+      }
+      return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({}) })
+    }) as unknown as typeof fetch
+
+    await el.syncPreferredLanguage()
+
+    expect(i18next.language).toBe('de')
+  })
+
+  it('leaves an explicit language prop untouched (no user lookup)', async () => {
+    const { el } = await setup('trigger="button" language="en"')
+    authStore.state.accessToken = 'AT'
+    const fetchSpy = jest.fn()
+    global.fetch = fetchSpy as unknown as typeof fetch
+
+    await el.syncPreferredLanguage()
+
+    expect(fetchSpy).not.toHaveBeenCalled()
+    expect(i18next.language).toBe('en')
   })
 })

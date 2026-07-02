@@ -12,7 +12,7 @@ import {
 } from '@stencil/core'
 import authStore, { EzpAuthorizationService, sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
-import userStore from '../../services/user'
+import userStore, { EzpUserService } from '../../services/user'
 import config from '../../shared/config.json'
 import {
   ThemeTypes,
@@ -21,7 +21,7 @@ import {
   SystemAppearanceTypes,
 } from './../../shared/types'
 import i18next from 'i18next'
-import { initi18n } from '../../utils/utils'
+import { initi18n, subscribeToLanguageChange } from '../../utils/utils'
 import { storage } from '../../shared/storage'
 import { TOKEN_REFRESH_INTERVAL_S } from '../../shared/constants'
 
@@ -37,6 +37,7 @@ export class EzpPrinting {
   private tokenRefreshInterval?: ReturnType<typeof setInterval>
   private systemAppearanceQuery?: MediaQueryList
   private systemAppearanceListener?: (event: MediaQueryListEvent) => void
+  private unsubscribeLanguage?: () => void
 
   @Prop() clientid: string
   @Prop() redirecturi: string
@@ -103,6 +104,8 @@ export class EzpPrinting {
   watchLanguage(newValue: string, oldValue: string) {
     if (newValue !== oldValue && newValue.length > 0) {
       this.language = newValue
+      // Apply the new language so any dialog opened afterwards is translated.
+      i18next.changeLanguage(newValue)
     }
   }
 
@@ -159,7 +162,10 @@ export class EzpPrinting {
   }
 
   @Listen('authSuccess')
-  listenAuthSuccess() {
+  async listenAuthSuccess() {
+    // Adopt the user's account language before opening the dialog so it renders
+    // in the right language (and picks up a language change made in the host app).
+    await this.syncPreferredLanguage()
     if (this.onlyGetSasUri) {
       this.printOpen = false
       this.onlyGetSasUri = false
@@ -331,6 +337,10 @@ export class EzpPrinting {
     }, seconds * 1000)
   }
 
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
+
   async componentWillLoad() {
     const systemAppearanceDark = window.matchMedia('(prefers-color-scheme: dark)')
 
@@ -362,7 +372,27 @@ export class EzpPrinting {
 
     sendCodeToParentWindow()
     initi18n(this.language)
-    this.checkAuth()
+    this.checkAuth().then(() => this.syncPreferredLanguage())
+  }
+
+  /**
+   * Adopt the signed-in user's account language (`preferred_language` from
+   * /v1/users/me) so the print UI matches the language chosen in the host app.
+   * An explicit `language` prop always wins. Requires an access token, so it
+   * runs after auth. Best-effort: on any failure the current language is kept.
+   */
+  private async syncPreferredLanguage(): Promise<void> {
+    if (this.language) return
+    if (!authStore.state.accessToken) return
+    try {
+      const user = await new EzpUserService().getUserInfo()
+      const lang = user?.preferred_language
+      if (lang && lang !== i18next.language) {
+        await i18next.changeLanguage(lang)
+      }
+    } catch {
+      // Language sync is best-effort; keep the current language on failure.
+    }
   }
 
   componentDidLoad() {
@@ -378,6 +408,7 @@ export class EzpPrinting {
     if (this.systemAppearanceQuery && this.systemAppearanceListener) {
       this.systemAppearanceQuery.removeEventListener('change', this.systemAppearanceListener)
     }
+    this.unsubscribeLanguage?.()
   }
 
   /**

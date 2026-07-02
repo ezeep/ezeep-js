@@ -1,3 +1,4 @@
+import { forceUpdate } from '@stencil/core'
 import i18next from 'i18next'
 import translationsDE from '../data/locales/de.json'
 import translationsEN from '../data/locales/en.json'
@@ -5,6 +6,20 @@ import { PrinterProperties } from './../shared/types'
 import { PAPER_ID } from '../shared/constants'
 
 export { PAPER_ID } from '../shared/constants'
+
+/**
+ * Re-render a Stencil component whenever the i18next language changes.
+ * i18next fires `languageChanged` but has no hook into Stencil's render cycle,
+ * so any component that calls `i18next.t()` in render() must force an update —
+ * otherwise a runtime language switch leaves already-mounted text stale.
+ * Call from connectedCallback and invoke the returned disposer in
+ * disconnectedCallback.
+ */
+export function subscribeToLanguageChange(component: unknown): () => void {
+  const rerender = () => forceUpdate(component)
+  i18next.on('languageChanged', rerender)
+  return () => i18next.off('languageChanged', rerender)
+}
 
 export function encodeFormData(data: { [x: string]: string | number | boolean }): string {
   return Object.keys(data)

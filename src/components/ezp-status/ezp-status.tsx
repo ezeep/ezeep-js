@@ -1,5 +1,6 @@
 import { Component, Host, Prop, Event, EventEmitter, h } from '@stencil/core'
 import { IconNameTypes } from '../../shared/types'
+import { subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
 
 @Component({
@@ -32,6 +33,8 @@ export class EzpStatus {
   @Event() statusClose: EventEmitter<string>
   @Event() statusRetry: EventEmitter<string>
 
+  private unsubscribeLanguage?: () => void
+
   /**
    *
    * Private methods
@@ -56,7 +59,13 @@ export class EzpStatus {
    *
    */
 
-  componentWillLoad() {}
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
+  }
 
   /**
    *

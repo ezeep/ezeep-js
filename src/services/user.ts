@@ -9,6 +9,8 @@ import { authGetJson } from './http'
  */
 export interface UserInfo {
   display_name: string
+  /** The user's account language (e.g. "en", "de") — used to sync the UI language. */
+  preferred_language?: string | null
   [key: string]: unknown
 }
 

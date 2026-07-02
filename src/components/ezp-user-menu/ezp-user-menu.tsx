@@ -3,6 +3,7 @@ import authStore, { EzpAuthorizationService } from '../../services/auth'
 import userStore from '../../services/user'
 import { IconNameTypes, ThemeTypes, AppearanceTypes } from '../../shared/types'
 import { storage } from '../../shared/storage'
+import { subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
 
 @Component({
@@ -93,6 +94,12 @@ export class EzpUserMenu {
    *
    */
 
+  private unsubscribeLanguage?: () => void
+
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
+
   componentWillLoad() {
     this.container = this.component.closest('[data-backdrop-surface]') as HTMLDivElement
 
@@ -103,6 +110,10 @@ export class EzpUserMenu {
     this.backdrop.addEventListener('backdropHideEnd', () => {
       this.container.removeChild(this.backdrop)
     })
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
   }
 
   /**
