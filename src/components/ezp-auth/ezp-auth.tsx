@@ -90,6 +90,24 @@ export class EzpAuth {
   }
 
   receiveMessage(event: MessageEvent) {
+    // Only accept the auth code from the expected redirect origin — otherwise any
+    // page could postMessage a forged code into the token exchange. Fail *open*
+    // if the redirect URI can't be parsed, so a config quirk can never silently
+    // block sign-in; warn on any rejection so a real mismatch is debuggable.
+    let expectedOrigin: string | null = null
+    try {
+      expectedOrigin = new URL(this.redirectURI).origin
+    } catch {
+      expectedOrigin = null
+    }
+    if (expectedOrigin && event.origin !== expectedOrigin) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[ezeep] Ignored auth message from unexpected origin "${event.origin}" (expected "${expectedOrigin}").`,
+      )
+      return
+    }
+
     authStore.state.code = event.data
     this.auth.getAccessToken().then(() => {
       this.authCancel.emit()
