@@ -41,4 +41,29 @@ describe('ezp-auth receiveMessage origin validation', () => {
     expect(authStore.state.code).toBe('code')
     expect(el.auth.getAccessToken).toHaveBeenCalled()
   })
+
+  it('ignores a message whose source is not the popup we opened', async () => {
+    const el = await setup()
+    el.oauthPopupWindow = { name: 'our-popup' }
+    el.receiveMessage({
+      origin: 'https://app.example.com',
+      source: { name: 'some-other-window' },
+      data: 'forged-code',
+    } as unknown as MessageEvent)
+    expect(authStore.state.code).toBe('')
+    expect(el.auth.getAccessToken).not.toHaveBeenCalled()
+  })
+
+  it('accepts a message whose source is the popup we opened', async () => {
+    const el = await setup()
+    const popup = { name: 'our-popup' }
+    el.oauthPopupWindow = popup
+    el.receiveMessage({
+      origin: 'https://app.example.com',
+      source: popup,
+      data: 'auth-code',
+    } as unknown as MessageEvent)
+    expect(authStore.state.code).toBe('auth-code')
+    expect(el.auth.getAccessToken).toHaveBeenCalled()
+  })
 })

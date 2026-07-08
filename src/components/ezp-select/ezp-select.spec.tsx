@@ -50,11 +50,20 @@ describe('ezp-select', () => {
     expect(sel.selected.title).toBe('A4')
   })
 
-  it('preSelect() keeps the current selection when nothing matches', async () => {
-    const sel = await withPreSelected('Legal')
-    const before = sel.selected
-    sel.preSelect()
-    expect(sel.selected).toBe(before)
+  it('preSelect() resets to the placeholder when nothing matches', async () => {
+    const { page, sel } = await setup()
+    // A value that matches is reflected in the selection.
+    ;(page.root as any).preSelected = 'Letter'
+    await page.waitForChanges()
+    expect(sel.selected.title).toBe('Letter')
+
+    // Switching to a value with no matching option (e.g. a printer that lacks
+    // this paper size) must clear the stale label back to the placeholder,
+    // not keep showing the previous — now invalid — selection.
+    ;(page.root as any).preSelected = 'Legal'
+    await page.waitForChanges()
+    expect(sel.selected.title).toBe('')
+    expect(sel.selected.id).toBe(false)
   })
 
   it('exposes combobox / listbox / option roles', async () => {

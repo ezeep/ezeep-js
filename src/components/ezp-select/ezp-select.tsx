@@ -1,6 +1,13 @@
 import { Component, Host, Prop, State, Watch, Element, Event, EventEmitter, h } from '@stencil/core'
 import { SelectFlowTypes, SelectOptionType, IconNameTypes } from '../../shared/types'
 
+/**
+ * The "nothing selected" sentinel. Its empty `title` makes the toggle fall back
+ * to the placeholder (see render). Used as the initial state and to reset the
+ * selection when the current `preSelected` value has no matching option.
+ */
+const EMPTY_SELECTION: SelectOptionType = { id: false, title: '', meta: '' }
+
 @Component({
   tag: 'ezp-select',
   styleUrl: 'ezp-select.scss',
@@ -64,7 +71,7 @@ export class EzpSelect {
   @State() expanded: boolean = false
 
   /** Description... */
-  @State() selected: SelectOptionType = { id: false, title: '', meta: '' }
+  @State() selected: SelectOptionType = EMPTY_SELECTION
 
   /**
    *
@@ -159,9 +166,9 @@ export class EzpSelect {
           ? option.title === this.preSelected
           : null,
     )
-    if (match) {
-      this.selected = match
-    }
+    // Reset to the placeholder when the current printer has no matching option,
+    // rather than leaving the previous printer's (now-invalid) label showing.
+    this.selected = match ?? EMPTY_SELECTION
   }
 
   private getOptionElements(): HTMLElement[] {

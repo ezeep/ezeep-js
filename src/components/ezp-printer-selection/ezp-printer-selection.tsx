@@ -91,6 +91,7 @@ export class EzpPrinterSelection {
   @State() preparingUpload: boolean = false
   @State() printSuccess: boolean = false
   @State() printFailed: boolean = false
+  @State() printTimedOut: boolean = false
   @State() notSupported: boolean = false
   @State() noPrinters: boolean = false
   @State() hubDriverError: boolean = false
@@ -210,6 +211,11 @@ export class EzpPrinterSelection {
       case 'print-failed':
         this.printFailed = false
         break
+      case 'print-timeout':
+        // The job may still be completing; closing just dismisses the flow.
+        this.printTimedOut = false
+        this.printCancel.emit()
+        break
       case 'hub-driver-error':
         this.hubDriverError = false
         break
@@ -231,6 +237,11 @@ export class EzpPrinterSelection {
         break
       case 'print-failed':
         this.printFailed = false
+        this.printProcessing = false
+        this.handlePrint()
+        break
+      case 'print-timeout':
+        this.printTimedOut = false
         this.printProcessing = false
         this.handlePrint()
         break
@@ -346,15 +357,22 @@ export class EzpPrinterSelection {
           }
 
           if (response.status === FILE_EXPIRED_STATUS) {
-            response.json().then((data) => (this.fileid = data.fileid))
-            this.printService.printByFileID(
-              authStore.state.accessToken,
-              this.fileid,
-              this.filetype,
-              this.selectedPrinter.id,
-              cleanPrintProperties,
-              this.filename,
-            )
+            // The file expired server-side. Parse the fresh fileid first, then
+            // reprint by fileID and RETURN that promise so the reprint's parsed
+            // PrintResponse (with its jobid) flows to the next `.then` and gets
+            // polled — otherwise the reprint is untracked and a successful
+            // reprint is reported as a failure.
+            return response.json().then((data) => {
+              this.fileid = data.fileid
+              return this.printService.printByFileID(
+                authStore.state.accessToken,
+                this.fileid,
+                this.filetype,
+                this.selectedPrinter.id,
+                cleanPrintProperties,
+                this.filename,
+              )
+            })
           } else {
             return response.json()
           }
@@ -376,9 +394,15 @@ export class EzpPrinterSelection {
               validate: this.validateData,
               interval: POLL_INTERVAL_MS,
               maxAttempts: MAX_POLL_ATTEMPTS,
-            }).catch(() => {
-              // Polling failed — for hub printers this usually means a driver issue.
-              failByPrinterType()
+            }).catch((error) => {
+              if (this.isTimeoutError(error)) {
+                // Status poll timed out — the job may still finish on the printer.
+                this.printTimedOut = true
+                this.printProcessing = false
+              } else {
+                // Polling failed — for hub printers this usually means a driver issue.
+                failByPrinterType()
+              }
             })
           } else {
             // No job ID returned — treat as a hub or generic failure.
@@ -404,13 +428,18 @@ export class EzpPrinterSelection {
         this.partialSuccess = false
         this.printProcessing = false
       } catch (error) {
-        this.failedFiles.push(this.files[0].name)
-        this.printFailed = true
         this.partialSuccess = false
         this.printProcessing = false
-        // Check if this is a hub driver error
-        if (error.message && error.message.includes('Hub printer driver error')) {
-          this.hubDriverError = true
+        if (this.isTimeoutError(error)) {
+          // The job may still be completing server-side — soften the message.
+          this.printTimedOut = true
+        } else {
+          this.failedFiles.push(this.files[0].name)
+          this.printFailed = true
+          // Check if this is a hub driver error
+          if (error.message && error.message.includes('Hub printer driver error')) {
+            this.hubDriverError = true
+          }
         }
       }
       if (hubTimeout) clearTimeout(hubTimeout)
@@ -726,6 +755,16 @@ export class EzpPrinterSelection {
   }
 
   /**
+   * True when an error is a polling-budget timeout rather than an outright
+   * failure — the job may still be rendering/printing server-side (common for
+   * large documents on direct printers), so it warrants a softer message.
+   */
+  private isTimeoutError(error: unknown): boolean {
+    const message = error instanceof Error ? error.message : String(error)
+    return message.includes('Exceeded max attempts') || message.includes('timed out')
+  }
+
+  /**
    * The single status card (if any) to show above the form. Replaces a deeply
    * nested 9-branch ternary; the order of checks is preserved.
    */
@@ -757,6 +796,17 @@ export class EzpPrinterSelection {
           description={this.printSuccessDescription()}
           instance="print-success"
           close
+        />
+      )
+    }
+    if (this.printTimedOut) {
+      return (
+        <ezp-status
+          icon="exclamation-mark"
+          description={i18next.t('printer_selection.print_timeout')}
+          instance="print-timeout"
+          close
+          retry
         />
       )
     }

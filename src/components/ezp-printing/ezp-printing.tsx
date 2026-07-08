@@ -38,6 +38,8 @@ export class EzpPrinting {
   private systemAppearanceQuery?: MediaQueryList
   private systemAppearanceListener?: (event: MediaQueryListEvent) => void
   private unsubscribeLanguage?: () => void
+  // De-dupes an in-flight token refresh so concurrent callers share one request.
+  private refreshInFlight?: Promise<void>
 
   @Prop() clientid: string
   @Prop() redirecturi: string
@@ -233,9 +235,38 @@ export class EzpPrinting {
     this.printOpen = false
   }
 
+  /**
+   * Make sure an access token is available before a token-dependent call. The
+   * token is in-memory only, so after a reload it must be refreshed from the
+   * persisted refresh token first. Returns a shared in-flight promise so
+   * concurrent callers don't fire duplicate refreshes, and swallows a transient
+   * failure (the caller then falls through to the unauthorized path; the
+   * periodic refresh and next checkAuth retry).
+   */
+  private ensureAccessToken(): Promise<void> {
+    if (authStore.state.accessToken !== '' || authStore.state.refreshToken === '' || !this.auth) {
+      return Promise.resolve()
+    }
+    if (!this.refreshInFlight) {
+      this.refreshInFlight = this.auth
+        .refreshTokens()
+        .catch(() => {
+          // Transient token-endpoint failure — leave the token empty.
+        })
+        .finally(() => {
+          this.refreshInFlight = undefined
+        })
+    }
+    return this.refreshInFlight
+  }
+
   @Method()
-  async getSasUri(): Promise<string | undefined> {
+  async getSasUri(): Promise<string> {
     this.onlyGetSasUri = true
+
+    // Wait for a reload-time token refresh to settle so we don't call the API
+    // with an empty bearer (which would spuriously open the login dialog).
+    await this.ensureAccessToken()
 
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
@@ -246,10 +277,10 @@ export class EzpPrinting {
         return null
       })
 
-    if (response) {
-      const sasUri = response.sasUri
-      return sasUri
-    }
+    // Keep the original public signature (Promise<string>) for backward
+    // compatibility. On the prepare-failure path this resolves to undefined at
+    // runtime, exactly as it always has.
+    return response ? response.sasUri : (undefined as unknown as string)
   }
 
   @Method()
@@ -279,9 +310,10 @@ export class EzpPrinting {
     // The access token is kept in memory only (never written to localStorage),
     // to limit XSS exposure. If it's missing — e.g. after a page reload — obtain
     // a fresh one from the persisted refresh token so the user stays signed in.
-    if (authStore.state.accessToken === '' && authStore.state.refreshToken !== '') {
-      await new EzpAuthorizationService(this.redirecturi, this.clientid).refreshTokens()
-    }
+    // A transient refresh failure is swallowed here so checkAuth still completes
+    // and reports unauthorized (rather than rejecting); getConfig below then
+    // runs and the periodic refresh retries.
+    await this.ensureAccessToken()
 
     if (storage.hasIsAuthorized()) {
       authStore.state.isAuthorized = storage.getIsAuthorized()

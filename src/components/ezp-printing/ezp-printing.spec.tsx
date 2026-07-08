@@ -238,6 +238,49 @@ describe('ezp-printing public methods', () => {
     expect(el.authOpen).toBe(true)
   })
 
+  it('getSasUri refreshes an empty access token before calling the API', async () => {
+    const { el } = await setup('trigger="button"')
+    // Simulate a reload: no in-memory access token, but a persisted refresh token.
+    authStore.state.accessToken = ''
+    authStore.state.refreshToken = 'RT'
+    authStore.state.authApiHostUrl = 'account.ezeep.com'
+
+    const urls: string[] = []
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      urls.push(url)
+      if (url.includes('/oauth/access_token/')) {
+        return Promise.resolve({
+          json: () => Promise.resolve({ access_token: 'fresh-AT', refresh_token: 'RT2' }),
+        })
+      }
+      // prepareFileUpload
+      return Promise.resolve({
+        status: 200,
+        json: () => Promise.resolve({ sasUri: 'https://blob/sas', fileid: 'f1' }),
+      })
+    }) as unknown as typeof fetch
+
+    const uri = await el.getSasUri()
+
+    // The token refresh must happen before the SAS request (no empty bearer).
+    expect(urls[0]).toContain('/oauth/access_token/')
+    expect(uri).toBe('https://blob/sas')
+  })
+
+  it('getSasUri swallows a transient refresh failure and still resolves', async () => {
+    const { el } = await setup('trigger="button"')
+    authStore.state.accessToken = ''
+    authStore.state.refreshToken = 'RT'
+    // Refresh and the subsequent prepare both fail (transient hiccup).
+    global.fetch = jest.fn().mockRejectedValue(new Error('network')) as unknown as typeof fetch
+
+    // Must not throw out of getSasUri; falls through to the auth dialog.
+    const uri = await el.getSasUri()
+
+    expect(uri).toBeUndefined()
+    expect(el.authOpen).toBe(true)
+  })
+
   it('watchFileData turns a raw data string into a File named after filename', async () => {
     const { el } = await setup('trigger="button"')
     el.filename = 'report.pdf'

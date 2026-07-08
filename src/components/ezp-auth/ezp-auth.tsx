@@ -48,6 +48,8 @@ export class EzpAuth {
 
   disconnectedCallback() {
     this.unsubscribeLanguage?.()
+    // Don't leave the message listener behind when the component is removed.
+    window.removeEventListener('message', this.receiveMessage)
   }
 
   openSignInWindow(url: string, name: string) {
@@ -93,17 +95,32 @@ export class EzpAuth {
       this.oauthPopupWindow.focus()
     }
 
-    // add the listener for receiving a message from the popup
-    window.addEventListener('message', (event) => this.receiveMessage(event), false)
+    // add the listener for receiving a message from the popup (same bound
+    // reference used by removeEventListener above, so it never stacks)
+    window.addEventListener('message', this.receiveMessage, false)
 
     this.previousUrl = this.auth.authURI
   }
 
-  receiveMessage(event: MessageEvent) {
-    // Only accept the auth code from the expected redirect origin — otherwise any
-    // page could postMessage a forged code into the token exchange. Fail *open*
-    // if the redirect URI can't be parsed, so a config quirk can never silently
-    // block sign-in; warn on any rejection so a real mismatch is debuggable.
+  // Bound once (arrow property) so add/removeEventListener share the same
+  // reference. An inline `(e) => this.receiveMessage(e)` never matches on
+  // remove, so listeners stacked across retried sign-ins and the popup's single
+  // code got exchanged once per accumulated listener.
+  receiveMessage = (event: MessageEvent) => {
+    // Defense in depth #1: the code must come from the popup we opened — not any
+    // other window, frame or tab, even one served from the redirect origin.
+    if (this.oauthPopupWindow && event.source && event.source !== this.oauthPopupWindow) {
+      // eslint-disable-next-line no-console
+      console.warn('[ezeep] Ignored auth message from an unexpected source window.')
+      return
+    }
+
+    // Defense in depth #2: only accept the code from the expected redirect
+    // origin — otherwise any page could postMessage a forged code into the
+    // token exchange. Fail *open* if redirectURI can't be parsed so a config
+    // quirk can never silently block sign-in; the source-window check above
+    // still guards against forgery in that case. Warn on any rejection so a
+    // real mismatch is debuggable.
     let expectedOrigin: string | null = null
     try {
       expectedOrigin = new URL(this.redirectURI).origin

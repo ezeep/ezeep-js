@@ -37,3 +37,17 @@ describe('ezp-printer-selection upload progress', () => {
     expect(el.processingDescription()).not.toContain('%')
   })
 })
+
+describe('ezp-printer-selection timeout classification', () => {
+  it('treats a polling-budget exhaustion as a timeout (job may still finish)', () => {
+    const el = new EzpPrinterSelection() as any
+    expect(el.isTimeoutError(new Error('Exceeded max attempts.'))).toBe(true)
+    expect(el.isTimeoutError(new Error('Print job timed out after 300 status checks'))).toBe(true)
+  })
+
+  it('does not treat an outright print failure as a timeout', () => {
+    const el = new EzpPrinterSelection() as any
+    expect(el.isTimeoutError(new Error('Print job failed: rejected'))).toBe(false)
+    expect(el.isTimeoutError(new Error('Hub printer driver error: no driver'))).toBe(false)
+  })
+})

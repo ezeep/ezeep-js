@@ -15,6 +15,7 @@
         "print_success": "Successfully printed.",
         "pull_print_success": "Ready to be released.",
         "print_failed": "Print failed",
+        "print_timeout": "This is taking longer than expected. The job may still finish on the printer.",
         "not_supported": "The selected file type is not supported.",
         "prepare_upload": "Preparing…",
         "uploading": "Uploading…",
