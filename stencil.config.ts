@@ -8,12 +8,18 @@ import { angularOutputTarget } from '@stencil/angular-output-target'
 // doesn't intercept modern Rollup's resolution order in Stencil 4.
 import nodePolyfills from 'rollup-plugin-polyfill-node'
 // Uncomment together with the `devServer` block below for local HTTPS dev.
-// import fs from 'fs'
+import fs from 'fs'
 
 export const config: Config = {
   namespace: 'ezeep',
   globalScript: 'src/shared/global.ts',
   plugins: [sass({ includePaths: ['node_modules'] })],
+  testing: {
+    // The e2e test server inherits the HTTPS dev-server config (self-signed
+    // cert), so Chromium must be told to accept the insecure localhost origin.
+    // `--no-sandbox` is required for headless Chromium in CI containers.
+    browserArgs: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-insecure-localhost'],
+  },
   outputTargets: [
     angularOutputTarget({
       componentCorePackage: '@ezeep/ezeep-js',
@@ -30,9 +36,7 @@ export const config: Config = {
     {
       type: 'dist',
       esmLoaderPath: '../loader',
-      copy: [
-        { src: 'shared/types.d.ts', dest: 'types/shared/types.d.ts' }
-      ]
+      copy: [{ src: 'shared/types.d.ts', dest: 'types/shared/types.d.ts' }],
     },
     {
       // Stencil 4 replacement for `dist-custom-elements-bundle`.

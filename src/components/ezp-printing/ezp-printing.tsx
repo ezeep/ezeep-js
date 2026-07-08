@@ -12,7 +12,7 @@ import {
 } from '@stencil/core'
 import authStore, { EzpAuthorizationService, sendCodeToParentWindow } from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
-import userStore from '../../services/user'
+import userStore, { EzpUserService } from '../../services/user'
 import config from '../../shared/config.json'
 import {
   ThemeTypes,
@@ -21,7 +21,9 @@ import {
   SystemAppearanceTypes,
 } from './../../shared/types'
 import i18next from 'i18next'
-import { initi18n } from '../../utils/utils'
+import { initi18n, subscribeToLanguageChange } from '../../utils/utils'
+import { storage } from '../../shared/storage'
+import { TOKEN_REFRESH_INTERVAL_S } from '../../shared/constants'
 
 @Component({
   tag: 'ezp-printing',
@@ -30,6 +32,14 @@ import { initi18n } from '../../utils/utils'
 })
 export class EzpPrinting {
   auth: EzpAuthorizationService
+
+  // Handles retained so they can be torn down in disconnectedCallback.
+  private tokenRefreshInterval?: ReturnType<typeof setInterval>
+  private systemAppearanceQuery?: MediaQueryList
+  private systemAppearanceListener?: (event: MediaQueryListEvent) => void
+  private unsubscribeLanguage?: () => void
+  // De-dupes an in-flight token refresh so concurrent callers share one request.
+  private refreshInFlight?: Promise<void>
 
   @Prop() clientid: string
   @Prop() redirecturi: string
@@ -69,9 +79,8 @@ export class EzpPrinting {
 
   @Watch('filedata')
   watchFileData(newValue: string, oldValue: string) {
-    console.log(newValue)
     if (newValue !== oldValue && newValue.length > 0) {
-      let array = new Uint8Array(newValue.length)
+      const array = new Uint8Array(newValue.length)
       for (let i = 0; i < newValue.length; i++) {
         array[i] = newValue.charCodeAt(i)
       }
@@ -97,6 +106,8 @@ export class EzpPrinting {
   watchLanguage(newValue: string, oldValue: string) {
     if (newValue !== oldValue && newValue.length > 0) {
       this.language = newValue
+      // Apply the new language so any dialog opened afterwards is translated.
+      i18next.changeLanguage(newValue)
     }
   }
 
@@ -153,7 +164,10 @@ export class EzpPrinting {
   }
 
   @Listen('authSuccess')
-  listenAuthSuccess() {
+  async listenAuthSuccess() {
+    // Adopt the user's account language before opening the dialog so it renders
+    // in the right language (and picks up a language change made in the host app).
+    await this.syncPreferredLanguage()
     if (this.onlyGetSasUri) {
       this.printOpen = false
       this.onlyGetSasUri = false
@@ -199,7 +213,7 @@ export class EzpPrinting {
     composed: true,
     bubbles: true,
   })
-  printFinished: EventEmitter<any>
+  printFinished: EventEmitter<void>
 
   /**
    *
@@ -217,29 +231,56 @@ export class EzpPrinting {
   @Method()
   async logOut() {
     this.auth.revokeRefreshToken()
-    localStorage.removeItem('properties')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('printer')
-    localStorage.removeItem('isAuthorized')
+    storage.clearSession()
     this.printOpen = false
+  }
+
+  /**
+   * Make sure an access token is available before a token-dependent call. The
+   * token is in-memory only, so after a reload it must be refreshed from the
+   * persisted refresh token first. Returns a shared in-flight promise so
+   * concurrent callers don't fire duplicate refreshes, and swallows a transient
+   * failure (the caller then falls through to the unauthorized path; the
+   * periodic refresh and next checkAuth retry).
+   */
+  private ensureAccessToken(): Promise<void> {
+    if (authStore.state.accessToken !== '' || authStore.state.refreshToken === '' || !this.auth) {
+      return Promise.resolve()
+    }
+    if (!this.refreshInFlight) {
+      this.refreshInFlight = this.auth
+        .refreshTokens()
+        .catch(() => {
+          // Transient token-endpoint failure — leave the token empty.
+        })
+        .finally(() => {
+          this.refreshInFlight = undefined
+        })
+    }
+    return this.refreshInFlight
   }
 
   @Method()
   async getSasUri(): Promise<string> {
     this.onlyGetSasUri = true
 
+    // Wait for a reload-time token refresh to settle so we don't call the API
+    // with an empty bearer (which would spuriously open the login dialog).
+    await this.ensureAccessToken()
+
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
-    let response = await printService.prepareFileUpload(authStore.state.accessToken).catch(() => {
-      this.open()
-      return null
-    })
+    const response = await printService
+      .prepareFileUpload(authStore.state.accessToken)
+      .catch((): null => {
+        this.open()
+        return null
+      })
 
-    if (response) {
-      const sasUri = response.sasUri
-      return sasUri
-    }
+    // Keep the original public signature (Promise<string>) for backward
+    // compatibility. On the prepare-failure path this resolves to undefined at
+    // runtime, exactly as it always has.
+    return response ? response.sasUri : (undefined as unknown as string)
   }
 
   @Method()
@@ -254,7 +295,7 @@ export class EzpPrinting {
   async setAuthRefreshToken(refreshToken: string) {
     // Store the refresh token in the same way as the component does in self-managed auth
     authStore.state.refreshToken = refreshToken
-    localStorage.setItem('refreshToken', refreshToken)
+    storage.setRefreshToken(refreshToken)
 
     // Use the refresh token to obtain a valid access token
     // This ensures the user doesn't see the login dialog
@@ -263,17 +304,19 @@ export class EzpPrinting {
 
   @Method()
   async checkAuth(): Promise<boolean> {
+    // Constructing the print service also loads any persisted refresh token.
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
-    let accessToken = authStore.state.accessToken
+    // The access token is kept in memory only (never written to localStorage),
+    // to limit XSS exposure. If it's missing — e.g. after a page reload — obtain
+    // a fresh one from the persisted refresh token so the user stays signed in.
+    // A transient refresh failure is swallowed here so checkAuth still completes
+    // and reports unauthorized (rather than rejecting); getConfig below then
+    // runs and the periodic refresh retries.
+    await this.ensureAccessToken()
 
-    if (accessToken === '') {
-      accessToken = localStorage.getItem('access_token')
-      authStore.state.accessToken = accessToken
-    }
-
-    if (localStorage.getItem('isAuthorized')) {
-      authStore.state.isAuthorized = localStorage.getItem('isAuthorized') === 'true'
+    if (storage.hasIsAuthorized()) {
+      authStore.state.isAuthorized = storage.getIsAuthorized()
     }
 
     await printService
@@ -291,7 +334,7 @@ export class EzpPrinting {
         authStore.state.isAuthorized = false
       })
 
-    localStorage.setItem('isAuthorized', authStore.state.isAuthorized.toString())
+    storage.setIsAuthorized(authStore.state.isAuthorized)
 
     return authStore.state.isAuthorized
   }
@@ -311,9 +354,8 @@ export class EzpPrinting {
         const url = new URL(hostUrl)
         return url.host
       }
-    } catch (e) {
-      // If URL parsing fails, return the original value
-      console.warn('Failed to parse URL:', hostUrl, e)
+    } catch {
+      // If URL parsing fails, fall through and return the original value.
     }
 
     // Return as-is if it's already just a hostname
@@ -322,9 +364,13 @@ export class EzpPrinting {
 
   refreshTokensPeriodically(seconds: number) {
     const authService = new EzpAuthorizationService(this.redirecturi, this.clientid)
-    setInterval(() => {
+    this.tokenRefreshInterval = setInterval(() => {
       authService.refreshTokens()
     }, seconds * 1000)
+  }
+
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
   }
 
   async componentWillLoad() {
@@ -332,9 +378,11 @@ export class EzpPrinting {
 
     this.systemAppearance = systemAppearanceDark.matches ? 'dark' : 'light'
 
-    systemAppearanceDark.addEventListener('change', (event) => {
+    this.systemAppearanceQuery = systemAppearanceDark
+    this.systemAppearanceListener = (event: MediaQueryListEvent) => {
       this.systemAppearance = event.matches ? 'dark' : 'light'
-    })
+    }
+    systemAppearanceDark.addEventListener('change', this.systemAppearanceListener)
 
     authStore.state.redirectUri = this.redirecturi
     userStore.state.theme = this.theme
@@ -356,11 +404,43 @@ export class EzpPrinting {
 
     sendCodeToParentWindow()
     initi18n(this.language)
-    this.checkAuth()
+    this.checkAuth().then(() => this.syncPreferredLanguage())
+  }
+
+  /**
+   * Adopt the signed-in user's account language (`preferred_language` from
+   * /v1/users/me) so the print UI matches the language chosen in the host app.
+   * An explicit `language` prop always wins. Requires an access token, so it
+   * runs after auth. Best-effort: on any failure the current language is kept.
+   */
+  private async syncPreferredLanguage(): Promise<void> {
+    if (this.language) return
+    if (!authStore.state.accessToken) return
+    try {
+      const user = await new EzpUserService().getUserInfo()
+      const lang = user?.preferred_language
+      if (lang && lang !== i18next.language) {
+        await i18next.changeLanguage(lang)
+      }
+    } catch {
+      // Language sync is best-effort; keep the current language on failure.
+    }
   }
 
   componentDidLoad() {
-    this.refreshTokensPeriodically(1800)
+    this.refreshTokensPeriodically(TOKEN_REFRESH_INTERVAL_S)
+  }
+
+  disconnectedCallback() {
+    // Stop the periodic token refresh and the colour-scheme listener so they
+    // don't leak (and keep firing) after the component is removed.
+    if (this.tokenRefreshInterval) {
+      clearInterval(this.tokenRefreshInterval)
+    }
+    if (this.systemAppearanceQuery && this.systemAppearanceListener) {
+      this.systemAppearanceQuery.removeEventListener('change', this.systemAppearanceListener)
+    }
+    this.unsubscribeLanguage?.()
   }
 
   /**

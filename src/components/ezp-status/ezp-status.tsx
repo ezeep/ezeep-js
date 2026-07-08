@@ -1,5 +1,6 @@
 import { Component, Host, Prop, Event, EventEmitter, h } from '@stencil/core'
 import { IconNameTypes } from '../../shared/types'
+import { subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
 
 @Component({
@@ -28,9 +29,11 @@ export class EzpStatus {
    *
    */
 
-  @Event() statusCancel: EventEmitter
-  @Event() statusClose: EventEmitter
-  @Event() statusRetry: EventEmitter
+  @Event() statusCancel: EventEmitter<string>
+  @Event() statusClose: EventEmitter<string>
+  @Event() statusRetry: EventEmitter<string>
+
+  private unsubscribeLanguage?: () => void
 
   /**
    *
@@ -56,7 +59,13 @@ export class EzpStatus {
    *
    */
 
-  componentWillLoad() {}
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
+  }
 
   /**
    *
@@ -66,10 +75,17 @@ export class EzpStatus {
 
   render() {
     return (
-      <Host>
+      // Live region so screen readers announce status changes (loading,
+      // processing, success, error) as they render.
+      <Host role="status" aria-live="polite">
         <div id="box">
           {this.processing ? (
-            <svg id="indicator" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              id="indicator"
+              viewBox="0 0 42 42"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
               <circle id="track" cx="21" cy="21" r="18" />
               <circle id="value" cx="21" cy="21" r="18" />
             </svg>

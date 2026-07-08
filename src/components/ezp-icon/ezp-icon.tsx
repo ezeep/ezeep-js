@@ -37,7 +37,9 @@ export class EzpIcon {
       .then((result) => {
         this.glyph = result
       })
-      .catch((error) => console.log(error))
+      .catch(() => {
+        // Missing/unfetchable glyph — render nothing rather than crash.
+      })
   }
 
   /**
@@ -48,7 +50,9 @@ export class EzpIcon {
 
   render() {
     return (
-      <Host class={`${this.size} ${this.framed ? 'framed' : ''}`}>
+      // Decorative: icons here always sit next to a label or live-region text,
+      // so hide them from the accessibility tree to avoid double announcements.
+      <Host class={`${this.size} ${this.framed ? 'framed' : ''}`} aria-hidden="true">
         <div id="glyph" innerHTML={this.glyph} />
       </Host>
     )

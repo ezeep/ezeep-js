@@ -13,21 +13,22 @@
  */
 
 :host {
-  display: grid;
-  grid-template: var(--ezp-input-grid-template, auto / auto auto 1fr);
-  height: 30px;
-  position: relative;
-  gap: var(--ezp-spacing-3);
+  align-items: center;
   background: var(--ezp-input-background, var(--ezp-core-surface-tertiary));
-  padding: 0 var(--ezp-spacing-3);
-  z-index: var(--ezp-input-z-index, 3);
   border-radius: var(--ezp-input-border-radius, 0);
-  box-shadow: var(--ezp-input-box-shadow-position-top, 0 -1px 0 0) var(--ezp-core-outline),
+  box-shadow:
+    var(--ezp-input-box-shadow-position-top, 0 -1px 0 0) var(--ezp-core-outline),
     var(--ezp-input-box-shadow-position-right, 1px 0 0 0) var(--ezp-core-outline),
     var(--ezp-input-box-shadow-position-bottom, 0 1px 0 0) var(--ezp-core-outline),
     var(--ezp-input-box-shadow-position-left, -1px 0 0 0) var(--ezp-core-outline);
-  align-items: center;
   cursor: pointer;
+  display: grid;
+  gap: var(--ezp-spacing-3);
+  grid-template: var(--ezp-input-grid-template, auto / auto auto 1fr);
+  height: 30px;
+  padding: 0 var(--ezp-spacing-3);
+  position: relative;
+  z-index: var(--ezp-input-z-index, 3);
 
   @at-root {
     #{&}([suffix]) {
@@ -57,11 +58,8 @@
     }
 
     #{&}(:hover) {
-      --ezp-input-background: linear-gradient(
-          0deg,
-          var(--ezp-core-shade-primary) 0%,
-          var(--ezp-core-shade-primary) 100%
-        ),
+      --ezp-input-background:
+        linear-gradient(0deg, var(--ezp-core-shade-primary) 0%, var(--ezp-core-shade-primary) 100%),
         var(--ezp-core-surface-tertiary);
     }
   }

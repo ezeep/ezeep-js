@@ -249,9 +249,9 @@ export namespace Components {
          */
         "placeholder": string;
         /**
-          * Description...
+          * The currently-selected option, matched by title (string) or id (number).
          */
-        "preSelected": any;
+        "preSelected": string | number | null;
         /**
           * Description...
           * @default 'horizontal'
@@ -388,8 +388,8 @@ export interface EzpUserMenuCustomEvent<T> extends CustomEvent<T> {
 declare global {
     interface HTMLEzpAuthElementEventMap {
         "authCancel": MouseEvent;
-        "authSuccess": any;
-        "userCancel": any;
+        "authSuccess": void;
+        "userCancel": void;
     }
     interface HTMLEzpAuthElement extends Components.EzpAuth, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpAuthElementEventMap>(type: K, listener: (this: HTMLEzpAuthElement, ev: EzpAuthCustomEvent<HTMLEzpAuthElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -406,8 +406,8 @@ declare global {
         new (): HTMLEzpAuthElement;
     };
     interface HTMLEzpBackdropElementEventMap {
-        "backdropHideStart": any;
-        "backdropHideEnd": any;
+        "backdropHideStart": void;
+        "backdropHideEnd": void;
     }
     interface HTMLEzpBackdropElement extends Components.EzpBackdrop, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpBackdropElementEventMap>(type: K, listener: (this: HTMLEzpBackdropElement, ev: EzpBackdropCustomEvent<HTMLEzpBackdropElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -424,8 +424,8 @@ declare global {
         new (): HTMLEzpBackdropElement;
     };
     interface HTMLEzpDialogElementEventMap {
-        "dialogClose": any;
-        "dialogAction": any;
+        "dialogClose": string;
+        "dialogAction": string;
     }
     interface HTMLEzpDialogElement extends Components.EzpDialog, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpDialogElementEventMap>(type: K, listener: (this: HTMLEzpDialogElement, ev: EzpDialogCustomEvent<HTMLEzpDialogElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -454,7 +454,7 @@ declare global {
         new (): HTMLEzpIconButtonElement;
     };
     interface HTMLEzpInputElementEventMap {
-        "inputValueChanged": any;
+        "inputValueChanged": { type: string; value: string | number };
     }
     interface HTMLEzpInputElement extends Components.EzpInput, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpInputElementEventMap>(type: K, listener: (this: HTMLEzpInputElement, ev: EzpInputCustomEvent<HTMLEzpInputElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -496,7 +496,7 @@ declare global {
         new (): HTMLEzpPrinterSelectionElement;
     };
     interface HTMLEzpPrintingElementEventMap {
-        "printFinished": any;
+        "printFinished": void;
     }
     interface HTMLEzpPrintingElement extends Components.EzpPrinting, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpPrintingElementEventMap>(type: K, listener: (this: HTMLEzpPrintingElement, ev: EzpPrintingCustomEvent<HTMLEzpPrintingElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -513,8 +513,8 @@ declare global {
         new (): HTMLEzpPrintingElement;
     };
     interface HTMLEzpSelectElementEventMap {
-        "selectToggle": any;
-        "selectSelection": any;
+        "selectToggle": boolean;
+        "selectSelection": SelectOptionType;
     }
     interface HTMLEzpSelectElement extends Components.EzpSelect, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpSelectElementEventMap>(type: K, listener: (this: HTMLEzpSelectElement, ev: EzpSelectCustomEvent<HTMLEzpSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -531,9 +531,9 @@ declare global {
         new (): HTMLEzpSelectElement;
     };
     interface HTMLEzpStatusElementEventMap {
-        "statusCancel": any;
-        "statusClose": any;
-        "statusRetry": any;
+        "statusCancel": string;
+        "statusClose": string;
+        "statusRetry": string;
     }
     interface HTMLEzpStatusElement extends Components.EzpStatus, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpStatusElementEventMap>(type: K, listener: (this: HTMLEzpStatusElement, ev: EzpStatusCustomEvent<HTMLEzpStatusElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -550,7 +550,7 @@ declare global {
         new (): HTMLEzpStatusElement;
     };
     interface HTMLEzpStepperElementEventMap {
-        "stepperChanged": any;
+        "stepperChanged": number;
     }
     interface HTMLEzpStepperElement extends Components.EzpStepper, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpStepperElementEventMap>(type: K, listener: (this: HTMLEzpStepperElement, ev: EzpStepperCustomEvent<HTMLEzpStepperElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -573,7 +573,7 @@ declare global {
         new (): HTMLEzpTextButtonElement;
     };
     interface HTMLEzpUploadElementEventMap {
-        "uploadFile": any;
+        "uploadFile": File[];
     }
     interface HTMLEzpUploadElement extends Components.EzpUpload, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpUploadElementEventMap>(type: K, listener: (this: HTMLEzpUploadElement, ev: EzpUploadCustomEvent<HTMLEzpUploadElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -590,8 +590,8 @@ declare global {
         new (): HTMLEzpUploadElement;
     };
     interface HTMLEzpUserMenuElementEventMap {
-        "userMenuClosure": any;
-        "logoutEmitter": any;
+        "userMenuClosure": void;
+        "logoutEmitter": void;
     }
     interface HTMLEzpUserMenuElement extends Components.EzpUserMenu, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpUserMenuElementEventMap>(type: K, listener: (this: HTMLEzpUserMenuElement, ev: EzpUserMenuCustomEvent<HTMLEzpUserMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -633,14 +633,14 @@ declare namespace LocalJSX {
         "code"?: string;
         "hidelogin"?: boolean;
         "onAuthCancel"?: (event: EzpAuthCustomEvent<MouseEvent>) => void;
-        "onAuthSuccess"?: (event: EzpAuthCustomEvent<any>) => void;
-        "onUserCancel"?: (event: EzpAuthCustomEvent<any>) => void;
+        "onAuthSuccess"?: (event: EzpAuthCustomEvent<void>) => void;
+        "onUserCancel"?: (event: EzpAuthCustomEvent<void>) => void;
         "redirectURI"?: string;
         "trigger"?: string;
     }
     interface EzpBackdrop {
-        "onBackdropHideEnd"?: (event: EzpBackdropCustomEvent<any>) => void;
-        "onBackdropHideStart"?: (event: EzpBackdropCustomEvent<any>) => void;
+        "onBackdropHideEnd"?: (event: EzpBackdropCustomEvent<void>) => void;
+        "onBackdropHideStart"?: (event: EzpBackdropCustomEvent<void>) => void;
         /**
           * @default true
          */
@@ -666,11 +666,11 @@ declare namespace LocalJSX {
          */
         "iconSize"?: IconSizeTypes;
         "instance"?: string;
-        "onDialogAction"?: (event: EzpDialogCustomEvent<any>) => void;
+        "onDialogAction"?: (event: EzpDialogCustomEvent<string>) => void;
         /**
           * Events
          */
-        "onDialogClose"?: (event: EzpDialogCustomEvent<any>) => void;
+        "onDialogClose"?: (event: EzpDialogCustomEvent<string>) => void;
     }
     interface EzpIcon {
         /**
@@ -735,7 +735,7 @@ declare namespace LocalJSX {
         /**
           * Events
          */
-        "onInputValueChanged"?: (event: EzpInputCustomEvent<any>) => void;
+        "onInputValueChanged"?: (event: EzpInputCustomEvent<{ type: string; value: string | number }>) => void;
         /**
           * Description...
           * @default ''
@@ -845,7 +845,7 @@ declare namespace LocalJSX {
         /**
           * Events
          */
-        "onPrintFinished"?: (event: EzpPrintingCustomEvent<any>) => void;
+        "onPrintFinished"?: (event: EzpPrintingCustomEvent<void>) => void;
         "printapihosturl"?: string;
         "redirecturi"?: string;
         /**
@@ -873,11 +873,11 @@ declare namespace LocalJSX {
           * @default 'Label'
          */
         "label"?: string;
-        "onSelectSelection"?: (event: EzpSelectCustomEvent<any>) => void;
+        "onSelectSelection"?: (event: EzpSelectCustomEvent<SelectOptionType>) => void;
         /**
           * Events
          */
-        "onSelectToggle"?: (event: EzpSelectCustomEvent<any>) => void;
+        "onSelectToggle"?: (event: EzpSelectCustomEvent<boolean>) => void;
         /**
           * Description...
          */
@@ -892,9 +892,9 @@ declare namespace LocalJSX {
          */
         "placeholder"?: string;
         /**
-          * Description...
+          * The currently-selected option, matched by title (string) or id (number).
          */
-        "preSelected"?: any;
+        "preSelected"?: string | number | null;
         /**
           * Description...
           * @default 'horizontal'
@@ -914,9 +914,9 @@ declare namespace LocalJSX {
         /**
           * Events
          */
-        "onStatusCancel"?: (event: EzpStatusCustomEvent<any>) => void;
-        "onStatusClose"?: (event: EzpStatusCustomEvent<any>) => void;
-        "onStatusRetry"?: (event: EzpStatusCustomEvent<any>) => void;
+        "onStatusCancel"?: (event: EzpStatusCustomEvent<string>) => void;
+        "onStatusClose"?: (event: EzpStatusCustomEvent<string>) => void;
+        "onStatusRetry"?: (event: EzpStatusCustomEvent<string>) => void;
         /**
           * @default false
          */
@@ -945,7 +945,7 @@ declare namespace LocalJSX {
         /**
           * Events
          */
-        "onStepperChanged"?: (event: EzpStepperCustomEvent<any>) => void;
+        "onStepperChanged"?: (event: EzpStepperCustomEvent<number>) => void;
     }
     interface EzpTextButton {
         /**
@@ -985,18 +985,18 @@ declare namespace LocalJSX {
         /**
           * Events
          */
-        "onUploadFile"?: (event: EzpUploadCustomEvent<any>) => void;
+        "onUploadFile"?: (event: EzpUploadCustomEvent<File[]>) => void;
     }
     interface EzpUserMenu {
         /**
           * @default 'John Doe'
          */
         "name"?: string;
-        "onLogoutEmitter"?: (event: EzpUserMenuCustomEvent<any>) => void;
+        "onLogoutEmitter"?: (event: EzpUserMenuCustomEvent<void>) => void;
         /**
           * Events
          */
-        "onUserMenuClosure"?: (event: EzpUserMenuCustomEvent<any>) => void;
+        "onUserMenuClosure"?: (event: EzpUserMenuCustomEvent<void>) => void;
         /**
           * @default false
          */

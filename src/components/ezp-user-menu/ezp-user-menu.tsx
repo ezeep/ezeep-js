@@ -2,6 +2,8 @@ import { Component, Host, Prop, Event, Element, EventEmitter, Watch, h } from '@
 import authStore, { EzpAuthorizationService } from '../../services/auth'
 import userStore from '../../services/user'
 import { IconNameTypes, ThemeTypes, AppearanceTypes } from '../../shared/types'
+import { storage } from '../../shared/storage'
+import { subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
 
 @Component({
@@ -42,8 +44,8 @@ export class EzpUserMenu {
    *
    */
 
-  @Event() userMenuClosure: EventEmitter
-  @Event() logoutEmitter: EventEmitter
+  @Event() userMenuClosure: EventEmitter<void>
+  @Event() logoutEmitter: EventEmitter<void>
   auth: EzpAuthorizationService
   /**
    *
@@ -73,11 +75,7 @@ export class EzpUserMenu {
   }
 
   private logOut = () => {
-    localStorage.removeItem('properties')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('printer')
-    localStorage.removeItem('isAuthorized')
+    storage.clearSession()
     authStore.state.isAuthorized = false
     this.logoutEmitter.emit()
   }
@@ -96,8 +94,14 @@ export class EzpUserMenu {
    *
    */
 
+  private unsubscribeLanguage?: () => void
+
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
+
   componentWillLoad() {
-    this.container = this.component.closest('[data-backdrop-surface]')
+    this.container = this.component.closest('[data-backdrop-surface]') as HTMLDivElement
 
     this.backdrop.addEventListener('backdropHideStart', () => {
       this.open = false
@@ -106,6 +110,10 @@ export class EzpUserMenu {
     this.backdrop.addEventListener('backdropHideEnd', () => {
       this.container.removeChild(this.backdrop)
     })
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
   }
 
   /**

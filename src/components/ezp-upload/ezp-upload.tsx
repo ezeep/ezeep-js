@@ -1,4 +1,5 @@
 import { Component, Host, Listen, Event, EventEmitter, State, h, Fragment } from '@stencil/core'
+import { subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
 @Component({
   tag: 'ezp-upload',
@@ -8,6 +9,15 @@ import i18next from 'i18next'
 export class EzpUpload {
   private input?: HTMLInputElement
   private form?: HTMLFormElement
+  private unsubscribeLanguage?: () => void
+
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
+  }
 
   /**
    *
@@ -24,7 +34,7 @@ export class EzpUpload {
    *
    */
 
-  @Event() uploadFile: EventEmitter
+  @Event() uploadFile: EventEmitter<File[]>
 
   /**
    *
@@ -41,7 +51,9 @@ export class EzpUpload {
   handleDragOver(event: DragEvent) {
     event.stopPropagation()
     event.preventDefault()
-    event.dataTransfer.dropEffect = 'copy'
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'copy'
+    }
   }
 
   @Listen('dragleave')
@@ -55,7 +67,7 @@ export class EzpUpload {
     event.preventDefault()
 
     this.dragging = false
-    const files = Array.from(event.dataTransfer.files)
+    const files = Array.from(event.dataTransfer?.files ?? [])
     // Add new files to existing selection instead of replacing
     this.selectedFiles = [...this.selectedFiles, ...files]
     this.uploadFile.emit(this.selectedFiles)
@@ -63,7 +75,7 @@ export class EzpUpload {
 
   @Listen('printCancel', { target: 'document' })
   listenPrintCancel() {
-    this.form.reset()
+    this.form?.reset()
     this.selectedFiles = []
   }
 
@@ -74,7 +86,7 @@ export class EzpUpload {
    */
 
   private handleInput = () => {
-    const files = Array.from(this.input.files)
+    const files = Array.from(this.input?.files ?? [])
     // Add new files to existing selection instead of replacing
     this.selectedFiles = [...this.selectedFiles, ...files]
     this.uploadFile.emit(this.selectedFiles)
@@ -122,6 +134,7 @@ export class EzpUpload {
                 name="input"
                 id="input"
                 multiple
+                aria-label={i18next.t('upload.description')}
                 ref={(input) => (this.input = input)}
                 onInput={this.handleInput}
               />

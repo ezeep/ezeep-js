@@ -55,7 +55,9 @@ export class EzpTextButton {
 
     return (
       <Host class={`${this.level}`}>
-        <TagType id="button" {...attributes}>
+        {/* aria-label makes the accessible name explicit (the visible text lives
+            in a nested shadow tree, which name-from-contents can miss). */}
+        <TagType id="button" aria-label={this.label} {...attributes}>
           <ezp-label
             id="label"
             weight="heavy"

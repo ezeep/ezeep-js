@@ -1,8 +1,18 @@
 import { createStore } from '@stencil/store'
 import authStore, { EzpAuthorizationService } from './auth'
 import fetchIntercept from 'fetch-intercept'
-import { /* PrinterProperties, */ PrinterConfig, PrinterProperties } from '../shared/types'
+import {
+  PrinterConfig,
+  PrinterProperties,
+  Printer,
+  PrintResponse,
+  JobStatusResponse,
+  PrepareUploadResponse,
+} from '../shared/types'
 import { AnonymousCredential, BlockBlobClient, newPipeline } from '@azure/storage-blob'
+import { authGetJson, bearer } from './http'
+import { storage } from '../shared/storage'
+
 export class EzpPrintService {
   constructor(redirectURI: string, clientID: string) {
     this.redirectURI = redirectURI
@@ -17,17 +27,13 @@ export class EzpPrintService {
   devApi: boolean
   printerConfig: PrinterConfig
   printingApi: string
-  abortController: AbortController | null = null;
+  abortController: AbortController | null = null
 
   private checkStoredRefreshToken() {
     if (authStore.state.refreshToken !== '') {
       return
     }
-    if (localStorage.getItem('refreshToken') === null) {
-      authStore.state.refreshToken = ''
-    } else {
-      authStore.state.refreshToken = localStorage.getItem('refreshToken')
-    }
+    authStore.state.refreshToken = storage.getRefreshToken() ?? ''
   }
 
   registerFetchInterceptor() {
@@ -60,43 +66,28 @@ export class EzpPrintService {
   }
 
   getPrinterList(accessToken: string) {
-    return fetch(`https://${this.printingApi}/sfapi/GetPrinter/`, {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-      },
-    }).then((response) => response.json())
+    return authGetJson<Printer[]>(`https://${this.printingApi}/sfapi/GetPrinter/`, accessToken)
   }
 
   async getConfig(accessToken: string) {
     return fetch(`https://${this.printingApi}/sfapi/GetConfiguration/`, {
       method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-      },
+      headers: bearer(accessToken),
     })
   }
 
   getPrinterProperties(accessToken: string, printerID: string) {
-    return fetch(`https://${this.printingApi}/sfapi/GetPrinterProperties/?id=${printerID}`, {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-      },
-    }).then((response) => {
-      return response.json()
-    })
+    return authGetJson<PrinterConfig[]>(
+      `https://${this.printingApi}/sfapi/GetPrinterProperties/?id=${printerID}`,
+      accessToken,
+    )
   }
 
   getAllPrinterProperties(accessToken: string) {
-    return fetch(`https://${this.printingApi}/sfapi/GetPrinterProperties/`, {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-      },
-    }).then((response) => {
-      return response.json()
-    })
+    return authGetJson<PrinterConfig[]>(
+      `https://${this.printingApi}/sfapi/GetPrinterProperties/`,
+      accessToken,
+    )
   }
 
   printFileByUrl(
@@ -106,33 +97,42 @@ export class EzpPrintService {
     printerID: string,
     properties: PrinterProperties,
     filename?: string,
-    printAndDelete?: boolean
+    printAndDelete?: boolean,
   ) {
-    this.abortController = new AbortController();
+    this.abortController = new AbortController()
 
-    return fetch(`https://${this.printingApi}/sfapi/Print/`, {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    return this.printRequest(
+      accessToken,
+      {
         fileurl: fileUrl,
         type: fileType,
         printerid: printerID,
         ...(filename && { alias: filename }),
         ...(printAndDelete && { printanddelete: printAndDelete }),
         properties,
-      }),
-      signal: this.abortController.signal
-    })
+      },
+      this.abortController.signal,
+    )
   }
 
   abortPrint() {
     if (this.abortController) {
-      this.abortController.abort();
-      this.abortController = null;
+      this.abortController.abort()
+      this.abortController = null
     }
+  }
+
+  /** Shared POST to the `Print` endpoint. Returns the raw response. */
+  private printRequest(accessToken: string, body: Record<string, unknown>, signal?: AbortSignal) {
+    return fetch(`https://${this.printingApi}/sfapi/Print/`, {
+      method: 'POST',
+      headers: {
+        ...bearer(accessToken),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      signal,
+    })
   }
 
   printByFileID(
@@ -142,43 +142,23 @@ export class EzpPrintService {
     printerID: string,
     properties: PrinterProperties,
     filename?: string,
-    printAndDelete?: boolean
+    printAndDelete?: boolean,
   ) {
-    return fetch(`https://${this.printingApi}/sfapi/Print/`, {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        fileid: fileID,
-        type: fileType,
-        printerid: printerID,
-        ...(filename && { alias: filename }),
-        ...(printAndDelete && { printanddelete: printAndDelete }),
-        properties,
-      }),
-    }).then((response) => response.json())
+    return this.printRequest(accessToken, {
+      fileid: fileID,
+      type: fileType,
+      printerid: printerID,
+      ...(filename && { alias: filename }),
+      ...(printAndDelete && { printanddelete: printAndDelete }),
+      properties,
+    }).then((response) => response.json() as Promise<PrintResponse>)
   }
 
   prepareFileUpload(accessToken: string) {
-    return fetch(`https://${this.printingApi}/sfapi/PrepareUpload/`, {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-      },
-    }).then((response) => response.json())
-  }
-
-  uploadFile(sasURI: string, formData: FormData) {
-    return fetch(`${sasURI}`, {
-      method: 'PUT',
-      headers: {
-        'x-ms-blob-type': 'BlockBlob',
-        'Content-Type:': 'multipart/form-data', // try and not set it, see if it does it automatically
-      },
-      body: formData,
-    }).then((response) => response.json())
+    return authGetJson<PrepareUploadResponse>(
+      `https://${this.printingApi}/sfapi/PrepareUpload/`,
+      accessToken,
+    )
   }
 
   async uploadBlobFiles(sasUri: string, file: File) {
@@ -197,7 +177,7 @@ export class EzpPrintService {
       blockSize: 4 * 1024 * 1024, //4mb blocksize
       concurrency: 20,
       onProgress: (e) => {
-        let progress = (100 * e.loadedBytes) / file.size
+        const progress = (100 * e.loadedBytes) / file.size
         printStore.state.uploadProgress = progress
       },
       blobHTTPHeaders: { blobContentType: 'application/octet-stream' },
@@ -207,14 +187,10 @@ export class EzpPrintService {
   }
 
   getPrintStatus = () => {
-    return fetch(
+    return authGetJson<JobStatusResponse>(
       `https://${this.printingApi}/sfapi/Status/?id=${encodeURIComponent(printStore.state.jobID)}`,
-      {
-        headers: {
-          Authorization: 'Bearer ' + authStore.state.accessToken,
-        },
-      }
-    ).then((response) => response.json())
+      authStore.state.accessToken,
+    )
   }
 }
 

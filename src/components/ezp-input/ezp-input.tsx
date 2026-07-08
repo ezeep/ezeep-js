@@ -8,9 +8,9 @@ import { IconNameTypes } from './../../shared/types'
 })
 export class EzpInput {
   private input?: HTMLInputElement
-  private timeout = null
+  private timeout: ReturnType<typeof setTimeout> | null = null
 
-   /**
+  /**
    *
    * Properties
    *
@@ -30,34 +30,34 @@ export class EzpInput {
 
   /** Description... */
   @Prop({ reflect: true }) suffix: string
-  
+
   /** Description... */
   @Prop() eventType: string
 
   /** Description... */
   @Prop() placeholder: string = ''
 
-
-   /**
+  /**
    *
    * Events
    *
    */
 
-  @Event() inputValueChanged: EventEmitter
+  @Event() inputValueChanged: EventEmitter<{ type: string; value: string | number }>
 
-   /**
+  /**
    *
    * States
    *
    */
   @State() focused: boolean = false
 
-  handleChange(event) {
+  handleChange(event: Event) {
     if (this.timeout) {
       clearTimeout(this.timeout)
     }
-    this.value = event.target.value ? event.target.value : this.type === 'number' ? 0 : ''
+    const target = event.target as HTMLInputElement
+    this.value = target.value ? target.value : this.type === 'number' ? 0 : ''
     this.timeout = setTimeout(() => {
       this.inputValueChanged.emit({
         type: this.eventType.toLowerCase(),
@@ -67,7 +67,7 @@ export class EzpInput {
   }
 
   private setFocus = () => {
-    this.input.focus()
+    this.input?.focus()
   }
 
   private handleBlur = () => {
@@ -88,6 +88,7 @@ export class EzpInput {
           type={this.type}
           value={this.value}
           placeholder={this.placeholder}
+          aria-label={this.label}
           onInput={(event) => this.handleChange(event)}
           ref={(input) => (this.input = input)}
           onFocus={this.handleFocus}

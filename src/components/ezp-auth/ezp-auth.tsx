@@ -1,6 +1,7 @@
 import { Component, Host, h, Prop, State, Event, EventEmitter, Listen } from '@stencil/core'
 import { EzpAuthorizationService } from '../../services/auth'
 import authStore from '../../services/auth'
+import { subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
 @Component({
   tag: 'ezp-auth',
@@ -19,8 +20,8 @@ export class EzpAuth {
   @State() accessToken: string
 
   @Event() authCancel: EventEmitter<MouseEvent>
-  @Event() authSuccess: EventEmitter
-  @Event() userCancel: EventEmitter
+  @Event() authSuccess: EventEmitter<void>
+  @Event() userCancel: EventEmitter<void>
 
   @Listen('dialogAction')
   listenDialogAction() {
@@ -37,8 +38,19 @@ export class EzpAuth {
     this.authCancel.emit()
   }
 
-  oauthPopupWindow: Window = null
-  previousUrl = null
+  oauthPopupWindow: Window | null = null
+  previousUrl: string | URL | null = null
+  private unsubscribeLanguage?: () => void
+
+  connectedCallback() {
+    this.unsubscribeLanguage = subscribeToLanguageChange(this)
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeLanguage?.()
+    // Don't leave the message listener behind when the component is removed.
+    window.removeEventListener('message', this.receiveMessage)
+  }
 
   openSignInWindow(url: string, name: string) {
     if (authStore.state.isAuthorized) {
@@ -73,7 +85,7 @@ export class EzpAuth {
         alert('popup blocked')
       }
 
-      this.oauthPopupWindow.focus()
+      this.oauthPopupWindow?.focus()
     } else {
       /* else the window reference must exist and the window
      is not closed; therefore, we can bring it back on top of any other
@@ -83,13 +95,46 @@ export class EzpAuth {
       this.oauthPopupWindow.focus()
     }
 
-    // add the listener for receiving a message from the popup
-    window.addEventListener('message', (event) => this.receiveMessage(event), false)
+    // add the listener for receiving a message from the popup (same bound
+    // reference used by removeEventListener above, so it never stacks)
+    window.addEventListener('message', this.receiveMessage, false)
 
     this.previousUrl = this.auth.authURI
   }
 
-  receiveMessage(event) {
+  // Bound once (arrow property) so add/removeEventListener share the same
+  // reference. An inline `(e) => this.receiveMessage(e)` never matches on
+  // remove, so listeners stacked across retried sign-ins and the popup's single
+  // code got exchanged once per accumulated listener.
+  receiveMessage = (event: MessageEvent) => {
+    // Defense in depth #1: the code must come from the popup we opened — not any
+    // other window, frame or tab, even one served from the redirect origin.
+    if (this.oauthPopupWindow && event.source && event.source !== this.oauthPopupWindow) {
+      // eslint-disable-next-line no-console
+      console.warn('[ezeep] Ignored auth message from an unexpected source window.')
+      return
+    }
+
+    // Defense in depth #2: only accept the code from the expected redirect
+    // origin — otherwise any page could postMessage a forged code into the
+    // token exchange. Fail *open* if redirectURI can't be parsed so a config
+    // quirk can never silently block sign-in; the source-window check above
+    // still guards against forgery in that case. Warn on any rejection so a
+    // real mismatch is debuggable.
+    let expectedOrigin: string | null = null
+    try {
+      expectedOrigin = new URL(this.redirectURI).origin
+    } catch {
+      expectedOrigin = null
+    }
+    if (expectedOrigin && event.origin !== expectedOrigin) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[ezeep] Ignored auth message from unexpected origin "${event.origin}" (expected "${expectedOrigin}").`,
+      )
+      return
+    }
+
     authStore.state.code = event.data
     this.auth.getAccessToken().then(() => {
       this.authCancel.emit()

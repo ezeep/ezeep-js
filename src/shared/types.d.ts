@@ -55,6 +55,37 @@ export type AppearanceTypes = 'system' | 'light' | 'dark'
 export type TriggerTypes = 'custom' | 'file' | 'button'
 export type AlertType = { open: boolean; heading: string; description: string }
 export type SystemAppearanceTypes = 'light' | 'dark'
+
+/**
+ * Payload emitted by selection-style components (`ezp-select`, `ezp-input`,
+ * `ezp-stepper`) and consumed by `ezp-printer-selection.setSelectedProperties`.
+ */
+export interface PropertyChangeDetail {
+  type: string
+  id?: string | number | boolean
+  title?: string
+  is_queue?: boolean
+  value?: string | number
+}
+
+/** Response of `sfapi/Print` (POST). */
+export interface PrintResponse {
+  code?: number
+  jobid?: string
+  fileid?: string
+}
+
+/** Response of `sfapi/Status`. */
+export interface JobStatusResponse {
+  jobstatus: number
+  jobstatusstring?: string
+}
+
+/** Response of `sfapi/PrepareUpload`. */
+export interface PrepareUploadResponse {
+  fileid: string
+  sasUri: string
+}
 export interface PrinterProperties {
   paper?: string
   paperid?: number | string
@@ -64,11 +95,11 @@ export interface PrinterProperties {
   orientation?: number | string
   copies?: number | string
   resolution?: string | number
-  paperlength? : string | number
-  paperwidth? : string | number
+  paperlength?: string | number
+  paperwidth?: string | number
   defaultSource?: number | string
-  trayname?: string 
-  PageRanges? : string
+  trayname?: string
+  PageRanges?: string
 }
 
 export interface Printer {
@@ -87,8 +118,8 @@ export interface PaperFormat {
 }
 
 export interface Trays {
-  Default : boolean
-  Index:  number
+  Default: boolean
+  Index: number
   Name: string
 }
 
@@ -101,7 +132,7 @@ export interface PrinterConfig {
     Resolution?: string
     Paper?: string
     Tray?: string
-  },
+  }
   Collate?: boolean
   Color?: boolean
   ColorSupported?: boolean
@@ -123,7 +154,7 @@ export interface PrinterConfig {
 }
 
 export interface User {
-  azureProfile: any
+  azureProfile: unknown
   dateJoined: string
   displayName: string
   email: string
@@ -137,5 +168,5 @@ export interface User {
   isVerfified: boolean
   lastName: string
   roles: Array<string>
-  userInvitations: any
+  userInvitations: unknown
 }
