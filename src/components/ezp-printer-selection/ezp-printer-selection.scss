@@ -13,96 +13,238 @@
  */
 
 :host {
-  align-content: var(--ezp-printerSelection-alignContent, center);
+  --ezp-drucken-gradient: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ezp-theme-solid), white 14%) 0%,
+    color-mix(in srgb, var(--ezp-theme-solid), black 22%) 100%
+  );
+  --ezp-status-border-radius: 16px;
+
   background: var(--ezp-printerSelection-background, var(--ezp-core-backdrop));
-  display: grid;
-  grid-template: auto / var(--ezp-printerSelection-width, 320px);
-  height: var(--ezp-printerSelection-height, 100vh);
-  justify-content: var(--ezp-printerSelection-justifyContent, center);
-  left: 0;
+  box-sizing: border-box;
+  display: flex;
+  /* Anchor to the containing block on every edge (`inset: 0`) instead of relying
+     on `height: 100vh`. When a host-app ancestor is transformed/filtered it
+     becomes the containing block for our fixed positioning; `inset: 0` fills it
+     exactly (so the dialog stays centered in the visible area and responsive),
+     whereas `100vh` would overflow and push the dialog to the top. */
+  inset: var(--ezp-printerSelection-inset, 0);
+  /* Scroll the backdrop when the dialog is taller than the available height;
+     combined with `#box { margin: auto }` this keeps it centered without clipping. */
+  overflow-y: auto;
+  padding: var(--ezp-printerSelection-padding, var(--ezp-spacing-5));
   position: var(--ezp-printerSelection-position, fixed);
-  top: 0;
-  width: 100%;
   z-index: 1;
 
   @at-root {
     #{&}(.seamless) {
-      --ezp-printerSelection-alignContent: stretch;
       --ezp-printerSelection-background: transparent;
-      --ezp-printerSelection-body-background: transparent;
-      --ezp-printerSelection-body-padding: 0;
       --ezp-printerSelection-box-background: transparent;
-      --ezp-printerSelection-box-borderRadius: 0;
       --ezp-printerSelection-box-boxShadow: none;
-      --ezp-printerSelection-footer-boxShadowPosition: 0 0 0 0;
-      --ezp-printerSelection-footer-padding: var(--ezp-spacing-2) 0;
-      --ezp-printerSelection-header-boxShadowPosition: 0 0 0 0;
-      --ezp-printerSelection-header-padding: var(--ezp-spacing-4) 0;
-      --ezp-printerSelection-justifyContent: stretch;
+      --ezp-printerSelection-box-margin: 0;
+      --ezp-printerSelection-box-padding: 0;
+      --ezp-printerSelection-inset: auto;
+      --ezp-printerSelection-padding: 0;
       --ezp-printerSelection-position: static;
+      --ezp-printerSelection-width: 100%;
     }
   }
 }
 
 #box {
   background: var(--ezp-printerSelection-box-background, var(--ezp-core-surface-tertiary));
-  border-radius: var(--ezp-printerSelection-box-borderRadius, 6px);
-  box-shadow: var(--ezp-printerSelection-box-boxShadow, 0 0 0 1px var(--ezp-black-10));
-  padding: var(--ezp-printerSelection-padding, 0);
+  border-radius: 16px;
+  box-shadow: var(
+    --ezp-printerSelection-box-boxShadow,
+    0 0 0 1px var(--ezp-core-outline),
+    0 24px 60px -20px var(--ezp-core-backdrop)
+  );
+  color: var(--ezp-core-foreground-primary);
+  margin: var(--ezp-printerSelection-box-margin, auto);
+  padding: var(--ezp-printerSelection-box-padding, 0);
   position: relative;
+  width: var(--ezp-printerSelection-width, 384px);
 }
 
+/**
+ *
+ * Header
+ *
+ */
+
 #header {
-  border-radius: 6px 6px 0 0;
-  box-shadow: var(--ezp-printerSelection-header-boxShadowPosition, 0 1px 0 0)
-    var(--ezp-core-outline);
+  align-items: center;
+  border-bottom: 1px solid var(--ezp-core-outline);
   color: var(--ezp-core-foreground-primary);
-  display: grid;
-  grid-column-gap: var(--ezp-spacing-2);
-  grid-template-columns: auto 1fr auto;
-  padding: var(
-    --ezp-printerSelection-header-padding,
-    var(--ezp-spacing-4) var(--ezp-spacing-3) var(--ezp-spacing-4) var(--ezp-spacing-4)
-  );
+  display: flex;
+  gap: var(--ezp-spacing-3);
+  justify-content: space-between;
+  padding: var(--ezp-spacing-4);
   position: relative;
   z-index: 3;
 }
 
-#toggle-menu {
-  margin: calc(var(--ezp-spacing-3) * -1) 0;
-  position: relative;
-  z-index: 2;
+#title {
+  align-items: center;
+  display: flex;
+  gap: var(--ezp-spacing-3);
+  min-width: 0;
+
+  ezp-label {
+    --ezp-label-fontSize: 20px;
+    --ezp-label-lineHeight: 26px;
+  }
 }
 
+#files-badge {
+  background: var(--ezp-theme-translucent);
+  border-radius: 999px;
+  color: var(--ezp-theme-solid);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+#header-actions {
+  align-items: center;
+  display: flex;
+  gap: var(--ezp-spacing-2);
+}
+
+/**
+ *
+ * Body
+ *
+ */
+
 #body {
-  background: var(--ezp-printerSelection-body-background, var(--ezp-core-surface-secondary));
-  box-shadow: var(--ezp-printerSelection-body-boxShadow, none);
+  background: var(--ezp-printerSelection-body-background, var(--ezp-core-surface-tertiary));
+  display: flex;
+  flex-direction: column;
+  gap: var(--ezp-spacing-3);
+  padding: var(--ezp-spacing-4);
+}
+
+/**
+ *
+ * Files card
+ *
+ */
+
+#files-card {
+  background: var(--ezp-core-surface-secondary);
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   gap: var(--ezp-spacing-2);
-  padding: var(--ezp-printerSelection-body-padding, var(--ezp-spacing-2));
+  padding: var(--ezp-spacing-3) var(--ezp-spacing-4);
 }
 
-#footer {
-  border-radius: 0 0 6px 6px;
-  box-shadow: var(--ezp-printerSelection-footer-boxShadowPosition, 0 -1px 0 0)
-    var(--ezp-core-outline);
-  display: grid;
-  gap: var(--ezp-spacing-2);
-  grid-template-areas: var(--ezp-printerSelection-footer-areas, 'cancel print');
-  grid-template-columns: var(--ezp-printerSelection-footer-columns, repeat(2, 1fr));
-  grid-template-rows: var(--ezp-printerSelection-footer-rows, auto);
+.file-row {
+  align-items: center;
+  display: flex;
+  gap: var(--ezp-spacing-3);
+  min-width: 0;
+
+  ezp-label {
+    --ezp-label-minWidth: 0;
+  }
+}
+
+.file-row-icon {
+  --ezp-icon-size: 18px;
+  --ezp-icon-gridTemplate: 18px;
+
+  color: var(--ezp-theme-solid);
+  flex-shrink: 0;
+}
+
+/**
+ *
+ * Printer card + print button
+ *
+ */
+
+#printer-card {
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--ezp-core-outline);
+  position: relative;
+}
+
+#print {
+  align-items: center;
+  appearance: none;
+  background: var(--ezp-drucken-gradient);
+  border: 0;
+  border-radius: 0 0 12px 12px;
+  color: var(--ezp-white-100);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  gap: var(--ezp-spacing-3);
   justify-content: center;
-  justify-items: stretch;
-  padding: var(--ezp-printerSelection-footer-padding, var(--ezp-spacing-2));
+  margin: 0;
+  outline: none;
+  padding: var(--ezp-spacing-4);
+  transition: opacity var(--ezp-duration-2) var(--ezp-easing-out-quart);
+  width: 100%;
+
+  ezp-icon {
+    --ezp-icon-size: 20px;
+    --ezp-icon-gridTemplate: 20px;
+  }
+
+  &:not(:disabled) {
+    @media (hover: hover) {
+      &:hover {
+        opacity: 0.9;
+      }
+
+      &:active {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  &:disabled {
+    background: var(--ezp-core-shade-primary);
+    color: var(--ezp-core-foreground-tertiary);
+    cursor: default;
+  }
+}
+
+/**
+ *
+ * Options list
+ *
+ */
+
+#options {
+  display: flex;
+  flex-direction: column;
+}
+
+/**
+ *
+ * Footer
+ *
+ */
+
+#footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--ezp-spacing-3) var(--ezp-spacing-4) var(--ezp-spacing-4);
   position: relative;
   z-index: 3;
 }
 
 #cancel {
-  grid-area: cancel;
-}
-
-#print {
-  grid-area: print;
+  --ezp-textButton-background-init: transparent;
+  --ezp-textButton-background-hover: var(--ezp-core-shade-primary);
+  --ezp-textButton-boxShadow: inset 0 0 0 1px var(--ezp-core-outline);
+  --ezp-textButton-borderRadius: 999px;
+  --ezp-textButton-color-init: var(--ezp-core-foreground-primary);
+  --ezp-textButton-padding: var(--ezp-spacing-3) var(--ezp-spacing-6);
 }

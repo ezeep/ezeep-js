@@ -158,31 +158,26 @@ export class EzpAuth {
       this.auth.buildAuthURI()
     }
 
-    if (this.hidelogin && this.trigger === 'button') {
-      this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
+    if (this.hidelogin && (this.trigger === 'button' || this.trigger === 'file')) {
+      if (authStore.state.isAuthorized) {
+        // Already signed in: no sign-in popup is needed, so skip straight to the
+        // print options. Mirrors the authorized branch of openSignInWindow
+        // (authURI isn't built when already authorized, so we can't call it here).
+        this.authCancel.emit()
+        this.authSuccess.emit()
+      } else {
+        // Not signed in: trigger sign-in directly so the "Continue to print
+        // options" click leads to sign-in, without an extra confirmation button.
+        this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
+      }
     }
   }
 
   render() {
     return (
       <Host>
-        {this.hidelogin && this.trigger === 'button' ? (
+        {this.hidelogin && (this.trigger === 'button' || this.trigger === 'file') ? (
           <ezp-status description={i18next.t('login_dialog.action')} processing cancel></ezp-status>
-        ) : this.hidelogin && this.trigger === 'file' ? (
-          <div class="auth-actions">
-            <ezp-text-button
-              type="button"
-              level="secondary"
-              onClick={() => this.userCancel.emit()}
-              label={i18next.t('button_actions.cancel')}
-            />
-            <ezp-text-button
-              type="button"
-              level="primary"
-              onClick={() => this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')}
-              label={i18next.t('button_actions.select_printer')}
-            />
-          </div>
         ) : (
           <ezp-dialog
             heading={i18next.t('login_dialog.heading')}

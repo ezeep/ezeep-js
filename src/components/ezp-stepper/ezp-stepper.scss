@@ -14,31 +14,29 @@
 
 :host {
   align-items: center;
-  background: var(--ezp-core-surface-tertiary);
-  border-radius: 3px;
-  box-shadow: var(--ezp-stepper-boxShadowPosition, 0 0 0 1px) var(--ezp-core-outline);
+  background: transparent;
   display: grid;
   gap: var(--ezp-spacing-3);
-  grid-template: var(--ezp-stepper-gridTemplate, auto / auto 1fr auto);
-  padding: 0 var(--ezp-spacing-2) 0 var(--ezp-spacing-3);
+  grid-template: var(--ezp-stepper-gridTemplate, auto / 1fr auto);
+  height: 56px;
+  padding: var(--ezp-spacing-2) var(--ezp-spacing-3);
   position: relative;
   z-index: 0;
 
   @at-root {
     #{&}(.focused) {
-      --ezp-stepper-icon-color: var(--ezp-theme-solid);
-      --ezp-stepper-label-color: var(--ezp-theme-solid);
+      --ezp-stepper-label-color: var(--ezp-core-foreground-primary);
     }
 
     #{&}(.has-icon) {
-      --ezp-stepper-gridTemplate: auto / repeat(2, auto) 1fr auto;
+      --ezp-stepper-gridTemplate: auto / auto 1fr auto;
     }
   }
 }
 
 #toggle {
-  background: var(--ezp-stepper-toggle-background, transparent);
-  border-radius: 3px;
+  background: transparent;
+  border-radius: 12px;
   cursor: pointer;
   height: 100%;
   left: 0;
@@ -46,34 +44,24 @@
   top: 0;
   width: 100%;
   z-index: -1;
-
-  @media (hover: hover) {
-    &:hover {
-      --ezp-stepper-toggle-background: var(--ezp-core-shade-primary);
-    }
-  }
 }
 
 #icon {
-  color: var(--ezp-stepper-icon-color, var(--ezp-core-foreground-secondary));
+  --ezp-icon-background: var(--ezp-theme-translucent);
+  --ezp-icon-borderRadius: 50%;
+  --ezp-icon-height: 40px;
+  --ezp-icon-width: 40px;
+
+  color: var(--ezp-stepper-icon-color, var(--ezp-theme-solid));
   pointer-events: none;
 }
 
 #label {
-  color: var(--ezp-stepper-label-color, var(--ezp-core-foreground-secondary));
+  color: var(--ezp-stepper-label-color, var(--ezp-core-foreground-primary));
   pointer-events: none;
 }
 
 #input {
-  /**
-   *
-   * FIXME
-   *
-   * - adapt font properties
-   * - hover / focus state
-   *
-   */
-
   -moz-appearance: textfield;
   appearance: none;
   background: transparent;
@@ -82,19 +70,20 @@
   box-shadow: none;
   box-sizing: border-box;
   color: var(--ezp-core-foreground-primary);
-  cursor: inherit;
+  cursor: text;
   font-family: inherit;
   font-feature-settings: 'tnum';
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
   -webkit-font-smoothing: antialiased;
   height: 30px;
-  letter-spacing: #{global.getLetterSpacing(14px)};
+  letter-spacing: #{global.getLetterSpacing(16px)};
   margin: 0;
+  min-width: 28px;
   outline: none;
   padding: 0;
-  pointer-events: none;
-  text-align: right;
-  width: 100%;
+  text-align: center;
+  width: 28px;
 }
 
 #input::-webkit-outer-spin-button,
@@ -104,28 +93,42 @@
 }
 
 .buttons {
+  align-items: center;
   display: flex;
+  gap: var(--ezp-spacing-3);
 }
 
 .button {
   align-items: center;
   appearance: none;
   background: var(--ezp-stepper-button-background, transparent);
-  border: 0;
+  border: 1px solid var(--ezp-stepper-button-border, var(--ezp-core-outline));
   border-radius: 50%;
   box-shadow: none;
-  color: var(--ezp-stepper-button-color, var(--ezp-theme-solid));
+  color: var(--ezp-stepper-button-color, var(--ezp-core-foreground-secondary));
   cursor: var(--ezp-stepper-button-cursor, pointer);
   display: flex;
+  height: 32px;
   justify-content: center;
   margin: 0;
   outline: none;
-  padding: var(--ezp-spacing-1);
+  padding: 0;
+  transition:
+    background-color var(--ezp-duration-2) var(--ezp-easing-out-quart),
+    border-color var(--ezp-duration-2) var(--ezp-easing-out-quart);
+  width: 32px;
+
+  ezp-icon {
+    --ezp-icon-size: 16px;
+    --ezp-icon-gridTemplate: 16px;
+  }
 
   &:not(:disabled) {
     @media (hover: hover) {
       &:hover {
-        --ezp-stepper-button-background: var(--ezp-core-shade-primary);
+        --ezp-stepper-button-background: var(--ezp-theme-translucent);
+        --ezp-stepper-button-border: var(--ezp-theme-solid);
+        --ezp-stepper-button-color: var(--ezp-theme-solid);
       }
 
       &:active {
@@ -135,6 +138,7 @@
   }
 
   &:disabled {
+    --ezp-stepper-button-border: var(--ezp-core-shade-primary);
     --ezp-stepper-button-color: var(--ezp-core-foreground-tertiary);
     --ezp-stepper-button-cursor: default;
   }

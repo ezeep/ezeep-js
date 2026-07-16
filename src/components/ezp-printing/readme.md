@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property          | Attribute         | Description | Type                                                                               | Default     |
@@ -26,45 +27,58 @@
 | `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "teal" \| "violet"` | `'cyan'`    |
 | `trigger`         | `trigger`         |             | `"button" \| "custom" \| "file"`                                                   | `undefined` |
 
+
 ## Events
 
-| Event           | Description | Type               |
-| --------------- | ----------- | ------------------ |
-| `printFinished` | Events      | `CustomEvent<any>` |
+| Event           | Description | Type                |
+| --------------- | ----------- | ------------------- |
+| `printFinished` | Events      | `CustomEvent<void>` |
+
 
 ## Methods
 
 ### `checkAuth() => Promise<boolean>`
 
+
+
 #### Returns
 
 Type: `Promise<boolean>`
 
+
+
 ### `getAuthUri() => Promise<string>`
+
+
 
 #### Returns
 
 Type: `Promise<string>`
+
+
 
 ### `getSasUri() => Promise<string>`
 
+
+
 #### Returns
 
 Type: `Promise<string>`
 
+
+
 ### `logOut() => Promise<void>`
 
-#### Returns
 
-Type: `Promise<void>`
-
-### `logOutandRevokeToken() => Promise<void>`
 
 #### Returns
 
 Type: `Promise<void>`
+
+
 
 ### `open() => Promise<void>`
+
 
 Public methods
 
@@ -72,23 +86,24 @@ Public methods
 
 Type: `Promise<void>`
 
+
+
 ### `setAuthRefreshToken(refreshToken: string) => Promise<void>`
 
-Sets a refresh token for pre-authentication. This method allows you to provide an existing refresh token to authenticate users without requiring them to go through the OAuth login flow.
 
-The method stores the refresh token and immediately exchanges it for a valid access token by calling the OAuth token endpoint. This ensures that the user is fully authenticated and won't see the login dialog when printing.
 
 #### Parameters
 
-| Name           | Type     | Description                                                |
-| -------------- | -------- | ---------------------------------------------------------- |
-| `refreshToken` | `string` | The refresh token obtained from a previous authentication |
+| Name           | Type     | Description |
+| -------------- | -------- | ----------- |
+| `refreshToken` | `string` |             |
 
 #### Returns
 
 Type: `Promise<void>`
 
-A promise that resolves when the refresh token has been stored and exchanged for an access token.
+
+
 
 ## Dependencies
 
@@ -101,7 +116,6 @@ A promise that resolves when the refresh token has been stored and exchanged for
 - [ezp-dialog](../ezp-dialog)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-printing --> ezp-upload
@@ -109,16 +123,17 @@ graph TD;
   ezp-printing --> ezp-auth
   ezp-printing --> ezp-printer-selection
   ezp-printing --> ezp-dialog
-  ezp-upload --> ezp-icon
   ezp-upload --> ezp-label
+  ezp-upload --> ezp-icon-button
+  ezp-upload --> ezp-icon
+  ezp-upload --> ezp-text-button
   ezp-icon-button --> ezp-icon
+  ezp-text-button --> ezp-label
   ezp-auth --> ezp-status
-  ezp-auth --> ezp-text-button
   ezp-auth --> ezp-dialog
   ezp-status --> ezp-icon
   ezp-status --> ezp-label
   ezp-status --> ezp-text-button
-  ezp-text-button --> ezp-label
   ezp-dialog --> ezp-icon-button
   ezp-dialog --> ezp-icon
   ezp-dialog --> ezp-label
@@ -126,8 +141,10 @@ graph TD;
   ezp-printer-selection --> ezp-status
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
+  ezp-printer-selection --> ezp-icon
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-stepper
+  ezp-printer-selection --> ezp-input
   ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
   ezp-select --> ezp-backdrop
@@ -135,6 +152,8 @@ graph TD;
   ezp-select --> ezp-label
   ezp-stepper --> ezp-icon
   ezp-stepper --> ezp-label
+  ezp-input --> ezp-icon
+  ezp-input --> ezp-label
   ezp-user-menu --> ezp-backdrop
   ezp-user-menu --> ezp-label
   ezp-user-menu --> ezp-icon-button
@@ -142,4 +161,6 @@ graph TD;
   style ezp-printing fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

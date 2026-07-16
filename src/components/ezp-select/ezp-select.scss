@@ -6,6 +6,11 @@
 
 :host {
   --ezp-select-duration: var(--ezp-duration-3);
+  --ezp-badge-gradient: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ezp-theme-solid), white 14%) 0%,
+    color-mix(in srgb, var(--ezp-theme-solid), black 22%) 100%
+  );
 
   display: block;
   height: var(--ezp-select-toggle-height);
@@ -14,29 +19,13 @@
   z-index: var(--ezp-select-zIndex, 3);
 
   @at-root {
-    #{&}(:first-child) {
-      --ezp-select-wrap-borderRadius: 3px 3px 0 0;
-    }
-
-    #{&}(:last-child) {
-      --ezp-select-wrap-borderRadius: 0 0 3px 3px;
-    }
-
-    #{&}(:first-child:last-child) {
-      --ezp-select-wrap-borderRadius: 3px;
-    }
-
-    #{&}(:not(:last-child):not(.is-expanded)) {
-      --ezp-select-wrap-boxShadowPositionBottom: 0 0 0 0;
-    }
-
     #{&}(.toggle-horizontal) {
-      --ezp-select-label-alignSelf: start;
+      --ezp-select-label-alignSelf: center;
       --ezp-select-toggle-gridTemplateAreas: 'label value accessory';
       --ezp-select-toggle-gridTemplateColumns: 1fr repeat(2, auto);
-      --ezp-select-toggle-height: 30px;
+      --ezp-select-toggle-height: 56px;
       --ezp-select-toggle-gridTemplateRows: auto;
-      --ezp-select-value-alignSelf: end;
+      --ezp-select-value-alignSelf: center;
     }
 
     #{&}(.toggle-horizontal.has-icon) {
@@ -48,7 +37,7 @@
       --ezp-select-label-alignSelf: center;
       --ezp-select-toggle-gridTemplateAreas: 'label accessory' 'value accessory';
       --ezp-select-toggle-gridTemplateColumns: 1fr auto;
-      --ezp-select-toggle-height: 48px;
+      --ezp-select-toggle-height: 64px;
       --ezp-select-toggle-gridTemplateRows: repeat(2, auto);
       --ezp-select-value-alignSelf: center;
     }
@@ -61,43 +50,58 @@
     #{&}(.option-horizontal) {
       --ezp-select-details-gridTemplateColumns: repeat(2, 1fr);
       --ezp-select-details-gridTemplateRows: auto;
-      --ezp-select-option-height: 30px;
+      --ezp-select-option-height: 44px;
     }
 
     #{&}(.option-vertical) {
       --ezp-select-details-gridTemplateColumns: 1fr;
       --ezp-select-details-gridTemplateRows: repeat(2, auto);
-      --ezp-select-option-height: 48px;
+      --ezp-select-option-height: 52px;
+    }
+
+    /* The printer selector reads as a solid, prominent badge (screen 3). */
+    #{&}(.toggle-vertical.has-icon) {
+      --ezp-select-badge-background: var(--ezp-badge-gradient);
+      --ezp-select-badge-color: var(--ezp-white-100);
+      --ezp-select-badge-height: 44px;
+      --ezp-select-badge-width: 44px;
+      --ezp-select-label-textTransform: uppercase;
+      --ezp-select-label-letterSpacing: 0.08em;
+      --ezp-select-label-fontSize: 11px;
+      --ezp-select-value-fontSize: 16px;
+      --ezp-select-value-fontWeight: 600;
+      --ezp-select-value-color: var(--ezp-core-foreground-primary);
     }
 
     #{&}(.is-expanded) {
       --ezp-select-accessory-color: var(--ezp-theme-solid);
       --ezp-select-transition: z-index 0s 0s;
       --ezp-select-zIndex: 9999;
-      --ezp-select-icon-color: var(--ezp-theme-solid);
       --ezp-select-label-color: var(--ezp-theme-solid);
-      --ezp-select-wrap-borderRadius: 3px;
+      --ezp-select-toggle-background: var(--ezp-theme-translucent);
+      --ezp-select-wrap-background: var(--ezp-core-surface-tertiary);
+      --ezp-select-wrap-borderRadius: 12px;
+      --ezp-select-wrap-boxShadow:
+        0 0 0 1px var(--ezp-core-outline), 0 16px 40px -16px var(--ezp-core-backdrop);
     }
 
     #{&}(.disabled) {
       --ezp-select-accessory-color: var(--ezp-core-foreground-tertiary);
-      --ezp-select-icon-color: var(--ezp-core-foreground-tertiary);
+      --ezp-select-badge-background: var(--ezp-core-shade-primary);
+      --ezp-select-badge-color: var(--ezp-core-foreground-tertiary);
       --ezp-select-label-color: var(--ezp-core-foreground-tertiary);
       --ezp-select-toggle-background-hover: transparent;
       --ezp-select-toggle-cursor: default;
+      --ezp-select-value-color: var(--ezp-core-foreground-tertiary);
       --value-color: var(--ezp-core-foreground-tertiary);
     }
   }
 }
 
 #wrap {
-  background: var(--ezp-core-surface-tertiary);
-  border-radius: var(--ezp-select-wrap-borderRadius, 0);
-  box-shadow:
-    var(--ezp-select-wrap-boxShadowPositionTop, 0 -1px 0 0) var(--ezp-core-outline),
-    var(--ezp-select-wrap-boxShadowPositionRight, 1px 0 0 0) var(--ezp-core-outline),
-    var(--ezp-select-wrap-boxShadowPositionBottom, 0 1px 0 0) var(--ezp-core-outline),
-    var(--ezp-select-wrap-boxShadowPositionLeft, -1px 0 0 0) var(--ezp-core-outline);
+  background: var(--ezp-select-wrap-background, transparent);
+  border-radius: var(--ezp-select-wrap-borderRadius, 12px);
+  box-shadow: var(--ezp-select-wrap-boxShadow, none);
   transform: translateY(var(--ezp-select-wrap-translateY, 0));
   transition:
     transform var(--ezp-select-duration) var(--ezp-easing-out-quart),
@@ -107,15 +111,17 @@
 
 #toggle {
   background: var(--ezp-select-toggle-background, transparent);
+  border-radius: var(--ezp-select-wrap-borderRadius, 12px);
   box-sizing: border-box;
   cursor: var(--ezp-select-toggle-cursor, pointer);
   display: grid;
-  gap: var(--ezp-spacing-2) var(--ezp-spacing-3);
+  gap: 2px var(--ezp-spacing-3);
   grid-template-areas: var(--ezp-select-toggle-gridTemplateAreas, none);
   grid-template-columns: var(--ezp-select-toggle-gridTemplateColumns, none);
   grid-template-rows: var(--ezp-select-toggle-gridTemplateRows, auto);
   height: var(--ezp-select-toggle-height, auto);
-  padding: var(--ezp-spacing-3);
+  padding: var(--ezp-spacing-2) var(--ezp-spacing-3);
+  transition: background-color var(--ezp-duration-2) var(--ezp-easing-out-quart);
 
   &:hover {
     --ezp-select-toggle-background: var(
@@ -126,29 +132,40 @@
 }
 
 #icon {
+  --ezp-icon-background: var(--ezp-select-badge-background, var(--ezp-theme-translucent));
+  --ezp-icon-borderRadius: 50%;
+  --ezp-icon-height: var(--ezp-select-badge-height, 40px);
+  --ezp-icon-width: var(--ezp-select-badge-width, 40px);
+
   align-self: center;
-  color: var(--ezp-select-icon-color, var(--ezp-core-foreground-secondary));
+  color: var(--ezp-select-badge-color, var(--ezp-theme-solid));
   grid-area: icon;
-  margin: calc(var(--ezp-spacing-2) * -1) 0;
 }
 
 #label {
+  --ezp-label-fontSize: var(--ezp-select-label-fontSize, 14px);
+  --ezp-label-letterSpacing: var(--ezp-select-label-letterSpacing, normal);
+
   align-self: var(--ezp-select-label-alignSelf, auto);
-  color: var(--ezp-select-label-color, var(--ezp-core-foreground-secondary));
+  color: var(--ezp-select-label-color, var(--ezp-core-foreground-primary));
   grid-area: label;
+  text-transform: var(--ezp-select-label-textTransform, none);
 }
 
 #value {
+  --ezp-label-fontSize: var(--ezp-select-value-fontSize, 14px);
+  --ezp-label-fontWeight: var(--ezp-select-value-fontWeight, 400);
+
   align-self: var(--ezp-select-value-alignSelf, auto);
-  color: var(--value-color, var(--ezp-core-foreground-primary));
+  color: var(--ezp-select-value-color, var(--value-color, var(--ezp-core-foreground-secondary)));
   grid-area: value;
+  text-align: right;
 }
 
 #accessory {
   align-self: center;
-  color: var(--ezp-select-accessory-color, var(--ezp-core-foreground-secondary));
+  color: var(--ezp-select-accessory-color, var(--ezp-core-foreground-tertiary));
   grid-area: accessory;
-  margin: calc(var(--ezp-spacing-2) * -1) 0;
 }
 
 #list {

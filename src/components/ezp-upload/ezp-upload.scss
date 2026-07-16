@@ -5,81 +5,28 @@
  */
 
 :host {
-  align-content: center;
-  background: var(--ezp-upload-background, transparent);
-  border: 1px dashed var(--ezp-upload-border-color, var(--ezp-core-foreground-tertiary));
-  border-radius: 3px;
+  --ezp-upload-gradient: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ezp-theme-solid), white 14%) 0%,
+    color-mix(in srgb, var(--ezp-theme-solid), black 22%) 100%
+  );
+
   box-sizing: border-box;
   color: var(--ezp-core-foreground-primary);
-  display: grid;
-  grid-template: auto / minmax(auto, 280px);
-  height: var(--ezp-upload-height, auto);
-  justify-content: center;
-  padding: var(--ezp-spacing-3);
-  position: relative;
-  transition:
-    background-color var(--ezp-duration-3) var(--ezp-easing-out-quart),
-    border-color var(--ezp-duration-3) var(--ezp-easing-out-quart);
+  display: block;
   width: var(--ezp-upload-width, auto);
-
-  @at-root {
-    #{&}(.dragging) {
-      --ezp-upload-background: var(--ezp-theme-translucent);
-      --ezp-upload-border-color: var(--ezp-theme-translucent);
-      --ezp-upload-header-blur: 16px;
-      --ezp-upload-header-opacity: 0.42;
-    }
-  }
+  height: var(--ezp-upload-height, auto);
 }
 
-#header {
-  --ezp-icon-fill: var(--ezp-theme-solid);
-
-  align-items: center;
-  display: flex;
-  filter: blur(var(--ezp-upload-header-blur, 0));
-  flex-direction: column;
-  gap: var(--ezp-spacing-5);
-  opacity: var(--ezp-upload-header-opacity, 1);
-  text-align: center;
-  transition:
-    filter var(--ezp-duration-3) var(--ezp-easing-out-quart),
-    opacity var(--ezp-duration-3) var(--ezp-easing-out-quart);
-
-  /* When files are selected, collapse the drop-zone icon and primary description
-     so the file list has more breathing room. */
-  &:has(#file-list) {
-    gap: var(--ezp-spacing-3);
-
-    > ezp-icon {
-      display: none;
-    }
-
-    > ezp-label:first-of-type {
-      display: none;
-    }
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-#meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ezp-spacing-3) 3px;
-  justify-content: center;
-}
-
-#select {
-  color: var(--ezp-theme-solid);
-  cursor: pointer;
-  opacity: var(--ezp-upload-select-opacity, 1);
-  text-decoration: underline;
-  white-space: nowrap;
-
-  @media (hover: hover) {
-    &:hover {
-      --ezp-upload-select-opacity: 0.58;
-    }
-  }
+#form {
+  display: block;
+  height: 100%;
 }
 
 #input {
@@ -91,56 +38,274 @@
   width: 0;
 }
 
-#file-list {
+#modal {
+  background: var(--ezp-core-surface-tertiary);
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 1px var(--ezp-core-outline),
+    0 24px 60px -20px var(--ezp-core-backdrop);
   display: flex;
   flex-direction: column;
-  gap: var(--ezp-spacing-3);
-  max-height: var(--ezp-upload-fileList-maxHeight, 35vh);
-  overflow-y: auto;
-  scrollbar-color: var(--ezp-core-foreground-tertiary) transparent;
+  gap: var(--ezp-spacing-4);
+  height: 100%;
+  padding: var(--ezp-spacing-5);
+}
 
-  /* Cross-platform thin scrollbar — Windows default is too chunky for this size. */
+/**
+ *
+ * Header
+ *
+ */
+
+#header {
+  align-items: center;
+  border-bottom: 1px solid var(--ezp-core-outline);
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: var(--ezp-spacing-4);
+}
+
+#heading {
+  --ezp-label-fontSize: 22px;
+  --ezp-label-lineHeight: 28px;
+}
+
+/**
+ *
+ * Dropzone
+ *
+ */
+
+#dropzone {
+  align-items: center;
+  background: var(--ezp-upload-background, transparent);
+  border: 1.5px dashed var(--ezp-upload-border-color, var(--ezp-core-foreground-tertiary));
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ezp-spacing-4);
+  padding: var(--ezp-spacing-6) var(--ezp-spacing-5);
+  text-align: center;
+  transition:
+    background-color var(--ezp-duration-3) var(--ezp-easing-out-quart),
+    border-color var(--ezp-duration-3) var(--ezp-easing-out-quart);
+}
+
+:host(.dragging) {
+  --ezp-upload-background: var(--ezp-theme-translucent);
+  --ezp-upload-border-color: var(--ezp-theme-solid);
+}
+
+#cloud {
+  align-items: center;
+  background: var(--ezp-upload-gradient);
+  border-radius: 20px;
+  box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--ezp-theme-solid), transparent 45%);
+  color: var(--ezp-white-100);
+  display: flex;
+  height: 84px;
+  justify-content: center;
+  width: 84px;
+
+  ezp-icon {
+    --ezp-icon-size: 40px;
+    --ezp-icon-gridTemplate: 40px;
+  }
+}
+
+#dropzone-title {
+  --ezp-label-fontSize: 20px;
+  --ezp-label-lineHeight: 26px;
+}
+
+#meta {
+  align-items: baseline;
+  color: var(--ezp-core-foreground-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+#browse {
+  color: var(--ezp-theme-solid);
+  cursor: pointer;
+  opacity: var(--ezp-upload-browse-opacity, 1);
+
+  @media (hover: hover) {
+    &:hover {
+      --ezp-upload-browse-opacity: 0.6;
+    }
+  }
+}
+
+/**
+ *
+ * Format chips
+ *
+ */
+
+#formats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ezp-spacing-2);
+  justify-content: center;
+}
+
+.format {
+  background: transparent;
+  border: 1px solid var(--ezp-core-outline);
+  border-radius: 999px;
+  color: var(--ezp-core-foreground-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  padding: 7px 14px;
+}
+
+/**
+ *
+ * File thumbnails
+ *
+ */
+
+#thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ezp-spacing-4);
+  justify-content: center;
+  max-height: 40vh;
+  overflow-y: auto;
+  padding: var(--ezp-spacing-1);
   scrollbar-width: thin;
   width: 100%;
-
-  /* WebKit fallback for older Safari / Chrome that don't honor scrollbar-width. */
-  &::-webkit-scrollbar {
-    height: 8px;
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: var(--ezp-core-foreground-tertiary);
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
 }
 
-.file-item {
-  align-items: center;
-  background: var(--ezp-core-background-secondary);
-  border-radius: 3px;
-  display: grid;
-  gap: var(--ezp-spacing-3);
-  grid-template-columns: 1fr auto;
-  min-height: 32px;
-  padding: var(--ezp-spacing-2) var(--ezp-spacing-3);
-}
-
-.file-name {
-  grid-column: 1;
-  min-width: 0;
-
-  ezp-label {
-    --ezp-label-minWidth: 0;
-  }
-}
-
-.file-remove {
+.thumb {
   align-items: center;
   display: flex;
-  grid-column: 2;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  width: 88px;
+}
+
+.thumb-icon {
+  align-items: center;
+  background: var(--ezp-upload-gradient);
+  border-radius: 50%;
+  color: var(--ezp-white-100);
+  display: flex;
+  height: 56px;
+  justify-content: center;
+  width: 56px;
+
+  ezp-icon {
+    --ezp-icon-size: 26px;
+    --ezp-icon-gridTemplate: 26px;
+  }
+}
+
+.thumb-name {
+  --ezp-label-minWidth: 0;
+
+  max-width: 100%;
+}
+
+.thumb-meta {
+  letter-spacing: 0.02em;
+}
+
+.thumb-remove {
+  align-items: center;
+  appearance: none;
+  background: var(--ezp-core-surface-tertiary);
+  border: 1px solid var(--ezp-core-outline);
+  border-radius: 50%;
+  color: var(--ezp-core-foreground-secondary);
+  cursor: pointer;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  right: 8px;
+  top: -4px;
+  transition: color var(--ezp-duration-2) var(--ezp-easing-out-quart);
+  width: 20px;
+  z-index: 1;
+
+  ezp-icon {
+    --ezp-icon-size: 12px;
+    --ezp-icon-gridTemplate: 12px;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--ezp-core-foreground-primary);
+    }
+  }
+}
+
+.thumb-add {
+  cursor: pointer;
+
+  .thumb-add-icon {
+    align-items: center;
+    border: 1.5px dashed var(--ezp-core-foreground-tertiary);
+    border-radius: 50%;
+    color: var(--ezp-core-foreground-secondary);
+    display: flex;
+    height: 56px;
+    justify-content: center;
+    transition: border-color var(--ezp-duration-2) var(--ezp-easing-out-quart);
+    width: 56px;
+
+    ezp-icon {
+      --ezp-icon-size: 24px;
+      --ezp-icon-gridTemplate: 24px;
+    }
+  }
+
+  @media (hover: hover) {
+    &:hover .thumb-add-icon {
+      border-color: var(--ezp-theme-solid);
+      color: var(--ezp-theme-solid);
+    }
+  }
+}
+
+/**
+ *
+ * Ready counter
+ *
+ */
+
+#ready {
+  color: var(--ezp-core-foreground-secondary);
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/**
+ *
+ * Footer
+ *
+ */
+
+#footer {
+  display: grid;
+  gap: var(--ezp-spacing-3);
+  grid-template-columns: 1fr 1.4fr;
+}
+
+.action {
+  --ezp-textButton-borderRadius: 999px;
+  --ezp-textButton-padding: var(--ezp-spacing-4);
+}
+
+#continue {
+  --ezp-textButton-background-init: var(--ezp-upload-gradient);
 }

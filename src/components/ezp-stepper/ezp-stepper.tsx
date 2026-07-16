@@ -204,19 +204,6 @@ export class EzpStepper {
         <div id="toggle" onClick={this.setFocus} />
         {this.icon ? <ezp-icon id="icon" name={this.icon} /> : null}
         <ezp-label id="label" noWrap text={this.label} />
-        <input
-          id="input"
-          type="number"
-          ref={(input) => (this.input = input)}
-          min={this.min.toString()}
-          max={this.max !== undefined ? this.max.toString() : undefined}
-          value={this.value.toString()}
-          aria-label={this.label}
-          onInput={this.handleInput}
-          onKeyDown={this.handleKeyDown}
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
-        />
         <div class="buttons">
           <button
             class="button"
@@ -227,6 +214,19 @@ export class EzpStepper {
           >
             <ezp-icon name="minus" />
           </button>
+          <input
+            id="input"
+            type="number"
+            ref={(input) => (this.input = input)}
+            min={this.min.toString()}
+            max={this.max !== undefined ? this.max.toString() : undefined}
+            value={this.value.toString()}
+            aria-label={this.label}
+            onInput={this.handleInput}
+            onKeyDown={this.handleKeyDown}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
+          />
           <button
             class="button"
             type="button"

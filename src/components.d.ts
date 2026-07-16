@@ -574,6 +574,7 @@ declare global {
     };
     interface HTMLEzpUploadElementEventMap {
         "uploadFile": File[];
+        "uploadContinue": File[];
     }
     interface HTMLEzpUploadElement extends Components.EzpUpload, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpUploadElementEventMap>(type: K, listener: (this: HTMLEzpUploadElement, ev: EzpUploadCustomEvent<HTMLEzpUploadElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -983,7 +984,11 @@ declare namespace LocalJSX {
     }
     interface EzpUpload {
         /**
-          * Events
+          * Fired when the user confirms the selection and wants to move on to print options.
+         */
+        "onUploadContinue"?: (event: EzpUploadCustomEvent<File[]>) => void;
+        /**
+          * Keeps the parent's file state in sync as the selection changes.
          */
         "onUploadFile"?: (event: EzpUploadCustomEvent<File[]>) => void;
     }

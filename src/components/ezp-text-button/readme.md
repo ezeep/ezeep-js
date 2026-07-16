@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property   | Attribute  | Description    | Type                                     | Default     |
@@ -14,29 +15,31 @@
 | `small`    | `small`    | Description... | `boolean`                                | `false`     |
 | `type`     | `type`     | Description... | `"button"`                               | `undefined` |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ezp-auth](../ezp-auth)
-- [ezp-dialog](../ezp-dialog)
-- [ezp-printer-selection](../ezp-printer-selection)
-- [ezp-status](../ezp-status)
+ - [ezp-dialog](../ezp-dialog)
+ - [ezp-printer-selection](../ezp-printer-selection)
+ - [ezp-status](../ezp-status)
+ - [ezp-upload](../ezp-upload)
 
 ### Depends on
 
 - [ezp-label](../ezp-label)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-text-button --> ezp-label
-  ezp-auth --> ezp-text-button
   ezp-dialog --> ezp-text-button
   ezp-printer-selection --> ezp-text-button
   ezp-status --> ezp-text-button
+  ezp-upload --> ezp-text-button
   style ezp-text-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+

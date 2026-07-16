@@ -49,7 +49,8 @@
         "page_ranges": "Page Ranges",
         "paper_ranges": "Paper Ranges",
         "files_selected": "{{count}} files selected",
-        "files": "files"
+        "files": "files",
+        "file_count": "{{count}} files"
     },
     "button_actions": {
         "login": "Sign In",
@@ -64,7 +65,14 @@
         "meta_leading": "or",
         "meta_select": "select files",
         "meta_trailing": "to print with ezeep Blue.",
-        "selected_files": "Selected Files:"
+        "selected_files": "Selected Files:",
+        "heading": "Print Now",
+        "dropzone_title": "Drop files here",
+        "browse": "select from device",
+        "meta_multiple": "— multiple files supported",
+        "add_more": "Add",
+        "files_ready": "{{count}} files ready",
+        "continue": "Continue to print options"
     },
     "user_menu": {
         "theme": "Color theme",
