@@ -794,6 +794,9 @@ export class EzpPrinterSelection {
         <ezp-status
           icon={this.partialSuccess ? 'exclamation-mark' : 'checkmark-alt'}
           description={this.printSuccessDescription()}
+          subtext={
+            this.partialSuccess ? undefined : i18next.t('printer_selection.print_success_sub')
+          }
           instance="print-success"
           close
         />

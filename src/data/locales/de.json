@@ -15,6 +15,7 @@
         "printer": "Drucker",
         "print_processing": "Drucken…",
         "print_success": "Erfolgreich gedruckt.",
+        "print_success_sub": "Dein Dokument ist auf dem Weg zum Drucker.",
         "print_failed": "Druck fehlgeschlagen",
         "print_timeout": "Das dauert länger als erwartet. Der Auftrag wird möglicherweise noch auf dem Drucker fertiggestellt.",
         "not_supported": "Der ausgewählte Dateityp wird nicht unterstützt.",

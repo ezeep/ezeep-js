@@ -273,6 +273,7 @@ export namespace Components {
          */
         "processing": boolean;
         "retry"?: string | boolean;
+        "subtext"?: string;
     }
     interface EzpStepper {
         /**
@@ -923,6 +924,7 @@ declare namespace LocalJSX {
          */
         "processing"?: boolean;
         "retry"?: string | boolean;
+        "subtext"?: string;
     }
     interface EzpStepper {
         /**
@@ -1099,6 +1101,7 @@ declare namespace LocalJSX {
     }
     interface EzpStatusAttributes {
         "description": string;
+        "subtext": string;
         "processing": boolean;
         "instance": string;
         "icon": IconNameTypes;

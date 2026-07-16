@@ -13,6 +13,7 @@
         "loading": "Loading My Printers…",
         "print_processing": "Printing…",
         "print_success": "Successfully printed.",
+        "print_success_sub": "Your document is on its way to the printer.",
         "pull_print_success": "Ready to be released.",
         "print_failed": "Print failed",
         "print_timeout": "This is taking longer than expected. The job may still finish on the printer.",
