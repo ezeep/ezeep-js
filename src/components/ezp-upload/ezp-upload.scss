@@ -82,8 +82,13 @@
   border: 1.5px dashed var(--ezp-upload-border-color, var(--ezp-core-foreground-tertiary));
   border-radius: 12px;
   display: flex;
+  /* Grow to fill the modal body so the dashed box spans the available height,
+     and keep the contents centered vertically within it. */
+  flex: 1 1 auto;
   flex-direction: column;
   gap: var(--ezp-spacing-4);
+  justify-content: center;
+  min-height: 0;
   padding: var(--ezp-spacing-6) var(--ezp-spacing-5);
   text-align: center;
   transition:
