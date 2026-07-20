@@ -61,7 +61,7 @@ export class EzpPrinterSelection {
       title: i18next.t('printer_selection.color_grayscale'),
     },
   ]
-  private printButton?: HTMLEzpTextButtonElement
+  private printButton?: HTMLButtonElement
 
   /**
    *
@@ -947,7 +947,7 @@ export class EzpPrinterSelection {
                   this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
                 }
                 onClick={this.handlePrint}
-                ref={(button) => (this.printButton = button as unknown as HTMLEzpTextButtonElement)}
+                ref={(button) => (this.printButton = button)}
               >
                 <ezp-icon name="printer" />
                 <ezp-label weight="heavy" text={i18next.t('printer_selection.print')} />

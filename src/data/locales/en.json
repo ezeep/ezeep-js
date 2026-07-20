@@ -49,9 +49,9 @@
         "select_trays": "Select Tray",
         "page_ranges": "Page Ranges",
         "paper_ranges": "Paper Ranges",
-        "files_selected": "{{count}} files selected",
         "files": "files",
-        "file_count": "{{count}} files"
+        "file_count_one": "{{count}} file",
+        "file_count_other": "{{count}} files"
     },
     "button_actions": {
         "login": "Sign In",
@@ -72,7 +72,8 @@
         "browse": "select from device",
         "meta_multiple": "— multiple files supported",
         "add_more": "Add",
-        "files_ready": "{{count}} files ready",
+        "files_ready_one": "{{count}} file ready",
+        "files_ready_other": "{{count}} files ready",
         "continue": "Continue to print options"
     },
     "user_menu": {

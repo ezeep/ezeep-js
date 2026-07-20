@@ -49,9 +49,9 @@
         "select_trays": "Wähle Papierfach",
         "page_ranges": "Druckbereich",
         "paper_ranges": "Papier-Ranges",
-        "files_selected": "{{count}} Dateien ausgewählt",
         "files": "Dateien",
-        "file_count": "{{count}} Dateien"
+        "file_count_one": "{{count}} Datei",
+        "file_count_other": "{{count}} Dateien"
     },
     "button_actions": {
         "login": "Anmelden",
@@ -72,7 +72,8 @@
         "browse": "vom Gerät auswählen",
         "meta_multiple": "— mehrere Dateien möglich",
         "add_more": "Hinzufügen",
-        "files_ready": "{{count}} Dateien bereit",
+        "files_ready_one": "{{count}} Datei bereit",
+        "files_ready_other": "{{count}} Dateien bereit",
         "continue": "Weiter zu Druckoptionen"
     },
     "user_menu": {

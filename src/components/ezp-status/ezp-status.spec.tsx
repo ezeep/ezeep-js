@@ -30,6 +30,22 @@ describe('ezp-status', () => {
     expect(page.root!.shadowRoot!.querySelectorAll('ezp-text-button').length).toBe(3)
   })
 
+  it('renders the secondary subtext only when provided', async () => {
+    const without = await newSpecPage({
+      components: [EzpStatus],
+      html: `<ezp-status description="Erfolgreich gedruckt."></ezp-status>`,
+    })
+    expect(without.root!.shadowRoot!.querySelector('#subtext')).toBeNull()
+
+    const withSub = await newSpecPage({
+      components: [EzpStatus],
+      html: `<ezp-status description="Erfolgreich gedruckt." subtext="Auf dem Weg zum Drucker."></ezp-status>`,
+    })
+    const sub = withSub.root!.shadowRoot!.querySelector('#subtext')
+    expect(sub).not.toBeNull()
+    expect(sub!.getAttribute('text')).toBe('Auf dem Weg zum Drucker.')
+  })
+
   it('is a polite live region so status changes are announced', async () => {
     const page = await newSpecPage({
       components: [EzpStatus],

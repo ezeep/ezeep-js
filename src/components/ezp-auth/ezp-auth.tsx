@@ -35,7 +35,14 @@ export class EzpAuth {
 
   @Listen('statusCancel')
   listenStatusCancel() {
-    this.authCancel.emit()
+    // Cancelling sign-in from the file trigger aborts the whole flow and clears
+    // the selected files (parity with the pre-redesign Cancel button). The button
+    // trigger has no pending selection, so it just closes the auth dialog.
+    if (this.trigger === 'file') {
+      this.userCancel.emit()
+    } else {
+      this.authCancel.emit()
+    }
   }
 
   oauthPopupWindow: Window | null = null
