@@ -1,3 +1,35 @@
+diff --git a/node_modules/@cortado-holding/colors/_accents.scss b/node_modules/@cortado-holding/colors/_accents.scss
+index 59ca5d1..f7d2dcd 100644
+--- a/node_modules/@cortado-holding/colors/_accents.scss
++++ b/node_modules/@cortado-holding/colors/_accents.scss
+@@ -63,10 +63,10 @@ $palette: (
+     'teal-solid-alt': rgb(0 132 110),
+     'teal-translucent': rgba(0 150 124/ 16%),
+     'teal-faded': rgba(0 150 124/ 10%),
+-    'cyan-solid': rgb(0 145 180),
+-    'cyan-solid-alt': rgb(0 128 160),
+-    'cyan-translucent': rgb(0 145 180 / 16%),
+-    'cyan-faded': rgb(0 145 180 / 10%),
++    'cyan-solid': rgb(0 143 178),
++    'cyan-solid-alt': rgb(0 126 158),
++    'cyan-translucent': rgb(0 143 178 / 10%),
++    'cyan-faded': rgb(0 143 178 / 10%),
+     'blue-solid': rgb(80 129 241),
+     'blue-solid-alt': rgb(59 114 223),
+     'blue-translucent': rgb(80 129 241 / 16%),
+@@ -99,9 +99,9 @@ $palette: (
+     'teal-solid': rgb(29 160 134),
+     'teal-translucent': rgba(29 160 134/ 26%),
+     'teal-faded': rgba(29 160 134/ 16%),
+-    'cyan-solid': rgb(32 155 191),
+-    'cyan-translucent': rgb(32 155 191 / 26%),
+-    'cyan-faded': rgb(32 155 191 / 16%),
++    'cyan-solid': rgb(32 153 189),
++    'cyan-translucent': rgb(32 153 189 / 26%),
++    'cyan-faded': rgb(32 153 189 / 16%),
+     'blue-solid': rgb(93 139 253),
+     'blue-translucent': rgb(93 139 253 / 26%),
+     'blue-faded': rgb(93 139 253 / 16%),
 diff --git a/node_modules/@cortado-holding/colors/library/utils.scss b/node_modules/@cortado-holding/colors/library/utils.scss
 index 04dd76a..c438f54 100644
 --- a/node_modules/@cortado-holding/colors/library/utils.scss
