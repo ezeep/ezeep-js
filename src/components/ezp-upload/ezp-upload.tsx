@@ -155,7 +155,7 @@ export class EzpUpload {
     const hasFiles = this.selectedFiles.length > 0
 
     return (
-      <Host class={{ dragging: this.dragging, 'has-files': hasFiles }}>
+      <Host class={{ dragging: this.dragging }}>
         <form id="form" ref={(form) => (this.form = form)}>
           <input
             type="file"
