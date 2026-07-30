@@ -64,9 +64,6 @@
     "upload": {
         "description": "Ziehe Dateien hier in den Browser ",
         "meta_leading": "oder",
-        "meta_select": "wähle Dateien aus",
-        "meta_trailing": "um mit ezeep Blue zu drucken.",
-        "selected_files": "Ausgewählte Dateien:",
         "heading": "Jetzt drucken",
         "dropzone_title": "Dateien hier ablegen",
         "browse": "vom Gerät auswählen",
