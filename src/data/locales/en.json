@@ -67,6 +67,7 @@
         "heading": "Print Now",
         "dropzone_title": "Drop files here",
         "browse": "select from device",
+        "file_type_fallback": "FILE",
         "meta_multiple": "— multiple files supported",
         "add_more": "Add",
         "files_ready_one": "{{count}} file ready",

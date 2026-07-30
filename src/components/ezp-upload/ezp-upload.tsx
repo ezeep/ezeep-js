@@ -129,7 +129,7 @@ export class EzpUpload {
   /** Extract a short, upper-cased file-type label from the file name. */
   private fileType(name: string): string {
     const extension = name.split('.').pop()
-    return extension && extension !== name ? extension.toUpperCase() : i18next.t('printer_selection.files')
+    return extension && extension !== name ? extension.toUpperCase() : i18next.t('upload.file_type_fallback')
   }
 
   /** Human-readable file size (matches the mockup's "14.6 KB" style). */
