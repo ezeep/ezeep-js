@@ -180,6 +180,14 @@ export class EzpPrinting {
 
   @Listen('uploadFile')
   listenUploadFile(event: CustomEvent) {
+    // Keep the selection in sync as files are added/removed, but stay on the
+    // upload step until the user explicitly continues (see listenUploadContinue).
+    this.files = event.detail
+    this.filename = this.files.length > 0 ? this.files[0].name : ''
+  }
+
+  @Listen('uploadContinue')
+  listenUploadContinue(event: CustomEvent) {
     this.files = event.detail
     this.filename = this.files.length > 0 ? this.files[0].name : ''
     this.open()

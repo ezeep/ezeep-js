@@ -39,9 +39,10 @@
 - [ezp-status](../ezp-status)
 - [ezp-label](../ezp-label)
 - [ezp-icon-button](../ezp-icon-button)
+- [ezp-icon](../ezp-icon)
 - [ezp-select](../ezp-select)
-- [ezp-input](../ezp-input)
 - [ezp-stepper](../ezp-stepper)
+- [ezp-input](../ezp-input)
 - [ezp-text-button](../ezp-text-button)
 - [ezp-user-menu](../ezp-user-menu)
 
@@ -51,9 +52,10 @@ graph TD;
   ezp-printer-selection --> ezp-status
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
+  ezp-printer-selection --> ezp-icon
   ezp-printer-selection --> ezp-select
-  ezp-printer-selection --> ezp-input
   ezp-printer-selection --> ezp-stepper
+  ezp-printer-selection --> ezp-input
   ezp-printer-selection --> ezp-text-button
   ezp-printer-selection --> ezp-user-menu
   ezp-status --> ezp-icon
@@ -64,10 +66,10 @@ graph TD;
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> ezp-label
-  ezp-input --> ezp-icon
-  ezp-input --> ezp-label
   ezp-stepper --> ezp-icon
   ezp-stepper --> ezp-label
+  ezp-input --> ezp-icon
+  ezp-input --> ezp-label
   ezp-user-menu --> ezp-backdrop
   ezp-user-menu --> ezp-label
   ezp-user-menu --> ezp-icon-button

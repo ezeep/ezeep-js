@@ -68,11 +68,17 @@ describe('ezp-printing journey', () => {
   it('upload -> auth dialog -> printer selection', async () => {
     const { page, el } = await setup('trigger="file"')
 
-    // A file is chosen in ezp-upload, which emits `uploadFile`.
+    // Files are chosen in ezp-upload, which emits `uploadFile` to sync the
+    // selection without leaving the upload step yet.
     el.listenUploadFile({ detail: [new File(['x'], 'report.pdf')] })
     await page.waitForChanges()
-    expect(el.authOpen).toBe(true)
+    expect(el.authOpen).toBe(false)
     expect(el.filename).toBe('report.pdf')
+
+    // Confirming the selection (`uploadContinue`) advances to the auth dialog.
+    el.listenUploadContinue({ detail: [new File(['x'], 'report.pdf')] })
+    await page.waitForChanges()
+    expect(el.authOpen).toBe(true)
     expect(html(page)).toContain('ezp-auth')
 
     // Auth succeeds with a document present -> printer selection opens.
@@ -113,7 +119,7 @@ describe('ezp-printing journey', () => {
 
   it('authCancel closes the auth dialog', async () => {
     const { page, el } = await setup('trigger="file"')
-    el.listenUploadFile({ detail: [new File(['x'], 'report.pdf')] })
+    el.listenUploadContinue({ detail: [new File(['x'], 'report.pdf')] })
     await page.waitForChanges()
     expect(el.authOpen).toBe(true)
 
@@ -306,7 +312,7 @@ describe('ezp-printing public methods', () => {
 
   it('listenUserCancel closes auth and clears the selected files', async () => {
     const { page, el } = await setup('trigger="file"')
-    el.listenUploadFile({ detail: [new File(['x'], 'report.pdf')] })
+    el.listenUploadContinue({ detail: [new File(['x'], 'report.pdf')] })
     await page.waitForChanges()
     expect(el.authOpen).toBe(true)
 

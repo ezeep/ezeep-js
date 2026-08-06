@@ -13,6 +13,7 @@
         "loading": "Loading My Printers…",
         "print_processing": "Printing…",
         "print_success": "Successfully printed.",
+        "print_success_sub": "Your document is on its way to the printer.",
         "pull_print_success": "Ready to be released.",
         "print_failed": "Print failed",
         "print_timeout": "This is taking longer than expected. The job may still finish on the printer.",
@@ -48,8 +49,9 @@
         "select_trays": "Select Tray",
         "page_ranges": "Page Ranges",
         "paper_ranges": "Paper Ranges",
-        "files_selected": "{{count}} files selected",
-        "files": "files"
+        "files": "files",
+        "file_count_one": "{{count}} file",
+        "file_count_other": "{{count}} files"
     },
     "button_actions": {
         "login": "Sign In",
@@ -62,9 +64,15 @@
     "upload": {
         "description": "Drop files here into the browser ",
         "meta_leading": "or",
-        "meta_select": "select files",
-        "meta_trailing": "to print with ezeep Blue.",
-        "selected_files": "Selected Files:"
+        "heading": "Print Now",
+        "dropzone_title": "Drop files here",
+        "browse": "select from device",
+        "file_type_fallback": "FILE",
+        "meta_multiple": "— multiple files supported",
+        "add_more": "Add",
+        "files_ready_one": "{{count}} file ready",
+        "files_ready_other": "{{count}} files ready",
+        "continue": "Continue to print options"
     },
     "user_menu": {
         "theme": "Color theme",

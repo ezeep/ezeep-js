@@ -66,4 +66,28 @@ describe('ezp-auth receiveMessage origin validation', () => {
     expect(authStore.state.code).toBe('auth-code')
     expect(el.auth.getAccessToken).toHaveBeenCalled()
   })
+
+  it('cancelling sign-in clears the selection on the file trigger, only closes on the button trigger', async () => {
+    // File trigger: emit userCancel so the parent clears the pending files.
+    const fileEl = await setup()
+    fileEl.trigger = 'file'
+    let userCancelled = false
+    let authCancelled = false
+    fileEl.userCancel = { emit: () => (userCancelled = true) }
+    fileEl.authCancel = { emit: () => (authCancelled = true) }
+    fileEl.listenStatusCancel()
+    expect(userCancelled).toBe(true)
+    expect(authCancelled).toBe(false)
+
+    // Button trigger: nothing to clear, so just close the auth dialog.
+    const buttonEl = await setup()
+    buttonEl.trigger = 'button'
+    let userCancelled2 = false
+    let authCancelled2 = false
+    buttonEl.userCancel = { emit: () => (userCancelled2 = true) }
+    buttonEl.authCancel = { emit: () => (authCancelled2 = true) }
+    buttonEl.listenStatusCancel()
+    expect(authCancelled2).toBe(true)
+    expect(userCancelled2).toBe(false)
+  })
 })

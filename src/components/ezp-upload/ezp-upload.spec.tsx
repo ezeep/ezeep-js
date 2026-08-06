@@ -59,4 +59,35 @@ describe('ezp-upload', () => {
     up.listenPrintCancel()
     expect(up.selectedFiles).toEqual([])
   })
+
+  it('handleContinue emits uploadContinue with the selection, and is a no-op when empty', async () => {
+    const { page, up } = await setup()
+    const advanced: File[][] = []
+    page.root!.addEventListener('uploadContinue', ((e: CustomEvent<File[]>) => {
+      advanced.push(e.detail)
+    }) as EventListener)
+
+    // No files yet -> must not advance.
+    up.handleContinue()
+    expect(advanced).toHaveLength(0)
+
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
+    up.handleContinue()
+    expect(advanced).toHaveLength(1)
+    expect(advanced[0].map((f: File) => f.name)).toEqual(['a.pdf'])
+  })
+
+  it('clearSelection empties the selection and re-emits an empty uploadFile', async () => {
+    const { page, up } = await setup()
+    up.form = { reset: () => undefined }
+    const emitted: File[][] = []
+    page.root!.addEventListener('uploadFile', ((e: CustomEvent<File[]>) => {
+      emitted.push(e.detail)
+    }) as EventListener)
+
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
+    up.clearSelection()
+    expect(up.selectedFiles).toEqual([])
+    expect(emitted[emitted.length - 1]).toEqual([])
+  })
 })

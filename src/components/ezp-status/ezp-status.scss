@@ -13,15 +13,21 @@
  */
 
 :host {
+  --ezp-status-gradient: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ezp-theme-solid), white 14%) 0%,
+    color-mix(in srgb, var(--ezp-theme-solid), black 22%) 100%
+  );
+
   align-items: center;
   background: var(--ezp-core-backdrop);
-  border-radius: var(--ezp-status-border-radius, 6px);
+  border-radius: var(--ezp-status-border-radius, 16px);
   box-sizing: border-box;
   display: flex;
   height: 100%;
   justify-content: center;
   left: 0;
-  padding: var(--ezp-spacing-6);
+  padding: var(--ezp-spacing-5);
   position: absolute;
   top: 0;
   width: 100%;
@@ -32,25 +38,76 @@
   }
 }
 
-#box {
-  --ezp-icon-fill: var(--ezp-theme-solid);
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
+#box {
   align-items: center;
   background: var(--ezp-core-surface-tertiary);
-  border-radius: 3px;
-  box-shadow: var(--ezp-status-box-boxShadow, 0 0 0 1px var(--ezp-black-10));
+  border-radius: 16px;
+  box-shadow: var(
+    --ezp-status-box-boxShadow,
+    0 0 0 1px var(--ezp-core-outline),
+    0 24px 60px -20px var(--ezp-core-backdrop)
+  );
   display: flex;
   flex-direction: column;
   gap: var(--ezp-spacing-4);
-  padding: var(--ezp-spacing-4) var(--ezp-spacing-5);
+  max-width: 360px;
+  padding: var(--ezp-spacing-6) var(--ezp-spacing-5) var(--ezp-spacing-5);
+  text-align: center;
+  width: 100%;
 }
+
+/**
+ *
+ * Icon (haloed gradient badge)
+ *
+ */
+
+#icon {
+  align-items: center;
+  background: var(--ezp-theme-translucent);
+  border-radius: 50%;
+  display: flex;
+  height: 132px;
+  justify-content: center;
+  margin-bottom: var(--ezp-spacing-2);
+  width: 132px;
+}
+
+#icon-inner {
+  align-items: center;
+  background: var(--ezp-status-gradient);
+  border-radius: 50%;
+  box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--ezp-theme-solid), transparent 45%);
+  color: var(--ezp-white-100);
+  display: flex;
+  height: 84px;
+  justify-content: center;
+  width: 84px;
+
+  ezp-icon {
+    --ezp-icon-size: 40px;
+    --ezp-icon-gridTemplate: 40px;
+  }
+}
+
+/**
+ *
+ * Processing spinner
+ *
+ */
 
 #indicator {
   animation: rotate var(--ezp-duration-6) linear infinite;
   display: block;
-  height: 42px;
+  height: 48px;
   transform: rotate(0);
-  width: 42px;
+  width: 48px;
 }
 
 #track {
@@ -69,13 +126,52 @@
   stroke-width: 4px;
 }
 
+/**
+ *
+ * Text
+ *
+ */
+
 #description {
+  --ezp-label-fontSize: 22px;
+  --ezp-label-lineHeight: 28px;
+
   color: var(--ezp-core-foreground-primary);
 }
 
+#subtext {
+  color: var(--ezp-core-foreground-secondary);
+  margin-top: calc(var(--ezp-spacing-4) * -1 + var(--ezp-spacing-2));
+}
+
+/**
+ *
+ * Footer
+ *
+ */
+
 #footer {
   display: flex;
-  gap: var(--ezp-spacing-2);
+  gap: var(--ezp-spacing-3);
+  margin-top: var(--ezp-spacing-3);
+  width: 100%;
+}
+
+.action {
+  --ezp-textButton-borderRadius: 999px;
+  --ezp-textButton-padding: var(--ezp-spacing-4);
+
+  flex: 1;
+}
+
+ezp-text-button.action.primary {
+  --ezp-textButton-background-init: var(--ezp-status-gradient);
+}
+
+ezp-text-button.action.secondary {
+  --ezp-textButton-background-init: transparent;
+  --ezp-textButton-boxShadow: inset 0 0 0 1px var(--ezp-core-outline);
+  --ezp-textButton-color-init: var(--ezp-core-foreground-primary);
 }
 
 /**

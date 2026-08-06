@@ -16,6 +16,7 @@ export class EzpStatus {
    */
 
   @Prop() description: string = 'Description'
+  @Prop() subtext?: string
   @Prop() processing: boolean = false
   @Prop() instance: string
   @Prop() icon?: IconNameTypes
@@ -90,15 +91,22 @@ export class EzpStatus {
               <circle id="value" cx="21" cy="21" r="18" />
             </svg>
           ) : this.icon ? (
-            <ezp-icon name={this.icon} framed />
+            <div id="icon">
+              <div id="icon-inner">
+                <ezp-icon name={this.icon} />
+              </div>
+            </div>
           ) : null}
-          <ezp-label id="description" level="tertiary" weight="strong" text={this.description} />
+          <ezp-label id="description" weight="heavy" text={this.description} />
+          {this.subtext && (
+            <ezp-label id="subtext" level="secondary" text={this.subtext} />
+          )}
           {(this.cancel || this.close || this.retry) && (
             <div id="footer">
               {this.cancel && (
                 <ezp-text-button
+                  class="action secondary"
                   level="secondary"
-                  small
                   onClick={this.handleCancel}
                   label={
                     typeof this.cancel === 'string'
@@ -109,8 +117,8 @@ export class EzpStatus {
               )}
               {this.close && (
                 <ezp-text-button
+                  class={`action ${this.retry ? 'secondary' : 'primary'}`}
                   level={this.retry ? 'secondary' : 'primary'}
-                  small
                   onClick={this.handleClose}
                   label={
                     typeof this.close === 'string' ? this.close : i18next.t('button_actions.close')
@@ -119,8 +127,8 @@ export class EzpStatus {
               )}
               {this.retry && (
                 <ezp-text-button
+                  class="action primary"
                   level="primary"
-                  small
                   onClick={this.handleRetry}
                   label={
                     typeof this.retry === 'string' ? this.retry : i18next.t('button_actions.retry')

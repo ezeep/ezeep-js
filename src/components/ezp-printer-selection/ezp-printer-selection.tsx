@@ -61,7 +61,7 @@ export class EzpPrinterSelection {
       title: i18next.t('printer_selection.color_grayscale'),
     },
   ]
-  private printButton?: HTMLEzpTextButtonElement
+  private printButton?: HTMLButtonElement
 
   /**
    *
@@ -794,6 +794,9 @@ export class EzpPrinterSelection {
         <ezp-status
           icon={this.partialSuccess ? 'exclamation-mark' : 'checkmark-alt'}
           description={this.printSuccessDescription()}
+          subtext={
+            this.partialSuccess ? undefined : i18next.t('printer_selection.print_success_sub')
+          }
           instance="print-success"
           close
         />
@@ -856,6 +859,14 @@ export class EzpPrinterSelection {
   }
 
   render() {
+    const fileNames =
+      this.files && this.files.length > 0
+        ? this.files.map((file) => file.name)
+        : this.filename
+          ? [this.filename]
+          : []
+    const fileCount = fileNames.length
+
     return this.loading ? (
       <ezp-status
         processing
@@ -868,34 +879,48 @@ export class EzpPrinterSelection {
           {!this.printStopped && this.renderStatus()}
           {!this.hideheader && (
             <div id="header">
-              <ezp-label
-                weight="heavy"
-                text={i18next.t('printer_selection.print') + `${!this.notSupported ? ':' : ''}`}
-              />
-              <ezp-label
-                text={
-                  !this.notSupported
-                    ? this.files && this.files.length > 1
-                      ? i18next.t('printer_selection.files_selected', { count: this.files.length })
-                      : this.filename
-                    : ''
-                }
-                ellipsis
-              />
-              {!this.hidemenu && (
+              <div id="title">
+                <ezp-label weight="heavy" text={i18next.t('printer_selection.print')} />
+                {!this.notSupported && fileCount > 0 && (
+                  <span id="files-badge">
+                    {i18next.t('printer_selection.file_count', { count: fileCount })}
+                  </span>
+                )}
+              </div>
+              <div id="header-actions">
+                {!this.hidemenu && (
+                  <ezp-icon-button
+                    level="tertiary"
+                    icon="menu"
+                    id="toggle-menu"
+                    type="button"
+                    onClick={this.handleUserMenu}
+                  />
+                )}
                 <ezp-icon-button
                   level="tertiary"
-                  icon="menu"
-                  id="toggle-menu"
+                  icon="close"
+                  id="close"
                   type="button"
-                  onClick={this.handleUserMenu}
+                  onClick={this.handleCancel}
                 />
-              )}
+              </div>
             </div>
           )}
           <div id="body">
-            <div id="printer">
+            {!this.notSupported && fileNames.length > 0 && (
+              <div id="files-card">
+                {fileNames.map((name, index) => (
+                  <div class="file-row" key={index}>
+                    <ezp-icon name="file" class="file-row-icon" />
+                    <ezp-label ellipsis text={name} />
+                  </div>
+                ))}
+              </div>
+            )}
+            <div id="printer-card">
               <ezp-select
+                id="printer"
                 label={i18next.t('printer_selection.printer')}
                 icon="printer"
                 placeholder={
@@ -915,8 +940,21 @@ export class EzpPrinterSelection {
                 preSelected={this.selectedPrinter.id ? this.selectedPrinter.name : null}
                 disabled={!(this.printers.length > 0)}
               />
+              <button
+                id="print"
+                type="button"
+                disabled={
+                  this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
+                }
+                onClick={this.handlePrint}
+                ref={(button) => (this.printButton = button)}
+              >
+                <ezp-icon name="printer" />
+                <ezp-label weight="heavy" text={i18next.t('printer_selection.print')} />
+              </button>
             </div>
             <div id="options">
+              <ezp-stepper label={i18next.t('printer_selection.copies')} icon="copies" />
               <ezp-select
                 label={i18next.t('printer_selection.color')}
                 icon="color"
@@ -1079,7 +1117,6 @@ export class EzpPrinterSelection {
                 label={i18next.t('printer_selection.page_ranges')}
               />
             </div>
-            <ezp-stepper label={i18next.t('printer_selection.copies')} icon="copies" />
           </div>
           <div id="footer">
             <ezp-text-button
@@ -1089,17 +1126,6 @@ export class EzpPrinterSelection {
               label={i18next.t('button_actions.cancel')}
               class="action"
               id="cancel"
-            />
-            <ezp-text-button
-              disabled={
-                this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
-              }
-              type="button"
-              onClick={this.handlePrint}
-              label={i18next.t('button_actions.print')}
-              ref={(button) => (this.printButton = button)}
-              class="action"
-              id="print"
             />
           </div>
           {!this.hidemenu && <ezp-user-menu open={this.userMenuOpen} name={this.userName} />}
