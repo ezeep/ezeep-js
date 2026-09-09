@@ -123,12 +123,11 @@ graph TD;
   ezp-printing --> ezp-auth
   ezp-printing --> ezp-printer-selection
   ezp-printing --> ezp-dialog
-  ezp-upload --> ezp-label
-  ezp-upload --> ezp-icon-button
   ezp-upload --> ezp-icon
+  ezp-upload --> ezp-label
   ezp-upload --> ezp-text-button
-  ezp-icon-button --> ezp-icon
   ezp-text-button --> ezp-label
+  ezp-icon-button --> ezp-icon
   ezp-auth --> ezp-status
   ezp-auth --> ezp-dialog
   ezp-status --> ezp-icon

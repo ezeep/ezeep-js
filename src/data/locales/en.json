@@ -64,7 +64,6 @@
     "upload": {
         "description": "Drop files here into the browser ",
         "meta_leading": "or",
-        "heading": "Print Now",
         "dropzone_title": "Drop files here",
         "browse": "select from device",
         "file_type_fallback": "FILE",

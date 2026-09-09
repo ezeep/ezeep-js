@@ -53,25 +53,6 @@
 
 /**
  *
- * Header
- *
- */
-
-#header {
-  align-items: center;
-  border-bottom: 1px solid var(--ezp-core-outline);
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: var(--ezp-spacing-4);
-}
-
-#heading {
-  --ezp-label-fontSize: 22px;
-  --ezp-label-lineHeight: 28px;
-}
-
-/**
- *
  * Dropzone
  *
  */

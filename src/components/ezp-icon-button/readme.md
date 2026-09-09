@@ -22,7 +22,6 @@
  - [ezp-dialog](../ezp-dialog)
  - [ezp-printer-selection](../ezp-printer-selection)
  - [ezp-printing](../ezp-printing)
- - [ezp-upload](../ezp-upload)
  - [ezp-user-menu](../ezp-user-menu)
 
 ### Depends on
@@ -36,7 +35,6 @@ graph TD;
   ezp-dialog --> ezp-icon-button
   ezp-printer-selection --> ezp-icon-button
   ezp-printing --> ezp-icon-button
-  ezp-upload --> ezp-icon-button
   ezp-user-menu --> ezp-icon-button
   style ezp-icon-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
