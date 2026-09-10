@@ -846,7 +846,7 @@ declare namespace LocalJSX {
          */
         "language"?: string;
         /**
-          * Events
+          * Fired when the print flow reaches an end state and the host may dismiss the component: a print job was submitted, or the user cancelled on the upload card, the sign-in dialog (with files pending) or the print options card. It does not mean a job was printed — check for that on the print API side.
          */
         "onPrintFinished"?: (event: EzpPrintingCustomEvent<void>) => void;
         "printapihosturl"?: string;
