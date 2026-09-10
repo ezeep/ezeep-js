@@ -160,6 +160,9 @@ export class EzpPrinting {
       detail: {},
     })
     document.dispatchEvent(printCancelEvent)
+    // Cancelling sign-in with files pending discards them, so the flow is over
+    // for the host — same signal as cancelling on the upload or print step.
+    this.printFinished.emit()
     this.checkAuth()
   }
 
@@ -216,6 +219,12 @@ export class EzpPrinting {
    * Events
    */
 
+  /**
+   * Fired when the print flow reaches an end state and the host may dismiss the
+   * component: a print job was submitted, or the user cancelled on the upload
+   * card, the sign-in dialog (with files pending) or the print options card. It
+   * does not mean a job was printed — check for that on the print API side.
+   */
   @Event({
     eventName: 'printFinished',
     composed: true,

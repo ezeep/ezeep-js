@@ -117,6 +117,23 @@ describe('ezp-printing journey', () => {
     expect(finished).toBe(true)
   })
 
+  it('userCancel discards the pending files and ends the flow for the host', async () => {
+    const { page, el } = await setup('trigger="file"')
+    el.listenUploadContinue({ detail: [new File(['x'], 'report.pdf')] })
+    await page.waitForChanges()
+    expect(el.authOpen).toBe(true)
+
+    let finished = false
+    page.root!.addEventListener('printFinished', (() => (finished = true)) as EventListener)
+
+    el.listenUserCancel()
+    await page.waitForChanges()
+    expect(el.authOpen).toBe(false)
+    expect(el.files).toEqual([])
+    expect(el.filename).toBe('')
+    expect(finished).toBe(true)
+  })
+
   it('authCancel closes the auth dialog', async () => {
     const { page, el } = await setup('trigger="file"')
     el.listenUploadContinue({ detail: [new File(['x'], 'report.pdf')] })

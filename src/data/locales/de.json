@@ -64,7 +64,6 @@
     "upload": {
         "description": "Ziehe Dateien hier in den Browser ",
         "meta_leading": "oder",
-        "heading": "Jetzt drucken",
         "dropzone_title": "Dateien hier ablegen",
         "browse": "vom Gerät auswählen",
         "file_type_fallback": "DATEI",

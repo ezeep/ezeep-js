@@ -77,17 +77,15 @@ describe('ezp-upload', () => {
     expect(advanced[0].map((f: File) => f.name)).toEqual(['a.pdf'])
   })
 
-  it('clearSelection empties the selection and re-emits an empty uploadFile', async () => {
+  it('handleCancel emits printCancel so the host closes the flow', async () => {
     const { page, up } = await setup()
-    up.form = { reset: () => undefined }
-    const emitted: File[][] = []
-    page.root!.addEventListener('uploadFile', ((e: CustomEvent<File[]>) => {
-      emitted.push(e.detail)
-    }) as EventListener)
+    let cancels = 0
+    page.root!.addEventListener('printCancel', () => {
+      cancels++
+    })
 
     up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
-    up.clearSelection()
-    expect(up.selectedFiles).toEqual([])
-    expect(emitted[emitted.length - 1]).toEqual([])
+    up.handleCancel()
+    expect(cancels).toBe(1)
   })
 })

@@ -576,6 +576,7 @@ declare global {
     interface HTMLEzpUploadElementEventMap {
         "uploadFile": File[];
         "uploadContinue": File[];
+        "printCancel": MouseEvent;
     }
     interface HTMLEzpUploadElement extends Components.EzpUpload, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpUploadElementEventMap>(type: K, listener: (this: HTMLEzpUploadElement, ev: EzpUploadCustomEvent<HTMLEzpUploadElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -845,7 +846,7 @@ declare namespace LocalJSX {
          */
         "language"?: string;
         /**
-          * Events
+          * Fired when the print flow reaches an end state and the host may dismiss the component: a print job was submitted, or the user cancelled on the upload card, the sign-in dialog (with files pending) or the print options card. It does not mean a job was printed — check for that on the print API side.
          */
         "onPrintFinished"?: (event: EzpPrintingCustomEvent<void>) => void;
         "printapihosturl"?: string;
@@ -985,6 +986,10 @@ declare namespace LocalJSX {
         "type"?: TextButtonTypeTypes;
     }
     interface EzpUpload {
+        /**
+          * Fired when the user cancels, closing the print flow in the host app.
+         */
+        "onPrintCancel"?: (event: EzpUploadCustomEvent<MouseEvent>) => void;
         /**
           * Fired when the user confirms the selection and wants to move on to print options.
          */

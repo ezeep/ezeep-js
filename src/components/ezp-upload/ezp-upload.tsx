@@ -44,6 +44,9 @@ export class EzpUpload {
   /** Fired when the user confirms the selection and wants to move on to print options. */
   @Event() uploadContinue: EventEmitter<File[]>
 
+  /** Fired when the user cancels, closing the print flow in the host app. */
+  @Event() printCancel: EventEmitter<MouseEvent>
+
   /**
    *
    * Listeners
@@ -115,10 +118,11 @@ export class EzpUpload {
     }
   }
 
-  private clearSelection = () => {
-    this.form?.reset()
-    this.selectedFiles = []
-    this.uploadFile.emit(this.selectedFiles)
+  private handleCancel = () => {
+    // Closing is the host's call: the event bubbles to `ezp-printing`, which
+    // ends the print flow. It also reaches the document, where our own
+    // `printCancel` listener resets the form and the selection.
+    this.printCancel.emit()
   }
 
   private handleContinue = () => {
@@ -168,16 +172,6 @@ export class EzpUpload {
           />
 
           <div id="modal">
-            <div id="header">
-              <ezp-label id="heading" weight="heavy" text={i18next.t('upload.heading')} />
-              <ezp-icon-button
-                icon="close"
-                type="button"
-                level="tertiary"
-                onClick={this.clearSelection}
-              />
-            </div>
-
             <div id="dropzone">
               {hasFiles && (
                 <div id="thumbs">
@@ -250,7 +244,7 @@ export class EzpUpload {
               <ezp-text-button
                 type="button"
                 level="secondary"
-                onClick={this.clearSelection}
+                onClick={this.handleCancel}
                 label={i18next.t('button_actions.cancel')}
                 class="action"
               />

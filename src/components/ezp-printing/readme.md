@@ -30,9 +30,9 @@
 
 ## Events
 
-| Event           | Description | Type                |
-| --------------- | ----------- | ------------------- |
-| `printFinished` | Events      | `CustomEvent<void>` |
+| Event           | Description                                                                                                                                                                                                                                                                                               | Type                |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `printFinished` | Fired when the print flow reaches an end state and the host may dismiss the component: a print job was submitted, or the user cancelled on the upload card, the sign-in dialog (with files pending) or the print options card. It does not mean a job was printed — check for that on the print API side. | `CustomEvent<void>` |
 
 
 ## Methods
@@ -123,12 +123,11 @@ graph TD;
   ezp-printing --> ezp-auth
   ezp-printing --> ezp-printer-selection
   ezp-printing --> ezp-dialog
-  ezp-upload --> ezp-label
-  ezp-upload --> ezp-icon-button
   ezp-upload --> ezp-icon
+  ezp-upload --> ezp-label
   ezp-upload --> ezp-text-button
-  ezp-icon-button --> ezp-icon
   ezp-text-button --> ezp-label
+  ezp-icon-button --> ezp-icon
   ezp-auth --> ezp-status
   ezp-auth --> ezp-dialog
   ezp-status --> ezp-icon
