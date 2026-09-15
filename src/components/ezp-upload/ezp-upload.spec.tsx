@@ -1,5 +1,6 @@
 import { newSpecPage } from '@stencil/core/testing'
 import { EzpUpload } from './ezp-upload'
+import { EzpTextButton } from '../ezp-text-button/ezp-text-button'
 
 async function setup() {
   const page = await newSpecPage({ components: [EzpUpload], html: `<ezp-upload></ezp-upload>` })
@@ -87,5 +88,31 @@ describe('ezp-upload', () => {
     up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
     up.handleCancel()
     expect(cancels).toBe(1)
+  })
+
+  it('handleCancel is a no-op when there are no files', async () => {
+    const { page, up } = await setup()
+    let cancels = 0
+    page.root!.addEventListener('printCancel', () => {
+      cancels++
+    })
+
+    up.handleCancel()
+    expect(cancels).toBe(0)
+  })
+
+  it('Clear files is disabled until files are added', async () => {
+    const page = await newSpecPage({
+      components: [EzpUpload, EzpTextButton],
+      html: `<ezp-upload></ezp-upload>`,
+    })
+    const up = page.rootInstance as any
+    const clear = () => page.root!.shadowRoot!.querySelector('#clear') as any
+
+    expect(clear().disabled).toBe(true)
+
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
+    await page.waitForChanges()
+    expect(clear().disabled).toBe(false)
   })
 })
