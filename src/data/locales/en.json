@@ -69,6 +69,7 @@
         "file_type_fallback": "FILE",
         "meta_multiple": "— multiple files supported",
         "add_more": "Add",
+        "clear_files": "Clear files",
         "files_ready_one": "{{count}} file ready",
         "files_ready_other": "{{count}} files ready",
         "continue": "Continue to print options"

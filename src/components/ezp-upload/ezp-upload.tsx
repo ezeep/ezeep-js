@@ -245,7 +245,7 @@ export class EzpUpload {
                 type="button"
                 level="secondary"
                 onClick={this.handleCancel}
-                label={i18next.t('button_actions.cancel')}
+                label={i18next.t('upload.clear_files')}
                 class="action"
               />
               <ezp-text-button
