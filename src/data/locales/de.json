@@ -69,6 +69,7 @@
         "file_type_fallback": "DATEI",
         "meta_multiple": "— mehrere Dateien möglich",
         "add_more": "Hinzufügen",
+        "clear_files": "Dateien entfernen",
         "files_ready_one": "{{count}} Datei bereit",
         "files_ready_other": "{{count}} Dateien bereit",
         "continue": "Weiter zu Druckoptionen"

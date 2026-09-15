@@ -119,6 +119,7 @@ export class EzpUpload {
   }
 
   private handleCancel = () => {
+    if (this.selectedFiles.length === 0) return
     // Closing is the host's call: the event bubbles to `ezp-printing`, which
     // ends the print flow. It also reaches the document, where our own
     // `printCancel` listener resets the form and the selection.
@@ -242,10 +243,12 @@ export class EzpUpload {
 
             <div id="footer">
               <ezp-text-button
+                id="clear"
                 type="button"
                 level="secondary"
+                disabled={!hasFiles}
                 onClick={this.handleCancel}
-                label={i18next.t('button_actions.cancel')}
+                label={i18next.t('upload.clear_files')}
                 class="action"
               />
               <ezp-text-button
