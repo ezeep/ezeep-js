@@ -31,6 +31,8 @@ $easings: (
 $durations: (0.1s, 0.16s, 0.26s, 0.42s, 0.68s, 1s);
 $ratios: (1, 2, 3);
 $spacings: (4px, 6px, 10px, 16px, 26px, 42px, 68px, 110px);
+// Vertical padding shared by the card action buttons so they keep one height.
+$action-padding-block: 13px;
 $themes: ('blue', 'cyan', 'green', 'teal', 'orange', 'pink', 'red', 'violet');
 
 /**

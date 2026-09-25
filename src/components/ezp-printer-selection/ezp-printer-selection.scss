@@ -198,7 +198,7 @@
   justify-content: center;
   margin: 0;
   outline: none;
-  padding: 13px var(--ezp-spacing-4);
+  padding: #{global.$action-padding-block} var(--ezp-spacing-4);
   transition: opacity var(--ezp-duration-2) var(--ezp-easing-out-quart);
   width: 100%;
 
@@ -268,5 +268,5 @@
   --ezp-textButton-borderRadius: 8px;
   --ezp-textButton-boxShadow: inset 0 0 0 1px var(--ezp-core-outline);
   --ezp-textButton-color-init: var(--ezp-core-foreground-primary);
-  --ezp-textButton-padding: 13px var(--ezp-spacing-3);
+  --ezp-textButton-padding: #{global.$action-padding-block} var(--ezp-spacing-3);
 }

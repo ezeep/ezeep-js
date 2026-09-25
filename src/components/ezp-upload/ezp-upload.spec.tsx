@@ -126,6 +126,42 @@ describe('ezp-upload', () => {
     expect(page.root!.shadowRoot!.querySelector('#dropzone')).not.toBeNull()
   })
 
+  it('keeps the dropzone while the pointer crosses child elements', async () => {
+    const { page, up } = await setup()
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
+
+    // Entering a child fires before leaving the previous one.
+    up.handleDragEnter()
+    up.handleDragEnter()
+    up.handleDragLeave()
+    await page.waitForChanges()
+
+    expect(up.dragging).toBe(true)
+    expect(page.root!.shadowRoot!.querySelector('#dropzone')).not.toBeNull()
+
+    up.handleDragLeave()
+    await page.waitForChanges()
+
+    expect(up.dragging).toBe(false)
+    expect(page.root!.shadowRoot!.querySelector('#files')).not.toBeNull()
+  })
+
+  it('removing a file keeps the remaining rows in order', async () => {
+    const { page, up } = await setup()
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf'), new File(['2'], 'b.pdf')]))
+    await page.waitForChanges()
+
+    const remove = page.root!.shadowRoot!.querySelectorAll('.file-remove')[0] as HTMLButtonElement
+    remove.click()
+    await page.waitForChanges()
+
+    const names = Array.from(page.root!.shadowRoot!.querySelectorAll('.file-name')).map((el) =>
+      el.getAttribute('text'),
+    )
+    expect(names).toEqual(['b.pdf'])
+    expect(up.selectedFiles.map((f: File) => f.name)).toEqual(['b.pdf'])
+  })
+
   it('Remove files is disabled until files are added', async () => {
     const page = await newSpecPage({
       components: [EzpUpload, EzpTextButton],

@@ -290,6 +290,11 @@ export class EzpPrinterSelection {
     }
   }
 
+  /** Print needs a printer, no job in flight and a valid page range. */
+  private get printDisabled(): boolean {
+    return this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
+  }
+
   /** Description... */
   private handlePrint = async () => {
     this.printButton?.blur()
@@ -1115,9 +1120,7 @@ export class EzpPrinterSelection {
             <button
               id="print"
               type="button"
-              disabled={
-                this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
-              }
+              disabled={this.printDisabled}
               onClick={this.handlePrint}
               ref={(button) => (this.printButton = button)}
             >

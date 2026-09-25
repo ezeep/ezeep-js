@@ -79,12 +79,11 @@ export class EzpInput {
   }
 
   render() {
+    const hasIcon = !!this.icon
+
     return (
-      <Host
-        class={{ focused: this.focused, 'has-icon': this.icon !== undefined }}
-        onClick={this.setFocus}
-      >
-        {this.icon ? <ezp-icon id="icon" name={this.icon} /> : null}
+      <Host class={{ focused: this.focused, 'has-icon': hasIcon }} onClick={this.setFocus}>
+        {hasIcon ? <ezp-icon id="icon" name={this.icon} /> : null}
         <ezp-label id="label" noWrap level="secondary" text={this.label} />
         <input
           id="input"

@@ -1,5 +1,13 @@
 /**
  *
+ * Modules
+ *
+ */
+
+@use './../../shared/global';
+
+/**
+ *
  * Rules
  *
  */
@@ -100,7 +108,7 @@
 
 #choose {
   --ezp-textButton-borderRadius: 8px;
-  --ezp-textButton-padding: 13px var(--ezp-spacing-5);
+  --ezp-textButton-padding: #{global.$action-padding-block} var(--ezp-spacing-5);
 }
 
 #drag-hint {
@@ -235,7 +243,7 @@
 
 .action {
   --ezp-textButton-borderRadius: 8px;
-  --ezp-textButton-padding: 13px var(--ezp-spacing-3);
+  --ezp-textButton-padding: #{global.$action-padding-block} var(--ezp-spacing-3);
   --ezp-textButton-whiteSpace: normal;
 
   text-align: center;

@@ -53,8 +53,14 @@ export class EzpUpload {
    *
    */
 
+  // dragenter/dragleave bubble from every child the pointer crosses, and the
+  // next child's enter fires before the previous one's leave, so count depth
+  // instead of toggling — otherwise the dropzone flickers mid-drag.
+  private dragDepth = 0
+
   @Listen('dragenter')
   handleDragEnter() {
+    this.dragDepth++
     this.dragging = true
   }
 
@@ -69,7 +75,8 @@ export class EzpUpload {
 
   @Listen('dragleave')
   handleDragLeave() {
-    this.dragging = false
+    this.dragDepth = Math.max(0, this.dragDepth - 1)
+    this.dragging = this.dragDepth > 0
   }
 
   @Listen('drop', { passive: false })
@@ -77,6 +84,7 @@ export class EzpUpload {
     event.stopPropagation()
     event.preventDefault()
 
+    this.dragDepth = 0
     this.dragging = false
     const files = Array.from(event.dataTransfer?.files ?? [])
     // Add new files to existing selection instead of replacing
@@ -95,6 +103,19 @@ export class EzpUpload {
    * Private methods
    *
    */
+
+  // Stable per-File keys, so removing a row doesn't make Stencil reuse the
+  // following rows' DOM. Keyed by identity: the same file picked twice still
+  // gets two distinct rows.
+  private fileKeys = new WeakMap<File, number>()
+  private nextFileKey = 0
+
+  private fileKey(file: File): number {
+    if (!this.fileKeys.has(file)) {
+      this.fileKeys.set(file, this.nextFileKey++)
+    }
+    return this.fileKeys.get(file)!
+  }
 
   /** Opens the native file picker from our own buttons. */
   private openPicker = () => {
@@ -220,8 +241,11 @@ export class EzpUpload {
               {!showDropzone && (
                 <div id="files">
                   {this.selectedFiles.map((file, index) => (
-                    <div key={index} class="file">
-                      <span class="file-type">{this.fileType(file.name)}</span>
+                    <div key={this.fileKey(file)} class="file">
+                      {/* The name below already carries the extension. */}
+                      <span class="file-type" aria-hidden="true">
+                        {this.fileType(file.name)}
+                      </span>
                       <div class="file-details">
                         <ezp-label class="file-name" ellipsis weight="heavy" text={file.name} />
                         <ezp-label
