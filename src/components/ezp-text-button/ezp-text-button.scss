@@ -53,7 +53,7 @@
   opacity: var(--ezp-textButton-opacity, 1);
   outline: none;
   padding: var(--ezp-textButton-padding, var(--ezp-spacing-3));
-  white-space: nowrap;
+  white-space: var(--ezp-textButton-whiteSpace, nowrap);
   width: 100%;
 
   &:not(:disabled) {
@@ -78,6 +78,8 @@
 
   &:disabled {
     --ezp-textButton-background: var(--ezp-textButton-background-disabled);
+    /* An outlined button reads as filled-and-flat once disabled. */
+    --ezp-textButton-boxShadow: none;
     --ezp-textButton-color: var(--ezp-textButton-color-disabled);
     --ezp-textButton-cursor: default;
   }

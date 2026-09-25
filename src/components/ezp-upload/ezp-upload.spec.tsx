@@ -101,7 +101,32 @@ describe('ezp-upload', () => {
     expect(cancels).toBe(0)
   })
 
-  it('Clear files is disabled until files are added', async () => {
+  it('swaps the dropzone for a file list once files are added', async () => {
+    const { page, up } = await setup()
+    const shadow = () => page.root!.shadowRoot!
+
+    expect(shadow().querySelector('#dropzone')).not.toBeNull()
+    expect(shadow().querySelector('#files')).toBeNull()
+
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf'), new File(['2'], 'b.docx')]))
+    await page.waitForChanges()
+
+    expect(shadow().querySelector('#dropzone')).toBeNull()
+    const types = Array.from(shadow().querySelectorAll('.file-type')).map((el) => el.textContent)
+    expect(types).toEqual(['PDF', 'DOCX'])
+    expect(shadow().querySelector('#add-more')).not.toBeNull()
+  })
+
+  it('brings the dropzone back while a drag is in progress', async () => {
+    const { page, up } = await setup()
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
+    up.handleDragEnter()
+    await page.waitForChanges()
+
+    expect(page.root!.shadowRoot!.querySelector('#dropzone')).not.toBeNull()
+  })
+
+  it('Remove files is disabled until files are added', async () => {
     const page = await newSpecPage({
       components: [EzpUpload, EzpTextButton],
       html: `<ezp-upload></ezp-upload>`,

@@ -26,7 +26,7 @@ export class EzpInput {
   @Prop() type: string = 'text'
 
   /** Description... */
-  @Prop() icon: IconNameTypes = 'color'
+  @Prop() icon: IconNameTypes
 
   /** Description... */
   @Prop({ reflect: true }) suffix: string
@@ -80,8 +80,11 @@ export class EzpInput {
 
   render() {
     return (
-      <Host class={{ focused: this.focused }} onClick={this.setFocus}>
-        <ezp-icon id="icon" name={this.icon} />
+      <Host
+        class={{ focused: this.focused, 'has-icon': this.icon !== undefined }}
+        onClick={this.setFocus}
+      >
+        {this.icon ? <ezp-icon id="icon" name={this.icon} /> : null}
         <ezp-label id="label" noWrap level="secondary" text={this.label} />
         <input
           id="input"

@@ -96,6 +96,11 @@ export class EzpUpload {
    *
    */
 
+  /** Opens the native file picker from our own buttons. */
+  private openPicker = () => {
+    this.input?.click()
+  }
+
   private handleInput = () => {
     const files = Array.from(this.input?.files ?? [])
     // Add new files to existing selection instead of replacing
@@ -158,6 +163,9 @@ export class EzpUpload {
 
   render() {
     const hasFiles = this.selectedFiles.length > 0
+    // While a drag is in progress the dropzone always takes over, so there is
+    // a target to drop onto even once files have been picked.
+    const showDropzone = !hasFiles || this.dragging
 
     return (
       <Host class={{ dragging: this.dragging }}>
@@ -167,79 +175,78 @@ export class EzpUpload {
             name="input"
             id="input"
             multiple
-            aria-label={i18next.t('upload.description')}
+            aria-label={i18next.t('upload.choose_files')}
             ref={(input) => (this.input = input)}
             onInput={this.handleInput}
           />
 
           <div id="modal">
-            <div id="dropzone">
-              {hasFiles && (
-                <div id="thumbs">
+            <div id="body">
+              {showDropzone && (
+                <div id="dropzone">
+                  <ezp-icon id="dropzone-icon" name="cloud-upload" />
+
+                  {this.dragging ? (
+                    <ezp-label
+                      id="dropzone-title"
+                      level="primary"
+                      weight="heavy"
+                      text={i18next.t('upload.dropzone_title')}
+                    />
+                  ) : (
+                    <div id="dropzone-prompt">
+                      <ezp-text-button
+                        id="choose"
+                        type="button"
+                        onClick={this.openPicker}
+                        label={i18next.t('upload.choose_files')}
+                      />
+                      <ezp-label
+                        id="drag-hint"
+                        level="secondary"
+                        weight="strong"
+                        text={i18next.t('upload.drag_hint')}
+                      />
+                      <ezp-label
+                        id="formats"
+                        level="tertiary"
+                        text={SUPPORTED_FORMATS.join(', ')}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {!showDropzone && (
+                <div id="files">
                   {this.selectedFiles.map((file, index) => (
-                    <div key={index} class="thumb">
+                    <div key={index} class="file">
+                      <span class="file-type">{this.fileType(file.name)}</span>
+                      <div class="file-details">
+                        <ezp-label class="file-name" ellipsis weight="heavy" text={file.name} />
+                        <ezp-label
+                          class="file-size"
+                          level="tertiary"
+                          text={this.formatSize(file.size)}
+                        />
+                      </div>
                       <button
                         type="button"
-                        class="thumb-remove"
-                        aria-label={i18next.t('button_actions.close')}
+                        class="file-remove"
+                        aria-label={i18next.t('upload.remove_file')}
                         onClick={(event) => this.removeFile(event, index)}
                       >
                         <ezp-icon name="close" />
                       </button>
-                      <div class="thumb-icon">
-                        <ezp-icon name="file" />
-                      </div>
-                      <ezp-label class="thumb-name" ellipsis text={file.name} />
-                      <ezp-label
-                        class="thumb-meta"
-                        level="tertiary"
-                        weight="strong"
-                        text={`${this.fileType(file.name)} · ${this.formatSize(file.size)}`}
-                      />
                     </div>
                   ))}
-                  <label htmlFor="input" class="thumb thumb-add">
-                    <div class="thumb-add-icon">
-                      <ezp-icon name="plus" />
-                    </div>
-                    <ezp-label class="thumb-name" level="tertiary" text={i18next.t('upload.add_more')} />
-                  </label>
+                  <button type="button" id="add-more" onClick={this.openPicker}>
+                    <ezp-icon name="plus" />
+                    <ezp-label level="secondary" weight="heavy" text={i18next.t('upload.add_more')} />
+                  </button>
                 </div>
               )}
-
-              {!hasFiles && (
-                <div id="cloud">
-                  <ezp-icon name="cloud-upload" />
-                </div>
-              )}
-
-              <ezp-label id="dropzone-title" weight="heavy" text={i18next.t('upload.dropzone_title')} />
-
-              <div id="meta">
-                <ezp-label level="secondary" text={i18next.t('upload.meta_leading')} />
-                <label htmlFor="input" id="browse">
-                  <ezp-label level="secondary" weight="strong" text={i18next.t('upload.browse')} />
-                </label>
-                <ezp-label level="secondary" text={i18next.t('upload.meta_multiple')} />
-              </div>
-
-              <div id="formats">
-                {SUPPORTED_FORMATS.map((format) => (
-                  <span class="format" key={format}>
-                    {format}
-                  </span>
-                ))}
-              </div>
             </div>
-
-            {hasFiles && (
-              <ezp-label
-                id="ready"
-                level="secondary"
-                weight="strong"
-                text={i18next.t('upload.files_ready', { count: this.selectedFiles.length })}
-              />
-            )}
 
             <div id="footer">
               <ezp-text-button
@@ -248,7 +255,7 @@ export class EzpUpload {
                 level="secondary"
                 disabled={!hasFiles}
                 onClick={this.handleCancel}
-                label={i18next.t('upload.clear_files')}
+                label={i18next.t('upload.remove_files')}
                 class="action"
               />
               <ezp-text-button

@@ -6,11 +6,6 @@
 
 :host {
   --ezp-select-duration: var(--ezp-duration-3);
-  --ezp-badge-gradient: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--ezp-theme-solid), white 14%) 0%,
-    color-mix(in srgb, var(--ezp-theme-solid), black 22%) 100%
-  );
 
   display: block;
   height: var(--ezp-select-toggle-height);
@@ -59,12 +54,11 @@
       --ezp-select-option-height: 52px;
     }
 
-    /* The printer selector reads as a solid, prominent badge (screen 3). */
+    /* The printer selector reads as a tinted, rounded badge (screen 3). */
     #{&}(.toggle-vertical.has-icon) {
-      --ezp-select-badge-background: var(--ezp-badge-gradient);
-      --ezp-select-badge-color: var(--ezp-white-100);
-      --ezp-select-badge-height: 44px;
-      --ezp-select-badge-width: 44px;
+      --ezp-select-badge-borderRadius: 10px;
+      --ezp-select-badge-height: 40px;
+      --ezp-select-badge-width: 40px;
       --ezp-select-label-textTransform: uppercase;
       --ezp-select-label-letterSpacing: 0.08em;
       --ezp-select-label-fontSize: 11px;
@@ -133,7 +127,7 @@
 
 #icon {
   --ezp-icon-background: var(--ezp-select-badge-background, var(--ezp-theme-translucent));
-  --ezp-icon-borderRadius: 50%;
+  --ezp-icon-borderRadius: var(--ezp-select-badge-borderRadius, 50%);
   --ezp-icon-height: var(--ezp-select-badge-height, 40px);
   --ezp-icon-width: var(--ezp-select-badge-width, 40px);
 
@@ -148,6 +142,9 @@
 
   align-self: var(--ezp-select-label-alignSelf, auto);
   color: var(--ezp-select-label-color, var(--ezp-core-foreground-primary));
+  /* Hidden when the consumer captions the select from the outside; the label
+     prop still names the combobox for assistive tech. */
+  display: var(--ezp-select-label-display, block);
   grid-area: label;
   text-transform: var(--ezp-select-label-textTransform, none);
 }
@@ -159,7 +156,7 @@
   align-self: var(--ezp-select-value-alignSelf, auto);
   color: var(--ezp-select-value-color, var(--value-color, var(--ezp-core-foreground-secondary)));
   grid-area: value;
-  text-align: right;
+  text-align: var(--ezp-select-value-textAlign, right);
 }
 
 #accessory {
