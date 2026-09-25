@@ -101,7 +101,114 @@ describe('ezp-upload', () => {
     expect(cancels).toBe(0)
   })
 
-  it('Clear files is disabled until files are added', async () => {
+  it('swaps the dropzone for a file list once files are added', async () => {
+    const { page, up } = await setup()
+    const shadow = () => page.root!.shadowRoot!
+
+    expect(shadow().querySelector('#dropzone')).not.toBeNull()
+    expect(shadow().querySelector('#files')).toBeNull()
+
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf'), new File(['2'], 'b.docx')]))
+    await page.waitForChanges()
+
+    expect(shadow().querySelector('#dropzone')).toBeNull()
+    const types = Array.from(shadow().querySelectorAll('.file-type')).map((el) => el.textContent)
+    expect(types).toEqual(['PDF', 'DOCX'])
+    expect(shadow().querySelector('#add-more')).not.toBeNull()
+  })
+
+  it('lays the drop overlay over the file list while a drag is in progress', async () => {
+    const { page, up } = await setup()
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
+    await page.waitForChanges()
+    const row = page.root!.shadowRoot!.querySelector('.file')
+
+    up.handleDragEnter()
+    await page.waitForChanges()
+
+    // The row under the pointer must stay connected, or its dragleave never
+    // reaches the host and the drag depth never returns to zero.
+    expect(page.root!.shadowRoot!.querySelector('#drop-overlay')).not.toBeNull()
+    expect(page.root!.shadowRoot!.querySelector('.file')).toBe(row)
+    expect(row!.isConnected).toBe(true)
+  })
+
+  it('keeps the empty-state prompt mounted while a drag is in progress', async () => {
+    const { page, up } = await setup()
+    const prompt = page.root!.shadowRoot!.querySelector('#dropzone-prompt')
+
+    up.handleDragEnter()
+    await page.waitForChanges()
+
+    expect(page.root!.shadowRoot!.querySelector('#dropzone-prompt')).toBe(prompt)
+    expect(page.root!.shadowRoot!.querySelector('#dropzone-title')).not.toBeNull()
+  })
+
+  it('clearing the selection also ends a stuck drag', async () => {
+    const { page, up } = await setup()
+    up.form = { reset: () => undefined }
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
+    up.handleDragEnter()
+    up.listenPrintCancel()
+    await page.waitForChanges()
+
+    expect(up.dragging).toBe(false)
+    expect(page.root!.classList.contains('dragging')).toBe(false)
+
+    // A later drag starts balanced again.
+    up.handleDragEnter()
+    up.handleDragLeave()
+    expect(up.dragging).toBe(false)
+  })
+
+  it('a drag that ends elsewhere on the page resets the drop state', async () => {
+    const { page, up } = await setup()
+    up.handleDragEnter()
+    up.handleDragEnter()
+    window.dispatchEvent(new Event('dragend'))
+    await page.waitForChanges()
+
+    expect(up.dragging).toBe(false)
+  })
+
+  it('keeps the drop overlay while the pointer crosses child elements', async () => {
+    const { page, up } = await setup()
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf')]))
+
+    // Entering a child fires before leaving the previous one.
+    up.handleDragEnter()
+    up.handleDragEnter()
+    up.handleDragLeave()
+    await page.waitForChanges()
+
+    expect(up.dragging).toBe(true)
+    expect(page.root!.shadowRoot!.querySelector('#drop-overlay')).not.toBeNull()
+
+    up.handleDragLeave()
+    await page.waitForChanges()
+
+    expect(up.dragging).toBe(false)
+    expect(page.root!.shadowRoot!.querySelector('#drop-overlay')).toBeNull()
+    expect(page.root!.shadowRoot!.querySelector('#files')).not.toBeNull()
+  })
+
+  it('removing a file keeps the remaining rows in order', async () => {
+    const { page, up } = await setup()
+    up.handleDrop(dropEvent([new File(['1'], 'a.pdf'), new File(['2'], 'b.pdf')]))
+    await page.waitForChanges()
+
+    const remove = page.root!.shadowRoot!.querySelectorAll('.file-remove')[0] as HTMLButtonElement
+    remove.click()
+    await page.waitForChanges()
+
+    const names = Array.from(page.root!.shadowRoot!.querySelectorAll('.file-name')).map((el) =>
+      el.getAttribute('text'),
+    )
+    expect(names).toEqual(['b.pdf'])
+    expect(up.selectedFiles.map((f: File) => f.name)).toEqual(['b.pdf'])
+  })
+
+  it('Remove files is disabled until files are added', async () => {
     const page = await newSpecPage({
       components: [EzpUpload, EzpTextButton],
       html: `<ezp-upload></ezp-upload>`,

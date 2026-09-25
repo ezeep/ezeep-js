@@ -18,14 +18,23 @@
   cursor: text;
   display: grid;
   gap: var(--ezp-spacing-3);
-  grid-template: var(--ezp-input-grid-template, auto / auto auto 1fr);
+  grid-template: var(--ezp-input-grid-template, auto / auto 1fr);
   height: 56px;
   padding: var(--ezp-spacing-2) var(--ezp-spacing-3);
   position: relative;
   z-index: var(--ezp-input-z-index, 3);
 
   @at-root {
+    #{&}(.has-icon) {
+      --ezp-input-grid-template: auto / auto auto 1fr;
+    }
+
     #{&}([suffix]) {
+      --ezp-input-grid-template: auto / auto 1fr auto;
+      --ezp-input-input-padding-right: 0;
+    }
+
+    #{&}([suffix].has-icon) {
       --ezp-input-grid-template: auto / auto auto 1fr auto;
       --ezp-input-input-padding-right: 0;
     }
@@ -61,8 +70,8 @@
   font-family: inherit;
   font-feature-settings: 'tnum';
   font-size: 14px;
-  font-weight: 600;
   -webkit-font-smoothing: antialiased;
+  font-weight: 600;
   height: 30px;
   letter-spacing: #{global.getLetterSpacing(14px)};
   margin: 0;

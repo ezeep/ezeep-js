@@ -51,3 +51,35 @@ describe('ezp-printer-selection timeout classification', () => {
     expect(el.isTimeoutError(new Error('Hub printer driver error: no driver'))).toBe(false)
   })
 })
+
+describe('ezp-printer-selection print button guard', () => {
+  const ready = () => {
+    const el = new EzpPrinterSelection() as any
+    el.selectedPrinter = { id: 'p1', name: 'Printer' }
+    el.printProcessing = false
+    el.pageRangeInvalid = false
+    return el
+  }
+
+  it('enables Print once a printer is selected', () => {
+    expect(ready().printDisabled).toBe(false)
+  })
+
+  it('disables Print without a printer', () => {
+    const el = ready()
+    el.selectedPrinter = { id: '', name: '' }
+    expect(el.printDisabled).toBe(true)
+  })
+
+  it('disables Print while a job is processing', () => {
+    const el = ready()
+    el.printProcessing = true
+    expect(el.printDisabled).toBe(true)
+  })
+
+  it('disables Print when the page range is invalid', () => {
+    const el = ready()
+    el.pageRangeInvalid = true
+    expect(el.printDisabled).toBe(true)
+  })
+})

@@ -94,7 +94,6 @@ export namespace Components {
         "eventType": string;
         /**
           * Description...
-          * @default 'color'
          */
         "icon": IconNameTypes;
         /**
@@ -727,7 +726,6 @@ declare namespace LocalJSX {
         "eventType"?: string;
         /**
           * Description...
-          * @default 'color'
          */
         "icon"?: IconNameTypes;
         /**

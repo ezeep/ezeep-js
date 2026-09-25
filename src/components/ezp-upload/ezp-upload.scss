@@ -1,21 +1,23 @@
 /**
  *
+ * Modules
+ *
+ */
+
+@use './../../shared/global';
+
+/**
+ *
  * Rules
  *
  */
 
 :host {
-  --ezp-upload-gradient: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--ezp-theme-solid), white 14%) 0%,
-    color-mix(in srgb, var(--ezp-theme-solid), black 22%) 100%
-  );
-
   box-sizing: border-box;
   color: var(--ezp-core-foreground-primary);
   display: block;
-  width: var(--ezp-upload-width, auto);
   height: var(--ezp-upload-height, auto);
+  width: var(--ezp-upload-width, auto);
 }
 
 *,
@@ -46,9 +48,35 @@
     0 24px 60px -20px var(--ezp-core-backdrop);
   display: flex;
   flex-direction: column;
-  gap: var(--ezp-spacing-4);
   height: 100%;
-  padding: var(--ezp-spacing-5);
+  overflow: hidden;
+}
+
+/* While a drag is in progress only the modal itself is a drag target. Its
+   children stop taking part in hit testing, so crossing rows, labels or
+   buttons fires no enter/leave pairs that could fall out of balance. */
+:host(.dragging) #modal * {
+  pointer-events: none;
+}
+
+/* Positioning context for the drop overlay; stays put while #body scrolls. */
+#body-frame {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+
+/* Scrolls internally so the footer stays pinned inside a constrained modal. */
+#body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--ezp-spacing-4);
+  scrollbar-width: thin;
 }
 
 /**
@@ -59,9 +87,10 @@
 
 #dropzone {
   align-items: center;
-  background: var(--ezp-upload-background, transparent);
-  border: 1.5px dashed var(--ezp-upload-border-color, var(--ezp-core-foreground-tertiary));
+  background: var(--ezp-theme-translucent);
+  border: 1.5px dashed var(--ezp-theme-solid);
   border-radius: 12px;
+  box-shadow: var(--ezp-upload-dropzone-boxShadow, none);
   display: flex;
   /* Grow to fill the modal body so the dashed box spans the available height,
      and keep the contents centered vertically within it. */
@@ -69,162 +98,141 @@
   flex-direction: column;
   gap: var(--ezp-spacing-4);
   justify-content: center;
-  min-height: 0;
-  padding: var(--ezp-spacing-6) var(--ezp-spacing-5);
+  min-height: 160px;
+  padding: var(--ezp-spacing-6) var(--ezp-spacing-4);
   text-align: center;
-  transition:
-    background-color var(--ezp-duration-3) var(--ezp-easing-out-quart),
-    border-color var(--ezp-duration-3) var(--ezp-easing-out-quart);
+  transition: box-shadow var(--ezp-duration-3) var(--ezp-easing-out-quart);
 }
 
 :host(.dragging) {
-  --ezp-upload-background: var(--ezp-theme-translucent);
-  --ezp-upload-border-color: var(--ezp-theme-solid);
+  --ezp-upload-dropzone-boxShadow: 0 0 0 4px var(--ezp-theme-translucent);
 }
 
-#cloud {
+/* The title and the prompt are both always rendered; show one per state. */
+:host(:not(.dragging)) #dropzone-title,
+:host(.dragging) #dropzone-prompt {
+  display: none;
+}
+
+/* Same look as the empty dropzone, laid over the file list during a drag. */
+#drop-overlay {
   align-items: center;
-  background: var(--ezp-upload-gradient);
-  border-radius: 20px;
-  box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--ezp-theme-solid), transparent 45%);
-  color: var(--ezp-white-100);
+  background:
+    linear-gradient(var(--ezp-theme-translucent), var(--ezp-theme-translucent)),
+    var(--ezp-core-surface-tertiary);
+  border: 1.5px dashed var(--ezp-theme-solid);
+  border-radius: 12px;
+  box-shadow: 0 0 0 4px var(--ezp-theme-translucent);
   display: flex;
-  height: 84px;
-  justify-content: center;
-  width: 84px;
-
-  ezp-icon {
-    --ezp-icon-size: 40px;
-    --ezp-icon-gridTemplate: 40px;
-  }
-}
-
-#dropzone-title {
-  --ezp-label-fontSize: 20px;
-  --ezp-label-lineHeight: 26px;
-}
-
-#meta {
-  align-items: baseline;
-  color: var(--ezp-core-foreground-secondary);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: center;
-}
-
-#browse {
-  color: var(--ezp-theme-solid);
-  cursor: pointer;
-  opacity: var(--ezp-upload-browse-opacity, 1);
-
-  @media (hover: hover) {
-    &:hover {
-      --ezp-upload-browse-opacity: 0.6;
-    }
-  }
-}
-
-/**
- *
- * Format chips
- *
- */
-
-#formats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ezp-spacing-2);
-  justify-content: center;
-}
-
-.format {
-  background: transparent;
-  border: 1px solid var(--ezp-core-outline);
-  border-radius: 999px;
-  color: var(--ezp-core-foreground-secondary);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  padding: 7px 14px;
-}
-
-/**
- *
- * File thumbnails
- *
- */
-
-#thumbs {
-  display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: var(--ezp-spacing-4);
+  inset: var(--ezp-spacing-4);
   justify-content: center;
-  max-height: 40vh;
-  overflow-y: auto;
-  padding: var(--ezp-spacing-1);
-  scrollbar-width: thin;
-  width: 100%;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  z-index: 1;
 }
 
-.thumb {
+#dropzone-icon {
+  --ezp-icon-size: 32px;
+  --ezp-icon-gridTemplate: 32px;
+
+  color: var(--ezp-theme-solid);
+}
+
+#dropzone-prompt {
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  position: relative;
-  width: 88px;
+  gap: var(--ezp-spacing-3);
 }
 
-.thumb-icon {
+#choose {
+  --ezp-textButton-borderRadius: 8px;
+  --ezp-textButton-padding: #{global.$action-padding-block} var(--ezp-spacing-5);
+}
+
+#drag-hint {
+  color: var(--ezp-core-foreground-primary);
+}
+
+#formats {
+  color: var(--ezp-core-foreground-secondary);
+}
+
+/**
+ *
+ * File list
+ *
+ */
+
+#files {
+  border: 1px solid var(--ezp-core-outline);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.file {
   align-items: center;
-  background: var(--ezp-upload-gradient);
-  border-radius: 50%;
-  color: var(--ezp-white-100);
-  display: flex;
-  height: 56px;
-  justify-content: center;
-  width: 56px;
-
-  ezp-icon {
-    --ezp-icon-size: 26px;
-    --ezp-icon-gridTemplate: 26px;
-  }
+  display: grid;
+  gap: var(--ezp-spacing-3);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: var(--ezp-spacing-3) var(--ezp-spacing-4);
 }
 
-.thumb-name {
-  --ezp-label-minWidth: 0;
-
-  max-width: 100%;
+.file + .file {
+  border-top: 1px solid var(--ezp-core-outline);
 }
 
-.thumb-meta {
+.file-type {
+  background: var(--ezp-theme-translucent);
+  border-radius: 6px;
+  color: var(--ezp-theme-solid);
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.02em;
+  line-height: 1;
+  overflow: hidden;
+  padding: 8px 6px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* Fixed rather than content-sized, so file names line up across rows. */
+  width: 56px;
 }
 
-.thumb-remove {
+/* ezp-label trims its own half-leading, so the gap is measured cap-box to
+   cap-box — spacing-2 is what ezp-select uses for the same title/meta pair. */
+.file-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ezp-spacing-2);
+  min-width: 0;
+}
+
+.file-size {
+  color: var(--ezp-core-foreground-secondary);
+}
+
+.file-remove {
   align-items: center;
   appearance: none;
-  background: var(--ezp-core-surface-tertiary);
-  border: 1px solid var(--ezp-core-outline);
-  border-radius: 50%;
-  color: var(--ezp-core-foreground-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--ezp-core-foreground-tertiary);
   cursor: pointer;
   display: flex;
-  height: 20px;
+  height: 28px;
   justify-content: center;
   padding: 0;
-  position: absolute;
-  right: 8px;
-  top: -4px;
   transition: color var(--ezp-duration-2) var(--ezp-easing-out-quart);
-  width: 20px;
-  z-index: 1;
+  width: 28px;
 
   ezp-icon {
-    --ezp-icon-size: 12px;
-    --ezp-icon-gridTemplate: 12px;
+    --ezp-icon-size: 16px;
+    --ezp-icon-gridTemplate: 16px;
   }
 
   @media (hover: hover) {
@@ -234,45 +242,32 @@
   }
 }
 
-.thumb-add {
+#add-more {
+  align-items: center;
+  appearance: none;
+  background: var(--ezp-upload-addMore-background, transparent);
+  border: 0;
+  border-top: 1px solid var(--ezp-core-outline);
+  color: var(--ezp-theme-solid);
   cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  gap: 4px;
+  justify-content: center;
+  padding: var(--ezp-spacing-3);
+  transition: background-color var(--ezp-duration-2) var(--ezp-easing-out-quart);
+  width: 100%;
 
-  .thumb-add-icon {
-    align-items: center;
-    border: 1.5px dashed var(--ezp-core-foreground-tertiary);
-    border-radius: 50%;
-    color: var(--ezp-core-foreground-secondary);
-    display: flex;
-    height: 56px;
-    justify-content: center;
-    transition: border-color var(--ezp-duration-2) var(--ezp-easing-out-quart);
-    width: 56px;
-
-    ezp-icon {
-      --ezp-icon-size: 24px;
-      --ezp-icon-gridTemplate: 24px;
-    }
+  ezp-icon {
+    --ezp-icon-size: 18px;
+    --ezp-icon-gridTemplate: 18px;
   }
 
   @media (hover: hover) {
-    &:hover .thumb-add-icon {
-      border-color: var(--ezp-theme-solid);
-      color: var(--ezp-theme-solid);
+    &:hover {
+      --ezp-upload-addMore-background: var(--ezp-core-shade-primary);
     }
   }
-}
-
-/**
- *
- * Ready counter
- *
- */
-
-#ready {
-  color: var(--ezp-core-foreground-secondary);
-  letter-spacing: 0.08em;
-  text-align: center;
-  text-transform: uppercase;
 }
 
 /**
@@ -282,16 +277,26 @@
  */
 
 #footer {
+  border-top: 1px solid var(--ezp-core-outline);
   display: grid;
   gap: var(--ezp-spacing-3);
   grid-template-columns: 1fr 1.4fr;
+  padding: var(--ezp-spacing-4);
 }
 
 .action {
-  --ezp-textButton-borderRadius: 999px;
-  --ezp-textButton-padding: var(--ezp-spacing-4);
+  --ezp-textButton-borderRadius: 8px;
+  --ezp-textButton-padding: #{global.$action-padding-block} var(--ezp-spacing-3);
+  --ezp-textButton-whiteSpace: normal;
+
+  text-align: center;
 }
 
-#continue {
-  --ezp-textButton-background-init: var(--ezp-upload-gradient);
+/* Outlined rather than filled, so the primary action stays the only solid one. */
+#clear {
+  --ezp-textButton-background-active: var(--ezp-core-shade-secondary);
+  --ezp-textButton-background-hover: var(--ezp-core-shade-primary);
+  --ezp-textButton-background-init: transparent;
+  --ezp-textButton-boxShadow: inset 0 0 0 1px var(--ezp-core-outline);
+  --ezp-textButton-color-init: var(--ezp-core-foreground-primary);
 }

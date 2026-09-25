@@ -13,11 +13,6 @@
  */
 
 :host {
-  --ezp-drucken-gradient: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--ezp-theme-solid), white 14%) 0%,
-    color-mix(in srgb, var(--ezp-theme-solid), black 22%) 100%
-  );
   --ezp-status-border-radius: 16px;
 
   background: var(--ezp-printerSelection-background, var(--ezp-core-backdrop));
@@ -167,18 +162,34 @@
  *
  */
 
+#printer-caption {
+  color: var(--ezp-core-foreground-secondary);
+  letter-spacing: 0.08em;
+  padding: 0 var(--ezp-spacing-1);
+  text-transform: uppercase;
+}
+
 #printer-card {
   border-radius: 12px;
   box-shadow: inset 0 0 0 1px var(--ezp-core-outline);
   position: relative;
 }
 
+/* The caption above the card names this select, so hide its built-in label and
+   let the printer name sit next to the badge instead of hugging the chevron. */
+#printer {
+  --ezp-select-label-display: none;
+  --ezp-select-toggle-gridTemplateAreas: 'icon value accessory';
+  --ezp-select-toggle-gridTemplateRows: auto;
+  --ezp-select-value-textAlign: left;
+}
+
 #print {
   align-items: center;
   appearance: none;
-  background: var(--ezp-drucken-gradient);
+  background: var(--ezp-theme-solid);
   border: 0;
-  border-radius: 0 0 12px 12px;
+  border-radius: 8px;
   color: var(--ezp-white-100);
   cursor: pointer;
   display: flex;
@@ -187,7 +198,7 @@
   justify-content: center;
   margin: 0;
   outline: none;
-  padding: var(--ezp-spacing-4);
+  padding: #{global.$action-padding-block} var(--ezp-spacing-4);
   transition: opacity var(--ezp-duration-2) var(--ezp-easing-out-quart);
   width: 100%;
 
@@ -224,6 +235,14 @@
 #options {
   display: flex;
   flex-direction: column;
+
+  > * {
+    box-shadow: inset 0 -1px 0 0 var(--ezp-core-outline);
+  }
+
+  > *:last-child {
+    box-shadow: none;
+  }
 }
 
 /**
@@ -232,19 +251,28 @@
  *
  */
 
+/* Sticky so Print stays in view when the dialog is taller than the viewport
+   and the backdrop scrolls. A scrolling #body would clip the selects, which
+   expand in place and measure themselves against #box. */
 #footer {
-  display: flex;
-  justify-content: flex-end;
-  padding: var(--ezp-spacing-3) var(--ezp-spacing-4) var(--ezp-spacing-4);
-  position: relative;
+  background: var(--ezp-printerSelection-body-background, var(--ezp-core-surface-tertiary));
+  border-radius: 0 0 16px 16px;
+  border-top: 1px solid var(--ezp-core-outline);
+  bottom: 0;
+  display: grid;
+  gap: var(--ezp-spacing-3);
+  grid-template-columns: 1fr 1.4fr;
+  padding: var(--ezp-spacing-4);
+  position: sticky;
   z-index: 3;
 }
 
 #cancel {
-  --ezp-textButton-background-init: transparent;
+  --ezp-textButton-background-active: var(--ezp-core-shade-secondary);
   --ezp-textButton-background-hover: var(--ezp-core-shade-primary);
+  --ezp-textButton-background-init: transparent;
+  --ezp-textButton-borderRadius: 8px;
   --ezp-textButton-boxShadow: inset 0 0 0 1px var(--ezp-core-outline);
-  --ezp-textButton-borderRadius: 999px;
   --ezp-textButton-color-init: var(--ezp-core-foreground-primary);
-  --ezp-textButton-padding: var(--ezp-spacing-3) var(--ezp-spacing-6);
+  --ezp-textButton-padding: #{global.$action-padding-block} var(--ezp-spacing-3);
 }

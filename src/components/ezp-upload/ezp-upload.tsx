@@ -53,8 +53,19 @@ export class EzpUpload {
    *
    */
 
-  @Listen('dragenter')
-  handleDragEnter() {
+  // dragenter/dragleave bubble from every child the pointer crosses, and the
+  // next child's enter fires before the previous one's leave, so count depth
+  // instead of toggling. This only balances if every entered element stays
+  // connected until its dragleave fires, so the render never removes anything
+  // while `dragging` flips (see the drop overlay below).
+  private dragDepth = 0
+
+  @Listen('dragenter', { passive: false })
+  handleDragEnter(event?: DragEvent) {
+    // Accept here as well as on dragover: when the element under the pointer
+    // changes, the browser takes the drop effect from dragenter alone.
+    event?.preventDefault()
+    this.dragDepth++
     this.dragging = true
   }
 
@@ -69,7 +80,8 @@ export class EzpUpload {
 
   @Listen('dragleave')
   handleDragLeave() {
-    this.dragging = false
+    this.dragDepth = Math.max(0, this.dragDepth - 1)
+    this.dragging = this.dragDepth > 0
   }
 
   @Listen('drop', { passive: false })
@@ -77,6 +89,7 @@ export class EzpUpload {
     event.stopPropagation()
     event.preventDefault()
 
+    this.dragDepth = 0
     this.dragging = false
     const files = Array.from(event.dataTransfer?.files ?? [])
     // Add new files to existing selection instead of replacing
@@ -84,10 +97,20 @@ export class EzpUpload {
     this.uploadFile.emit(this.selectedFiles)
   }
 
+  // A drag that ends anywhere else (dropped elsewhere on the page, or
+  // cancelled) must not leave the card stuck in its drop state.
+  @Listen('drop', { target: 'window' })
+  @Listen('dragend', { target: 'window' })
+  resetDrag() {
+    this.dragDepth = 0
+    this.dragging = false
+  }
+
   @Listen('printCancel', { target: 'document' })
   listenPrintCancel() {
     this.form?.reset()
     this.selectedFiles = []
+    this.resetDrag()
   }
 
   /**
@@ -95,6 +118,24 @@ export class EzpUpload {
    * Private methods
    *
    */
+
+  // Stable per-File keys, so removing a row doesn't make Stencil reuse the
+  // following rows' DOM. Keyed by identity: the same file picked twice still
+  // gets two distinct rows.
+  private fileKeys = new WeakMap<File, number>()
+  private nextFileKey = 0
+
+  private fileKey(file: File): number {
+    if (!this.fileKeys.has(file)) {
+      this.fileKeys.set(file, this.nextFileKey++)
+    }
+    return this.fileKeys.get(file)!
+  }
+
+  /** Opens the native file picker from our own buttons. */
+  private openPicker = () => {
+    this.input?.click()
+  }
 
   private handleInput = () => {
     const files = Array.from(this.input?.files ?? [])
@@ -167,79 +208,98 @@ export class EzpUpload {
             name="input"
             id="input"
             multiple
-            aria-label={i18next.t('upload.description')}
+            aria-label={i18next.t('upload.choose_files')}
             ref={(input) => (this.input = input)}
             onInput={this.handleInput}
           />
 
           <div id="modal">
-            <div id="dropzone">
-              {hasFiles && (
-                <div id="thumbs">
-                  {this.selectedFiles.map((file, index) => (
-                    <div key={index} class="thumb">
-                      <button
+            <div id="body-frame">
+              <div id="body">
+                {!hasFiles && (
+                  <div id="dropzone">
+                    <ezp-icon id="dropzone-icon" name="cloud-upload" />
+                    {/* Both states stay mounted and CSS picks one: removing the
+                        prompt under the pointer would swallow its dragleave. */}
+                    <ezp-label
+                      id="dropzone-title"
+                      level="primary"
+                      weight="heavy"
+                      text={i18next.t('upload.dropzone_title')}
+                    />
+                    <div id="dropzone-prompt">
+                      <ezp-text-button
+                        id="choose"
                         type="button"
-                        class="thumb-remove"
-                        aria-label={i18next.t('button_actions.close')}
-                        onClick={(event) => this.removeFile(event, index)}
-                      >
-                        <ezp-icon name="close" />
-                      </button>
-                      <div class="thumb-icon">
-                        <ezp-icon name="file" />
-                      </div>
-                      <ezp-label class="thumb-name" ellipsis text={file.name} />
+                        onClick={this.openPicker}
+                        label={i18next.t('upload.choose_files')}
+                      />
                       <ezp-label
-                        class="thumb-meta"
-                        level="tertiary"
+                        id="drag-hint"
+                        level="secondary"
                         weight="strong"
-                        text={`${this.fileType(file.name)} · ${this.formatSize(file.size)}`}
+                        text={i18next.t('upload.drag_hint')}
+                      />
+                      <ezp-label
+                        id="formats"
+                        level="tertiary"
+                        text={SUPPORTED_FORMATS.join(', ')}
                       />
                     </div>
-                  ))}
-                  <label htmlFor="input" class="thumb thumb-add">
-                    <div class="thumb-add-icon">
+                  </div>
+                )}
+
+                {hasFiles && (
+                  <div id="files">
+                    {this.selectedFiles.map((file, index) => (
+                      <div key={this.fileKey(file)} class="file">
+                        {/* The name below already carries the extension. */}
+                        <span class="file-type" aria-hidden="true">
+                          {this.fileType(file.name)}
+                        </span>
+                        <div class="file-details">
+                          <ezp-label class="file-name" ellipsis weight="heavy" text={file.name} />
+                          <ezp-label
+                            class="file-size"
+                            level="tertiary"
+                            text={this.formatSize(file.size)}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          class="file-remove"
+                          aria-label={i18next.t('upload.remove_file')}
+                          onClick={(event) => this.removeFile(event, index)}
+                        >
+                          <ezp-icon name="close" />
+                        </button>
+                      </div>
+                    ))}
+                    <button type="button" id="add-more" onClick={this.openPicker}>
                       <ezp-icon name="plus" />
-                    </div>
-                    <ezp-label class="thumb-name" level="tertiary" text={i18next.t('upload.add_more')} />
-                  </label>
-                </div>
-              )}
-
-              {!hasFiles && (
-                <div id="cloud">
-                  <ezp-icon name="cloud-upload" />
-                </div>
-              )}
-
-              <ezp-label id="dropzone-title" weight="heavy" text={i18next.t('upload.dropzone_title')} />
-
-              <div id="meta">
-                <ezp-label level="secondary" text={i18next.t('upload.meta_leading')} />
-                <label htmlFor="input" id="browse">
-                  <ezp-label level="secondary" weight="strong" text={i18next.t('upload.browse')} />
-                </label>
-                <ezp-label level="secondary" text={i18next.t('upload.meta_multiple')} />
+                      <ezp-label
+                        level="secondary"
+                        weight="heavy"
+                        text={i18next.t('upload.add_more')}
+                      />
+                    </button>
+                  </div>
+                )}
               </div>
 
-              <div id="formats">
-                {SUPPORTED_FORMATS.map((format) => (
-                  <span class="format" key={format}>
-                    {format}
-                  </span>
-                ))}
-              </div>
+              {/* Laid over the file list rather than replacing it, so the row
+                  under the pointer stays in the DOM for the whole drag. */}
+              {hasFiles && this.dragging && (
+                <div id="drop-overlay" aria-hidden="true">
+                  <ezp-icon id="dropzone-icon" name="cloud-upload" />
+                  <ezp-label
+                    level="primary"
+                    weight="heavy"
+                    text={i18next.t('upload.dropzone_title')}
+                  />
+                </div>
+              )}
             </div>
-
-            {hasFiles && (
-              <ezp-label
-                id="ready"
-                level="secondary"
-                weight="strong"
-                text={i18next.t('upload.files_ready', { count: this.selectedFiles.length })}
-              />
-            )}
 
             <div id="footer">
               <ezp-text-button
@@ -248,7 +308,7 @@ export class EzpUpload {
                 level="secondary"
                 disabled={!hasFiles}
                 onClick={this.handleCancel}
-                label={i18next.t('upload.clear_files')}
+                label={i18next.t('upload.remove_files')}
                 class="action"
               />
               <ezp-text-button

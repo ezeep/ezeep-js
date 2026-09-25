@@ -290,6 +290,11 @@ export class EzpPrinterSelection {
     }
   }
 
+  /** Print needs a printer, no job in flight and a valid page range. */
+  private get printDisabled(): boolean {
+    return this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
+  }
+
   /** Description... */
   private handlePrint = async () => {
     this.printButton?.blur()
@@ -918,6 +923,12 @@ export class EzpPrinterSelection {
                 ))}
               </div>
             )}
+            <ezp-label
+              id="printer-caption"
+              level="tertiary"
+              weight="heavy"
+              text={i18next.t('printer_selection.printer')}
+            />
             <div id="printer-card">
               <ezp-select
                 id="printer"
@@ -940,24 +951,11 @@ export class EzpPrinterSelection {
                 preSelected={this.selectedPrinter.id ? this.selectedPrinter.name : null}
                 disabled={!(this.printers.length > 0)}
               />
-              <button
-                id="print"
-                type="button"
-                disabled={
-                  this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
-                }
-                onClick={this.handlePrint}
-                ref={(button) => (this.printButton = button)}
-              >
-                <ezp-icon name="printer" />
-                <ezp-label weight="heavy" text={i18next.t('printer_selection.print')} />
-              </button>
             </div>
             <div id="options">
-              <ezp-stepper label={i18next.t('printer_selection.copies')} icon="copies" />
+              <ezp-stepper label={i18next.t('printer_selection.copies')} />
               <ezp-select
                 label={i18next.t('printer_selection.color')}
-                icon="color"
                 placeholder={i18next.t('printer_selection.select_color')}
                 toggleFlow="horizontal"
                 options={this.ColorOptions?.map((option) => ({
@@ -975,7 +973,6 @@ export class EzpPrinterSelection {
               />
               <ezp-select
                 label={i18next.t('printer_selection.duplex')}
-                icon="duplex"
                 placeholder={i18next.t('printer_selection.select_duplex')}
                 toggleFlow="horizontal"
                 options={this.duplexOptions?.map((option) => ({
@@ -998,7 +995,6 @@ export class EzpPrinterSelection {
               />
               <ezp-select
                 label={i18next.t('printer_selection.size')}
-                icon="size"
                 placeholder={i18next.t('printer_selection.select_size')}
                 toggleFlow="horizontal"
                 optionFlow="horizontal"
@@ -1024,7 +1020,6 @@ export class EzpPrinterSelection {
               {this.paperid == PAPER_ID ? (
                 <>
                   <ezp-input
-                    icon="width"
                     suffix="mm"
                     value={this.selectedProperties.paperwidth}
                     eventType="width"
@@ -1032,7 +1027,6 @@ export class EzpPrinterSelection {
                     label={i18next.t('printer_selection.width')}
                   />
                   <ezp-input
-                    icon="height"
                     suffix="mm"
                     value={this.selectedProperties.paperlength}
                     eventType="length"
@@ -1043,7 +1037,6 @@ export class EzpPrinterSelection {
               ) : null}
               <ezp-select
                 label={i18next.t('printer_selection.orientation')}
-                icon="orientation"
                 placeholder={i18next.t('printer_selection.select_orientation')}
                 toggleFlow="horizontal"
                 options={this.selectedPrinterConfig.OrientationsSupported?.map(
@@ -1059,7 +1052,6 @@ export class EzpPrinterSelection {
               />
               <ezp-select
                 label={i18next.t('printer_selection.quality')}
-                icon="quality"
                 placeholder={i18next.t('printer_selection.select_quality')}
                 toggleFlow="horizontal"
                 options={this.selectedPrinterConfig.Resolutions?.map((option, index) => ({
@@ -1083,7 +1075,6 @@ export class EzpPrinterSelection {
               this.selectedPrinterConfig.Trays[0] != null ? (
                 <ezp-select
                   label={i18next.t('printer_selection.trays')}
-                  icon="trays"
                   placeholder={i18next.t('printer_selection.select_trays')}
                   toggleFlow="horizontal"
                   optionFlow="horizontal"
@@ -1108,7 +1099,6 @@ export class EzpPrinterSelection {
                 />
               ) : null}
               <ezp-input
-                icon="paper_range"
                 suffix=""
                 placeholder="1-2,4-5,8"
                 value={this.selectedProperties.PageRanges}
@@ -1127,6 +1117,16 @@ export class EzpPrinterSelection {
               class="action"
               id="cancel"
             />
+            <button
+              id="print"
+              type="button"
+              disabled={this.printDisabled}
+              onClick={this.handlePrint}
+              ref={(button) => (this.printButton = button)}
+            >
+              <ezp-icon name="printer" />
+              <ezp-label weight="heavy" text={i18next.t('printer_selection.print')} />
+            </button>
           </div>
           {!this.hidemenu && <ezp-user-menu open={this.userMenuOpen} name={this.userName} />}
         </div>

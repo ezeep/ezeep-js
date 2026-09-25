@@ -62,16 +62,13 @@
         "select_printer": "Wähle Drucker"
     },
     "upload": {
-        "description": "Ziehe Dateien hier in den Browser ",
-        "meta_leading": "oder",
-        "dropzone_title": "Dateien hier ablegen",
-        "browse": "vom Gerät auswählen",
+        "choose_files": "Dateien auswählen",
+        "drag_hint": "oder Dateien hierher ziehen",
+        "dropzone_title": "Zum Hochladen ablegen",
         "file_type_fallback": "DATEI",
-        "meta_multiple": "— mehrere Dateien möglich",
-        "add_more": "Hinzufügen",
-        "clear_files": "Dateien entfernen",
-        "files_ready_one": "{{count}} Datei bereit",
-        "files_ready_other": "{{count}} Dateien bereit",
+        "add_more": "Weitere Dateien hinzufügen",
+        "remove_file": "Datei entfernen",
+        "remove_files": "Dateien entfernen",
         "continue": "Weiter zu Druckoptionen"
     },
     "user_menu": {
