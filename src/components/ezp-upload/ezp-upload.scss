@@ -52,6 +52,22 @@
   overflow: hidden;
 }
 
+/* While a drag is in progress only the modal itself is a drag target. Its
+   children stop taking part in hit testing, so crossing rows, labels or
+   buttons fires no enter/leave pairs that could fall out of balance. */
+:host(.dragging) #modal * {
+  pointer-events: none;
+}
+
+/* Positioning context for the drop overlay; stays put while #body scrolls. */
+#body-frame {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+
 /* Scrolls internally so the footer stays pinned inside a constrained modal. */
 #body {
   display: flex;
@@ -90,6 +106,32 @@
 
 :host(.dragging) {
   --ezp-upload-dropzone-boxShadow: 0 0 0 4px var(--ezp-theme-translucent);
+}
+
+/* The title and the prompt are both always rendered; show one per state. */
+:host(:not(.dragging)) #dropzone-title,
+:host(.dragging) #dropzone-prompt {
+  display: none;
+}
+
+/* Same look as the empty dropzone, laid over the file list during a drag. */
+#drop-overlay {
+  align-items: center;
+  background:
+    linear-gradient(var(--ezp-theme-translucent), var(--ezp-theme-translucent)),
+    var(--ezp-core-surface-tertiary);
+  border: 1.5px dashed var(--ezp-theme-solid);
+  border-radius: 12px;
+  box-shadow: 0 0 0 4px var(--ezp-theme-translucent);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ezp-spacing-4);
+  inset: var(--ezp-spacing-4);
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  z-index: 1;
 }
 
 #dropzone-icon {
@@ -151,12 +193,13 @@
   font-weight: 600;
   letter-spacing: 0.02em;
   line-height: 1;
-  max-width: 64px;
   overflow: hidden;
-  padding: 8px 10px;
+  padding: 8px 6px;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* Fixed rather than content-sized, so file names line up across rows. */
+  width: 56px;
 }
 
 /* ezp-label trims its own half-leading, so the gap is measured cap-box to

@@ -251,13 +251,19 @@
  *
  */
 
+/* Sticky so Print stays in view when the dialog is taller than the viewport
+   and the backdrop scrolls. A scrolling #body would clip the selects, which
+   expand in place and measure themselves against #box. */
 #footer {
+  background: var(--ezp-printerSelection-body-background, var(--ezp-core-surface-tertiary));
+  border-radius: 0 0 16px 16px;
   border-top: 1px solid var(--ezp-core-outline);
+  bottom: 0;
   display: grid;
   gap: var(--ezp-spacing-3);
   grid-template-columns: 1fr 1.4fr;
   padding: var(--ezp-spacing-4);
-  position: relative;
+  position: sticky;
   z-index: 3;
 }
 
