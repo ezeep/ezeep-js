@@ -1,18 +1,35 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+#
+# Release channels
+#   pull request          -> verify only, nothing is published
+#   push to main          -> release candidate 1.0.<run>-rc on npm dist-tag `next`
+#                            (environment: Staging). `latest` and the CDN are not touched.
+#   manual run on RC tag  -> promotes that release candidate to 1.0.<run> on npm
+#                            dist-tag `latest`, then updates the CDN (environment: Production).
+#                            Actions -> Node.js Build -> Run workflow -> "Use workflow from":
+#                            Tags -> 1.0.<run>-rc
+#
+# The promotion does not rebuild: it takes the RC tarball from the npm registry,
+# changes only the version number and publishes it, so what was tested is what ships.
 
 name: Node.js Build
 
 env:
-  MODULE_VERSION: '1.0.${{ github.run_number }}'   # update MAJOR and MINOR version here
+  # Push to main: a new release candidate. Manual run: the RC tag being promoted.
+  # update MAJOR and MINOR version here
+  RC_VERSION: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || format('1.0.{0}-rc', github.run_number) }}
+
+  NPM_PACKAGE: '@ezeep/ezeep-js'                   # npm package name
+  NPM_PACKAGE_NG: '@ezeep/ngx-ezeep-js'            # angular npm package name
+
   DIST_PATH: 'dist/ezeep'                          # deployment path
   ARTIFACT_NAME: 'ezeep-js.zip'                    # artifact name
-  
+
   DIST_PATH_NG: 'dist/directives'                  # angular directives deployment path
   ARTIFACT_NAME_NG: 'ng-directives.zip'            # angular directives artifact name
-  
+
   NPM_REGISTRY: 'https://registry.npmjs.org'       # npm registry url
-  
-  PRERELEASE: false                                # true if marked as pre-release, false if production-ready
+
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true         # suppress node 20 deprecation warnings
 
 on:
@@ -20,11 +37,15 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  # Promotion of a release candidate to production. Must be started from an RC tag.
+  workflow_dispatch:
 
 jobs:
   # Validation gate: lint + unit tests + build. Runs on every PR and push, and
   # never publishes. Keeps regressions out of main.
   verify:
+    # A promotion re-publishes an already verified RC, so there is nothing to build.
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -51,11 +72,14 @@ jobs:
     - name: Build
       run: npm run build
 
-  build-npm:
+  # ---------------------------------------------------------------------------
+  # Stage 1 - release candidate (npm dist-tag `next`)
+  # ---------------------------------------------------------------------------
+  rc-npm:
     # Only publish on a real push to main, never on pull requests.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
-    environment: Production
+    environment: Staging
     runs-on: ubuntu-latest
     # NEU: Erforderlich für Trusted Publishing
     permissions:
@@ -74,17 +98,24 @@ jobs:
         cache: 'npm'
 
     - name: Bump package.json version of npm package
-      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
-    
+      run: npm version --no-git-tag-version --allow-same-version "${RC_VERSION}"
+
     - name: Build
       run: |
         npm ci
         npm run build
 
-    - name: Publish npm package to npm registry
+    - name: Publish release candidate to npm registry (dist-tag next)
       # npx -p npm@latest sorgt dafür, dass die aktuellste npm-Version geladen wird (OIDC Auth)
-      run: npx -p npm@latest npm publish --access public --provenance
-        
+      # A pre-release version with --tag next never becomes `latest` and is not
+      # matched by semver ranges such as ^1.0.0, so existing consumers do not get it.
+      run: |
+        if [ -n "$(npm view "${NPM_PACKAGE}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+          echo "${NPM_PACKAGE}@${RC_VERSION} is already published - skipping."
+          exit 0
+        fi
+        npx -p npm@latest npm publish --access public --provenance --tag next
+
     - name: Upload npm artifact
       uses: actions/upload-artifact@v5
       with:
@@ -105,24 +136,27 @@ jobs:
         path: '.'
         filename: ${{ env.ARTIFACT_NAME }}
 
-    - name: Create release with npm package
+    - name: Create pre-release with npm package
+      # The tag created here is what a promotion run is started from.
       uses: ncipollo/release-action@v1
       with:
-        tag: "${{ env.MODULE_VERSION }}"
-        prerelease: ${{ env.PRERELEASE }}
+        tag: "${{ env.RC_VERSION }}"
+        commit: ${{ github.sha }}
+        prerelease: true
+        allowUpdates: true
         artifacts: "${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
         token: ${{ secrets.GITHUB_TOKEN }}
 
 
-  build-ng:
-    environment: Production
-    needs: build-npm
+  rc-ng:
+    environment: Staging
+    needs: rc-npm
     runs-on: ubuntu-latest
     # NEU: Erforderlich für Trusted Publishing
     permissions:
-      contents: write
+      contents: read
       id-token: write
-  
+
     steps:
     - name: Checkout angular branch
       uses: actions/checkout@v5
@@ -136,18 +170,35 @@ jobs:
         registry-url: "${{ env.NPM_REGISTRY }}"
         cache: 'npm'
         cache-dependency-path: 'ezeep-js-angular/projects/ngx-ezeep-js'
-              
+
     - name: Bump package.json version for angular component
-      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
+      # The RC of the angular module is pinned to the matching RC of the npm
+      # package. The range in package.json (^1.0.x) can never resolve to a
+      # pre-release, so without the pin it would pull in the current `latest`.
+      run: |
+        npm version --no-git-tag-version --allow-same-version "${RC_VERSION}"
+        npm pkg set "dependencies.${NPM_PACKAGE}=${RC_VERSION}"
       working-directory: ezeep-js-angular/projects/ngx-ezeep-js
 
     - name: download angular build artifact
       uses: actions/download-artifact@v5
       with:
-          name: ng-directives.zip
+          name: ${{ env.ARTIFACT_NAME_NG }}
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
 
-    - name: build angular library and publish
+    - name: Wait for the npm release candidate to be installable
+      run: |
+        for attempt in $(seq 1 30); do
+          if [ -n "$(npm view "${NPM_PACKAGE}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+            exit 0
+          fi
+          echo "Waiting for ${NPM_PACKAGE}@${RC_VERSION} (${attempt}/30)"
+          sleep 10
+        done
+        echo "::error::${NPM_PACKAGE}@${RC_VERSION} did not appear on the npm registry."
+        exit 1
+
+    - name: build angular library and publish (dist-tag next)
       run: |
         cd ezeep-js-angular
         npm install -g @angular/cli
@@ -157,18 +208,152 @@ jobs:
         cd ../..
         ng build ngx-ezeep-js
         cd dist/ngx-ezeep-js
+        if [ -n "$(npm view "${NPM_PACKAGE_NG}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+          echo "${NPM_PACKAGE_NG}@${RC_VERSION} is already published - skipping."
+          exit 0
+        fi
         # Hier ebenfalls npx nutzen, um die OIDC-kompatible npm Version zu erzwingen
-        npx -p npm@latest npm publish --access public --provenance
-  
+        npx -p npm@latest npm publish --access public --provenance --tag next
+
+  # ---------------------------------------------------------------------------
+  # Stage 2 - production (npm dist-tag `latest` + CDN), manual, from an RC tag
+  # ---------------------------------------------------------------------------
+  promote-npm:
+    if: github.event_name == 'workflow_dispatch'
+    environment: Production
+    runs-on: ubuntu-latest
+    # NEU: Erforderlich für Trusted Publishing
+    permissions:
+      contents: write
+      id-token: write
+    outputs:
+      release_version: ${{ steps.version.outputs.release_version }}
+
+    steps:
+    - name: Setup Node.js 22
+      uses: actions/setup-node@v5
+      with:
+        node-version: '22'
+        registry-url: "${{ env.NPM_REGISTRY }}"
+
+    - name: Resolve release version from RC tag
+      id: version
+      run: |
+        if [[ "${GITHUB_REF_TYPE}" != "tag" || ! "${RC_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc$ ]]; then
+          echo "::error::A promotion must be started from a release-candidate tag (e.g. 1.0.300-rc), not from ${GITHUB_REF_TYPE} '${GITHUB_REF_NAME}'."
+          exit 1
+        fi
+        release_version="${RC_VERSION%-rc}"
+
+        for pkg in "${NPM_PACKAGE}" "${NPM_PACKAGE_NG}"; do
+          if [ -z "$(npm view "${pkg}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+            echo "::error::${pkg}@${RC_VERSION} is not on the npm registry - nothing to promote."
+            exit 1
+          fi
+        done
+
+        # Never move `latest` backwards. (Equal is allowed so a failed promotion can be re-run.)
+        latest="$(npm view "${NPM_PACKAGE}" dist-tags.latest)"
+        if [ "${latest}" != "${release_version}" ] && ! npx -y semver -r ">${latest}" "${release_version}" > /dev/null; then
+          echo "::error::${release_version} is older than the current latest (${latest}) - refusing to promote."
+          exit 1
+        fi
+
+        echo "release_version=${release_version}" >> "$GITHUB_OUTPUT"
+        echo "RELEASE_VERSION=${release_version}" >> "$GITHUB_ENV"
+        echo "Promoting ${RC_VERSION} -> ${release_version}" >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Download release candidate from npm registry
+      run: |
+        mkdir promote
+        npm pack "${NPM_PACKAGE}@${RC_VERSION}" --pack-destination "${RUNNER_TEMP}"
+        tar -xzf "${RUNNER_TEMP}"/ezeep-ezeep-js-*.tgz -C promote
+
+    - name: Publish npm package to npm registry (dist-tag latest)
+      # --ignore-scripts: the unpacked tarball has no node_modules, so the
+      # `prepare` (patch-package) script must not run. Nothing is built here.
+      run: |
+        if [ -n "$(npm view "${NPM_PACKAGE}@${RELEASE_VERSION}" version 2>/dev/null || true)" ]; then
+          echo "${NPM_PACKAGE}@${RELEASE_VERSION} is already published - skipping."
+          exit 0
+        fi
+        npm version --no-git-tag-version "${RELEASE_VERSION}"
+        npx -p npm@latest npm publish --access public --provenance --ignore-scripts --tag latest
+      working-directory: promote/package
+
+    - name: Upload npm artifact
+      uses: actions/upload-artifact@v5
+      with:
+        path: promote/package/${{ env.DIST_PATH }}
+        name: ${{ env.ARTIFACT_NAME }}
+
+    - name: Zip npm artifact for release
+      uses: thedoctor0/zip-release@b57d897cb5d60cb78b51a507f63fa184cfe35554 # 0.7.6
+      with:
+        type: 'zip'
+        directory: promote/package/${{ env.DIST_PATH }}
+        path: '.'
+        filename: ${{ env.ARTIFACT_NAME }}
+
+    - name: Create release with npm package
+      uses: ncipollo/release-action@v1
+      with:
+        tag: "${{ env.RELEASE_VERSION }}"
+        commit: ${{ github.sha }}
+        prerelease: false
+        allowUpdates: true
+        artifacts: "promote/package/${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+
+  promote-ng:
+    environment: Production
+    needs: promote-npm
+    runs-on: ubuntu-latest
+    # NEU: Erforderlich für Trusted Publishing
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      RELEASE_VERSION: ${{ needs.promote-npm.outputs.release_version }}
+
+    steps:
+    - name: Setup Node.js 22
+      uses: actions/setup-node@v5
+      with:
+        node-version: '22'
+        registry-url: "${{ env.NPM_REGISTRY }}"
+
+    - name: Download angular release candidate from npm registry
+      run: |
+        mkdir promote
+        npm pack "${NPM_PACKAGE_NG}@${RC_VERSION}" --pack-destination "${RUNNER_TEMP}"
+        tar -xzf "${RUNNER_TEMP}"/ezeep-ngx-ezeep-js-*.tgz -C promote
+
+    - name: Publish angular library to npm registry (dist-tag latest)
+      # The RC was pinned to the RC of the npm package; the release depends on
+      # the release it was generated from (or newer).
+      run: |
+        if [ -n "$(npm view "${NPM_PACKAGE_NG}@${RELEASE_VERSION}" version 2>/dev/null || true)" ]; then
+          echo "${NPM_PACKAGE_NG}@${RELEASE_VERSION} is already published - skipping."
+          exit 0
+        fi
+        npm version --no-git-tag-version "${RELEASE_VERSION}"
+        npm pkg set "dependencies.${NPM_PACKAGE}=^${RELEASE_VERSION}"
+        npx -p npm@latest npm publish --access public --provenance --ignore-scripts --tag latest
+      working-directory: promote/package
+
   cdn-upload-npm:
     environment: Production
-    needs: build-npm
+    needs: promote-npm
     runs-on: ubuntu-latest
     # WICHTIG: Die id-token Permission wird hier für Azure benötigt
     permissions:
       contents: read
       id-token: write
-      
+    env:
+      RELEASE_VERSION: ${{ needs.promote-npm.outputs.release_version }}
+
     steps:
     - name: Setup Node.js 22
       uses: actions/setup-node@v5
@@ -179,7 +364,7 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: ${{ env.ARTIFACT_NAME }}
-        path: "artifacts/v${{ env.MODULE_VERSION }}"
+        path: "artifacts/v${{ env.RELEASE_VERSION }}"
 
     - name: Login to Azure CLI via OIDC
       uses: azure/login@v3
@@ -241,7 +426,7 @@ jobs:
               -n $endpoint \
               --rule-name $rule \
               --action-name UrlRedirect \
-              --custom-path "/$container/v${{ env.MODULE_VERSION }}/$fileName" \
+              --custom-path "/$container/v${{ env.RELEASE_VERSION }}/$fileName" \
               --redirect-type Found \
               -o none
           done

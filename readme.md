@@ -284,3 +284,20 @@ Format source code:
 ```bash
 npm run format
 ```
+
+### Releases
+
+Releases are published by the [GitHub Actions workflow](.github/workflows/node.js.yml) in two stages.
+
+**1. Release candidate (automatic).** Every push to `main` publishes `@ezeep/ezeep-js` and `@ezeep/ngx-ezeep-js` as a pre-release version `1.0.<run>-rc` under the npm dist-tag `next`, and creates a GitHub pre-release with the tag `1.0.<run>-rc`. `latest` and `cdn.ezeep.com` are not changed, and version ranges such as `^1.0.0` never resolve to a release candidate.
+
+Test a release candidate with:
+
+```bash
+npm install @ezeep/ezeep-js@next
+npm install @ezeep/ngx-ezeep-js@next
+```
+
+**2. Production (manual).** To promote a tested release candidate, open _Actions → Node.js Build → Run workflow_ and choose the release candidate's tag (for example `1.0.300-rc`) under _Use workflow from → Tags_. The workflow takes that release candidate from the npm registry, publishes it unchanged as `1.0.300` under the dist-tag `latest`, creates the GitHub release and switches `cdn.ezeep.com` to the new version.
+
+A promotion is refused if it is not started from a release-candidate tag, or if the version is older than the current `latest`.
