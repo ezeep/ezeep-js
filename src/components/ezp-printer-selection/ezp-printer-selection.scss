@@ -142,9 +142,11 @@
   display: flex;
   gap: var(--ezp-spacing-3);
   min-width: 0;
+  /* Anchors the file name's tooltip, so it can span the row. */
+  position: relative;
 
-  ezp-label {
-    --ezp-label-minWidth: 0;
+  ezp-file-name {
+    flex: 0 1 auto;
   }
 }
 

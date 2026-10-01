@@ -918,7 +918,9 @@ export class EzpPrinterSelection {
                 {fileNames.map((name, index) => (
                   <div class="file-row" key={index}>
                     <ezp-icon name="file" class="file-row-icon" />
-                    <ezp-label ellipsis text={name} />
+                    {/* The first row sits at the top of the card, so its
+                        tooltip opens downwards instead. */}
+                    <ezp-file-name name={name} placement={index === 0 ? 'bottom' : 'top'} />
                   </div>
                 ))}
               </div>

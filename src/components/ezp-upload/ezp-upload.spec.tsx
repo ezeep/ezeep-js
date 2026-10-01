@@ -202,7 +202,7 @@ describe('ezp-upload', () => {
     await page.waitForChanges()
 
     const names = Array.from(page.root!.shadowRoot!.querySelectorAll('.file-name')).map((el) =>
-      el.getAttribute('text'),
+      el.getAttribute('name'),
     )
     expect(names).toEqual(['b.pdf'])
     expect(up.selectedFiles.map((f: File) => f.name)).toEqual(['b.pdf'])
