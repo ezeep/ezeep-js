@@ -95,7 +95,7 @@ describe('ezp-printer-selection remembering the last printer', () => {
     const el = new EzpPrinterSelection() as any
     el.printers = [printer('p1'), printer('p2')]
 
-    el.restoreSavedPrinter()
+    el.selectInitialPrinter()
 
     expect(el.selectedPrinter.id).toBe('p2')
   })
@@ -104,9 +104,9 @@ describe('ezp-printer-selection remembering the last printer', () => {
     storage.setPrinter(printer('gone'))
     storage.setPrinterSettings('gone', { color: true })
     const el = new EzpPrinterSelection() as any
-    el.printers = [printer('p1')]
+    el.printers = [printer('p1'), printer('p2')]
 
-    el.restoreSavedPrinter()
+    el.selectInitialPrinter()
 
     expect(el.selectedPrinter.id).toBe('')
     expect(storage.getPrinter()).toBeNull()
@@ -152,9 +152,54 @@ describe('ezp-printer-selection remembering the last printer', () => {
 
   it('starts with no printer when nothing was ever saved', () => {
     const el = new EzpPrinterSelection() as any
-    el.printers = [printer('p1')]
+    el.printers = [printer('p1'), printer('p2')]
 
-    el.restoreSavedPrinter()
+    el.selectInitialPrinter()
+
+    expect(el.selectedPrinter.id).toBe('')
+  })
+})
+
+describe('ezp-printer-selection with a single printer', () => {
+  const printer = (id: string) => ({ id, name: `Printer ${id}`, location: '', is_queue: false })
+
+  beforeEach(() => localStorage.clear())
+
+  it('selects the only printer, so there is nothing to pick', () => {
+    const el = new EzpPrinterSelection() as any
+    el.printers = [printer('only')]
+
+    el.selectInitialPrinter()
+
+    expect(el.selectedPrinter.id).toBe('only')
+  })
+
+  it('selects the only printer even when the saved one is gone', () => {
+    storage.setPrinter(printer('gone'))
+    const el = new EzpPrinterSelection() as any
+    el.printers = [printer('only')]
+
+    el.selectInitialPrinter()
+
+    expect(el.selectedPrinter.id).toBe('only')
+    expect(storage.getPrinter()).toBeNull()
+  })
+
+  it('still prefers the saved printer when it is the only one', () => {
+    storage.setPrinter(printer('only'))
+    const el = new EzpPrinterSelection() as any
+    el.printers = [printer('only')]
+
+    el.selectInitialPrinter()
+
+    expect(el.selectedPrinter.id).toBe('only')
+  })
+
+  it('selects nothing when the user has no printers at all', () => {
+    const el = new EzpPrinterSelection() as any
+    el.printers = []
+
+    el.selectInitialPrinter()
 
     expect(el.selectedPrinter.id).toBe('')
   })

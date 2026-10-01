@@ -483,17 +483,25 @@ export class EzpPrinterSelection {
     this.userMenuOpen = true
   }
 
-  /** Restore the last used printer. Its settings follow once its config is in,
-   *  since they can only be validated against the printer's capabilities. */
-  private restoreSavedPrinter() {
+  /**
+   * Decide which printer the dialog opens on: the one last printed to, or the
+   * user's only printer when there is nothing to choose between. Its settings
+   * follow once its config is in, since they can only be validated against the
+   * printer's capabilities.
+   */
+  private selectInitialPrinter() {
     const savedPrinter = storage.getPrinter()
-    if (savedPrinter) {
-      if (this.printers.some((printer) => printer.id === savedPrinter.id)) {
-        this.selectedPrinter = savedPrinter
-      } else {
-        this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
-        storage.clearSavedPrinter()
-      }
+    const savedIsAvailable = this.printers?.some((printer) => printer.id === savedPrinter?.id)
+
+    // A printer the user no longer has must not stay preselected.
+    if (savedPrinter && !savedIsAvailable) storage.clearSavedPrinter()
+
+    if (savedPrinter && savedIsAvailable) {
+      this.selectedPrinter = savedPrinter
+    } else if (this.printers?.length === 1) {
+      // Nothing to pick between: opening a dropdown with one entry in it is
+      // busywork, so start on it.
+      this.selectedPrinter = this.printers[0]
     } else {
       this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
     }
@@ -746,7 +754,7 @@ export class EzpPrinterSelection {
         }
       })
 
-    this.restoreSavedPrinter()
+    this.selectInitialPrinter()
 
     // if printer is stored from previous print, get the config to enable property selection
     if (this.selectedPrinter.id != '') {
