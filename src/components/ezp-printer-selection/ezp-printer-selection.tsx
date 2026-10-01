@@ -109,7 +109,8 @@ export class EzpPrinterSelection {
   @State() userMenuOpen: boolean = false
   @State() printStopped: boolean = false
   @State() userName: string
-  @State() printers: Printer[]
+  /** Starts empty so the dialog can still render if the list never arrives. */
+  @State() printers: Printer[] = []
   @State() selectedPrinter: Printer
   @State() printerConfig: PrinterConfig[]
   @State() selectedPrinterConfig: PrinterConfig = {
@@ -742,61 +743,99 @@ export class EzpPrinterSelection {
     this.unsubscribeLanguage = subscribeToLanguageChange(this)
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService.registerFetchInterceptor()
-    await this.getUserInfo()
 
-    await this.printService
-      .getPrinterList(authStore.state.accessToken)
-      .then((printers: Printer[]) => {
-        this.printers = printers
+    try {
+      // A missing display name must not stop the user from printing.
+      await this.getUserInfo().catch(() => undefined)
 
-        if (!(this.printers.length > 0)) {
-          this.noPrinters = true
-        }
-      })
+      try {
+        this.printers = (await this.printService.getPrinterList(authStore.state.accessToken)) ?? []
+      } catch {
+        this.printers = []
+      }
+      if (this.printers.length === 0) {
+        this.noPrinters = true
+      }
 
-    this.selectInitialPrinter()
+      this.selectInitialPrinter()
 
-    // if printer is stored from previous print, get the config to enable property selection
-    if (this.selectedPrinter.id != '') {
-      await this.printService
-        .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
-        .then((data) => {
-          this.selectedPrinterConfig = data[0]
-          applySavedProperties(
-            this.selectedPrinterConfig,
-            storage.getPrinterSettings(this.selectedPrinter.id),
-            this.selectedProperties,
-          )
-          this.setPaperid()
-        })
+      // A printer carried over from a previous print, or the only one the user
+      // has, needs its config before its properties can be offered.
+      if (this.selectedPrinter.id != '') {
+        await this.loadSelectedPrinterConfig()
+      }
+
+      let supportedExtensionsLoaded = false
+      try {
+        const response = await (
+          await this.printService.getConfig(authStore.state.accessToken)
+        ).json()
+        printStore.state.supportedFileExtensions = response.System.FILEEXT
+        supportedExtensionsLoaded = true
+      } catch {
+        // Handled below: without the list, nothing can be validated against it.
+      }
+
+      try {
+        await this.printService
+          .getAllPrinterProperties(authStore.state.accessToken)
+          .then((printerConfig: PrinterConfig[]) => {
+            this.printerConfig = printerConfig
+          })
+      } catch {
+        // Only used to describe other printers; the dialog works without it.
+      }
+
+      // Skipped when the list never arrived: every file would compare as
+      // unsupported and the user would be told their document cannot be
+      // printed when nothing is actually wrong with it.
+      if (supportedExtensionsLoaded && this.files && this.files.length > 0) {
+        // Validate all files
+        const validationPromises = this.files.map((file) => this.validateFileType(file.name))
+        const validationResults = await Promise.all(validationPromises)
+        const allValid = validationResults.every((valid) => valid)
+        this.notSupported = !allValid
+      }
+    } finally {
+      // Whatever failed above, the dialog has to become usable: the loading
+      // status carries no close button, so throwing out of here would strand
+      // the user on "Loading My Printers…" with no way back.
+      this.loading = false
+    }
+  }
+
+  /**
+   * Fetch the selected printer's capabilities and restore its saved settings.
+   *
+   * A failure drops the selection rather than keeping a printer the dialog
+   * cannot describe: the options would stay disabled while Print stayed
+   * enabled, so the job would go out with properties nothing has verified.
+   * With no selection the user picks from the list, which fetches again.
+   */
+  private async loadSelectedPrinterConfig() {
+    try {
+      const data = await this.printService.getPrinterProperties(
+        authStore.state.accessToken,
+        this.selectedPrinter.id,
+      )
+      // An empty list or an error body leaves nothing to configure from.
+      const config = data?.[0]
+      if (!config) throw new Error('No properties returned for the selected printer')
+
+      this.selectedPrinterConfig = config
+      applySavedProperties(
+        config,
+        storage.getPrinterSettings(this.selectedPrinter.id),
+        this.selectedProperties,
+      )
+      this.setPaperid()
+
       if (this.selectedProperties.paper === '') {
         this.setDefaultPaperFormat()
       }
+    } catch {
+      this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
     }
-
-    await (
-      await this.printService.getConfig(authStore.state.accessToken)
-    )
-      .json()
-      .then((response) => {
-        printStore.state.supportedFileExtensions = response.System.FILEEXT
-      })
-
-    await this.printService
-      .getAllPrinterProperties(authStore.state.accessToken)
-      .then((printerConfig: PrinterConfig[]) => {
-        this.printerConfig = printerConfig
-      })
-
-    if (this.files && this.files.length > 0) {
-      // Validate all files
-      const validationPromises = this.files.map((file) => this.validateFileType(file.name))
-      const validationResults = await Promise.all(validationPromises)
-      const allValid = validationResults.every((valid) => valid)
-      this.notSupported = !allValid
-    }
-
-    this.loading = false
   }
 
   disconnectedCallback() {

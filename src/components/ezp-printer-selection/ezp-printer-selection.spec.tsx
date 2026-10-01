@@ -1,5 +1,6 @@
 import { EzpPrinterSelection } from './ezp-printer-selection'
-import printStore from '../../services/print'
+import printStore, { EzpPrintService } from '../../services/print'
+import { EzpUserService } from '../../services/user'
 import { initi18n } from '../../utils/utils'
 import { storage } from '../../shared/storage'
 
@@ -202,5 +203,89 @@ describe('ezp-printer-selection with a single printer', () => {
     el.selectInitialPrinter()
 
     expect(el.selectedPrinter.id).toBe('')
+  })
+})
+
+describe('ezp-printer-selection load failures', () => {
+  const printer = (id: string) => ({ id, name: `Printer ${id}`, location: '', is_queue: false })
+
+  beforeEach(() => localStorage.clear())
+  afterEach(() => jest.restoreAllMocks())
+
+  /** connectedCallback with every network call stubbed. */
+  function loadable(overrides: Record<string, any> = {}) {
+    jest.spyOn(EzpUserService.prototype, 'getUserInfo').mockResolvedValue({} as any)
+    jest
+      .spyOn(EzpPrintService.prototype, 'registerFetchInterceptor')
+      .mockImplementation(() => undefined)
+    jest
+      .spyOn(EzpPrintService.prototype, 'getPrinterList')
+      .mockResolvedValue([printer('only')] as any)
+    jest
+      .spyOn(EzpPrintService.prototype, 'getPrinterProperties')
+      .mockResolvedValue([{ ColorSupported: true }] as any)
+    jest.spyOn(EzpPrintService.prototype, 'getAllPrinterProperties').mockResolvedValue([] as any)
+    jest
+      .spyOn(EzpPrintService.prototype, 'getConfig')
+      .mockResolvedValue({ json: () => Promise.resolve({ System: { FILEEXT: ['pdf'] } }) } as any)
+
+    for (const [method, impl] of Object.entries(overrides)) {
+      jest.spyOn(EzpPrintService.prototype, method as any).mockImplementation(impl as any)
+    }
+    return new EzpPrinterSelection() as any
+  }
+
+  it('leaves the dialog loading-free when the properties call fails', async () => {
+    // The loading status has no close button, so a throw here would strand the
+    // user — and auto-select makes this reachable on a first-ever print.
+    const el = loadable({ getPrinterProperties: () => Promise.reject(new Error('network')) })
+
+    await el.connectedCallback()
+
+    expect(el.loading).toBe(false)
+    // No half-configured printer is left selected.
+    expect(el.selectedPrinter.id).toBe('')
+  })
+
+  it('survives a printer-properties response with no properties in it', async () => {
+    const el = loadable({ getPrinterProperties: () => Promise.resolve([]) })
+
+    await el.connectedCallback()
+
+    expect(el.loading).toBe(false)
+    expect(el.selectedPrinter.id).toBe('')
+  })
+
+  it('leaves the dialog loading-free when the printer list fails', async () => {
+    const el = loadable({ getPrinterList: () => Promise.reject(new Error('network')) })
+
+    await el.connectedCallback()
+
+    expect(el.loading).toBe(false)
+    // Renderable: the list is an array, and the user gets a closeable state.
+    expect(el.printers).toEqual([])
+    expect(el.noPrinters).toBe(true)
+  })
+
+  it('opens without calling files unsupported when the extension list fails', async () => {
+    const el = loadable({ getConfig: () => Promise.reject(new Error('network')) })
+    el.files = [new File(['x'], 'a.pdf')]
+
+    await el.connectedCallback()
+
+    expect(el.loading).toBe(false)
+    // Without the list every file compares as unsupported, so validation is
+    // skipped rather than telling the user their document cannot be printed.
+    expect(el.notSupported).toBe(false)
+  })
+
+  it('keeps the auto-selected printer when its properties load', async () => {
+    const el = loadable()
+
+    await el.connectedCallback()
+
+    expect(el.loading).toBe(false)
+    expect(el.selectedPrinter.id).toBe('only')
+    expect(el.selectedPrinterConfig.ColorSupported).toBe(true)
   })
 })
