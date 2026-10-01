@@ -14,9 +14,20 @@ import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties, JobStatusResponse } from '../../shared/types'
-import { managePaperDimensions, poll, removeEmptyStrings, subscribeToLanguageChange } from '../../utils/utils'
+import {
+  managePaperDimensions,
+  poll,
+  removeEmptyStrings,
+  subscribeToLanguageChange,
+} from '../../utils/utils'
 import { PAPER_ID, validatePageRange, formatPageRange } from '../../utils/utils'
-import { applyPrinterDefaults, classifyJobStatus, hasTrays, hasNoTrays } from '../../utils/printer'
+import {
+  applySavedProperties,
+  classifyJobStatus,
+  hasTrays,
+  hasNoTrays,
+  pickRememberedProperties,
+} from '../../utils/printer'
 import { uploadAndPrintFile } from '../../services/print-job'
 import { storage } from '../../shared/storage'
 import {
@@ -450,22 +461,31 @@ export class EzpPrinterSelection {
       if (hubTimeout) clearTimeout(hubTimeout)
     }
 
-    storage.setProperties(this.selectedProperties)
-    storage.setPrinter(this.selectedPrinter)
+    this.rememberSelection()
 
     this.printStopped = false
+  }
+
+  /** Keep this printer and its settings for the next print. Stored per printer,
+   *  so each one keeps its own and no setting follows the user to a printer
+   *  that cannot do it. */
+  private rememberSelection() {
+    if (!this.selectedPrinter.id) return
+
+    storage.setPrinterSettings(
+      this.selectedPrinter.id,
+      pickRememberedProperties(this.selectedProperties),
+    )
+    storage.setPrinter(this.selectedPrinter)
   }
 
   private handleUserMenu = () => {
     this.userMenuOpen = true
   }
 
-  private getPropertiesFromLocalStorage() {
-    const savedProperties = storage.getProperties()
-    if (savedProperties) {
-      this.selectedProperties = savedProperties
-    }
-
+  /** Restore the last used printer. Its settings follow once its config is in,
+   *  since they can only be validated against the printer's capabilities. */
+  private restoreSavedPrinter() {
     const savedPrinter = storage.getPrinter()
     if (savedPrinter) {
       if (this.printers.some((printer) => printer.id === savedPrinter.id)) {
@@ -509,7 +529,13 @@ export class EzpPrinterSelection {
           .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
           .then((data) => {
             this.selectedPrinterConfig = { ...this.selectedPrinterConfig, ...data[0] }
-            applyPrinterDefaults(this.selectedPrinterConfig, this.selectedProperties)
+            // Each printer keeps its own settings, so switching to one the user
+            // has printed with before brings that printer's choices back.
+            applySavedProperties(
+              this.selectedPrinterConfig,
+              storage.getPrinterSettings(this.selectedPrinter.id),
+              this.selectedProperties,
+            )
           })
         break
       case 'color':
@@ -593,6 +619,53 @@ export class EzpPrinterSelection {
     return printStore.state.supportedFileExtensions.includes(`${this.fileExtension}`)
   }
 
+  /**
+   * What a dropdown should show: the current selection — restored from the last
+   * print, or just made by the user — and otherwise the printer's own default.
+   *
+   * The fallbacks matter because a config may describe its default only by name
+   * (`Default.Duplex`, `Default.Paper`, `Default.Tray`) without flagging the
+   * matching entry, which is all these dropdowns had to go on before settings
+   * were remembered.
+   */
+  private duplexPreSelection(): number | string | null {
+    if (!this.selectedPrinter.id) return null
+
+    const mode = Number(this.selectedProperties.duplexmode)
+    if (mode) return mode
+
+    switch (this.selectedPrinterConfig.Default?.Duplex) {
+      case 'duplex_simplex':
+        return i18next.t('printer_selection.duplex_none')
+      case 'duplex_vertical':
+        return i18next.t('printer_selection.duplex_long')
+      case 'duplex_horizontal':
+        return i18next.t('printer_selection.duplex_short')
+      default:
+        return null
+    }
+  }
+
+  private paperPreSelection(): string | null {
+    if (!this.selectedPrinter.id) return null
+    if (this.selectedProperties.paper) return this.selectedProperties.paper
+
+    const name = this.selectedPrinterConfig.Default?.Paper
+    return name && this.selectedPrinterConfig.PaperFormats?.some((el) => el.Name.includes(name))
+      ? name
+      : null
+  }
+
+  private trayPreSelection(): string | null {
+    if (!this.selectedPrinter.id) return null
+    if (this.selectedProperties.trayname) return this.selectedProperties.trayname
+
+    const name = this.selectedPrinterConfig.Default?.Tray
+    return name && this.selectedPrinterConfig.Trays?.some((el) => el?.Name.includes(name))
+      ? name
+      : null
+  }
+
   setDefaultPaperFormat() {
     let format: string
     const language = navigator.language
@@ -673,7 +746,7 @@ export class EzpPrinterSelection {
         }
       })
 
-    this.getPropertiesFromLocalStorage()
+    this.restoreSavedPrinter()
 
     // if printer is stored from previous print, get the config to enable property selection
     if (this.selectedPrinter.id != '') {
@@ -681,7 +754,12 @@ export class EzpPrinterSelection {
         .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
         .then((data) => {
           this.selectedPrinterConfig = data[0]
-          applyPrinterDefaults(this.selectedPrinterConfig, this.selectedProperties)
+          applySavedProperties(
+            this.selectedPrinterConfig,
+            storage.getPrinterSettings(this.selectedPrinter.id),
+            this.selectedProperties,
+          )
+          this.setPaperid()
         })
       if (this.selectedProperties.paper === '') {
         this.setDefaultPaperFormat()
@@ -967,9 +1045,11 @@ export class EzpPrinterSelection {
                   type: 'color',
                 }))}
                 preSelected={
-                  this.selectedPrinter.id && this.selectedPrinterConfig.Default?.Color == 'color'
-                    ? i18next.t('printer_selection.color_color')
-                    : i18next.t('printer_selection.color_grayscale')
+                  this.selectedPrinter.id
+                    ? this.selectedProperties.color
+                      ? i18next.t('printer_selection.color_color')
+                      : i18next.t('printer_selection.color_grayscale')
+                    : null
                 }
                 disabled={!this.selectedPrinterConfig.ColorSupported}
               />
@@ -983,16 +1063,7 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'duplex',
                 }))}
-                preSelected={
-                  this.selectedPrinter.id &&
-                  this.selectedPrinterConfig.Default?.Duplex == 'duplex_simplex'
-                    ? i18next.t('printer_selection.duplex_none')
-                    : this.selectedPrinterConfig.Default?.Duplex == 'duplex_vertical'
-                      ? i18next.t('printer_selection.duplex_long')
-                      : this.selectedPrinterConfig.Default?.Duplex == 'duplex_horizontal'
-                        ? i18next.t('printer_selection.duplex_short')
-                        : null
-                }
+                preSelected={this.duplexPreSelection()}
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
               <ezp-select
@@ -1009,14 +1080,7 @@ export class EzpPrinterSelection {
                     type: 'format',
                   }))
                 }
-                preSelected={
-                  this.selectedPrinter.id &&
-                  this.selectedPrinterConfig.PaperFormats?.find((el) =>
-                    el.Name.includes(this.selectedPrinterConfig.Default?.Paper as string),
-                  )
-                    ? this.selectedPrinterConfig.Default?.Paper
-                    : null
-                }
+                preSelected={this.paperPreSelection()}
                 disabled={!((this.selectedPrinterConfig.PaperFormats?.length ?? 0) > 0)}
               />
               {this.paperid == PAPER_ID ? (
@@ -1063,11 +1127,8 @@ export class EzpPrinterSelection {
                   type: 'quality',
                 }))}
                 preSelected={
-                  this.selectedPrinter.id &&
-                  this.selectedPrinterConfig.Resolutions?.includes(
-                    this.selectedPrinterConfig.Default?.Resolution as string,
-                  )
-                    ? this.selectedPrinterConfig.Default?.Resolution
+                  this.selectedPrinter.id
+                    ? (this.selectedProperties.resolution as string) || null
                     : null
                 }
                 disabled={!((this.selectedPrinterConfig.Resolutions?.length ?? 0) > 0)}
@@ -1090,14 +1151,7 @@ export class EzpPrinterSelection {
                         }))
                       : undefined
                   }
-                  preSelected={
-                    this.selectedPrinter.id &&
-                    this.selectedPrinterConfig.Trays?.find((el) =>
-                      el.Name.includes(this.selectedPrinterConfig.Default?.Tray as string),
-                    )
-                      ? this.selectedPrinterConfig.Default?.Tray
-                      : null
-                  }
+                  preSelected={this.trayPreSelection()}
                 />
               ) : null}
               <ezp-input

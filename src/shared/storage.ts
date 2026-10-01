@@ -14,9 +14,14 @@ const KEY = {
   accessToken: 'access_token',
   refreshToken: 'refreshToken',
   isAuthorized: 'isAuthorized',
+  /** Legacy single-printer settings blob, read once to seed `printerSettings`. */
   properties: 'properties',
   printer: 'printer',
+  printerSettings: 'printerSettings',
 } as const
+
+/** Print settings remembered per printer, keyed by printer id. */
+type PrinterSettings = Record<string, PrinterProperties>
 
 function getJSON<T>(key: string): T | null {
   const raw = localStorage.getItem(key)
@@ -49,13 +54,21 @@ export const storage = {
     return localStorage.getItem(KEY.isAuthorized) !== null
   },
 
-  getProperties(): PrinterProperties | null {
-    return getJSON<PrinterProperties>(KEY.properties)
+  /**
+   * Settings the user last printed with on `printerId`, or null if that printer
+   * has none yet. Kept per printer so switching printers never carries another
+   * printer's paper size or tray over to one that may not have it.
+   */
+  getPrinterSettings(printerId: string): PrinterProperties | null {
+    return readPrinterSettings()[printerId] ?? null
   },
-  setProperties(properties: PrinterProperties): void {
-    localStorage.setItem(KEY.properties, JSON.stringify(properties))
+  setPrinterSettings(printerId: string, properties: PrinterProperties): void {
+    const all = readPrinterSettings()
+    all[printerId] = properties
+    localStorage.setItem(KEY.printerSettings, JSON.stringify(all))
   },
 
+  /** The printer used for the last print, preselected when the dialog reopens. */
   getPrinter(): Printer | null {
     return getJSON<Printer>(KEY.printer)
   },
@@ -63,18 +76,38 @@ export const storage = {
     localStorage.setItem(KEY.printer, JSON.stringify(printer))
   },
 
-  /** Remove everything tied to the current session (used on logout). */
+  /**
+   * Remove everything tied to the current session (used on logout).
+   *
+   * Print settings and the last printer deliberately survive: they belong to
+   * this browser profile rather than to the session, and are validated against
+   * the signed-in user's printers on the next load (an unknown printer resets
+   * the selection), so the next user never inherits a selection they can't use.
+   */
   clearSession(): void {
-    localStorage.removeItem(KEY.properties)
     localStorage.removeItem(KEY.refreshToken)
     localStorage.removeItem(KEY.accessToken)
-    localStorage.removeItem(KEY.printer)
     localStorage.removeItem(KEY.isAuthorized)
   },
 
-  /** Remove just the saved printer + its properties (used when the saved printer is gone). */
+  /** Forget which printer was last used (when it is gone from the user's list).
+   *  Its settings stay put, ready in case that printer comes back. */
   clearSavedPrinter(): void {
     localStorage.removeItem(KEY.printer)
-    localStorage.removeItem(KEY.properties)
   },
+}
+
+/**
+ * Read the per-printer settings map, seeding it once from the pre-upgrade
+ * single-printer blob so a user who already printed keeps those settings.
+ */
+function readPrinterSettings(): PrinterSettings {
+  const stored = getJSON<PrinterSettings>(KEY.printerSettings)
+  if (stored) return stored
+
+  const legacy = getJSON<PrinterProperties>(KEY.properties)
+  const legacyPrinter = getJSON<Printer>(KEY.printer)
+  if (legacy && legacyPrinter?.id) return { [legacyPrinter.id]: legacy }
+
+  return {}
 }
