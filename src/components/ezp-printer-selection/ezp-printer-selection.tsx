@@ -111,7 +111,8 @@ export class EzpPrinterSelection {
   @State() userName: string
   /** Starts empty so the dialog can still render if the list never arrives. */
   @State() printers: Printer[] = []
-  @State() selectedPrinter: Printer
+  /** Starts empty so the dialog renders even if the list never loads. */
+  @State() selectedPrinter: Printer = { id: '', location: '', name: '', is_queue: false }
   @State() printerConfig: PrinterConfig[]
   @State() selectedPrinterConfig: PrinterConfig = {
     Default: {
@@ -748,21 +749,35 @@ export class EzpPrinterSelection {
       // A missing display name must not stop the user from printing.
       await this.getUserInfo().catch(() => undefined)
 
+      let printersLoaded = false
       try {
-        this.printers = (await this.printService.getPrinterList(authStore.state.accessToken)) ?? []
+        const printers = await this.printService.getPrinterList(authStore.state.accessToken)
+        // A failed request still resolves: the API answers with a `{code,
+        // message}` body, which would survive `?? []` and break on `.some`.
+        if (!Array.isArray(printers)) throw new Error('Unexpected printer list payload')
+        this.printers = printers
+        printersLoaded = true
       } catch {
         this.printers = []
       }
-      if (this.printers.length === 0) {
+
+      if (!printersLoaded) {
+        // Nothing is known about this user's printers, so the saved printer is
+        // left untouched: treating it as gone would clear it from storage and
+        // lose the settings that are only reachable through it.
         this.noPrinters = true
-      }
+      } else {
+        if (this.printers.length === 0) {
+          this.noPrinters = true
+        }
 
-      this.selectInitialPrinter()
+        this.selectInitialPrinter()
 
-      // A printer carried over from a previous print, or the only one the user
-      // has, needs its config before its properties can be offered.
-      if (this.selectedPrinter.id != '') {
-        await this.loadSelectedPrinterConfig()
+        // A printer carried over from a previous print, or the only one the
+        // user has, needs its config before its properties can be offered.
+        if (this.selectedPrinter.id != '') {
+          await this.loadSelectedPrinterConfig()
+        }
       }
 
       let supportedExtensionsLoaded = false

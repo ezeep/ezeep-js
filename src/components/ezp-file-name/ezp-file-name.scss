@@ -44,6 +44,20 @@
   flex: 0 0 auto;
 }
 
+/* The split can fall on a space — `Invoice (1).pdf`, `Document copy.pdf` — and
+   a space at the edge of a block collapses away, silently renaming the file on
+   screen. `pre` keeps it; the halves still cannot wrap, which is what the
+   ellipsis needs. */
+:host(:not(.expanded)) .head,
+:host(:not(.expanded)) .tail {
+  --ezp-label-whiteSpace: pre;
+}
+
+/* Expanded shows the whole name, so it has to wrap while keeping its spaces. */
+:host(.expanded) .head {
+  --ezp-label-whiteSpace: pre-wrap;
+}
+
 :host(.expanded) #trigger {
   /* Long names rarely carry spaces, so allow a break anywhere. */
   word-break: break-all;
@@ -67,8 +81,9 @@
   left: 0;
   line-height: 18px;
   padding: var(--ezp-spacing-2) var(--ezp-spacing-3);
-  /* Purely informational: it must never swallow a click meant for the row. */
-  pointer-events: none;
+  /* Stays hoverable so it can be read without it vanishing (WCAG 1.4.13); it
+     closes on its own mouseleave, so it only sits over the row while in use. */
+  pointer-events: auto;
   position: absolute;
   /* Spans the row it is anchored to: wide enough for most names to stay on one
      line, and it covers the neighbouring row cleanly rather than half of it. */

@@ -121,3 +121,79 @@ describe('ezp-file-name', () => {
     expect(page.root!.className).toContain('place-bottom')
   })
 })
+
+describe('ezp-file-name accessible name', () => {
+  it('states the name once, so the split is not read as a gap', async () => {
+    // Name computation joins the two labels with a space, which would turn
+    // "Short.pdf" into "S hort.pdf" for a screen reader.
+    const { shadow } = await setup('Short.pdf')
+
+    expect(shadow.querySelector('#trigger')!.getAttribute('aria-label')).toBe('Short.pdf')
+  })
+
+  it('keeps the label exact for a name containing spaces', async () => {
+    const { shadow } = await setup('Budget 2026 final.xlsx')
+
+    expect(shadow.querySelector('#trigger')!.getAttribute('aria-label')).toBe(
+      'Budget 2026 final.xlsx',
+    )
+    // The two halves still spell the name out character for character.
+    expect(rendered(shadow)).toBe('Budget 2026 final.xlsx')
+  })
+
+  it('splits without losing a space at the cut', async () => {
+    const { shadow } = await setup('Invoice (1).pdf')
+
+    const head = shadow.querySelector('.head')!.getAttribute('text')!
+    const tail = shadow.querySelector('.tail')!.getAttribute('text')!
+    expect(head + tail).toBe('Invoice (1).pdf')
+    // The space lands at the tail's edge, where only `white-space: pre` keeps
+    // it on screen — see ezp-file-name.scss.
+    expect(tail.startsWith(' ')).toBe(true)
+  })
+})
+
+describe('ezp-file-name tooltip dismissal', () => {
+  it('can be dismissed with Escape when hover opened it', async () => {
+    // Hover leaves focus elsewhere, so a host-scoped listener never sees the
+    // key. WCAG 1.4.13 asks for hover content to be dismissible.
+    const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf')
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    page.doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    await page.waitForChanges()
+
+    expect(shadow.querySelector('#tooltip')).toBeNull()
+  })
+
+  it('stays up while the pointer crosses to it, and closes once it leaves', async () => {
+    const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf')
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    // Pointer leaves the name heading for the bubble.
+    fn.scheduleClose()
+    fn.cancelScheduledClose()
+    await settle()
+    await page.waitForChanges()
+    expect(shadow.querySelector('#tooltip')).not.toBeNull()
+
+    // Pointer leaves the bubble itself.
+    fn.closeTooltip()
+    await page.waitForChanges()
+    expect(shadow.querySelector('#tooltip')).toBeNull()
+  })
+
+  it('closes when the pointer leaves without reaching the bubble', async () => {
+    const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf')
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    fn.scheduleClose()
+    await settle()
+    await page.waitForChanges()
+
+    expect(shadow.querySelector('#tooltip')).toBeNull()
+  })
+})

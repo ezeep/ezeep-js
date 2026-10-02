@@ -11,6 +11,10 @@ const TAIL_LENGTH = 8
 /** Hovering across a list shouldn't flash a tooltip over every row in passing. */
 const OPEN_DELAY_MS = 300
 
+/** Grace period for crossing the gap between the name and the bubble, so the
+ *  tooltip can be hovered rather than vanishing on the way (WCAG 1.4.13). */
+const CLOSE_DELAY_MS = 200
+
 @Component({
   tag: 'ezp-file-name',
   styleUrl: 'ezp-file-name.scss',
@@ -20,6 +24,7 @@ export class EzpFileName {
   @Element() host: HTMLEzpFileNameElement
 
   private openTimeout?: ReturnType<typeof setTimeout>
+  private closeTimeout?: ReturnType<typeof setTimeout>
   /** Invalidates an in-flight open when the pointer leaves. */
   private openGeneration = 0
 
@@ -63,6 +68,7 @@ export class EzpFileName {
 
   disconnectedCallback() {
     clearTimeout(this.openTimeout)
+    clearTimeout(this.closeTimeout)
   }
 
   /**
@@ -71,7 +77,7 @@ export class EzpFileName {
    *
    */
 
-  @Listen('keydown')
+  @Listen('keydown', { target: 'document' })
   handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'Escape' && this.tooltipOpen) {
       event.stopPropagation()
@@ -116,7 +122,19 @@ export class EzpFileName {
   private closeTooltip = () => {
     this.openGeneration++
     clearTimeout(this.openTimeout)
+    clearTimeout(this.closeTimeout)
     this.tooltipOpen = false
+  }
+
+  /** Leaves the tooltip up briefly so the pointer can reach it. */
+  private scheduleClose = () => {
+    clearTimeout(this.openTimeout)
+    clearTimeout(this.closeTimeout)
+    this.closeTimeout = setTimeout(this.closeTooltip, CLOSE_DELAY_MS)
+  }
+
+  private cancelScheduledClose = () => {
+    clearTimeout(this.closeTimeout)
   }
 
   private toggleExpanded = () => {
@@ -144,10 +162,14 @@ export class EzpFileName {
         <button
           type="button"
           id="trigger"
+          /* The split puts the name in two elements, and name computation joins
+             them with a space — "Short.pdf" would be read as "S hort.pdf". The
+             label states the name once, exactly as it is. */
+          aria-label={this.name}
           aria-expanded={this.expanded ? 'true' : 'false'}
           onClick={this.toggleExpanded}
           onMouseEnter={this.openTooltip}
-          onMouseLeave={this.closeTooltip}
+          onMouseLeave={this.scheduleClose}
           onFocus={this.openTooltip}
           onBlur={this.closeTooltip}
         >
@@ -160,10 +182,16 @@ export class EzpFileName {
           />
           {split && <ezp-label class="tail" level={this.level} weight={this.weight} text={tail} />}
         </button>
-        {/* Purely a visual aid: the button's own text already spells the name
-            out in full, so announcing the bubble too would just repeat it. */}
+        {/* Purely a visual aid: the button's own label already states the name,
+            so announcing the bubble too would just repeat it. It stays hoverable
+            (WCAG 1.4.13), hence the handlers rather than `pointer-events: none`. */}
         {this.tooltipOpen && (
-          <div id="tooltip" aria-hidden="true">
+          <div
+            id="tooltip"
+            aria-hidden="true"
+            onMouseEnter={this.cancelScheduledClose}
+            onMouseLeave={this.closeTooltip}
+          >
             {this.name}
           </div>
         )}

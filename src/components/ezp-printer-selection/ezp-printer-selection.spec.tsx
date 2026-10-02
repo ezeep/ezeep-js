@@ -279,6 +279,37 @@ describe('ezp-printer-selection load failures', () => {
     expect(el.notSupported).toBe(false)
   })
 
+  it('keeps the saved printer when the list fails, so its settings stay reachable', async () => {
+    // A failed list is not evidence the printer is gone. Clearing it would also
+    // orphan a pre-upgrade settings blob, which is only found via that printer.
+    storage.setPrinter(printer('saved'))
+    storage.setPrinterSettings('saved', { color: true })
+    const el = loadable({ getPrinterList: () => Promise.reject(new Error('network')) })
+
+    await el.connectedCallback()
+
+    expect(el.loading).toBe(false)
+    expect(storage.getPrinter()!.id).toBe('saved')
+    expect(storage.getPrinterSettings('saved')).toEqual({ color: true })
+    expect(el.selectedPrinter.id).toBe('')
+  })
+
+  it('treats an error body in place of the printer list as a failure', async () => {
+    // The API answers a failed request with {code, message}, which is truthy
+    // and survives `?? []`, then breaks on `.some`.
+    storage.setPrinter(printer('saved'))
+    const el = loadable({
+      getPrinterList: () => Promise.resolve({ code: 401, message: 'Unauthorized' }),
+    })
+
+    await el.connectedCallback()
+
+    expect(el.loading).toBe(false)
+    expect(el.printers).toEqual([])
+    expect(el.noPrinters).toBe(true)
+    expect(storage.getPrinter()!.id).toBe('saved')
+  })
+
   it('keeps the auto-selected printer when its properties load', async () => {
     const el = loadable()
 
