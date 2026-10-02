@@ -531,23 +531,22 @@ export class EzpPrinterSelection {
     value?: string | number
   }) {
     switch (eventDetails.type) {
-      case 'printer':
-        this.selectedPrinter.id = eventDetails.id
-        this.selectedPrinter.name = eventDetails.title
-        this.selectedPrinter.is_queue = eventDetails.is_queue
-        await this.printService
-          .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
-          .then((data) => {
-            this.selectedPrinterConfig = { ...this.selectedPrinterConfig, ...data[0] }
-            // Each printer keeps its own settings, so switching to one the user
-            // has printed with before brings that printer's choices back.
-            applySavedProperties(
-              this.selectedPrinterConfig,
-              storage.getPrinterSettings(this.selectedPrinter.id),
-              this.selectedProperties,
-            )
-          })
+      case 'printer': {
+        const picked = this.printers.find((printer) => printer.id === eventDetails.id)
+        this.selectedPrinter = picked ?? {
+          id: eventDetails.id,
+          name: eventDetails.title,
+          location: '',
+          is_queue: eventDetails.is_queue,
+        }
+        // Same guard as the initial load. Without it a failed fetch left the
+        // printer selected while the config still described the *previous*
+        // one: Print stayed enabled, the job went out with settings nothing
+        // had checked against this printer, and those settings were then
+        // saved under its id and restored on later opens.
+        await this.loadSelectedPrinterConfig()
         break
+      }
       case 'color':
         this.selectedProperties.color =
           eventDetails.title == i18next.t('printer_selection.color_color') ? true : false

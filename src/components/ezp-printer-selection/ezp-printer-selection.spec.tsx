@@ -310,6 +310,54 @@ describe('ezp-printer-selection load failures', () => {
     expect(storage.getPrinter()!.id).toBe('saved')
   })
 
+  it('drops a hand-picked printer whose properties fail, so Print cannot fire', async () => {
+    const el = loadable()
+    await el.connectedCallback()
+    // Start from a printer that loaded fine.
+    expect(el.selectedPrinter.id).toBe('only')
+
+    jest
+      .spyOn(EzpPrintService.prototype, 'getPrinterProperties')
+      .mockRejectedValue(new Error('network'))
+    el.printers = [printer('only'), printer('other')]
+    await el.setSelectedProperties({
+      type: 'printer',
+      id: 'other',
+      title: 'Printer other',
+      is_queue: false,
+    })
+
+    // Leaving it selected would print with the previous printer's capabilities
+    // and then save them under this printer's id.
+    expect(el.selectedPrinter.id).toBe('')
+    expect(el.printDisabled).toBe(true)
+  })
+
+  it('replaces the config when switching printers rather than merging it', async () => {
+    const el = loadable()
+    await el.connectedCallback()
+    el.selectedPrinterConfig = {
+      ColorSupported: true,
+      Trays: [{ Default: true, Index: 1, Name: 'Tray 1' }],
+    }
+    el.printers = [printer('only'), printer('other')]
+
+    jest
+      .spyOn(EzpPrintService.prototype, 'getPrinterProperties')
+      .mockResolvedValue([{ ColorSupported: false }] as any)
+    await el.setSelectedProperties({
+      type: 'printer',
+      id: 'other',
+      title: 'Printer other',
+      is_queue: false,
+    })
+
+    expect(el.selectedPrinter.id).toBe('other')
+    // The previous printer's trays must not survive the switch.
+    expect(el.selectedPrinterConfig.Trays).toBeUndefined()
+    expect(el.selectedPrinterConfig.ColorSupported).toBe(false)
+  })
+
   it('keeps the auto-selected printer when its properties load', async () => {
     const el = loadable()
 
