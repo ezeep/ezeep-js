@@ -258,7 +258,14 @@ export class EzpUpload {
                           {this.fileType(file.name)}
                         </span>
                         <div class="file-details">
-                          <ezp-label class="file-name" ellipsis weight="heavy" text={file.name} />
+                          {/* The first row has no room above it inside the card,
+                              so its tooltip opens downwards instead. */}
+                          <ezp-file-name
+                            class="file-name"
+                            weight="heavy"
+                            name={file.name}
+                            placement={index === 0 ? 'bottom' : 'top'}
+                          />
                           <ezp-label
                             class="file-size"
                             level="tertiary"

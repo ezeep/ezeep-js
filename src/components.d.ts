@@ -5,8 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TriggerTypes, WeightTypes } from "./shared/types";
-export { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TriggerTypes, WeightTypes } from "./shared/types";
+import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
+export { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -41,6 +41,28 @@ export namespace Components {
          */
         "iconSize": IconSizeTypes;
         "instance": string;
+    }
+    interface EzpFileName {
+        /**
+          * Type scale of the rendered name, passed through to `ezp-label`.
+          * @default 'secondary'
+         */
+        "level": LabelLevelTypes;
+        /**
+          * The full file name. Always present in the DOM, so screen readers and copy-paste get it in full however it is truncated on screen.
+          * @default ''
+         */
+        "name": string;
+        /**
+          * Side the tooltip opens on. Consumers point it away from the edge their row sits against — `bottom` for the first row of a list, `top` below it.
+          * @default 'top'
+         */
+        "placement": TooltipPlacementTypes;
+        /**
+          * Font weight of the rendered name, passed through to `ezp-label`.
+          * @default 'soft'
+         */
+        "weight": WeightTypes;
     }
     interface EzpIcon {
         /**
@@ -126,6 +148,10 @@ export namespace Components {
           * @default false
          */
         "ellipsis": boolean;
+        /**
+          * Whether the text is currently clipped — `ellipsis` only bites when the text outgrows the space it was given, which callers cannot tell from the props alone. Lets a caller offer the full text only when it is needed.
+         */
+        "isTruncated": () => Promise<boolean>;
         /**
           * Description...
           * @default 'secondary'
@@ -441,6 +467,12 @@ declare global {
         prototype: HTMLEzpDialogElement;
         new (): HTMLEzpDialogElement;
     };
+    interface HTMLEzpFileNameElement extends Components.EzpFileName, HTMLStencilElement {
+    }
+    var HTMLEzpFileNameElement: {
+        prototype: HTMLEzpFileNameElement;
+        new (): HTMLEzpFileNameElement;
+    };
     interface HTMLEzpIconElement extends Components.EzpIcon, HTMLStencilElement {
     }
     var HTMLEzpIconElement: {
@@ -613,6 +645,7 @@ declare global {
         "ezp-auth": HTMLEzpAuthElement;
         "ezp-backdrop": HTMLEzpBackdropElement;
         "ezp-dialog": HTMLEzpDialogElement;
+        "ezp-file-name": HTMLEzpFileNameElement;
         "ezp-icon": HTMLEzpIconElement;
         "ezp-icon-button": HTMLEzpIconButtonElement;
         "ezp-input": HTMLEzpInputElement;
@@ -673,6 +706,28 @@ declare namespace LocalJSX {
           * Events
          */
         "onDialogClose"?: (event: EzpDialogCustomEvent<string>) => void;
+    }
+    interface EzpFileName {
+        /**
+          * Type scale of the rendered name, passed through to `ezp-label`.
+          * @default 'secondary'
+         */
+        "level"?: LabelLevelTypes;
+        /**
+          * The full file name. Always present in the DOM, so screen readers and copy-paste get it in full however it is truncated on screen.
+          * @default ''
+         */
+        "name"?: string;
+        /**
+          * Side the tooltip opens on. Consumers point it away from the edge their row sits against — `bottom` for the first row of a list, `top` below it.
+          * @default 'top'
+         */
+        "placement"?: TooltipPlacementTypes;
+        /**
+          * Font weight of the rendered name, passed through to `ezp-label`.
+          * @default 'soft'
+         */
+        "weight"?: WeightTypes;
     }
     interface EzpIcon {
         /**
@@ -1032,6 +1087,12 @@ declare namespace LocalJSX {
         "iconFramed": boolean;
         "instance": string;
     }
+    interface EzpFileNameAttributes {
+        "name": string;
+        "level": LabelLevelTypes;
+        "weight": WeightTypes;
+        "placement": TooltipPlacementTypes;
+    }
     interface EzpIconAttributes {
         "name": IconNameTypes;
         "size": IconSizeTypes;
@@ -1136,6 +1197,7 @@ declare namespace LocalJSX {
         "ezp-auth": Omit<EzpAuth, keyof EzpAuthAttributes> & { [K in keyof EzpAuth & keyof EzpAuthAttributes]?: EzpAuth[K] } & { [K in keyof EzpAuth & keyof EzpAuthAttributes as `attr:${K}`]?: EzpAuthAttributes[K] } & { [K in keyof EzpAuth & keyof EzpAuthAttributes as `prop:${K}`]?: EzpAuth[K] };
         "ezp-backdrop": Omit<EzpBackdrop, keyof EzpBackdropAttributes> & { [K in keyof EzpBackdrop & keyof EzpBackdropAttributes]?: EzpBackdrop[K] } & { [K in keyof EzpBackdrop & keyof EzpBackdropAttributes as `attr:${K}`]?: EzpBackdropAttributes[K] } & { [K in keyof EzpBackdrop & keyof EzpBackdropAttributes as `prop:${K}`]?: EzpBackdrop[K] };
         "ezp-dialog": Omit<EzpDialog, keyof EzpDialogAttributes> & { [K in keyof EzpDialog & keyof EzpDialogAttributes]?: EzpDialog[K] } & { [K in keyof EzpDialog & keyof EzpDialogAttributes as `attr:${K}`]?: EzpDialogAttributes[K] } & { [K in keyof EzpDialog & keyof EzpDialogAttributes as `prop:${K}`]?: EzpDialog[K] };
+        "ezp-file-name": Omit<EzpFileName, keyof EzpFileNameAttributes> & { [K in keyof EzpFileName & keyof EzpFileNameAttributes]?: EzpFileName[K] } & { [K in keyof EzpFileName & keyof EzpFileNameAttributes as `attr:${K}`]?: EzpFileNameAttributes[K] } & { [K in keyof EzpFileName & keyof EzpFileNameAttributes as `prop:${K}`]?: EzpFileName[K] };
         "ezp-icon": Omit<EzpIcon, keyof EzpIconAttributes> & { [K in keyof EzpIcon & keyof EzpIconAttributes]?: EzpIcon[K] } & { [K in keyof EzpIcon & keyof EzpIconAttributes as `attr:${K}`]?: EzpIconAttributes[K] } & { [K in keyof EzpIcon & keyof EzpIconAttributes as `prop:${K}`]?: EzpIcon[K] } & OneOf<"name", EzpIcon["name"], EzpIconAttributes["name"]>;
         "ezp-icon-button": Omit<EzpIconButton, keyof EzpIconButtonAttributes> & { [K in keyof EzpIconButton & keyof EzpIconButtonAttributes]?: EzpIconButton[K] } & { [K in keyof EzpIconButton & keyof EzpIconButtonAttributes as `attr:${K}`]?: EzpIconButtonAttributes[K] } & { [K in keyof EzpIconButton & keyof EzpIconButtonAttributes as `prop:${K}`]?: EzpIconButton[K] } & OneOf<"icon", EzpIconButton["icon"], EzpIconButtonAttributes["icon"]>;
         "ezp-input": Omit<EzpInput, keyof EzpInputAttributes> & { [K in keyof EzpInput & keyof EzpInputAttributes]?: EzpInput[K] } & { [K in keyof EzpInput & keyof EzpInputAttributes as `attr:${K}`]?: EzpInputAttributes[K] } & { [K in keyof EzpInput & keyof EzpInputAttributes as `prop:${K}`]?: EzpInput[K] };
@@ -1157,6 +1219,7 @@ declare module "@stencil/core" {
             "ezp-auth": LocalJSX.IntrinsicElements["ezp-auth"] & JSXBase.HTMLAttributes<HTMLEzpAuthElement>;
             "ezp-backdrop": LocalJSX.IntrinsicElements["ezp-backdrop"] & JSXBase.HTMLAttributes<HTMLEzpBackdropElement>;
             "ezp-dialog": LocalJSX.IntrinsicElements["ezp-dialog"] & JSXBase.HTMLAttributes<HTMLEzpDialogElement>;
+            "ezp-file-name": LocalJSX.IntrinsicElements["ezp-file-name"] & JSXBase.HTMLAttributes<HTMLEzpFileNameElement>;
             "ezp-icon": LocalJSX.IntrinsicElements["ezp-icon"] & JSXBase.HTMLAttributes<HTMLEzpIconElement>;
             "ezp-icon-button": LocalJSX.IntrinsicElements["ezp-icon-button"] & JSXBase.HTMLAttributes<HTMLEzpIconButtonElement>;
             "ezp-input": LocalJSX.IntrinsicElements["ezp-input"] & JSXBase.HTMLAttributes<HTMLEzpInputElement>;

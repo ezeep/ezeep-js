@@ -14,9 +14,20 @@ import authStore from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import { Printer, PrinterConfig, PrinterProperties, JobStatusResponse } from '../../shared/types'
-import { managePaperDimensions, poll, removeEmptyStrings, subscribeToLanguageChange } from '../../utils/utils'
+import {
+  managePaperDimensions,
+  poll,
+  removeEmptyStrings,
+  subscribeToLanguageChange,
+} from '../../utils/utils'
 import { PAPER_ID, validatePageRange, formatPageRange } from '../../utils/utils'
-import { applyPrinterDefaults, classifyJobStatus, hasTrays, hasNoTrays } from '../../utils/printer'
+import {
+  applySavedProperties,
+  classifyJobStatus,
+  hasTrays,
+  hasNoTrays,
+  pickRememberedProperties,
+} from '../../utils/printer'
 import { uploadAndPrintFile } from '../../services/print-job'
 import { storage } from '../../shared/storage'
 import {
@@ -98,8 +109,10 @@ export class EzpPrinterSelection {
   @State() userMenuOpen: boolean = false
   @State() printStopped: boolean = false
   @State() userName: string
-  @State() printers: Printer[]
-  @State() selectedPrinter: Printer
+  /** Starts empty so the dialog can still render if the list never arrives. */
+  @State() printers: Printer[] = []
+  /** Starts empty so the dialog renders even if the list never loads. */
+  @State() selectedPrinter: Printer = { id: '', location: '', name: '', is_queue: false }
   @State() printerConfig: PrinterConfig[]
   @State() selectedPrinterConfig: PrinterConfig = {
     Default: {
@@ -134,6 +147,9 @@ export class EzpPrinterSelection {
     trayname: '',
     PageRanges: '',
   }
+
+  /** True while a printer's capabilities are being fetched. */
+  @State() loadingPrinterConfig: boolean = false
 
   @State() paperid: number | string | undefined
   @State() currentFileIndex: number = 0
@@ -290,9 +306,17 @@ export class EzpPrinterSelection {
     }
   }
 
-  /** Print needs a printer, no job in flight and a valid page range. */
+  /** Print needs a printer with its capabilities in hand, no job in flight and
+   *  a valid page range. The config matters: between picking a printer and its
+   *  properties arriving, the selection is set but the properties still hold
+   *  blank defaults, and printing then saves those as that printer's settings. */
   private get printDisabled(): boolean {
-    return this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
+    return (
+      this.selectedPrinter.id === '' ||
+      this.loadingPrinterConfig ||
+      this.printProcessing ||
+      this.pageRangeInvalid
+    )
   }
 
   /** Description... */
@@ -450,30 +474,47 @@ export class EzpPrinterSelection {
       if (hubTimeout) clearTimeout(hubTimeout)
     }
 
-    storage.setProperties(this.selectedProperties)
-    storage.setPrinter(this.selectedPrinter)
+    this.rememberSelection()
 
     this.printStopped = false
+  }
+
+  /** Keep this printer and its settings for the next print. Stored per printer,
+   *  so each one keeps its own and no setting follows the user to a printer
+   *  that cannot do it. */
+  private rememberSelection() {
+    if (!this.selectedPrinter.id) return
+
+    storage.setPrinterSettings(
+      this.selectedPrinter.id,
+      pickRememberedProperties(this.selectedProperties),
+    )
+    storage.setPrinter(this.selectedPrinter)
   }
 
   private handleUserMenu = () => {
     this.userMenuOpen = true
   }
 
-  private getPropertiesFromLocalStorage() {
-    const savedProperties = storage.getProperties()
-    if (savedProperties) {
-      this.selectedProperties = savedProperties
-    }
-
+  /**
+   * Decide which printer the dialog opens on: the one last printed to, or the
+   * user's only printer when there is nothing to choose between. Its settings
+   * follow once its config is in, since they can only be validated against the
+   * printer's capabilities.
+   */
+  private selectInitialPrinter() {
     const savedPrinter = storage.getPrinter()
-    if (savedPrinter) {
-      if (this.printers.some((printer) => printer.id === savedPrinter.id)) {
-        this.selectedPrinter = savedPrinter
-      } else {
-        this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
-        storage.clearSavedPrinter()
-      }
+    const savedIsAvailable = this.printers?.some((printer) => printer.id === savedPrinter?.id)
+
+    // A printer the user no longer has must not stay preselected.
+    if (savedPrinter && !savedIsAvailable) storage.clearSavedPrinter()
+
+    if (savedPrinter && savedIsAvailable) {
+      this.selectedPrinter = savedPrinter
+    } else if (this.printers?.length === 1) {
+      // Nothing to pick between: opening a dropdown with one entry in it is
+      // busywork, so start on it.
+      this.selectedPrinter = this.printers[0]
     } else {
       this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
     }
@@ -501,17 +542,22 @@ export class EzpPrinterSelection {
     value?: string | number
   }) {
     switch (eventDetails.type) {
-      case 'printer':
-        this.selectedPrinter.id = eventDetails.id
-        this.selectedPrinter.name = eventDetails.title
-        this.selectedPrinter.is_queue = eventDetails.is_queue
-        await this.printService
-          .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
-          .then((data) => {
-            this.selectedPrinterConfig = { ...this.selectedPrinterConfig, ...data[0] }
-            applyPrinterDefaults(this.selectedPrinterConfig, this.selectedProperties)
-          })
+      case 'printer': {
+        const picked = this.printers.find((printer) => printer.id === eventDetails.id)
+        this.selectedPrinter = picked ?? {
+          id: eventDetails.id,
+          name: eventDetails.title,
+          location: '',
+          is_queue: eventDetails.is_queue,
+        }
+        // Same guard as the initial load. Without it a failed fetch left the
+        // printer selected while the config still described the *previous*
+        // one: Print stayed enabled, the job went out with settings nothing
+        // had checked against this printer, and those settings were then
+        // saved under its id and restored on later opens.
+        await this.loadSelectedPrinterConfig()
         break
+      }
       case 'color':
         this.selectedProperties.color =
           eventDetails.title == i18next.t('printer_selection.color_color') ? true : false
@@ -593,6 +639,53 @@ export class EzpPrinterSelection {
     return printStore.state.supportedFileExtensions.includes(`${this.fileExtension}`)
   }
 
+  /**
+   * What a dropdown should show: the current selection — restored from the last
+   * print, or just made by the user — and otherwise the printer's own default.
+   *
+   * The fallbacks matter because a config may describe its default only by name
+   * (`Default.Duplex`, `Default.Paper`, `Default.Tray`) without flagging the
+   * matching entry, which is all these dropdowns had to go on before settings
+   * were remembered.
+   */
+  private duplexPreSelection(): number | string | null {
+    if (!this.selectedPrinter.id) return null
+
+    const mode = Number(this.selectedProperties.duplexmode)
+    if (mode) return mode
+
+    switch (this.selectedPrinterConfig.Default?.Duplex) {
+      case 'duplex_simplex':
+        return i18next.t('printer_selection.duplex_none')
+      case 'duplex_vertical':
+        return i18next.t('printer_selection.duplex_long')
+      case 'duplex_horizontal':
+        return i18next.t('printer_selection.duplex_short')
+      default:
+        return null
+    }
+  }
+
+  private paperPreSelection(): string | null {
+    if (!this.selectedPrinter.id) return null
+    if (this.selectedProperties.paper) return this.selectedProperties.paper
+
+    const name = this.selectedPrinterConfig.Default?.Paper
+    return name && this.selectedPrinterConfig.PaperFormats?.some((el) => el.Name.includes(name))
+      ? name
+      : null
+  }
+
+  private trayPreSelection(): string | null {
+    if (!this.selectedPrinter.id) return null
+    if (this.selectedProperties.trayname) return this.selectedProperties.trayname
+
+    const name = this.selectedPrinterConfig.Default?.Tray
+    return name && this.selectedPrinterConfig.Trays?.some((el) => el?.Name.includes(name))
+      ? name
+      : null
+  }
+
   setDefaultPaperFormat() {
     let format: string
     const language = navigator.language
@@ -661,56 +754,116 @@ export class EzpPrinterSelection {
     this.unsubscribeLanguage = subscribeToLanguageChange(this)
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
     this.printService.registerFetchInterceptor()
-    await this.getUserInfo()
 
-    await this.printService
-      .getPrinterList(authStore.state.accessToken)
-      .then((printers: Printer[]) => {
+    try {
+      // A missing display name must not stop the user from printing.
+      await this.getUserInfo().catch(() => undefined)
+
+      let printersLoaded = false
+      try {
+        const printers = await this.printService.getPrinterList(authStore.state.accessToken)
+        // A failed request still resolves: the API answers with a `{code,
+        // message}` body, which would survive `?? []` and break on `.some`.
+        if (!Array.isArray(printers)) throw new Error('Unexpected printer list payload')
         this.printers = printers
+        printersLoaded = true
+      } catch {
+        this.printers = []
+      }
 
-        if (!(this.printers.length > 0)) {
+      if (!printersLoaded) {
+        // Nothing is known about this user's printers, so the saved printer is
+        // left untouched: treating it as gone would clear it from storage and
+        // lose the settings that are only reachable through it.
+        this.noPrinters = true
+      } else {
+        if (this.printers.length === 0) {
           this.noPrinters = true
         }
-      })
 
-    this.getPropertiesFromLocalStorage()
+        this.selectInitialPrinter()
 
-    // if printer is stored from previous print, get the config to enable property selection
-    if (this.selectedPrinter.id != '') {
-      await this.printService
-        .getPrinterProperties(authStore.state.accessToken, this.selectedPrinter.id)
-        .then((data) => {
-          this.selectedPrinterConfig = data[0]
-          applyPrinterDefaults(this.selectedPrinterConfig, this.selectedProperties)
-        })
+        // A printer carried over from a previous print, or the only one the
+        // user has, needs its config before its properties can be offered.
+        if (this.selectedPrinter.id != '') {
+          await this.loadSelectedPrinterConfig()
+        }
+      }
+
+      let supportedExtensionsLoaded = false
+      try {
+        const response = await (
+          await this.printService.getConfig(authStore.state.accessToken)
+        ).json()
+        printStore.state.supportedFileExtensions = response.System.FILEEXT
+        supportedExtensionsLoaded = true
+      } catch {
+        // Handled below: without the list, nothing can be validated against it.
+      }
+
+      try {
+        await this.printService
+          .getAllPrinterProperties(authStore.state.accessToken)
+          .then((printerConfig: PrinterConfig[]) => {
+            this.printerConfig = printerConfig
+          })
+      } catch {
+        // Only used to describe other printers; the dialog works without it.
+      }
+
+      // Skipped when the list never arrived: every file would compare as
+      // unsupported and the user would be told their document cannot be
+      // printed when nothing is actually wrong with it.
+      if (supportedExtensionsLoaded && this.files && this.files.length > 0) {
+        // Validate all files
+        const validationPromises = this.files.map((file) => this.validateFileType(file.name))
+        const validationResults = await Promise.all(validationPromises)
+        const allValid = validationResults.every((valid) => valid)
+        this.notSupported = !allValid
+      }
+    } finally {
+      // Whatever failed above, the dialog has to become usable: the loading
+      // status carries no close button, so throwing out of here would strand
+      // the user on "Loading My Printers…" with no way back.
+      this.loading = false
+    }
+  }
+
+  /**
+   * Fetch the selected printer's capabilities and restore its saved settings.
+   *
+   * A failure drops the selection rather than keeping a printer the dialog
+   * cannot describe: the options would stay disabled while Print stayed
+   * enabled, so the job would go out with properties nothing has verified.
+   * With no selection the user picks from the list, which fetches again.
+   */
+  private async loadSelectedPrinterConfig() {
+    this.loadingPrinterConfig = true
+    try {
+      const data = await this.printService.getPrinterProperties(
+        authStore.state.accessToken,
+        this.selectedPrinter.id,
+      )
+      // An empty list or an error body leaves nothing to configure from.
+      const config = data?.[0]
+      if (!config) throw new Error('No properties returned for the selected printer')
+
+      this.selectedPrinterConfig = config
+      applySavedProperties(
+        config,
+        storage.getPrinterSettings(this.selectedPrinter.id),
+        this.selectedProperties,
+      )
+      this.setPaperid()
+
       if (this.selectedProperties.paper === '') {
         this.setDefaultPaperFormat()
       }
+    } catch {
+      this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
+    } finally {
+      this.loadingPrinterConfig = false
     }
-
-    await (
-      await this.printService.getConfig(authStore.state.accessToken)
-    )
-      .json()
-      .then((response) => {
-        printStore.state.supportedFileExtensions = response.System.FILEEXT
-      })
-
-    await this.printService
-      .getAllPrinterProperties(authStore.state.accessToken)
-      .then((printerConfig: PrinterConfig[]) => {
-        this.printerConfig = printerConfig
-      })
-
-    if (this.files && this.files.length > 0) {
-      // Validate all files
-      const validationPromises = this.files.map((file) => this.validateFileType(file.name))
-      const validationResults = await Promise.all(validationPromises)
-      const allValid = validationResults.every((valid) => valid)
-      this.notSupported = !allValid
-    }
-
-    this.loading = false
   }
 
   disconnectedCallback() {
@@ -918,7 +1071,9 @@ export class EzpPrinterSelection {
                 {fileNames.map((name, index) => (
                   <div class="file-row" key={index}>
                     <ezp-icon name="file" class="file-row-icon" />
-                    <ezp-label ellipsis text={name} />
+                    {/* The first row sits at the top of the card, so its
+                        tooltip opens downwards instead. */}
+                    <ezp-file-name name={name} placement={index === 0 ? 'bottom' : 'top'} />
                   </div>
                 ))}
               </div>
@@ -965,9 +1120,11 @@ export class EzpPrinterSelection {
                   type: 'color',
                 }))}
                 preSelected={
-                  this.selectedPrinter.id && this.selectedPrinterConfig.Default?.Color == 'color'
-                    ? i18next.t('printer_selection.color_color')
-                    : i18next.t('printer_selection.color_grayscale')
+                  this.selectedPrinter.id
+                    ? this.selectedProperties.color
+                      ? i18next.t('printer_selection.color_color')
+                      : i18next.t('printer_selection.color_grayscale')
+                    : null
                 }
                 disabled={!this.selectedPrinterConfig.ColorSupported}
               />
@@ -981,16 +1138,7 @@ export class EzpPrinterSelection {
                   meta: '',
                   type: 'duplex',
                 }))}
-                preSelected={
-                  this.selectedPrinter.id &&
-                  this.selectedPrinterConfig.Default?.Duplex == 'duplex_simplex'
-                    ? i18next.t('printer_selection.duplex_none')
-                    : this.selectedPrinterConfig.Default?.Duplex == 'duplex_vertical'
-                      ? i18next.t('printer_selection.duplex_long')
-                      : this.selectedPrinterConfig.Default?.Duplex == 'duplex_horizontal'
-                        ? i18next.t('printer_selection.duplex_short')
-                        : null
-                }
+                preSelected={this.duplexPreSelection()}
                 disabled={!this.selectedPrinterConfig.DuplexSupported}
               />
               <ezp-select
@@ -1007,14 +1155,7 @@ export class EzpPrinterSelection {
                     type: 'format',
                   }))
                 }
-                preSelected={
-                  this.selectedPrinter.id &&
-                  this.selectedPrinterConfig.PaperFormats?.find((el) =>
-                    el.Name.includes(this.selectedPrinterConfig.Default?.Paper as string),
-                  )
-                    ? this.selectedPrinterConfig.Default?.Paper
-                    : null
-                }
+                preSelected={this.paperPreSelection()}
                 disabled={!((this.selectedPrinterConfig.PaperFormats?.length ?? 0) > 0)}
               />
               {this.paperid == PAPER_ID ? (
@@ -1061,11 +1202,8 @@ export class EzpPrinterSelection {
                   type: 'quality',
                 }))}
                 preSelected={
-                  this.selectedPrinter.id &&
-                  this.selectedPrinterConfig.Resolutions?.includes(
-                    this.selectedPrinterConfig.Default?.Resolution as string,
-                  )
-                    ? this.selectedPrinterConfig.Default?.Resolution
+                  this.selectedPrinter.id
+                    ? (this.selectedProperties.resolution as string) || null
                     : null
                 }
                 disabled={!((this.selectedPrinterConfig.Resolutions?.length ?? 0) > 0)}
@@ -1088,14 +1226,7 @@ export class EzpPrinterSelection {
                         }))
                       : undefined
                   }
-                  preSelected={
-                    this.selectedPrinter.id &&
-                    this.selectedPrinterConfig.Trays?.find((el) =>
-                      el.Name.includes(this.selectedPrinterConfig.Default?.Tray as string),
-                    )
-                      ? this.selectedPrinterConfig.Default?.Tray
-                      : null
-                  }
+                  preSelected={this.trayPreSelection()}
                 />
               ) : null}
               <ezp-input

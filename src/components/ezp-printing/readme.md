@@ -126,7 +126,9 @@ graph TD;
   ezp-upload --> ezp-icon
   ezp-upload --> ezp-label
   ezp-upload --> ezp-text-button
+  ezp-upload --> ezp-file-name
   ezp-text-button --> ezp-label
+  ezp-file-name --> ezp-label
   ezp-icon-button --> ezp-icon
   ezp-auth --> ezp-status
   ezp-auth --> ezp-dialog
@@ -141,6 +143,7 @@ graph TD;
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-icon
+  ezp-printer-selection --> ezp-file-name
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-stepper
   ezp-printer-selection --> ezp-input

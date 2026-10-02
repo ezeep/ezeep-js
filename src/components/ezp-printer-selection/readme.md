@@ -40,6 +40,7 @@
 - [ezp-label](../ezp-label)
 - [ezp-icon-button](../ezp-icon-button)
 - [ezp-icon](../ezp-icon)
+- [ezp-file-name](../ezp-file-name)
 - [ezp-select](../ezp-select)
 - [ezp-stepper](../ezp-stepper)
 - [ezp-input](../ezp-input)
@@ -53,6 +54,7 @@ graph TD;
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button
   ezp-printer-selection --> ezp-icon
+  ezp-printer-selection --> ezp-file-name
   ezp-printer-selection --> ezp-select
   ezp-printer-selection --> ezp-stepper
   ezp-printer-selection --> ezp-input
@@ -63,6 +65,7 @@ graph TD;
   ezp-status --> ezp-text-button
   ezp-text-button --> ezp-label
   ezp-icon-button --> ezp-icon
+  ezp-file-name --> ezp-label
   ezp-select --> ezp-backdrop
   ezp-select --> ezp-icon
   ezp-select --> ezp-label

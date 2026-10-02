@@ -1,0 +1,101 @@
+/**
+ *
+ * Rules
+ *
+ */
+
+/* Deliberately not a positioning context: the tooltip anchors to the nearest
+   positioned ancestor, so the consumer puts `position: relative` on the whole
+   row and the bubble may use its full width instead of the name column's. */
+:host {
+  display: block;
+  min-width: 0;
+}
+
+/* The name is a button so the full text is reachable without a pointer: tap on
+   touch, Enter or Space on a keyboard. */
+#trigger {
+  align-items: baseline;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  margin: 0;
+  max-width: 100%;
+  min-width: 0;
+  outline-color: var(--ezp-theme-solid);
+  outline-offset: 2px;
+  padding: 0;
+  text-align: left;
+}
+
+/* Everything but the last few characters, and the only part allowed to clip. */
+.head {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* Held back from truncation, so a trailing `_DE` / `_EN` stays readable. */
+.tail {
+  flex: 0 0 auto;
+}
+
+/* The split can fall on a space — `Invoice (1).pdf`, `Document copy.pdf` — and
+   a space at the edge of a block collapses away, silently renaming the file on
+   screen. `pre` keeps it; the halves still cannot wrap, which is what the
+   ellipsis needs. */
+:host(:not(.expanded)) .head,
+:host(:not(.expanded)) .tail {
+  --ezp-label-whiteSpace: pre;
+}
+
+/* Expanded shows the whole name, so it has to wrap while keeping its spaces. */
+:host(.expanded) .head {
+  --ezp-label-whiteSpace: pre-wrap;
+}
+
+:host(.expanded) #trigger {
+  /* Long names rarely carry spaces, so allow a break anywhere. */
+  word-break: break-all;
+}
+
+/**
+ *
+ * Tooltip
+ *
+ */
+
+#tooltip {
+  background: var(--ezp-core-surface-tertiary);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px var(--ezp-core-outline),
+    0 16px 40px -16px var(--ezp-core-backdrop);
+  color: var(--ezp-core-foreground-primary);
+  font-size: 12px;
+  font-weight: 500;
+  left: 0;
+  line-height: 18px;
+  padding: var(--ezp-spacing-2) var(--ezp-spacing-3);
+  /* Stays hoverable so it can be read without it vanishing (WCAG 1.4.13); it
+     closes on its own mouseleave, so it only sits over the row while in use. */
+  pointer-events: auto;
+  position: absolute;
+  /* Spans the row it is anchored to: wide enough for most names to stay on one
+     line, and it covers the neighbouring row cleanly rather than half of it. */
+  right: 0;
+  word-break: break-all;
+  z-index: 10;
+}
+
+:host(.place-top) #tooltip {
+  bottom: calc(100% + var(--ezp-spacing-2));
+}
+
+:host(.place-bottom) #tooltip {
+  top: calc(100% + var(--ezp-spacing-2));
+}
