@@ -148,6 +148,9 @@ export class EzpPrinterSelection {
     PageRanges: '',
   }
 
+  /** True while a printer's capabilities are being fetched. */
+  @State() loadingPrinterConfig: boolean = false
+
   @State() paperid: number | string | undefined
   @State() currentFileIndex: number = 0
   @State() totalFiles: number = 0
@@ -303,9 +306,17 @@ export class EzpPrinterSelection {
     }
   }
 
-  /** Print needs a printer, no job in flight and a valid page range. */
+  /** Print needs a printer with its capabilities in hand, no job in flight and
+   *  a valid page range. The config matters: between picking a printer and its
+   *  properties arriving, the selection is set but the properties still hold
+   *  blank defaults, and printing then saves those as that printer's settings. */
   private get printDisabled(): boolean {
-    return this.selectedPrinter.id === '' || this.printProcessing || this.pageRangeInvalid
+    return (
+      this.selectedPrinter.id === '' ||
+      this.loadingPrinterConfig ||
+      this.printProcessing ||
+      this.pageRangeInvalid
+    )
   }
 
   /** Description... */
@@ -827,6 +838,7 @@ export class EzpPrinterSelection {
    * With no selection the user picks from the list, which fetches again.
    */
   private async loadSelectedPrinterConfig() {
+    this.loadingPrinterConfig = true
     try {
       const data = await this.printService.getPrinterProperties(
         authStore.state.accessToken,
@@ -849,6 +861,8 @@ export class EzpPrinterSelection {
       }
     } catch {
       this.selectedPrinter = { id: '', location: '', name: '', is_queue: false }
+    } finally {
+      this.loadingPrinterConfig = false
     }
   }
 

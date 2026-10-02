@@ -167,6 +167,28 @@ describe('ezp-file-name tooltip dismissal', () => {
     expect(shadow.querySelector('#tooltip')).toBeNull()
   })
 
+  it('swallows the Escape it acts on, so the host page keeps its dialog open', async () => {
+    const { page, fn } = await setup('Quarterly_Report_2026_final_DE.pdf')
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    const event = { key: 'Escape', stopPropagation: jest.fn() } as any
+    fn.handleKeyDown(event)
+
+    expect(event.stopPropagation).toHaveBeenCalled()
+    expect(fn.tooltipOpen).toBe(false)
+  })
+
+  it('lets Escape through when no tooltip is open', async () => {
+    const { fn } = await setup('Quarterly_Report_2026_final_DE.pdf')
+
+    const event = { key: 'Escape', stopPropagation: jest.fn() } as any
+    fn.handleKeyDown(event)
+
+    // Nothing of ours is showing, so the page's own handlers must still run.
+    expect(event.stopPropagation).not.toHaveBeenCalled()
+  })
+
   it('stays up while the pointer crosses to it, and closes once it leaves', async () => {
     const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf')
     fn.tooltipOpen = true

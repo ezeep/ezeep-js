@@ -333,6 +333,34 @@ describe('ezp-printer-selection load failures', () => {
     expect(el.printDisabled).toBe(true)
   })
 
+  it("keeps Print disabled until the picked printer's capabilities arrive", async () => {
+    const el = loadable()
+    await el.connectedCallback()
+    el.printers = [printer('only'), printer('other')]
+
+    let release: (value: any) => void
+    jest
+      .spyOn(EzpPrintService.prototype, 'getPrinterProperties')
+      .mockReturnValue(new Promise((resolve) => (release = resolve)) as any)
+
+    const picking = el.setSelectedProperties({
+      type: 'printer',
+      id: 'other',
+      title: 'Printer other',
+      is_queue: false,
+    })
+
+    // The selection is set, but the properties still hold blank defaults —
+    // printing now would send them and save them as this printer's settings.
+    expect(el.selectedPrinter.id).toBe('other')
+    expect(el.printDisabled).toBe(true)
+
+    release!([{ ColorSupported: true }])
+    await picking
+
+    expect(el.printDisabled).toBe(false)
+  })
+
   it('replaces the config when switching printers rather than merging it', async () => {
     const el = loadable()
     await el.connectedCallback()

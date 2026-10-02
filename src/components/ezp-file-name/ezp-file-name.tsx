@@ -77,7 +77,18 @@ export class EzpFileName {
    *
    */
 
-  @Listen('keydown', { target: 'document' })
+  /**
+   * Escape dismisses the tooltip, and only the tooltip.
+   *
+   * On `document` the listener sees the key however the tooltip was opened,
+   * including by hover, when nothing here has focus. It has to run in the
+   * capture phase: stopping propagation on the way back up happens after every
+   * ancestor has already seen the key, so a host app that closes its dialog on
+   * Escape would close it as the tooltip was dismissed. Capturing at the
+   * document means this transient layer consumes the key first, and only while
+   * it is actually open.
+   */
+  @Listen('keydown', { target: 'document', capture: true })
   handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'Escape' && this.tooltipOpen) {
       event.stopPropagation()
