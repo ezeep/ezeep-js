@@ -28,10 +28,8 @@ describe('storage', () => {
     expect(storage.hasIsAuthorized()).toBe(false)
   })
 
-  it('serialises and parses properties and printer objects', () => {
-    storage.setProperties({ copies: 2, color: true })
+  it('serialises and parses the printer object', () => {
     storage.setPrinter({ id: 'p1', name: 'Printer', location: 'Lab', is_queue: false })
-    expect(storage.getProperties()).toEqual({ copies: 2, color: true })
     expect(storage.getPrinter()).toEqual({
       id: 'p1',
       name: 'Printer',
@@ -41,15 +39,36 @@ describe('storage', () => {
   })
 
   it('returns null (not a throw) for corrupt JSON', () => {
-    localStorage.setItem('properties', '{not valid json')
-    expect(storage.getProperties()).toBeNull()
+    localStorage.setItem('printer', '{not valid json')
+    expect(storage.getPrinter()).toBeNull()
   })
 
-  it('clearSession removes every session key (incl. any legacy access_token)', () => {
+  it("keeps each printer's settings apart", () => {
+    storage.setPrinterSettings('p1', { color: true, paper: 'A4' })
+    storage.setPrinterSettings('p2', { color: false, paper: 'Letter' })
+
+    expect(storage.getPrinterSettings('p1')).toEqual({ color: true, paper: 'A4' })
+    expect(storage.getPrinterSettings('p2')).toEqual({ color: false, paper: 'Letter' })
+    expect(storage.getPrinterSettings('never-used')).toBeNull()
+  })
+
+  it('adopts the pre-upgrade settings blob for the printer it was saved with', () => {
+    // Written by a version that kept one set of settings for one printer.
+    localStorage.setItem('properties', JSON.stringify({ color: true, paper: 'A4' }))
+    localStorage.setItem(
+      'printer',
+      JSON.stringify({ id: 'old', name: 'n', location: 'l', is_queue: false }),
+    )
+
+    expect(storage.getPrinterSettings('old')).toEqual({ color: true, paper: 'A4' })
+    expect(storage.getPrinterSettings('other')).toBeNull()
+  })
+
+  it('clearSession ends the session but keeps the print settings', () => {
     localStorage.setItem('access_token', 'a') // legacy value from before in-memory tokens
     storage.setRefreshToken('r')
     storage.setIsAuthorized(true)
-    storage.setProperties({ copies: 1 })
+    storage.setPrinterSettings('p', { color: true })
     storage.setPrinter({ id: 'p', name: 'n', location: 'l', is_queue: false })
 
     storage.clearSession()
@@ -57,19 +76,21 @@ describe('storage', () => {
     expect(localStorage.getItem('access_token')).toBeNull()
     expect(localStorage.getItem('refreshToken')).toBeNull()
     expect(localStorage.getItem('isAuthorized')).toBeNull()
-    expect(localStorage.getItem('properties')).toBeNull()
-    expect(localStorage.getItem('printer')).toBeNull()
+    // These belong to the browser profile, not the session: the next sign-in
+    // validates them against that user's printers.
+    expect(storage.getPrinterSettings('p')).toEqual({ color: true })
+    expect(storage.getPrinter()).not.toBeNull()
   })
 
-  it('clearSavedPrinter removes only the printer + its properties', () => {
+  it('clearSavedPrinter forgets the printer but keeps its settings for its return', () => {
     storage.setRefreshToken('keep-me')
-    storage.setProperties({ copies: 1 })
+    storage.setPrinterSettings('p', { color: true })
     storage.setPrinter({ id: 'p', name: 'n', location: 'l', is_queue: false })
 
     storage.clearSavedPrinter()
 
     expect(storage.getPrinter()).toBeNull()
-    expect(storage.getProperties()).toBeNull()
+    expect(storage.getPrinterSettings('p')).toEqual({ color: true })
     expect(storage.getRefreshToken()).toBe('keep-me')
   })
 })

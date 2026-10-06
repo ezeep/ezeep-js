@@ -23,6 +23,7 @@
 - [ezp-icon](../ezp-icon)
 - [ezp-label](../ezp-label)
 - [ezp-text-button](../ezp-text-button)
+- [ezp-file-name](../ezp-file-name)
 
 ### Graph
 ```mermaid
@@ -30,7 +31,9 @@ graph TD;
   ezp-upload --> ezp-icon
   ezp-upload --> ezp-label
   ezp-upload --> ezp-text-button
+  ezp-upload --> ezp-file-name
   ezp-text-button --> ezp-label
+  ezp-file-name --> ezp-label
   ezp-printing --> ezp-upload
   style ezp-upload fill:#f9f,stroke:#333,stroke-width:4px
 ```

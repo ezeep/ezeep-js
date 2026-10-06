@@ -167,10 +167,11 @@
  *
  */
 
+/* Deliberately not `overflow: hidden` — that would clip a row's tooltip. Only
+   `#add-more` paints to the edge, so it rounds its own corners instead. */
 #files {
   border: 1px solid var(--ezp-core-outline);
   border-radius: 12px;
-  overflow: hidden;
 }
 
 .file {
@@ -179,6 +180,8 @@
   gap: var(--ezp-spacing-3);
   grid-template-columns: auto minmax(0, 1fr) auto;
   padding: var(--ezp-spacing-3) var(--ezp-spacing-4);
+  /* Anchors the file name's tooltip, so it can span the row. */
+  position: relative;
 }
 
 .file + .file {
@@ -247,6 +250,7 @@
   appearance: none;
   background: var(--ezp-upload-addMore-background, transparent);
   border: 0;
+  border-radius: 0 0 11px 11px;
   border-top: 1px solid var(--ezp-core-outline);
   color: var(--ezp-theme-solid);
   cursor: pointer;

@@ -1,4 +1,4 @@
-import { Component, Host, Prop, h } from '@stencil/core'
+import { Component, Element, Host, Method, Prop, h } from '@stencil/core'
 import { LabelLevelTypes, WeightTypes } from '../../shared/types'
 
 @Component({
@@ -7,6 +7,25 @@ import { LabelLevelTypes, WeightTypes } from '../../shared/types'
   shadow: true,
 })
 export class EzpLabel {
+  @Element() host: HTMLEzpLabelElement
+
+  /**
+   *
+   * Public methods
+   *
+   */
+
+  /** Whether the text is currently clipped — `ellipsis` only bites when the
+   *  text outgrows the space it was given, which callers cannot tell from the
+   *  props alone. Lets a caller offer the full text only when it is needed. */
+  @Method()
+  async isTruncated(): Promise<boolean> {
+    const text = this.host.shadowRoot?.querySelector('#text')
+    if (!text) return false
+    // A pixel of slack: sub-pixel layout rounds scrollWidth up on its own.
+    return text.scrollWidth > text.clientWidth + 1
+  }
+
   /**
    *
    * Properties
