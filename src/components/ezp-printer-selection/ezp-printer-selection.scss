@@ -128,22 +128,54 @@
  *
  */
 
+/* One row is as tall as the file name in it: `ezp-label`'s secondary line height. */
+$file-row-height: 20px;
+/* Room inside the scroller for a focused name's outline (2px offset + the ring),
+   which it would otherwise clip. Taken back out of the card's padding. */
+$files-list-inset: 4px;
+
 #files-card {
   background: var(--ezp-core-surface-secondary);
   border-radius: 12px;
+  padding: var(--ezp-spacing-3) var(--ezp-spacing-4);
+}
+
+/* Anchors the file names' tooltips, so they can span the row. It sits outside
+   the scrolling list on purpose: a scroll container clips the absolutely
+   positioned boxes anchored inside it, but not those anchored beyond it. The
+   names measure where their row is when the tooltip opens (`anchor="parent"`). */
+#files {
+  position: relative;
+}
+
+/* Scrolls on its own, so a long selection doesn't make the dialog taller.
+   The card's padding stays outside it, and so do its corners. Half of a fifth
+   row shows at the bottom, which tells the list goes on. `max-height` rather
+   than `height`, so a short list looks the same as before. The inset padding
+   comes on top of `max-height` (content box), so it isn't counted in it. */
+#files-list {
   display: flex;
   flex-direction: column;
   gap: var(--ezp-spacing-2);
-  padding: var(--ezp-spacing-3) var(--ezp-spacing-4);
+  margin: calc(-1 * #{$files-list-inset});
+  max-height: var(
+    --ezp-printerSelection-filesList-maxHeight,
+    calc(4.5 * #{$file-row-height} + 4 * var(--ezp-spacing-2))
+  );
+  /* Long names are truncated by `ezp-file-name`; nothing scrolls sideways. */
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: $files-list-inset;
+  scrollbar-width: thin;
 }
 
 .file-row {
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   gap: var(--ezp-spacing-3);
+  min-height: $file-row-height;
   min-width: 0;
-  /* Anchors the file name's tooltip, so it can span the row. */
-  position: relative;
 
   ezp-file-name {
     flex: 0 1 auto;

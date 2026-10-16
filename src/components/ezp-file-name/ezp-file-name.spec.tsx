@@ -116,6 +116,32 @@ describe('ezp-file-name', () => {
     expect(shadow.querySelector('#tooltip')).toBeNull()
   })
 
+  it('closes a row-anchored tooltip once the list scrolls under it', async () => {
+    // Placed by measurement, the bubble would stay put while its row moved on.
+    const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf', 'anchor="parent"')
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+    expect(shadow.querySelector('#tooltip')).not.toBeNull()
+
+    page.body.dispatchEvent(new Event('scroll'))
+    await page.waitForChanges()
+
+    expect(shadow.querySelector('#tooltip')).toBeNull()
+  })
+
+  it('leaves a container-anchored tooltip to CSS, scrolling or not', async () => {
+    const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf')
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    page.body.dispatchEvent(new Event('scroll'))
+    await page.waitForChanges()
+
+    const tooltip = shadow.querySelector('#tooltip') as HTMLElement
+    expect(tooltip).not.toBeNull()
+    expect(tooltip.style.top).toBe('')
+  })
+
   it('points the tooltip away from the edge the row sits against', async () => {
     const { page } = await setup('Quarterly_Report_2026_final_DE.pdf', 'placement="bottom"')
     expect(page.root!.className).toContain('place-bottom')

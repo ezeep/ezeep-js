@@ -108,6 +108,9 @@ export class EzpPrinterSelection {
   @State() hubDriverError: boolean = false
   @State() userMenuOpen: boolean = false
   @State() printStopped: boolean = false
+  /** First row of the file list that is at least partly in view. Its tooltip
+   *  opens downwards, as there is no list left above it to cover. */
+  @State() firstVisibleFile: number = 0
   @State() userName: string
   /** Starts empty so the dialog can still render if the list never arrives. */
   @State() printers: Printer[] = []
@@ -494,6 +497,15 @@ export class EzpPrinterSelection {
 
   private handleUserMenu = () => {
     this.userMenuOpen = true
+  }
+
+  private handleFilesScroll = (event: Event) => {
+    const list = event.currentTarget as HTMLElement
+    const top = list.getBoundingClientRect().top
+    const rows = Array.from(list.children) as HTMLElement[]
+    const first = rows.findIndex((row) => row.getBoundingClientRect().bottom > top)
+    // Scroll fires every frame; only a change of row is worth a render.
+    if (first >= 0 && first !== this.firstVisibleFile) this.firstVisibleFile = first
   }
 
   /**
@@ -1068,14 +1080,22 @@ export class EzpPrinterSelection {
           <div id="body">
             {!this.notSupported && fileNames.length > 0 && (
               <div id="files-card">
-                {fileNames.map((name, index) => (
-                  <div class="file-row" key={index}>
-                    <ezp-icon name="file" class="file-row-icon" />
-                    {/* The first row sits at the top of the card, so its
-                        tooltip opens downwards instead. */}
-                    <ezp-file-name name={name} placement={index === 0 ? 'bottom' : 'top'} />
+                <div id="files">
+                  <div id="files-list" onScroll={this.handleFilesScroll}>
+                    {fileNames.map((name, index) => (
+                      <div class="file-row" key={index}>
+                        <ezp-icon name="file" class="file-row-icon" />
+                        {/* The topmost row in view has the edge of the list
+                            above it, so its tooltip opens downwards instead. */}
+                        <ezp-file-name
+                          name={name}
+                          anchor="parent"
+                          placement={index === this.firstVisibleFile ? 'bottom' : 'top'}
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
             )}
             <ezp-label

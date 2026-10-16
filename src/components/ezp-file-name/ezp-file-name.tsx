@@ -1,5 +1,10 @@
-import { Component, Element, Host, Listen, Prop, State, h } from '@stencil/core'
-import { LabelLevelTypes, TooltipPlacementTypes, WeightTypes } from '../../shared/types'
+import { Component, Element, Host, Listen, Prop, State, Watch, h } from '@stencil/core'
+import {
+  LabelLevelTypes,
+  TooltipAnchorTypes,
+  TooltipPlacementTypes,
+  WeightTypes,
+} from '../../shared/types'
 
 /**
  * Characters kept at the end of a truncated name. Uploads often differ only in
@@ -27,6 +32,8 @@ export class EzpFileName {
   private closeTimeout?: ReturnType<typeof setTimeout>
   /** Invalidates an in-flight open when the pointer leaves. */
   private openGeneration = 0
+  /** Everything the open tooltip listens to for scrolling, to detach on close. */
+  private scrollTargets: EventTarget[] = []
 
   /**
    *
@@ -47,6 +54,17 @@ export class EzpFileName {
   /** Side the tooltip opens on. Consumers point it away from the edge their
    *  row sits against — `bottom` for the first row of a list, `top` below it. */
   @Prop() placement: TooltipPlacementTypes = 'top'
+
+  /** What the tooltip is placed against.
+   *
+   *  `container`: the nearest positioned ancestor, by CSS alone. The consumer
+   *  makes the row that ancestor, and the bubble opens at the row's edge.
+   *
+   *  `parent`: the element the name sits in, measured when the tooltip opens.
+   *  For rows inside a scroll container, which would clip a bubble anchored to
+   *  the row. The consumer puts the positioned ancestor outside the scroller
+   *  instead, and the bubble spans that ancestor but lines up with the row. */
+  @Prop() anchor: TooltipAnchorTypes = 'container'
 
   /**
    *
@@ -69,6 +87,25 @@ export class EzpFileName {
   disconnectedCallback() {
     clearTimeout(this.openTimeout)
     clearTimeout(this.closeTimeout)
+    this.stopWatchingScroll()
+  }
+
+  componentDidRender() {
+    if (this.tooltipOpen && this.anchor === 'parent') this.placeTooltip()
+  }
+
+  /**
+   *
+   * Watchers
+   *
+   */
+
+  /** A measured bubble stays where it was put, so once the row scrolls away
+   *  under it, it would point at the wrong name. Closing it is the honest fix. */
+  @Watch('tooltipOpen')
+  watchTooltipOpen(open: boolean) {
+    if (open && this.anchor === 'parent') this.watchScroll()
+    else this.stopWatchingScroll()
   }
 
   /**
@@ -139,6 +176,49 @@ export class EzpFileName {
     clearTimeout(this.openTimeout)
     clearTimeout(this.closeTimeout)
     this.tooltipOpen = false
+  }
+
+  /** Lines the bubble up with the row the name sits in. Its containing block
+   *  is somewhere further out, so `top: 0` shows where that block starts, and
+   *  the offset is taken from there. */
+  private placeTooltip() {
+    const tooltip = this.host.shadowRoot?.querySelector('#tooltip') as HTMLElement | null
+    const row = this.host.parentElement
+    if (!tooltip || !row) return
+
+    tooltip.style.bottom = 'auto'
+    tooltip.style.top = '0px'
+    const origin = tooltip.getBoundingClientRect().top
+    const rowRect = row.getBoundingClientRect()
+    const gap = parseFloat(getComputedStyle(tooltip).getPropertyValue('--ezp-spacing-2')) || 6
+    const top =
+      this.placement === 'top'
+        ? rowRect.top - gap - tooltip.offsetHeight
+        : rowRect.bottom + gap
+    tooltip.style.top = `${top - origin}px`
+  }
+
+  /** Scroll events don't bubble, so every ancestor is listened to directly —
+   *  across shadow roots, since the scroll container is usually the consumer's. */
+  private watchScroll() {
+    this.stopWatchingScroll()
+    const targets: EventTarget[] = [window]
+    let node: Node | null = this.host.parentNode
+    while (node) {
+      if (node.nodeType === Node.ELEMENT_NODE) targets.push(node)
+      node = node instanceof ShadowRoot ? node.host : node.parentNode
+    }
+    targets.forEach((target) =>
+      target.addEventListener('scroll', this.closeTooltip, { passive: true }),
+    )
+    this.scrollTargets = targets
+  }
+
+  private stopWatchingScroll() {
+    this.scrollTargets.forEach((target) =>
+      target.removeEventListener('scroll', this.closeTooltip),
+    )
+    this.scrollTargets = []
   }
 
   /** Leaves the tooltip up briefly so the pointer can reach it. */

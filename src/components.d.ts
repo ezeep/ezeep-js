@@ -5,8 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
-export { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
+import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipAnchorTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
+export { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipAnchorTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -43,6 +43,11 @@ export namespace Components {
         "instance": string;
     }
     interface EzpFileName {
+        /**
+          * What the tooltip is placed against.  `container`: the nearest positioned ancestor, by CSS alone. The consumer makes the row that ancestor, and the bubble opens at the row's edge.  `parent`: the element the name sits in, measured when the tooltip opens. For rows inside a scroll container, which would clip a bubble anchored to the row. The consumer puts the positioned ancestor outside the scroller instead, and the bubble spans that ancestor but lines up with the row.
+          * @default 'container'
+         */
+        "anchor": TooltipAnchorTypes;
         /**
           * Type scale of the rendered name, passed through to `ezp-label`.
           * @default 'secondary'
@@ -709,6 +714,11 @@ declare namespace LocalJSX {
     }
     interface EzpFileName {
         /**
+          * What the tooltip is placed against.  `container`: the nearest positioned ancestor, by CSS alone. The consumer makes the row that ancestor, and the bubble opens at the row's edge.  `parent`: the element the name sits in, measured when the tooltip opens. For rows inside a scroll container, which would clip a bubble anchored to the row. The consumer puts the positioned ancestor outside the scroller instead, and the bubble spans that ancestor but lines up with the row.
+          * @default 'container'
+         */
+        "anchor"?: TooltipAnchorTypes;
+        /**
           * Type scale of the rendered name, passed through to `ezp-label`.
           * @default 'secondary'
          */
@@ -1092,6 +1102,7 @@ declare namespace LocalJSX {
         "level": LabelLevelTypes;
         "weight": WeightTypes;
         "placement": TooltipPlacementTypes;
+        "anchor": TooltipAnchorTypes;
     }
     interface EzpIconAttributes {
         "name": IconNameTypes;
