@@ -133,6 +133,19 @@ export class EzpPrinting {
     this.printFinished.emit()
   }
 
+  /** Cancel or close on the print options card. With an upload step to go
+   *  back to, only the card closes: the files picked there stay picked, and
+   *  removing them is the upload card's "Clear files". Without one there is
+   *  nothing left to show, so it ends the flow like `printCancel`. */
+  @Listen('printDismiss')
+  listenPrintDismiss() {
+    if (this.trigger === 'file') {
+      this.printOpen = false
+    } else {
+      this.listenPrintCancel()
+    }
+  }
+
   /** Description... */
   @Listen('printSubmit')
   listenPrintSubmit() {
@@ -222,8 +235,10 @@ export class EzpPrinting {
   /**
    * Fired when the print flow reaches an end state and the host may dismiss the
    * component: a print job was submitted, or the user cancelled on the upload
-   * card, the sign-in dialog (with files pending) or the print options card. It
-   * does not mean a job was printed — check for that on the print API side.
+   * card, the sign-in dialog (with files pending) or the print options card. A
+   * cancel on the print options card returns to the upload card when there is
+   * one (`trigger="file"`), so it doesn't end the flow there. It does not mean
+   * a job was printed — check for that on the print API side.
    */
   @Event({
     eventName: 'printFinished',

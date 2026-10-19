@@ -117,6 +117,51 @@ describe('ezp-printing journey', () => {
     expect(finished).toBe(true)
   })
 
+  it('printDismiss with an upload step closes only the print options', async () => {
+    const { page, el } = await setup('trigger="file"')
+    const files = [new File(['x'], 'report.pdf'), new File(['y'], 'notes.pdf')]
+    el.listenUploadContinue({ detail: files })
+    await authSucceeds(el)
+    await page.waitForChanges()
+    expect(el.printOpen).toBe(true)
+
+    let finished = false
+    let reset = false
+    page.root!.addEventListener('printFinished', (() => (finished = true)) as EventListener)
+    // ezp-upload clears its selection on a document-level printCancel.
+    const onReset = () => (reset = true)
+    document.addEventListener('printCancel', onReset)
+
+    el.listenPrintDismiss()
+    await page.waitForChanges()
+    document.removeEventListener('printCancel', onReset)
+
+    expect(el.printOpen).toBe(false)
+    expect(el.files).toEqual(files)
+    expect(el.filename).toBe('report.pdf')
+    expect(reset).toBe(false)
+    // The upload card is still up, so the flow isn't over for the host.
+    expect(finished).toBe(false)
+    expect(html(page)).toContain('<ezp-upload')
+    expect(html(page)).not.toContain('<ezp-printer-selection')
+  })
+
+  it('printDismiss without an upload step ends the flow as before', async () => {
+    const { page, el } = await setup('trigger="button" filename="report.pdf"')
+    await authSucceeds(el)
+    await page.waitForChanges()
+    expect(el.printOpen).toBe(true)
+
+    let finished = false
+    page.root!.addEventListener('printFinished', (() => (finished = true)) as EventListener)
+
+    el.listenPrintDismiss()
+    await page.waitForChanges()
+    expect(el.printOpen).toBe(false)
+    expect(el.filename).toBe('')
+    expect(finished).toBe(true)
+  })
+
   it('userCancel discards the pending files and ends the flow for the host', async () => {
     const { page, el } = await setup('trigger="file"')
     el.listenUploadContinue({ detail: [new File(['x'], 'report.pdf')] })

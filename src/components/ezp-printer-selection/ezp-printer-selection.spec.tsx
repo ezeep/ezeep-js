@@ -464,3 +464,17 @@ describe('ezp-printer-selection file list', () => {
     expect(placements.filter((p) => p === 'bottom')).toHaveLength(1)
   })
 })
+
+describe('ezp-printer-selection cancel', () => {
+  it('dismisses the dialog without asking for the files to be cleared', () => {
+    const el = new EzpPrinterSelection() as any
+    el.printDismiss = { emit: jest.fn() }
+    el.printCancel = { emit: jest.fn() }
+
+    el.handleCancel()
+
+    expect(el.printDismiss.emit).toHaveBeenCalledTimes(1)
+    // printCancel is what clears the upload card's selection.
+    expect(el.printCancel.emit).not.toHaveBeenCalled()
+  })
+})

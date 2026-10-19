@@ -30,9 +30,9 @@
 
 ## Events
 
-| Event           | Description                                                                                                                                                                                                                                                                                               | Type                |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `printFinished` | Fired when the print flow reaches an end state and the host may dismiss the component: a print job was submitted, or the user cancelled on the upload card, the sign-in dialog (with files pending) or the print options card. It does not mean a job was printed — check for that on the print API side. | `CustomEvent<void>` |
+| Event           | Description                                                                                                                                                                                                                                                                                                                                                                                                                                     | Type                |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `printFinished` | Fired when the print flow reaches an end state and the host may dismiss the component: a print job was submitted, or the user cancelled on the upload card, the sign-in dialog (with files pending) or the print options card. A cancel on the print options card returns to the upload card when there is one (`trigger="file"`), so it doesn't end the flow there. It does not mean a job was printed — check for that on the print API side. | `CustomEvent<void>` |
 
 
 ## Methods

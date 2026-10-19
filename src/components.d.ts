@@ -515,6 +515,7 @@ declare global {
     };
     interface HTMLEzpPrinterSelectionElementEventMap {
         "printCancel": MouseEvent;
+        "printDismiss": void;
         "printSubmit": MouseEvent;
         "logout": MouseEvent;
     }
@@ -872,6 +873,10 @@ declare namespace LocalJSX {
          */
         "onPrintCancel"?: (event: EzpPrinterSelectionCustomEvent<MouseEvent>) => void;
         /**
+          * Cancel or close on this dialog: the user backs out of the print options only. Unlike `printCancel`, it leaves the selected files alone, so the host can return to the step they were chosen on.
+         */
+        "onPrintDismiss"?: (event: EzpPrinterSelectionCustomEvent<void>) => void;
+        /**
           * Description...
          */
         "onPrintSubmit"?: (event: EzpPrinterSelectionCustomEvent<MouseEvent>) => void;
@@ -909,7 +914,7 @@ declare namespace LocalJSX {
          */
         "language"?: string;
         /**
-          * Fired when the print flow reaches an end state and the host may dismiss the component: a print job was submitted, or the user cancelled on the upload card, the sign-in dialog (with files pending) or the print options card. It does not mean a job was printed — check for that on the print API side.
+          * Fired when the print flow reaches an end state and the host may dismiss the component: a print job was submitted, or the user cancelled on the upload card, the sign-in dialog (with files pending) or the print options card. A cancel on the print options card returns to the upload card when there is one (`trigger="file"`), so it doesn't end the flow there. It does not mean a job was printed — check for that on the print API side.
          */
         "onPrintFinished"?: (event: EzpPrintingCustomEvent<void>) => void;
         "printapihosturl"?: string;

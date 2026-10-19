@@ -170,6 +170,11 @@ export class EzpPrinterSelection {
   /** Description... */
   @Event() printCancel: EventEmitter<MouseEvent>
 
+  /** Cancel or close on this dialog: the user backs out of the print options
+   *  only. Unlike `printCancel`, it leaves the selected files alone, so the
+   *  host can return to the step they were chosen on. */
+  @Event() printDismiss: EventEmitter<void>
+
   /** Description... */
   @Event() printSubmit: EventEmitter<MouseEvent>
 
@@ -284,7 +289,7 @@ export class EzpPrinterSelection {
     this.successfulFiles = []
     this.partialSuccess = false
     this.hubDriverError = false
-    this.printCancel.emit()
+    this.printDismiss.emit()
   }
 
   /** Poll `validate` callback: maps a job status to component state, returns `true` to stop polling. */
