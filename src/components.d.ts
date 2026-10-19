@@ -44,7 +44,7 @@ export namespace Components {
     }
     interface EzpFileName {
         /**
-          * What the tooltip is placed against.  `container`: the nearest positioned ancestor, by CSS alone. The consumer makes the row that ancestor, and the bubble opens at the row's edge.  `parent`: the element the name sits in, measured when the tooltip opens. For rows inside a scroll container, which would clip a bubble anchored to the row. The consumer puts the positioned ancestor outside the scroller instead, and the bubble spans that ancestor but lines up with the row.
+          * What the tooltip is placed against.  `container`: the nearest positioned ancestor, by CSS alone. The consumer makes the row that ancestor, and the bubble opens at the row's edge.  `parent`: the row the name sits in, measured when the tooltip opens — the closest ancestor marked `data-tooltip-row`, or else the name's parent element. For rows inside a scroll container, which would clip a bubble anchored to the row. The consumer puts the positioned ancestor outside the scroller instead, and the bubble spans that ancestor but lines up with the row.
           * @default 'container'
          */
         "anchor": TooltipAnchorTypes;
@@ -715,7 +715,7 @@ declare namespace LocalJSX {
     }
     interface EzpFileName {
         /**
-          * What the tooltip is placed against.  `container`: the nearest positioned ancestor, by CSS alone. The consumer makes the row that ancestor, and the bubble opens at the row's edge.  `parent`: the element the name sits in, measured when the tooltip opens. For rows inside a scroll container, which would clip a bubble anchored to the row. The consumer puts the positioned ancestor outside the scroller instead, and the bubble spans that ancestor but lines up with the row.
+          * What the tooltip is placed against.  `container`: the nearest positioned ancestor, by CSS alone. The consumer makes the row that ancestor, and the bubble opens at the row's edge.  `parent`: the row the name sits in, measured when the tooltip opens — the closest ancestor marked `data-tooltip-row`, or else the name's parent element. For rows inside a scroll container, which would clip a bubble anchored to the row. The consumer puts the positioned ancestor outside the scroller instead, and the bubble spans that ancestor but lines up with the row.
           * @default 'container'
          */
         "anchor"?: TooltipAnchorTypes;

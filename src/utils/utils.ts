@@ -21,6 +21,16 @@ export function subscribeToLanguageChange(component: unknown): () => void {
   return () => i18next.off('languageChanged', rerender)
 }
 
+/** Index of the first child of a scroll container that is at least partly in
+ *  view, or -1 when it has none. Lists use it to open the topmost visible row's
+ *  tooltip downwards, as nothing in the list is left above that row to cover. */
+export function firstVisibleChild(container: HTMLElement): number {
+  const top = container.getBoundingClientRect().top
+  return Array.from(container.children).findIndex(
+    (child) => child.getBoundingClientRect().bottom > top,
+  )
+}
+
 export function encodeFormData(data: { [x: string]: string | number | boolean }): string {
   return Object.keys(data)
     .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))

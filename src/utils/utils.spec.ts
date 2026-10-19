@@ -1,5 +1,6 @@
 import {
   encodeFormData,
+  firstVisibleChild,
   capitalize,
   removeEmptyStrings,
   managePaperDimensions,
@@ -85,5 +86,25 @@ describe('validatePageRange', () => {
     expect(validatePageRange('5-2')).toBe(false)
     expect(validatePageRange('0-3')).toBe(false)
     expect(validatePageRange('1-')).toBe(false)
+  })
+})
+
+describe('firstVisibleChild', () => {
+  /** A container whose top edge sits at 100, with children ending at `bottoms`. */
+  function container(bottoms: number[]): HTMLElement {
+    const rect = (bottom: number) => ({ getBoundingClientRect: () => ({ top: 100, bottom }) })
+    return {
+      ...rect(0),
+      children: bottoms.map((bottom) => rect(bottom)),
+    } as unknown as HTMLElement
+  }
+
+  it('finds the first child that reaches below the top edge', () => {
+    // The first two are scrolled out; the third shows its lower half.
+    expect(firstVisibleChild(container([40, 100, 130, 160]))).toBe(2)
+  })
+
+  it('reports -1 for an empty container', () => {
+    expect(firstVisibleChild(container([]))).toBe(-1)
   })
 })

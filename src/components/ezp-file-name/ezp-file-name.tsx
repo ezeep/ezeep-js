@@ -60,10 +60,12 @@ export class EzpFileName {
    *  `container`: the nearest positioned ancestor, by CSS alone. The consumer
    *  makes the row that ancestor, and the bubble opens at the row's edge.
    *
-   *  `parent`: the element the name sits in, measured when the tooltip opens.
-   *  For rows inside a scroll container, which would clip a bubble anchored to
-   *  the row. The consumer puts the positioned ancestor outside the scroller
-   *  instead, and the bubble spans that ancestor but lines up with the row. */
+   *  `parent`: the row the name sits in, measured when the tooltip opens — the
+   *  closest ancestor marked `data-tooltip-row`, or else the name's parent
+   *  element. For rows inside a scroll container, which would clip a bubble
+   *  anchored to the row. The consumer puts the positioned ancestor outside the
+   *  scroller instead, and the bubble spans that ancestor but lines up with
+   *  the row. */
   @Prop() anchor: TooltipAnchorTypes = 'container'
 
   /**
@@ -183,7 +185,7 @@ export class EzpFileName {
    *  the offset is taken from there. */
   private placeTooltip() {
     const tooltip = this.host.shadowRoot?.querySelector('#tooltip') as HTMLElement | null
-    const row = this.host.parentElement
+    const row = this.host.closest('[data-tooltip-row]') ?? this.host.parentElement
     if (!tooltip || !row) return
 
     tooltip.style.bottom = 'auto'
@@ -192,9 +194,7 @@ export class EzpFileName {
     const rowRect = row.getBoundingClientRect()
     const gap = parseFloat(getComputedStyle(tooltip).getPropertyValue('--ezp-spacing-2')) || 6
     const top =
-      this.placement === 'top'
-        ? rowRect.top - gap - tooltip.offsetHeight
-        : rowRect.bottom + gap
+      this.placement === 'top' ? rowRect.top - gap - tooltip.offsetHeight : rowRect.bottom + gap
     tooltip.style.top = `${top - origin}px`
   }
 
@@ -215,9 +215,7 @@ export class EzpFileName {
   }
 
   private stopWatchingScroll() {
-    this.scrollTargets.forEach((target) =>
-      target.removeEventListener('scroll', this.closeTooltip),
-    )
+    this.scrollTargets.forEach((target) => target.removeEventListener('scroll', this.closeTooltip))
     this.scrollTargets = []
   }
 

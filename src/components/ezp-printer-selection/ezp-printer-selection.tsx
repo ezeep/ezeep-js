@@ -20,7 +20,12 @@ import {
   removeEmptyStrings,
   subscribeToLanguageChange,
 } from '../../utils/utils'
-import { PAPER_ID, validatePageRange, formatPageRange } from '../../utils/utils'
+import {
+  PAPER_ID,
+  firstVisibleChild,
+  validatePageRange,
+  formatPageRange,
+} from '../../utils/utils'
 import {
   applySavedProperties,
   classifyJobStatus,
@@ -505,10 +510,7 @@ export class EzpPrinterSelection {
   }
 
   private handleFilesScroll = (event: Event) => {
-    const list = event.currentTarget as HTMLElement
-    const top = list.getBoundingClientRect().top
-    const rows = Array.from(list.children) as HTMLElement[]
-    const first = rows.findIndex((row) => row.getBoundingClientRect().bottom > top)
+    const first = firstVisibleChild(event.currentTarget as HTMLElement)
     // Scroll fires every frame; only a change of row is worth a render.
     if (first >= 0 && first !== this.firstVisibleFile) this.firstVisibleFile = first
   }

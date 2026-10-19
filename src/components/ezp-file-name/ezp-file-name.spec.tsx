@@ -118,7 +118,10 @@ describe('ezp-file-name', () => {
 
   it('closes a row-anchored tooltip once the list scrolls under it', async () => {
     // Placed by measurement, the bubble would stay put while its row moved on.
-    const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf', 'anchor="parent"')
+    const { page, fn, shadow } = await setup(
+      'Quarterly_Report_2026_final_DE.pdf',
+      'anchor="parent"',
+    )
     fn.tooltipOpen = true
     await page.waitForChanges()
     expect(shadow.querySelector('#tooltip')).not.toBeNull()
