@@ -180,6 +180,40 @@ describe('ezp-file-name', () => {
     expect(shadow.querySelector('#tooltip')).toBeNull()
   })
 
+  it('limits the room for the bubble to the ancestors that clip it', async () => {
+    const { fn } = await setup('Quarterly_Report_2026_final_DE.pdf', 'anchor="parent"')
+    // anchor -> (shadow root) -> scrolling body -> modal: the walk crosses the
+    // consumer's shadow root and keeps only ancestors that clip overflow.
+    const modal = { getBoundingClientRect: () => ({ top: 40, bottom: 500 }), parentElement: null }
+    const body = { getBoundingClientRect: () => ({ top: 80, bottom: 380 }), parentElement: modal }
+    const anchor = {
+      getBoundingClientRect: () => ({ top: 0, bottom: 2000 }),
+      parentElement: null,
+      getRootNode: () => ({ host: body }),
+    }
+    ;(modal as any).getRootNode = () => document
+    const overflow = new Map<object, string>([
+      [anchor, 'visible'],
+      [body, 'auto'],
+      [modal, 'hidden'],
+    ])
+    const style = jest
+      .spyOn(window, 'getComputedStyle')
+      .mockImplementation((node: any) => ({ overflowY: overflow.get(node) }) as any)
+
+    expect(fn.visibleArea({ offsetParent: anchor })).toEqual({
+      top: 80,
+      bottom: Math.min(380, window.innerHeight),
+    })
+    style.mockRestore()
+  })
+
+  it('falls back to the viewport when the bubble has no containing block', async () => {
+    const { fn } = await setup('Quarterly_Report_2026_final_DE.pdf', 'anchor="parent"')
+
+    expect(fn.visibleArea({ offsetParent: null })).toEqual({ top: 0, bottom: window.innerHeight })
+  })
+
   it('leaves a container-anchored tooltip to CSS, scrolling or not', async () => {
     const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf')
     fn.tooltipOpen = true

@@ -2,7 +2,7 @@ import { forceUpdate } from '@stencil/core'
 import i18next from 'i18next'
 import translationsDE from '../data/locales/de.json'
 import translationsEN from '../data/locales/en.json'
-import { PrinterProperties } from './../shared/types'
+import { PrinterProperties, TooltipPlacementTypes } from './../shared/types'
 import { PAPER_ID } from '../shared/constants'
 
 export { PAPER_ID } from '../shared/constants'
@@ -32,6 +32,27 @@ export function firstVisibleChild(container: HTMLElement): number {
     const rect = child.getBoundingClientRect()
     return (rect.top + rect.bottom) / 2 > top
   })
+}
+
+/**
+ * Side a tooltip should open on, given where it was asked to open and the room
+ * there is. The requested side wins whenever the bubble fits there; otherwise
+ * it flips to the other side if that fits, or if that simply has more room.
+ * All values are in the same (screen) pixels.
+ */
+export function pickTooltipSide(
+  requested: TooltipPlacementTypes,
+  row: { top: number; bottom: number },
+  needed: number,
+  visible: { top: number; bottom: number },
+): TooltipPlacementTypes {
+  const above = row.top - visible.top
+  const below = visible.bottom - row.bottom
+  const room = { top: above, bottom: below }
+  const other: TooltipPlacementTypes = requested === 'top' ? 'bottom' : 'top'
+  if (room[requested] >= needed) return requested
+  if (room[other] >= needed || room[other] > room[requested]) return other
+  return requested
 }
 
 export function encodeFormData(data: { [x: string]: string | number | boolean }): string {

@@ -5,6 +5,7 @@ import {
   TooltipPlacementTypes,
   WeightTypes,
 } from '../../shared/types'
+import { pickTooltipSide } from '../../utils/utils'
 
 /**
  * Characters kept at the end of a truncated name. Uploads often differ only in
@@ -185,7 +186,10 @@ export class EzpFileName {
    *  is somewhere further out, so `top: 0` shows where that block starts, and
    *  the offset is taken from there. Measurements are in screen pixels, which
    *  differ from CSS pixels when a host scales the dialog with a transform, so
-   *  the offset is converted back before it is applied. */
+   *  the offset is converted back before it is applied.
+   *
+   *  `placement` is a preference here: a row near the edge of whatever clips
+   *  the bubble may not have room on that side, so it opens on the other. */
   private placeTooltip() {
     const tooltip = this.host.shadowRoot?.querySelector('#tooltip') as HTMLElement | null
     const row = this.host.closest('[data-tooltip-row]') ?? this.host.parentElement
@@ -198,8 +202,33 @@ export class EzpFileName {
     const rowRect = row.getBoundingClientRect()
     const gap =
       (parseFloat(getComputedStyle(tooltip).getPropertyValue('--ezp-spacing-2')) || 6) * scale
-    const top = this.placement === 'top' ? rowRect.top - gap - bubble.height : rowRect.bottom + gap
+    const side = pickTooltipSide(
+      this.placement,
+      rowRect,
+      bubble.height + gap,
+      this.visibleArea(tooltip),
+    )
+    const top = side === 'top' ? rowRect.top - gap - bubble.height : rowRect.bottom + gap
     tooltip.style.top = `${(top - bubble.top) / (scale || 1)}px`
+  }
+
+  /** The part of the screen the bubble can show in: the viewport, narrowed by
+   *  every ancestor of its containing block that clips overflow — the host's
+   *  scrolling body, say. The scroller the rows sit in isn't among them, as the
+   *  bubble is anchored beyond it. */
+  private visibleArea(tooltip: HTMLElement): { top: number; bottom: number } {
+    let top = 0
+    let bottom = window.innerHeight
+    let node: Element | null = tooltip.offsetParent
+    while (node) {
+      if (getComputedStyle(node).overflowY !== 'visible') {
+        const rect = node.getBoundingClientRect()
+        top = Math.max(top, rect.top)
+        bottom = Math.min(bottom, rect.bottom)
+      }
+      node = node.parentElement ?? ((node.getRootNode() as ShadowRoot).host || null)
+    }
+    return { top, bottom }
   }
 
   /** Scroll events don't bubble, so every ancestor is listened to directly —
