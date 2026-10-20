@@ -399,6 +399,15 @@ describe('ezp-printer-selection load failures', () => {
   })
 })
 
+/** A list whose top edge sits at 100, with 30px rows ending at `bottoms`. */
+function scrolledList(bottoms: number[]) {
+  const row = (bottom: number) => ({
+    getBoundingClientRect: () => ({ top: bottom - 30, bottom }),
+  })
+  const list = { getBoundingClientRect: () => ({ top: 100 }), children: bottoms.map(row) }
+  return { currentTarget: list } as unknown as Event
+}
+
 describe('ezp-printer-selection file list', () => {
   const printer = { id: 'only', name: 'Printer only', location: '', is_queue: false }
 
@@ -448,6 +457,17 @@ describe('ezp-printer-selection file list', () => {
       'bottom',
       ...Array(7).fill('top'),
     ])
+  })
+
+  it('tracks the topmost row in view as the list scrolls', () => {
+    const el = new EzpPrinterSelection() as any
+
+    el.handleFilesScroll(scrolledList([40, 100, 130, 160]))
+    expect(el.firstVisibleFile).toBe(2)
+
+    // An empty list leaves the last known row alone.
+    el.handleFilesScroll(scrolledList([]))
+    expect(el.firstVisibleFile).toBe(2)
   })
 
   it('opens downwards from whichever row is topmost once scrolled', async () => {

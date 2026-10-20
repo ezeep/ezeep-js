@@ -90,18 +90,25 @@ describe('validatePageRange', () => {
 })
 
 describe('firstVisibleChild', () => {
-  /** A container whose top edge sits at 100, with children ending at `bottoms`. */
+  /** A container whose top edge sits at 100, with 30px children ending at `bottoms`. */
   function container(bottoms: number[]): HTMLElement {
-    const rect = (bottom: number) => ({ getBoundingClientRect: () => ({ top: 100, bottom }) })
+    const child = (bottom: number) => ({
+      getBoundingClientRect: () => ({ top: bottom - 30, bottom }),
+    })
     return {
-      ...rect(0),
-      children: bottoms.map((bottom) => rect(bottom)),
+      getBoundingClientRect: () => ({ top: 100 }),
+      children: bottoms.map(child),
     } as unknown as HTMLElement
   }
 
-  it('finds the first child that reaches below the top edge', () => {
-    // The first two are scrolled out; the third shows its lower half.
-    expect(firstVisibleChild(container([40, 100, 130, 160]))).toBe(2)
+  it('finds the first child that is at least half in view', () => {
+    // The first two are scrolled out; the third shows two thirds of itself.
+    expect(firstVisibleChild(container([40, 100, 120, 150]))).toBe(2)
+  })
+
+  it('skips a child showing only a sliver, for the one below it', () => {
+    // 4px of the first child shows; the second is the row read first.
+    expect(firstVisibleChild(container([104, 134, 164]))).toBe(1)
   })
 
   it('reports -1 for an empty container', () => {

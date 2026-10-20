@@ -87,8 +87,9 @@ export class EzpFileName {
    */
 
   disconnectedCallback() {
-    clearTimeout(this.openTimeout)
-    clearTimeout(this.closeTimeout)
+    // Closing also drops the listeners. A node that is moved comes back with
+    // its tooltip shut, rather than open with nothing left to close it.
+    this.closeTooltip()
     this.stopWatchingScroll()
   }
 
@@ -182,7 +183,9 @@ export class EzpFileName {
 
   /** Lines the bubble up with the row the name sits in. Its containing block
    *  is somewhere further out, so `top: 0` shows where that block starts, and
-   *  the offset is taken from there. */
+   *  the offset is taken from there. Measurements are in screen pixels, which
+   *  differ from CSS pixels when a host scales the dialog with a transform, so
+   *  the offset is converted back before it is applied. */
   private placeTooltip() {
     const tooltip = this.host.shadowRoot?.querySelector('#tooltip') as HTMLElement | null
     const row = this.host.closest('[data-tooltip-row]') ?? this.host.parentElement
@@ -190,16 +193,18 @@ export class EzpFileName {
 
     tooltip.style.bottom = 'auto'
     tooltip.style.top = '0px'
-    const origin = tooltip.getBoundingClientRect().top
+    const bubble = tooltip.getBoundingClientRect()
+    const scale = tooltip.offsetHeight > 0 ? bubble.height / tooltip.offsetHeight : 1
     const rowRect = row.getBoundingClientRect()
-    const gap = parseFloat(getComputedStyle(tooltip).getPropertyValue('--ezp-spacing-2')) || 6
-    const top =
-      this.placement === 'top' ? rowRect.top - gap - tooltip.offsetHeight : rowRect.bottom + gap
-    tooltip.style.top = `${top - origin}px`
+    const gap =
+      (parseFloat(getComputedStyle(tooltip).getPropertyValue('--ezp-spacing-2')) || 6) * scale
+    const top = this.placement === 'top' ? rowRect.top - gap - bubble.height : rowRect.bottom + gap
+    tooltip.style.top = `${(top - bubble.top) / (scale || 1)}px`
   }
 
   /** Scroll events don't bubble, so every ancestor is listened to directly —
-   *  across shadow roots, since the scroll container is usually the consumer's. */
+   *  across shadow roots, since the scroll container is usually the consumer's.
+   *  A window resize re-wraps the bubble just the same, so it closes it too. */
   private watchScroll() {
     this.stopWatchingScroll()
     const targets: EventTarget[] = [window]
@@ -211,12 +216,14 @@ export class EzpFileName {
     targets.forEach((target) =>
       target.addEventListener('scroll', this.closeTooltip, { passive: true }),
     )
+    window.addEventListener('resize', this.closeTooltip, { passive: true })
     this.scrollTargets = targets
   }
 
   private stopWatchingScroll() {
     this.scrollTargets.forEach((target) => target.removeEventListener('scroll', this.closeTooltip))
     this.scrollTargets = []
+    window.removeEventListener('resize', this.closeTooltip)
   }
 
   /** Leaves the tooltip up briefly so the pointer can reach it. */

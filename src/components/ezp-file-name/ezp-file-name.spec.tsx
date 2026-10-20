@@ -132,6 +132,54 @@ describe('ezp-file-name', () => {
     expect(shadow.querySelector('#tooltip')).toBeNull()
   })
 
+  it('closes a row-anchored tooltip when the window resizes under it', async () => {
+    // A resize re-wraps the bubble, which would leave it misplaced.
+    const { page, fn, shadow } = await setup(
+      'Quarterly_Report_2026_final_DE.pdf',
+      'anchor="parent"',
+    )
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    window.dispatchEvent(new Event('resize'))
+    await page.waitForChanges()
+
+    expect(shadow.querySelector('#tooltip')).toBeNull()
+  })
+
+  it('stops listening once the tooltip closes', async () => {
+    const { page, fn } = await setup('Quarterly_Report_2026_final_DE.pdf', 'anchor="parent"')
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+    const remove = jest.spyOn(window, 'removeEventListener')
+
+    fn.closeTooltip()
+    await page.waitForChanges()
+
+    expect(remove).toHaveBeenCalledWith('scroll', fn.closeTooltip)
+    expect(remove).toHaveBeenCalledWith('resize', fn.closeTooltip)
+    remove.mockRestore()
+  })
+
+  it('comes back closed after being moved while open', async () => {
+    // A moved node disconnects and reconnects; it must not return with a
+    // tooltip up and no scroll listeners left to close it.
+    const { page, fn, shadow } = await setup(
+      'Quarterly_Report_2026_final_DE.pdf',
+      'anchor="parent"',
+    )
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    const host = page.root!
+    host.remove()
+    page.body.appendChild(host)
+    await page.waitForChanges()
+
+    expect(fn.tooltipOpen).toBe(false)
+    expect(shadow.querySelector('#tooltip')).toBeNull()
+  })
+
   it('leaves a container-anchored tooltip to CSS, scrolling or not', async () => {
     const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf')
     fn.tooltipOpen = true

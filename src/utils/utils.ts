@@ -21,14 +21,17 @@ export function subscribeToLanguageChange(component: unknown): () => void {
   return () => i18next.off('languageChanged', rerender)
 }
 
-/** Index of the first child of a scroll container that is at least partly in
+/** Index of the first child of a scroll container that is at least half in
  *  view, or -1 when it has none. Lists use it to open the topmost visible row's
- *  tooltip downwards, as nothing in the list is left above that row to cover. */
+ *  tooltip downwards, as nothing in the list is left above that row to cover.
+ *  A row showing only a sliver doesn't count: the row below it is the one the
+ *  user reads first, and that one should open downwards. */
 export function firstVisibleChild(container: HTMLElement): number {
   const top = container.getBoundingClientRect().top
-  return Array.from(container.children).findIndex(
-    (child) => child.getBoundingClientRect().bottom > top,
-  )
+  return Array.from(container.children).findIndex((child) => {
+    const rect = child.getBoundingClientRect()
+    return (rect.top + rect.bottom) / 2 > top
+  })
 }
 
 export function encodeFormData(data: { [x: string]: string | number | boolean }): string {
