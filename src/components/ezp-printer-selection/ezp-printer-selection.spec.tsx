@@ -1,3 +1,5 @@
+import { h } from '@stencil/core'
+import { newSpecPage } from '@stencil/core/testing'
 import { EzpPrinterSelection } from './ezp-printer-selection'
 import printStore, { EzpPrintService } from '../../services/print'
 import { EzpUserService } from '../../services/user'
@@ -394,5 +396,105 @@ describe('ezp-printer-selection load failures', () => {
     expect(el.loading).toBe(false)
     expect(el.selectedPrinter.id).toBe('only')
     expect(el.selectedPrinterConfig.ColorSupported).toBe(true)
+  })
+})
+
+/** A list whose top edge sits at 100, with 30px rows ending at `bottoms`. */
+function scrolledList(bottoms: number[]) {
+  const row = (bottom: number) => ({
+    getBoundingClientRect: () => ({ top: bottom - 30, bottom }),
+  })
+  const list = { getBoundingClientRect: () => ({ top: 100 }), children: bottoms.map(row) }
+  return { currentTarget: list } as unknown as Event
+}
+
+describe('ezp-printer-selection file list', () => {
+  const printer = { id: 'only', name: 'Printer only', location: '', is_queue: false }
+
+  beforeEach(() => {
+    localStorage.clear()
+    jest.spyOn(EzpUserService.prototype, 'getUserInfo').mockResolvedValue({} as any)
+    jest
+      .spyOn(EzpPrintService.prototype, 'registerFetchInterceptor')
+      .mockImplementation(() => undefined)
+    jest.spyOn(EzpPrintService.prototype, 'getPrinterList').mockResolvedValue([printer] as any)
+    jest
+      .spyOn(EzpPrintService.prototype, 'getPrinterProperties')
+      .mockResolvedValue([{ ColorSupported: true }] as any)
+    jest.spyOn(EzpPrintService.prototype, 'getAllPrinterProperties').mockResolvedValue([] as any)
+    jest
+      .spyOn(EzpPrintService.prototype, 'getConfig')
+      .mockResolvedValue({ json: () => Promise.resolve({ System: { FILEEXT: ['pdf'] } }) } as any)
+  })
+  afterEach(() => jest.restoreAllMocks())
+
+  async function render(count: number) {
+    const files = Array.from({ length: count }, (_, i) => new File(['x'], `Document_${i + 1}.pdf`))
+    const page = await newSpecPage({
+      components: [EzpPrinterSelection],
+      template: () => <ezp-printer-selection files={files} />,
+    })
+    await page.waitForChanges()
+    return { page, shadow: page.root!.shadowRoot! }
+  }
+
+  it('renders every file inside the scrollable list', async () => {
+    const { shadow } = await render(12)
+
+    // The list caps its own height, so all rows live in it, not in the card.
+    const rows = shadow.querySelectorAll('#files-card #files-list > .file-row')
+    expect(rows).toHaveLength(12)
+    expect(rows[11].querySelector('ezp-file-name')!.getAttribute('name')).toBe('Document_12.pdf')
+  })
+
+  it('anchors the names outside the scroller, so their tooltips are not clipped', async () => {
+    const { shadow } = await render(8)
+    const names = Array.from(shadow.querySelectorAll('#files-list ezp-file-name'))
+
+    expect(names.every((name) => name.getAttribute('anchor') === 'parent')).toBe(true)
+    // Only the topmost row in view opens downwards.
+    expect(names.map((name) => name.getAttribute('placement'))).toEqual([
+      'bottom',
+      ...Array(7).fill('top'),
+    ])
+  })
+
+  it('tracks the topmost row in view as the list scrolls', () => {
+    const el = new EzpPrinterSelection() as any
+
+    el.handleFilesScroll(scrolledList([40, 100, 130, 160]))
+    expect(el.firstVisibleFile).toBe(2)
+
+    // An empty list leaves the last known row alone.
+    el.handleFilesScroll(scrolledList([]))
+    expect(el.firstVisibleFile).toBe(2)
+  })
+
+  it('opens downwards from whichever row is topmost once scrolled', async () => {
+    const { page, shadow } = await render(8)
+
+    // What the scroll handler settles on with three rows scrolled out of view.
+    page.rootInstance.firstVisibleFile = 3
+    await page.waitForChanges()
+
+    const placements = Array.from(shadow.querySelectorAll('#files-list ezp-file-name')).map(
+      (name) => name.getAttribute('placement'),
+    )
+    expect(placements[3]).toBe('bottom')
+    expect(placements.filter((p) => p === 'bottom')).toHaveLength(1)
+  })
+})
+
+describe('ezp-printer-selection cancel', () => {
+  it('dismisses the dialog without asking for the files to be cleared', () => {
+    const el = new EzpPrinterSelection() as any
+    el.printDismiss = { emit: jest.fn() }
+    el.printCancel = { emit: jest.fn() }
+
+    el.handleCancel()
+
+    expect(el.printDismiss.emit).toHaveBeenCalledTimes(1)
+    // printCancel is what clears the upload card's selection.
+    expect(el.printCancel.emit).not.toHaveBeenCalled()
   })
 })

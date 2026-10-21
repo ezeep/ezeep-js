@@ -223,3 +223,82 @@ describe('ezp-upload', () => {
     expect(clear().disabled).toBe(false)
   })
 })
+
+/** A list whose top edge sits at 100, with 30px rows ending at `bottoms`. */
+function scrolledList(bottoms: number[]) {
+  const row = (bottom: number) => ({
+    getBoundingClientRect: () => ({ top: bottom - 30, bottom }),
+  })
+  const list = { getBoundingClientRect: () => ({ top: 100 }), children: bottoms.map(row) }
+  return { currentTarget: list } as unknown as Event
+}
+
+describe('ezp-upload file list', () => {
+  const files = (count: number) =>
+    Array.from({ length: count }, (_, i) => new File(['x'], `Document_${i + 1}.pdf`))
+
+  it('renders every file inside the scrollable list, with Add more below it', async () => {
+    const { page, up } = await setup()
+    up.handleDrop(dropEvent(files(12)))
+    await page.waitForChanges()
+    const shadow = page.root!.shadowRoot!
+
+    // The list caps its own height, so all rows live in it, not in the card.
+    expect(shadow.querySelectorAll('#files > #file-list > .file')).toHaveLength(12)
+    // Kept out of the scroller, so it stays in reach however long the list is.
+    expect(shadow.querySelector('#files > #add-more')).not.toBeNull()
+  })
+
+  it('anchors the names outside the scroller, so their tooltips are not clipped', async () => {
+    const { page, up } = await setup()
+    up.handleDrop(dropEvent(files(6)))
+    await page.waitForChanges()
+    const shadow = page.root!.shadowRoot!
+
+    const rows = Array.from(shadow.querySelectorAll('#file-list > .file'))
+    expect(rows.every((row) => row.hasAttribute('data-tooltip-row'))).toBe(true)
+    const names = Array.from(shadow.querySelectorAll('#file-list ezp-file-name'))
+    expect(names.every((name) => name.getAttribute('anchor') === 'parent')).toBe(true)
+    // Only the topmost row in view opens downwards.
+    expect(names.map((name) => name.getAttribute('placement'))).toEqual([
+      'bottom',
+      ...Array(5).fill('top'),
+    ])
+  })
+
+  it('opens downwards from whichever row is topmost once scrolled', async () => {
+    const { page, up } = await setup()
+    up.handleDrop(dropEvent(files(8)))
+    // What the scroll handler settles on with three rows scrolled out of view.
+    up.firstVisibleFile = 3
+    await page.waitForChanges()
+
+    const placements = Array.from(
+      page.root!.shadowRoot!.querySelectorAll('#file-list ezp-file-name'),
+    ).map((name) => name.getAttribute('placement'))
+    expect(placements[3]).toBe('bottom')
+    expect(placements.filter((p) => p === 'bottom')).toHaveLength(1)
+  })
+
+  it('tracks the topmost row in view as the list scrolls', async () => {
+    const { up } = await setup()
+
+    // The first two rows are scrolled out; the third shows its lower half.
+    up.handleFilesScroll(scrolledList([40, 100, 130, 160]))
+    expect(up.firstVisibleFile).toBe(2)
+
+    up.handleFilesScroll(scrolledList([120, 150]))
+    expect(up.firstVisibleFile).toBe(0)
+  })
+
+  it('starts a fresh selection back at the top of the list', async () => {
+    const { up } = await setup()
+    up.form = { reset: () => undefined }
+    up.handleDrop(dropEvent(files(8)))
+    up.firstVisibleFile = 3
+
+    up.listenPrintCancel()
+
+    expect(up.firstVisibleFile).toBe(0)
+  })
+})

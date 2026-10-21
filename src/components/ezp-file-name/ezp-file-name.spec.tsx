@@ -116,6 +116,117 @@ describe('ezp-file-name', () => {
     expect(shadow.querySelector('#tooltip')).toBeNull()
   })
 
+  it('closes a row-anchored tooltip once the list scrolls under it', async () => {
+    // Placed by measurement, the bubble would stay put while its row moved on.
+    const { page, fn, shadow } = await setup(
+      'Quarterly_Report_2026_final_DE.pdf',
+      'anchor="parent"',
+    )
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+    expect(shadow.querySelector('#tooltip')).not.toBeNull()
+
+    page.body.dispatchEvent(new Event('scroll'))
+    await page.waitForChanges()
+
+    expect(shadow.querySelector('#tooltip')).toBeNull()
+  })
+
+  it('closes a row-anchored tooltip when the window resizes under it', async () => {
+    // A resize re-wraps the bubble, which would leave it misplaced.
+    const { page, fn, shadow } = await setup(
+      'Quarterly_Report_2026_final_DE.pdf',
+      'anchor="parent"',
+    )
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    window.dispatchEvent(new Event('resize'))
+    await page.waitForChanges()
+
+    expect(shadow.querySelector('#tooltip')).toBeNull()
+  })
+
+  it('stops listening once the tooltip closes', async () => {
+    const { page, fn } = await setup('Quarterly_Report_2026_final_DE.pdf', 'anchor="parent"')
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+    const remove = jest.spyOn(window, 'removeEventListener')
+
+    fn.closeTooltip()
+    await page.waitForChanges()
+
+    expect(remove).toHaveBeenCalledWith('scroll', fn.closeTooltip)
+    expect(remove).toHaveBeenCalledWith('resize', fn.closeTooltip)
+    remove.mockRestore()
+  })
+
+  it('comes back closed after being moved while open', async () => {
+    // A moved node disconnects and reconnects; it must not return with a
+    // tooltip up and no scroll listeners left to close it.
+    const { page, fn, shadow } = await setup(
+      'Quarterly_Report_2026_final_DE.pdf',
+      'anchor="parent"',
+    )
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    const host = page.root!
+    host.remove()
+    page.body.appendChild(host)
+    await page.waitForChanges()
+
+    expect(fn.tooltipOpen).toBe(false)
+    expect(shadow.querySelector('#tooltip')).toBeNull()
+  })
+
+  it('limits the room for the bubble to the ancestors that clip it', async () => {
+    const { fn } = await setup('Quarterly_Report_2026_final_DE.pdf', 'anchor="parent"')
+    // anchor -> (shadow root) -> scrolling body -> modal: the walk crosses the
+    // consumer's shadow root and keeps only ancestors that clip overflow.
+    const modal = { getBoundingClientRect: () => ({ top: 40, bottom: 500 }), parentElement: null }
+    const body = { getBoundingClientRect: () => ({ top: 80, bottom: 380 }), parentElement: modal }
+    const anchor = {
+      getBoundingClientRect: () => ({ top: 0, bottom: 2000 }),
+      parentElement: null,
+      getRootNode: () => ({ host: body }),
+    }
+    ;(modal as any).getRootNode = () => document
+    const overflow = new Map<object, string>([
+      [anchor, 'visible'],
+      [body, 'auto'],
+      [modal, 'hidden'],
+    ])
+    const style = jest
+      .spyOn(window, 'getComputedStyle')
+      .mockImplementation((node: any) => ({ overflowY: overflow.get(node) }) as any)
+
+    expect(fn.visibleArea({ offsetParent: anchor })).toEqual({
+      top: 80,
+      bottom: Math.min(380, window.innerHeight),
+    })
+    style.mockRestore()
+  })
+
+  it('falls back to the viewport when the bubble has no containing block', async () => {
+    const { fn } = await setup('Quarterly_Report_2026_final_DE.pdf', 'anchor="parent"')
+
+    expect(fn.visibleArea({ offsetParent: null })).toEqual({ top: 0, bottom: window.innerHeight })
+  })
+
+  it('leaves a container-anchored tooltip to CSS, scrolling or not', async () => {
+    const { page, fn, shadow } = await setup('Quarterly_Report_2026_final_DE.pdf')
+    fn.tooltipOpen = true
+    await page.waitForChanges()
+
+    page.body.dispatchEvent(new Event('scroll'))
+    await page.waitForChanges()
+
+    const tooltip = shadow.querySelector('#tooltip') as HTMLElement
+    expect(tooltip).not.toBeNull()
+    expect(tooltip.style.top).toBe('')
+  })
+
   it('points the tooltip away from the edge the row sits against', async () => {
     const { page } = await setup('Quarterly_Report_2026_final_DE.pdf', 'placement="bottom"')
     expect(page.root!.className).toContain('place-bottom')

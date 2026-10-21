@@ -1,5 +1,5 @@
 import { Component, Host, Listen, Event, EventEmitter, State, h } from '@stencil/core'
-import { subscribeToLanguageChange } from '../../utils/utils'
+import { firstVisibleChild, subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
 
 /** File formats advertised to the user as supported for printing. */
@@ -31,6 +31,9 @@ export class EzpUpload {
 
   @State() selectedFiles: File[] = []
   @State() dragging: boolean = false
+  /** First row of the file list that is at least partly in view. Its tooltip
+   *  opens downwards, as there is no list left above it to cover. */
+  @State() firstVisibleFile: number = 0
 
   /**
    *
@@ -110,6 +113,7 @@ export class EzpUpload {
   listenPrintCancel() {
     this.form?.reset()
     this.selectedFiles = []
+    this.firstVisibleFile = 0
     this.resetDrag()
   }
 
@@ -165,6 +169,12 @@ export class EzpUpload {
     // ends the print flow. It also reaches the document, where our own
     // `printCancel` listener resets the form and the selection.
     this.printCancel.emit()
+  }
+
+  private handleFilesScroll = (event: Event) => {
+    const first = firstVisibleChild(event.currentTarget as HTMLElement)
+    // Scroll fires every frame; only a change of row is worth a render.
+    if (first >= 0 && first !== this.firstVisibleFile) this.firstVisibleFile = first
   }
 
   private handleContinue = () => {
@@ -251,37 +261,40 @@ export class EzpUpload {
 
                 {hasFiles && (
                   <div id="files">
-                    {this.selectedFiles.map((file, index) => (
-                      <div key={this.fileKey(file)} class="file">
-                        {/* The name below already carries the extension. */}
-                        <span class="file-type" aria-hidden="true">
-                          {this.fileType(file.name)}
-                        </span>
-                        <div class="file-details">
-                          {/* The first row has no room above it inside the card,
-                              so its tooltip opens downwards instead. */}
-                          <ezp-file-name
-                            class="file-name"
-                            weight="heavy"
-                            name={file.name}
-                            placement={index === 0 ? 'bottom' : 'top'}
-                          />
-                          <ezp-label
-                            class="file-size"
-                            level="tertiary"
-                            text={this.formatSize(file.size)}
-                          />
+                    <div id="file-list" onScroll={this.handleFilesScroll}>
+                      {this.selectedFiles.map((file, index) => (
+                        <div key={this.fileKey(file)} class="file" data-tooltip-row>
+                          {/* The name below already carries the extension. */}
+                          <span class="file-type" aria-hidden="true">
+                            {this.fileType(file.name)}
+                          </span>
+                          <div class="file-details">
+                            {/* The topmost row in view has the edge of the list
+                                above it, so its tooltip opens downwards instead. */}
+                            <ezp-file-name
+                              class="file-name"
+                              weight="heavy"
+                              name={file.name}
+                              anchor="parent"
+                              placement={index === this.firstVisibleFile ? 'bottom' : 'top'}
+                            />
+                            <ezp-label
+                              class="file-size"
+                              level="tertiary"
+                              text={this.formatSize(file.size)}
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            class="file-remove"
+                            aria-label={i18next.t('upload.remove_file')}
+                            onClick={(event) => this.removeFile(event, index)}
+                          >
+                            <ezp-icon name="close" />
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          class="file-remove"
-                          aria-label={i18next.t('upload.remove_file')}
-                          onClick={(event) => this.removeFile(event, index)}
-                        >
-                          <ezp-icon name="close" />
-                        </button>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                     <button type="button" id="add-more" onClick={this.openPicker}>
                       <ezp-icon name="plus" />
                       <ezp-label

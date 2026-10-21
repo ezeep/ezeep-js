@@ -167,11 +167,36 @@
  *
  */
 
+/* The tallest thing in a row is its remove button (`.file-remove`). */
+$file-content-height: 28px;
+$file-row-height: calc(#{$file-content-height} + 2 * var(--ezp-spacing-3));
+
 /* Deliberately not `overflow: hidden` — that would clip a row's tooltip. Only
-   `#add-more` paints to the edge, so it rounds its own corners instead. */
+   `#add-more` paints to the edge, so it rounds its own corners instead.
+
+   Anchors the file names' tooltips, so they can span the row. It sits outside
+   the scrolling list on purpose: a scroll container clips the absolutely
+   positioned boxes anchored inside it, but not those anchored beyond it. The
+   names measure where their row is when the tooltip opens (`anchor="parent"`). */
 #files {
   border: 1px solid var(--ezp-core-outline);
   border-radius: 12px;
+  position: relative;
+}
+
+/* Scrolls on its own, so loading more files never makes the card — or the
+   window around it — taller. "Add more files" stays below it, in reach. Half
+   of a fifth row shows at the bottom, which tells the list goes on, and each
+   row after the first adds its 1px divider. `max-height` rather than
+   `height`, so a short list looks the same as before. */
+#file-list {
+  /* Rounds its own top corners, which the scrollbar would otherwise cover. */
+  border-radius: 11px 11px 0 0;
+  max-height: var(--ezp-upload-fileList-maxHeight, calc(4.5 * #{$file-row-height} + 4px));
+  /* Long names are truncated by `ezp-file-name`; nothing scrolls sideways. */
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .file {
@@ -179,9 +204,8 @@
   display: grid;
   gap: var(--ezp-spacing-3);
   grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: $file-row-height;
   padding: var(--ezp-spacing-3) var(--ezp-spacing-4);
-  /* Anchors the file name's tooltip, so it can span the row. */
-  position: relative;
 }
 
 .file + .file {

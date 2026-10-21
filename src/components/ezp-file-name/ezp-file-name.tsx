@@ -1,5 +1,11 @@
-import { Component, Element, Host, Listen, Prop, State, h } from '@stencil/core'
-import { LabelLevelTypes, TooltipPlacementTypes, WeightTypes } from '../../shared/types'
+import { Component, Element, Host, Listen, Prop, State, Watch, h } from '@stencil/core'
+import {
+  LabelLevelTypes,
+  TooltipAnchorTypes,
+  TooltipPlacementTypes,
+  WeightTypes,
+} from '../../shared/types'
+import { pickTooltipSide } from '../../utils/utils'
 
 /**
  * Characters kept at the end of a truncated name. Uploads often differ only in
@@ -27,6 +33,8 @@ export class EzpFileName {
   private closeTimeout?: ReturnType<typeof setTimeout>
   /** Invalidates an in-flight open when the pointer leaves. */
   private openGeneration = 0
+  /** Everything the open tooltip listens to for scrolling, to detach on close. */
+  private scrollTargets: EventTarget[] = []
 
   /**
    *
@@ -48,6 +56,19 @@ export class EzpFileName {
    *  row sits against — `bottom` for the first row of a list, `top` below it. */
   @Prop() placement: TooltipPlacementTypes = 'top'
 
+  /** What the tooltip is placed against.
+   *
+   *  `container`: the nearest positioned ancestor, by CSS alone. The consumer
+   *  makes the row that ancestor, and the bubble opens at the row's edge.
+   *
+   *  `parent`: the row the name sits in, measured when the tooltip opens — the
+   *  closest ancestor marked `data-tooltip-row`, or else the name's parent
+   *  element. For rows inside a scroll container, which would clip a bubble
+   *  anchored to the row. The consumer puts the positioned ancestor outside the
+   *  scroller instead, and the bubble spans that ancestor but lines up with
+   *  the row. */
+  @Prop() anchor: TooltipAnchorTypes = 'container'
+
   /**
    *
    * States
@@ -67,8 +88,28 @@ export class EzpFileName {
    */
 
   disconnectedCallback() {
-    clearTimeout(this.openTimeout)
-    clearTimeout(this.closeTimeout)
+    // Closing also drops the listeners. A node that is moved comes back with
+    // its tooltip shut, rather than open with nothing left to close it.
+    this.closeTooltip()
+    this.stopWatchingScroll()
+  }
+
+  componentDidRender() {
+    if (this.tooltipOpen && this.anchor === 'parent') this.placeTooltip()
+  }
+
+  /**
+   *
+   * Watchers
+   *
+   */
+
+  /** A measured bubble stays where it was put, so once the row scrolls away
+   *  under it, it would point at the wrong name. Closing it is the honest fix. */
+  @Watch('tooltipOpen')
+  watchTooltipOpen(open: boolean) {
+    if (open && this.anchor === 'parent') this.watchScroll()
+    else this.stopWatchingScroll()
   }
 
   /**
@@ -139,6 +180,79 @@ export class EzpFileName {
     clearTimeout(this.openTimeout)
     clearTimeout(this.closeTimeout)
     this.tooltipOpen = false
+  }
+
+  /** Lines the bubble up with the row the name sits in. Its containing block
+   *  is somewhere further out, so `top: 0` shows where that block starts, and
+   *  the offset is taken from there. Measurements are in screen pixels, which
+   *  differ from CSS pixels when a host scales the dialog with a transform, so
+   *  the offset is converted back before it is applied.
+   *
+   *  `placement` is a preference here: a row near the edge of whatever clips
+   *  the bubble may not have room on that side, so it opens on the other. */
+  private placeTooltip() {
+    const tooltip = this.host.shadowRoot?.querySelector('#tooltip') as HTMLElement | null
+    const row = this.host.closest('[data-tooltip-row]') ?? this.host.parentElement
+    if (!tooltip || !row) return
+
+    tooltip.style.bottom = 'auto'
+    tooltip.style.top = '0px'
+    const bubble = tooltip.getBoundingClientRect()
+    const scale = tooltip.offsetHeight > 0 ? bubble.height / tooltip.offsetHeight : 1
+    const rowRect = row.getBoundingClientRect()
+    const gap =
+      (parseFloat(getComputedStyle(tooltip).getPropertyValue('--ezp-spacing-2')) || 6) * scale
+    const side = pickTooltipSide(
+      this.placement,
+      rowRect,
+      bubble.height + gap,
+      this.visibleArea(tooltip),
+    )
+    const top = side === 'top' ? rowRect.top - gap - bubble.height : rowRect.bottom + gap
+    tooltip.style.top = `${(top - bubble.top) / (scale || 1)}px`
+  }
+
+  /** The part of the screen the bubble can show in: the viewport, narrowed by
+   *  every ancestor of its containing block that clips overflow — the host's
+   *  scrolling body, say. The scroller the rows sit in isn't among them, as the
+   *  bubble is anchored beyond it. */
+  private visibleArea(tooltip: HTMLElement): { top: number; bottom: number } {
+    let top = 0
+    let bottom = window.innerHeight
+    let node: Element | null = tooltip.offsetParent
+    while (node) {
+      if (getComputedStyle(node).overflowY !== 'visible') {
+        const rect = node.getBoundingClientRect()
+        top = Math.max(top, rect.top)
+        bottom = Math.min(bottom, rect.bottom)
+      }
+      node = node.parentElement ?? ((node.getRootNode() as ShadowRoot).host || null)
+    }
+    return { top, bottom }
+  }
+
+  /** Scroll events don't bubble, so every ancestor is listened to directly —
+   *  across shadow roots, since the scroll container is usually the consumer's.
+   *  A window resize re-wraps the bubble just the same, so it closes it too. */
+  private watchScroll() {
+    this.stopWatchingScroll()
+    const targets: EventTarget[] = [window]
+    let node: Node | null = this.host.parentNode
+    while (node) {
+      if (node.nodeType === Node.ELEMENT_NODE) targets.push(node)
+      node = node instanceof ShadowRoot ? node.host : node.parentNode
+    }
+    targets.forEach((target) =>
+      target.addEventListener('scroll', this.closeTooltip, { passive: true }),
+    )
+    window.addEventListener('resize', this.closeTooltip, { passive: true })
+    this.scrollTargets = targets
+  }
+
+  private stopWatchingScroll() {
+    this.scrollTargets.forEach((target) => target.removeEventListener('scroll', this.closeTooltip))
+    this.scrollTargets = []
+    window.removeEventListener('resize', this.closeTooltip)
   }
 
   /** Leaves the tooltip up briefly so the pointer can reach it. */

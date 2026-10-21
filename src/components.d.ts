@@ -5,8 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
-export { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
+import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipAnchorTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
+export { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipAnchorTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -43,6 +43,11 @@ export namespace Components {
         "instance": string;
     }
     interface EzpFileName {
+        /**
+          * What the tooltip is placed against.  `container`: the nearest positioned ancestor, by CSS alone. The consumer makes the row that ancestor, and the bubble opens at the row's edge.  `parent`: the row the name sits in, measured when the tooltip opens — the closest ancestor marked `data-tooltip-row`, or else the name's parent element. For rows inside a scroll container, which would clip a bubble anchored to the row. The consumer puts the positioned ancestor outside the scroller instead, and the bubble spans that ancestor but lines up with the row.
+          * @default 'container'
+         */
+        "anchor": TooltipAnchorTypes;
         /**
           * Type scale of the rendered name, passed through to `ezp-label`.
           * @default 'secondary'
@@ -510,6 +515,7 @@ declare global {
     };
     interface HTMLEzpPrinterSelectionElementEventMap {
         "printCancel": MouseEvent;
+        "printDismiss": void;
         "printSubmit": MouseEvent;
         "logout": MouseEvent;
     }
@@ -709,6 +715,11 @@ declare namespace LocalJSX {
     }
     interface EzpFileName {
         /**
+          * What the tooltip is placed against.  `container`: the nearest positioned ancestor, by CSS alone. The consumer makes the row that ancestor, and the bubble opens at the row's edge.  `parent`: the row the name sits in, measured when the tooltip opens — the closest ancestor marked `data-tooltip-row`, or else the name's parent element. For rows inside a scroll container, which would clip a bubble anchored to the row. The consumer puts the positioned ancestor outside the scroller instead, and the bubble spans that ancestor but lines up with the row.
+          * @default 'container'
+         */
+        "anchor"?: TooltipAnchorTypes;
+        /**
           * Type scale of the rendered name, passed through to `ezp-label`.
           * @default 'secondary'
          */
@@ -862,6 +873,10 @@ declare namespace LocalJSX {
          */
         "onPrintCancel"?: (event: EzpPrinterSelectionCustomEvent<MouseEvent>) => void;
         /**
+          * Cancel or close on this dialog: the user backs out of the print options only. Unlike `printCancel`, it leaves the selected files alone, so the host can return to the step they were chosen on.
+         */
+        "onPrintDismiss"?: (event: EzpPrinterSelectionCustomEvent<void>) => void;
+        /**
           * Description...
          */
         "onPrintSubmit"?: (event: EzpPrinterSelectionCustomEvent<MouseEvent>) => void;
@@ -899,7 +914,7 @@ declare namespace LocalJSX {
          */
         "language"?: string;
         /**
-          * Fired when the print flow reaches an end state and the host may dismiss the component: a print job was submitted, or the user cancelled on the upload card, the sign-in dialog (with files pending) or the print options card. It does not mean a job was printed — check for that on the print API side.
+          * Fired when the print flow reaches an end state and the host may dismiss the component: a print job was submitted, or the user cancelled on the upload card, the sign-in dialog (with files pending) or the print options card. A cancel on the print options card returns to the upload card when there is one (`trigger="file"`), so it doesn't end the flow there. It does not mean a job was printed — check for that on the print API side.
          */
         "onPrintFinished"?: (event: EzpPrintingCustomEvent<void>) => void;
         "printapihosturl"?: string;
@@ -1092,6 +1107,7 @@ declare namespace LocalJSX {
         "level": LabelLevelTypes;
         "weight": WeightTypes;
         "placement": TooltipPlacementTypes;
+        "anchor": TooltipAnchorTypes;
     }
     interface EzpIconAttributes {
         "name": IconNameTypes;

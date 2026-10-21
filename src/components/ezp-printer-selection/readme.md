@@ -21,11 +21,12 @@
 
 ## Events
 
-| Event         | Description    | Type                      |
-| ------------- | -------------- | ------------------------- |
-| `logout`      |                | `CustomEvent<MouseEvent>` |
-| `printCancel` | Description... | `CustomEvent<MouseEvent>` |
-| `printSubmit` | Description... | `CustomEvent<MouseEvent>` |
+| Event          | Description                                                                                                                                                                                     | Type                      |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `logout`       |                                                                                                                                                                                                 | `CustomEvent<MouseEvent>` |
+| `printCancel`  | Description...                                                                                                                                                                                  | `CustomEvent<MouseEvent>` |
+| `printDismiss` | Cancel or close on this dialog: the user backs out of the print options only. Unlike `printCancel`, it leaves the selected files alone, so the host can return to the step they were chosen on. | `CustomEvent<void>`       |
+| `printSubmit`  | Description...                                                                                                                                                                                  | `CustomEvent<MouseEvent>` |
 
 
 ## Dependencies

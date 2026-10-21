@@ -1,5 +1,7 @@
 import {
   encodeFormData,
+  firstVisibleChild,
+  pickTooltipSide,
   capitalize,
   removeEmptyStrings,
   managePaperDimensions,
@@ -85,5 +87,63 @@ describe('validatePageRange', () => {
     expect(validatePageRange('5-2')).toBe(false)
     expect(validatePageRange('0-3')).toBe(false)
     expect(validatePageRange('1-')).toBe(false)
+  })
+})
+
+describe('firstVisibleChild', () => {
+  /** A container whose top edge sits at 100, with 30px children ending at `bottoms`. */
+  function container(bottoms: number[]): HTMLElement {
+    const child = (bottom: number) => ({
+      getBoundingClientRect: () => ({ top: bottom - 30, bottom }),
+    })
+    return {
+      getBoundingClientRect: () => ({ top: 100 }),
+      children: bottoms.map(child),
+    } as unknown as HTMLElement
+  }
+
+  it('finds the first child that is at least half in view', () => {
+    // The first two are scrolled out; the third shows two thirds of itself.
+    expect(firstVisibleChild(container([40, 100, 120, 150]))).toBe(2)
+  })
+
+  it('skips a child showing only a sliver, for the one below it', () => {
+    // 4px of the first child shows; the second is the row read first.
+    expect(firstVisibleChild(container([104, 134, 164]))).toBe(1)
+  })
+
+  it('reports -1 for an empty container', () => {
+    expect(firstVisibleChild(container([]))).toBe(-1)
+  })
+})
+
+describe('pickTooltipSide', () => {
+  // The visible area runs from 100 to 400; the bubble needs 54px with its gap.
+  const visible = { top: 100, bottom: 400 }
+
+  it('keeps the requested side when the bubble fits there', () => {
+    expect(pickTooltipSide('top', { top: 200, bottom: 220 }, 54, visible)).toBe('top')
+    expect(pickTooltipSide('bottom', { top: 200, bottom: 220 }, 54, visible)).toBe('bottom')
+  })
+
+  it('flips downwards when the row sits too close to the top edge', () => {
+    // The case from review: a row 30px into a scrolled list, under a
+    // two-line bubble that would be cut off by the card's top.
+    expect(pickTooltipSide('top', { top: 130, bottom: 150 }, 54, visible)).toBe('bottom')
+  })
+
+  it('flips upwards when the row sits too close to the bottom edge', () => {
+    expect(pickTooltipSide('bottom', { top: 360, bottom: 380 }, 54, visible)).toBe('top')
+  })
+
+  it('takes the roomier side when the bubble fits on neither', () => {
+    // 110px above, 40px below, but the bubble needs 120px.
+    expect(pickTooltipSide('bottom', { top: 210, bottom: 360 }, 120, visible)).toBe('top')
+    // 20px above, 180px below.
+    expect(pickTooltipSide('top', { top: 120, bottom: 220 }, 300, visible)).toBe('bottom')
+  })
+
+  it('stays put when neither side fits and the other has no more room', () => {
+    expect(pickTooltipSide('top', { top: 150, bottom: 350 }, 120, visible)).toBe('top')
   })
 })
