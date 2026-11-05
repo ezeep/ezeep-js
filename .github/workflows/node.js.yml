@@ -4,7 +4,7 @@
 #   pull request          -> verify only, nothing is published
 #   push to main          -> release candidate 1.0.<run>-rc on npm dist-tag `next`
 #                            (environment: Staging). `latest` and the CDN are not touched.
-#   manual run on RC tag  -> promotes that release candidate to 1.0.<run> on npm
+#   manual run on RC tag  -> promotes 1.0.<N>-rc to 1.0.<N> on npm
 #                            dist-tag `latest`, then updates the CDN (environment: Production).
 #                            Actions -> Node.js Build -> Run workflow -> "Use workflow from":
 #                            Tags -> 1.0.<run>-rc
@@ -218,16 +218,16 @@ jobs:
   # ---------------------------------------------------------------------------
   # Stage 2 - production (npm dist-tag `latest` + CDN), manual, from an RC tag
   # ---------------------------------------------------------------------------
-  promote-npm:
+  # One job, so a promotion needs one approval of the Production environment
+  # and never stops halfway between npm and the CDN while waiting for another.
+  promote:
     if: github.event_name == 'workflow_dispatch'
     environment: Production
     runs-on: ubuntu-latest
-    # NEU: Erforderlich für Trusted Publishing
+    # Trusted Publishing (npm) and the Azure login both need the OIDC token
     permissions:
       contents: write
       id-token: write
-    outputs:
-      release_version: ${{ steps.version.outputs.release_version }}
 
     steps:
     - name: Setup Node.js 22
@@ -237,7 +237,6 @@ jobs:
         registry-url: "${{ env.NPM_REGISTRY }}"
 
     - name: Resolve release version from RC tag
-      id: version
       run: |
         if [[ "${GITHUB_REF_TYPE}" != "tag" || ! "${RC_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc$ ]]; then
           echo "::error::A promotion must be started from a release-candidate tag (e.g. 1.0.300-rc), not from ${GITHUB_REF_TYPE} '${GITHUB_REF_NAME}'."
@@ -259,15 +258,16 @@ jobs:
           exit 1
         fi
 
-        echo "release_version=${release_version}" >> "$GITHUB_OUTPUT"
         echo "RELEASE_VERSION=${release_version}" >> "$GITHUB_ENV"
         echo "Promoting ${RC_VERSION} -> ${release_version}" >> "$GITHUB_STEP_SUMMARY"
 
-    - name: Download release candidate from npm registry
+    - name: Download release candidates from npm registry
       run: |
-        mkdir promote
+        mkdir -p promote/core promote/ng
         npm pack "${NPM_PACKAGE}@${RC_VERSION}" --pack-destination "${RUNNER_TEMP}"
-        tar -xzf "${RUNNER_TEMP}"/ezeep-ezeep-js-*.tgz -C promote
+        npm pack "${NPM_PACKAGE_NG}@${RC_VERSION}" --pack-destination "${RUNNER_TEMP}"
+        tar -xzf "${RUNNER_TEMP}"/ezeep-ezeep-js-*.tgz -C promote/core
+        tar -xzf "${RUNNER_TEMP}"/ezeep-ngx-ezeep-js-*.tgz -C promote/ng
 
     - name: Publish npm package to npm registry (dist-tag latest)
       # --ignore-scripts: the unpacked tarball has no node_modules, so the
@@ -279,56 +279,7 @@ jobs:
         fi
         npm version --no-git-tag-version "${RELEASE_VERSION}"
         npx -p npm@latest npm publish --access public --provenance --ignore-scripts --tag latest
-      working-directory: promote/package
-
-    - name: Upload npm artifact
-      uses: actions/upload-artifact@v5
-      with:
-        path: promote/package/${{ env.DIST_PATH }}
-        name: ${{ env.ARTIFACT_NAME }}
-
-    - name: Zip npm artifact for release
-      uses: thedoctor0/zip-release@b57d897cb5d60cb78b51a507f63fa184cfe35554 # 0.7.6
-      with:
-        type: 'zip'
-        directory: promote/package/${{ env.DIST_PATH }}
-        path: '.'
-        filename: ${{ env.ARTIFACT_NAME }}
-
-    - name: Create release with npm package
-      uses: ncipollo/release-action@v1
-      with:
-        tag: "${{ env.RELEASE_VERSION }}"
-        commit: ${{ github.sha }}
-        prerelease: false
-        allowUpdates: true
-        artifacts: "promote/package/${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-
-  promote-ng:
-    environment: Production
-    needs: promote-npm
-    runs-on: ubuntu-latest
-    # NEU: Erforderlich für Trusted Publishing
-    permissions:
-      contents: read
-      id-token: write
-    env:
-      RELEASE_VERSION: ${{ needs.promote-npm.outputs.release_version }}
-
-    steps:
-    - name: Setup Node.js 22
-      uses: actions/setup-node@v5
-      with:
-        node-version: '22'
-        registry-url: "${{ env.NPM_REGISTRY }}"
-
-    - name: Download angular release candidate from npm registry
-      run: |
-        mkdir promote
-        npm pack "${NPM_PACKAGE_NG}@${RC_VERSION}" --pack-destination "${RUNNER_TEMP}"
-        tar -xzf "${RUNNER_TEMP}"/ezeep-ngx-ezeep-js-*.tgz -C promote
+      working-directory: promote/core/package
 
     - name: Publish angular library to npm registry (dist-tag latest)
       # The RC was pinned to the RC of the npm package; the release depends on
@@ -341,30 +292,31 @@ jobs:
         npm version --no-git-tag-version "${RELEASE_VERSION}"
         npm pkg set "dependencies.${NPM_PACKAGE}=^${RELEASE_VERSION}"
         npx -p npm@latest npm publish --access public --provenance --ignore-scripts --tag latest
-      working-directory: promote/package
+      working-directory: promote/ng/package
 
-  cdn-upload-npm:
-    environment: Production
-    needs: promote-npm
-    runs-on: ubuntu-latest
-    # WICHTIG: Die id-token Permission wird hier für Azure benötigt
-    permissions:
-      contents: read
-      id-token: write
-    env:
-      RELEASE_VERSION: ${{ needs.promote-npm.outputs.release_version }}
+    - name: Stage CDN files
+      # Copied before the zip step below, which writes the zip into DIST_PATH.
+      run: |
+        mkdir -p artifacts
+        cp -R "promote/core/package/${DIST_PATH}" "artifacts/v${RELEASE_VERSION}"
 
-    steps:
-    - name: Setup Node.js 22
-      uses: actions/setup-node@v5
+    - name: Zip npm artifact for release
+      uses: thedoctor0/zip-release@b57d897cb5d60cb78b51a507f63fa184cfe35554 # 0.7.6
       with:
-        node-version: '22'
-        
-    - name: Download npm artifact
-      uses: actions/download-artifact@v5
+        type: 'zip'
+        directory: promote/core/package/${{ env.DIST_PATH }}
+        path: '.'
+        filename: ${{ env.ARTIFACT_NAME }}
+
+    - name: Create release with npm package
+      uses: ncipollo/release-action@v1
       with:
-        name: ${{ env.ARTIFACT_NAME }}
-        path: "artifacts/v${{ env.RELEASE_VERSION }}"
+        tag: "${{ env.RELEASE_VERSION }}"
+        commit: ${{ github.sha }}
+        prerelease: false
+        allowUpdates: true
+        artifacts: "promote/core/package/${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Login to Azure CLI via OIDC
       uses: azure/login@v3
@@ -372,8 +324,10 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        
+
     - name: Upload artifact to blob storage
+      # --overwrite: a re-run after a failed redirect or purge uploads the same
+      # version again, which would otherwise stop with BlobAlreadyExists.
       run: |
           azenv='${{ secrets.AZURE_ENVIRONMENT }}'
           account=$(jq -crM .storage.account <<< $azenv)
@@ -384,6 +338,7 @@ jobs:
             --account-name $account \
             -d $container \
             -s "artifacts" \
+            --overwrite true \
             -o none
 
     - name: Update Url redirect
@@ -426,7 +381,7 @@ jobs:
               -n $endpoint \
               --rule-name $rule \
               --action-name UrlRedirect \
-              --custom-path "/$container/v${{ env.RELEASE_VERSION }}/$fileName" \
+              --custom-path "/$container/v${RELEASE_VERSION}/$fileName" \
               --redirect-type Found \
               -o none
           done
