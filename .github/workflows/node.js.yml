@@ -4,10 +4,10 @@
 #   pull request          -> verify only, nothing is published
 #   push to main          -> release candidate 1.0.<run>-rc on npm dist-tag `next`
 #                            (environment: Staging). `latest` and the CDN are not touched.
-#   manual run on RC tag  -> promotes 1.0.<N>-rc to 1.0.<N> on npm
+#   manual run on main    -> promotes 1.0.<N>-rc to 1.0.<N> on npm
 #                            dist-tag `latest`, then updates the CDN (environment: Production).
-#                            Actions -> Node.js Build -> Run workflow -> "Use workflow from":
-#                            Tags -> 1.0.<run>-rc
+#                            Actions -> Node.js Build -> Run workflow -> "Use workflow from": main,
+#                            "Release candidate to promote": 1.0.<N>-rc
 #
 # The promotion does not rebuild: it takes the RC tarball from the npm registry,
 # changes only the version number and publishes it, so what was tested is what ships.
@@ -15,9 +15,12 @@
 name: Node.js Build
 
 env:
-  # Push to main: a new release candidate. Manual run: the RC tag being promoted.
+  # Push to main: a new release candidate. Manual run: the release candidate being promoted.
   # update MAJOR and MINOR version here
-  RC_VERSION: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || format('1.0.{0}-rc', github.run_number) }}
+  RC_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.version || format('1.0.{0}-rc', github.run_number) }}
+
+  # Pinned, as it runs in jobs that can publish. Needs >= 11.5.1 for Trusted Publishing.
+  NPM_CLI: 'npm@11.21.2'
 
   NPM_PACKAGE: '@ezeep/ezeep-js'                   # npm package name
   NPM_PACKAGE_NG: '@ezeep/ngx-ezeep-js'            # angular npm package name
@@ -37,8 +40,13 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  # Promotion of a release candidate to production. Must be started from an RC tag.
+  # Promotion of a release candidate to production. Must be started from main.
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release candidate to promote (e.g. 1.0.300-rc)'
+        required: true
+        type: string
 
 jobs:
   # Validation gate: lint + unit tests + build. Runs on every PR and push, and
@@ -106,7 +114,7 @@ jobs:
         npm run build
 
     - name: Publish release candidate to npm registry (dist-tag next)
-      # npx -p npm@latest sorgt dafür, dass die aktuellste npm-Version geladen wird (OIDC Auth)
+      # npx -p sorgt dafür, dass eine OIDC-fähige npm-Version geladen wird (Trusted Publishing)
       # A pre-release version with --tag next never becomes `latest` and is not
       # matched by semver ranges such as ^1.0.0, so existing consumers do not get it.
       run: |
@@ -114,7 +122,7 @@ jobs:
           echo "${NPM_PACKAGE}@${RC_VERSION} is already published - skipping."
           exit 0
         fi
-        npx -p npm@latest npm publish --access public --provenance --tag next
+        npx -p "${NPM_CLI}" npm publish --access public --provenance --tag next
 
     - name: Upload npm artifact
       uses: actions/upload-artifact@v5
@@ -138,7 +146,7 @@ jobs:
 
     - name: Create pre-release with npm package
       # The tag created here is what a promotion run is started from.
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
       with:
         tag: "${{ env.RC_VERSION }}"
         commit: ${{ github.sha }}
@@ -213,7 +221,7 @@ jobs:
           exit 0
         fi
         # Hier ebenfalls npx nutzen, um die OIDC-kompatible npm Version zu erzwingen
-        npx -p npm@latest npm publish --access public --provenance --tag next
+        npx -p "${NPM_CLI}" npm publish --access public --provenance --tag next
 
   # ---------------------------------------------------------------------------
   # Stage 2 - production (npm dist-tag `latest` + CDN), manual, from an RC tag
@@ -223,6 +231,10 @@ jobs:
   promote:
     if: github.event_name == 'workflow_dispatch'
     environment: Production
+    # Two promotions at once could both pass the "not older than latest" check.
+    concurrency:
+      group: promote
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     # Trusted Publishing (npm) and the Azure login both need the OIDC token
     permissions:
@@ -236,13 +248,30 @@ jobs:
         node-version: '22'
         registry-url: "${{ env.NPM_REGISTRY }}"
 
-    - name: Resolve release version from RC tag
+    - name: Resolve release version and commit
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
-        if [[ "${GITHUB_REF_TYPE}" != "tag" || ! "${RC_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc$ ]]; then
-          echo "::error::A promotion must be started from a release-candidate tag (e.g. 1.0.300-rc), not from ${GITHUB_REF_TYPE} '${GITHUB_REF_NAME}'."
+        if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+          echo "::error::A promotion must be started from main, not from '${GITHUB_REF_NAME}'."
+          exit 1
+        fi
+        if [[ ! "${RC_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc$ ]]; then
+          echo "::error::'${RC_VERSION}' is not a release candidate (e.g. 1.0.300-rc)."
           exit 1
         fi
         release_version="${RC_VERSION%-rc}"
+
+        # The GitHub release is created on the commit the release candidate was built from.
+        if ! rc_commit="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${RC_VERSION}" --jq .sha)"; then
+          echo "::error::There is no tag ${RC_VERSION}."
+          exit 1
+        fi
+        status="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${rc_commit}...main" --jq .status)"
+        if [[ "${status}" != "ahead" && "${status}" != "identical" ]]; then
+          echo "::error::${RC_VERSION} (${rc_commit}) was not built from main."
+          exit 1
+        fi
 
         for pkg in "${NPM_PACKAGE}" "${NPM_PACKAGE_NG}"; do
           if [ -z "$(npm view "${pkg}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
@@ -253,12 +282,14 @@ jobs:
 
         # Never move `latest` backwards. (Equal is allowed so a failed promotion can be re-run.)
         latest="$(npm view "${NPM_PACKAGE}" dist-tags.latest)"
-        if [ "${latest}" != "${release_version}" ] && ! npx -y semver -r ">${latest}" "${release_version}" > /dev/null; then
+        newest="$(printf '%s\n' "${latest}" "${release_version}" | sort -V | tail -n 1)"
+        if [ "${latest}" != "${release_version}" ] && [ "${newest}" != "${release_version}" ]; then
           echo "::error::${release_version} is older than the current latest (${latest}) - refusing to promote."
           exit 1
         fi
 
         echo "RELEASE_VERSION=${release_version}" >> "$GITHUB_ENV"
+        echo "RC_COMMIT=${rc_commit}" >> "$GITHUB_ENV"
         echo "Promoting ${RC_VERSION} -> ${release_version}" >> "$GITHUB_STEP_SUMMARY"
 
     - name: Download release candidates from npm registry
@@ -278,7 +309,7 @@ jobs:
           exit 0
         fi
         npm version --no-git-tag-version "${RELEASE_VERSION}"
-        npx -p npm@latest npm publish --access public --provenance --ignore-scripts --tag latest
+        npx -p "${NPM_CLI}" npm publish --access public --provenance --ignore-scripts --tag latest
       working-directory: promote/core/package
 
     - name: Publish angular library to npm registry (dist-tag latest)
@@ -291,7 +322,7 @@ jobs:
         fi
         npm version --no-git-tag-version "${RELEASE_VERSION}"
         npm pkg set "dependencies.${NPM_PACKAGE}=^${RELEASE_VERSION}"
-        npx -p npm@latest npm publish --access public --provenance --ignore-scripts --tag latest
+        npx -p "${NPM_CLI}" npm publish --access public --provenance --ignore-scripts --tag latest
       working-directory: promote/ng/package
 
     - name: Stage CDN files
@@ -309,10 +340,10 @@ jobs:
         filename: ${{ env.ARTIFACT_NAME }}
 
     - name: Create release with npm package
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
       with:
         tag: "${{ env.RELEASE_VERSION }}"
-        commit: ${{ github.sha }}
+        commit: ${{ env.RC_COMMIT }}
         prerelease: false
         allowUpdates: true
         artifacts: "promote/core/package/${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"

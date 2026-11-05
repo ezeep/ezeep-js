@@ -298,6 +298,17 @@ npm install @ezeep/ezeep-js@next
 npm install @ezeep/ngx-ezeep-js@next
 ```
 
-**2. Production (manual).** To promote a tested release candidate, open _Actions → Node.js Build → Run workflow_ and choose the release candidate's tag (for example `1.0.300-rc`) under _Use workflow from → Tags_. The workflow takes that release candidate from the npm registry, publishes it unchanged as `1.0.300` under the dist-tag `latest`, creates the GitHub release and switches `cdn.ezeep.com` to the new version.
+**2. Production (manual).** To promote a tested release candidate, open _Actions → Node.js Build → Run workflow_, keep _Use workflow from_ on `main` and enter the release candidate (for example `1.0.300-rc`). After the Production environment is approved, the workflow takes that release candidate from the npm registry, publishes it unchanged as `1.0.300` under the dist-tag `latest`, creates the GitHub release and switches `cdn.ezeep.com` to the new version.
 
-A promotion is refused if it is not started from a release-candidate tag, or if the version is older than the current `latest`.
+A promotion is refused if it is not started from `main`, if the release candidate was not built from `main`, or if the version is older than the current `latest`.
+
+If a promotion fails partway, re-run it. Steps that already succeeded are skipped or repeated with the same files.
+
+**Rolling back.** The workflow never moves `latest` backwards. To go back to an earlier release:
+
+```bash
+npm dist-tag add @ezeep/ezeep-js@<previous> latest
+npm dist-tag add @ezeep/ngx-ezeep-js@<previous> latest
+```
+
+Then point the CDN redirect rules back to `v<previous>` and purge the CDN endpoint.
