@@ -62,8 +62,11 @@
 }
 
 #input {
-  -moz-appearance: textfield;
-  appearance: none;
+  // `textfield` (not `none`) hides Firefox's built-in spin buttons. Firefox
+  // treats `-moz-appearance` as an alias of `appearance`, so a later
+  // `appearance: none` overrides it and the spinners come back, filling most of
+  // the 28px width and clipping every digit after the first.
+  appearance: textfield;
   background: transparent;
   border: 0;
   border-radius: 3px;
