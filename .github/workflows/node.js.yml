@@ -290,7 +290,7 @@ jobs:
 
         echo "RELEASE_VERSION=${release_version}" >> "$GITHUB_ENV"
         echo "RC_COMMIT=${rc_commit}" >> "$GITHUB_ENV"
-        echo "Promoting ${RC_VERSION} -> ${release_version}" >> "$GITHUB_STEP_SUMMARY"
+        echo "Promoting ${RC_VERSION} (built from ${rc_commit}) -> ${release_version}" >> "$GITHUB_STEP_SUMMARY"
 
     - name: Download release candidates from npm registry
       run: |
@@ -340,10 +340,17 @@ jobs:
         filename: ${{ env.ARTIFACT_NAME }}
 
     - name: Create release with npm package
+      # The npm provenance of the release records this promotion run (main's HEAD
+      # when it started), not the commit the release candidate was built from.
+      # The release notes name both, so the two can be matched.
       uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
       with:
         tag: "${{ env.RELEASE_VERSION }}"
         commit: ${{ env.RC_COMMIT }}
+        body: |
+          Promoted from release candidate `${{ env.RC_VERSION }}`, built from ${{ env.RC_COMMIT }}. The package contents are that release candidate's; only the version number changed.
+
+          The npm provenance of `${{ env.RELEASE_VERSION }}` records the promotion run (${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) on `main` at ${{ github.sha }}, not the build commit. The build is in the provenance of `${{ env.RC_VERSION }}`.
         prerelease: false
         allowUpdates: true
         artifacts: "promote/core/package/${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
@@ -398,13 +405,22 @@ jobs:
                       | select(.value.name == "UrlRedirect") | .key' \
                   )
 
-            az cdn endpoint rule action remove \
-              -g $resourceGroup \
-              --profile-name $profile \
-              -n $endpoint \
-              --rule-name $rule \
-              --index $index \
-              -o none
+            # No redirect: a previous run removed it and then failed to add the new
+            # one. Skip the remove so a re-run can add it.
+            if [ -z "$index" ]; then
+              echo "Rule $rule has no UrlRedirect action - adding it."
+            elif [ "$(wc -l <<< "$index")" -gt 1 ]; then
+              echo "::error::Rule $rule has more than one UrlRedirect action ($(tr '\n' ' ' <<< "$index")) - fix it in the Azure portal."
+              exit 1
+            else
+              az cdn endpoint rule action remove \
+                -g $resourceGroup \
+                --profile-name $profile \
+                -n $endpoint \
+                --rule-name $rule \
+                --index $index \
+                -o none
+            fi
 
             az cdn endpoint rule action add  \
               -g $resourceGroup \
