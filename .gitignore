@@ -29,3 +29,6 @@ UserInterfaceState.xcuserstate
 *.pem
 *.crt
 *.key
+
+# code review
+.ai/review/code_review_*
