@@ -3,11 +3,13 @@
 # Release channels
 #   pull request          -> verify only, nothing is published
 #   push to main          -> release candidate 1.0.<run>-rc on npm dist-tag `next`
-#                            (environment: Staging). `latest` and the CDN are not touched.
-#   manual run on main    -> promotes 1.0.<N>-rc to 1.0.<N> on npm
-#                            dist-tag `latest`, then updates the CDN (environment: Production).
+#                            (environment: release-candidate). `latest` and the CDN are not touched.
+#   manual run on main    -> 1.0.<N>-rc: promotes it to 1.0.<N> on npm dist-tag `latest`,
+#                            then updates the CDN (environment: Production).
+#                            1.0.<N>: rolls back - points `latest` and the CDN back to that
+#                            earlier release. Nothing is published.
 #                            Actions -> Node.js Build -> Run workflow -> "Use workflow from": main,
-#                            "Release candidate to promote": 1.0.<N>-rc
+#                            "Version": 1.0.<N>-rc or 1.0.<N>
 #
 # The promotion does not rebuild: it takes the RC tarball from the npm registry,
 # changes only the version number and publishes it, so what was tested is what ships.
@@ -40,11 +42,12 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  # Promotion of a release candidate to production. Must be started from main.
+  # Promotion of a release candidate to production, or rollback to an earlier
+  # release. Must be started from main.
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release candidate to promote (e.g. 1.0.300-rc)'
+        description: 'Release candidate to promote (e.g. 1.0.300-rc), or an earlier release to roll back to (e.g. 1.0.296)'
         required: true
         type: string
 
@@ -87,7 +90,7 @@ jobs:
     # Only publish on a real push to main, never on pull requests.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
-    environment: Staging
+    environment: release-candidate
     runs-on: ubuntu-latest
     # NEU: Erforderlich für Trusted Publishing
     permissions:
@@ -157,7 +160,7 @@ jobs:
 
 
   rc-ng:
-    environment: Staging
+    environment: release-candidate
     needs: rc-npm
     runs-on: ubuntu-latest
     # NEU: Erforderlich für Trusted Publishing
@@ -228,10 +231,12 @@ jobs:
   # ---------------------------------------------------------------------------
   # One job, so a promotion needs one approval of the Production environment
   # and never stops halfway between npm and the CDN while waiting for another.
+  # The same job rolls back: it then skips everything that publishes and only
+  # points `latest` and the CDN at the earlier release.
   promote:
     if: github.event_name == 'workflow_dispatch'
     environment: Production
-    # Two promotions at once could both pass the "not older than latest" check.
+    # Two runs at once could both pass the "not older than latest" check.
     concurrency:
       group: promote
       cancel-in-progress: false
@@ -253,11 +258,32 @@ jobs:
         GH_TOKEN: ${{ github.token }}
       run: |
         if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
-          echo "::error::A promotion must be started from main, not from '${GITHUB_REF_NAME}'."
+          echo "::error::A promotion or rollback must be started from main, not from '${GITHUB_REF_NAME}'."
           exit 1
         fi
+        latest="$(npm view "${NPM_PACKAGE}" dist-tags.latest)"
+
+        if [[ "${RC_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          # Rollback: point `latest` and the CDN back to an earlier release. Nothing is published.
+          for pkg in "${NPM_PACKAGE}" "${NPM_PACKAGE_NG}"; do
+            if [ -z "$(npm view "${pkg}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+              echo "::error::${pkg}@${RC_VERSION} is not on the npm registry - nothing to roll back to."
+              exit 1
+            fi
+          done
+          newest="$(printf '%s\n' "${latest}" "${RC_VERSION}" | sort -V | tail -n 1)"
+          if [ "${latest}" = "${RC_VERSION}" ] || [ "${newest}" = "${RC_VERSION}" ]; then
+            echo "::error::${RC_VERSION} is not older than the current latest (${latest}) - promote a release candidate instead."
+            exit 1
+          fi
+          echo "MODE=rollback" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION=${RC_VERSION}" >> "$GITHUB_ENV"
+          echo "Rolling back ${latest} -> ${RC_VERSION}" >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+        fi
+
         if [[ ! "${RC_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc$ ]]; then
-          echo "::error::'${RC_VERSION}' is not a release candidate (e.g. 1.0.300-rc)."
+          echo "::error::'${RC_VERSION}' is neither a release candidate (e.g. 1.0.300-rc) nor a release (e.g. 1.0.296)."
           exit 1
         fi
         release_version="${RC_VERSION%-rc}"
@@ -280,19 +306,21 @@ jobs:
           fi
         done
 
-        # Never move `latest` backwards. (Equal is allowed so a failed promotion can be re-run.)
-        latest="$(npm view "${NPM_PACKAGE}" dist-tags.latest)"
+        # Never move `latest` backwards; that is what a rollback is for. (Equal is
+        # allowed so a failed promotion can be re-run.)
         newest="$(printf '%s\n' "${latest}" "${release_version}" | sort -V | tail -n 1)"
         if [ "${latest}" != "${release_version}" ] && [ "${newest}" != "${release_version}" ]; then
-          echo "::error::${release_version} is older than the current latest (${latest}) - refusing to promote."
+          echo "::error::${release_version} is older than the current latest (${latest}) - refusing to promote. To go back to an earlier release, run with that release's version (rollback)."
           exit 1
         fi
 
+        echo "MODE=promote" >> "$GITHUB_ENV"
         echo "RELEASE_VERSION=${release_version}" >> "$GITHUB_ENV"
         echo "RC_COMMIT=${rc_commit}" >> "$GITHUB_ENV"
         echo "Promoting ${RC_VERSION} (built from ${rc_commit}) -> ${release_version}" >> "$GITHUB_STEP_SUMMARY"
 
     - name: Download release candidates from npm registry
+      if: env.MODE == 'promote'
       run: |
         mkdir -p promote/core promote/ng
         npm pack "${NPM_PACKAGE}@${RC_VERSION}" --pack-destination "${RUNNER_TEMP}"
@@ -301,6 +329,7 @@ jobs:
         tar -xzf "${RUNNER_TEMP}"/ezeep-ngx-ezeep-js-*.tgz -C promote/ng
 
     - name: Publish npm package to npm registry (dist-tag latest)
+      if: env.MODE == 'promote'
       # --ignore-scripts: the unpacked tarball has no node_modules, so the
       # `prepare` (patch-package) script must not run. Nothing is built here.
       run: |
@@ -313,6 +342,7 @@ jobs:
       working-directory: promote/core/package
 
     - name: Publish angular library to npm registry (dist-tag latest)
+      if: env.MODE == 'promote'
       # The RC was pinned to the RC of the npm package; the release depends on
       # the release it was generated from (or newer).
       run: |
@@ -325,13 +355,30 @@ jobs:
         npx -p "${NPM_CLI}" npm publish --access public --provenance --ignore-scripts --tag latest
       working-directory: promote/ng/package
 
+    - name: Point npm latest at the release
+      # Runs for promotions too: there `latest` normally already points here, but
+      # not when a version that was rolled back is promoted again (its publish is
+      # skipped). It also exercises the rollback's npm path on every promotion.
+      # Needs "Allow npm dist-tag" on the Production trusted publisher of both packages.
+      run: |
+        for pkg in "${NPM_PACKAGE}" "${NPM_PACKAGE_NG}"; do
+          npx -p "${NPM_CLI}" npm dist-tag add "${pkg}@${RELEASE_VERSION}" latest
+          actual="$(npm view "${pkg}" dist-tags.latest)"
+          if [ "${actual}" != "${RELEASE_VERSION}" ]; then
+            echo "::error::${pkg} latest is ${actual}, expected ${RELEASE_VERSION}."
+            exit 1
+          fi
+        done
+
     - name: Stage CDN files
+      if: env.MODE == 'promote'
       # Copied before the zip step below, which writes the zip into DIST_PATH.
       run: |
         mkdir -p artifacts
         cp -R "promote/core/package/${DIST_PATH}" "artifacts/v${RELEASE_VERSION}"
 
     - name: Zip npm artifact for release
+      if: env.MODE == 'promote'
       uses: thedoctor0/zip-release@b57d897cb5d60cb78b51a507f63fa184cfe35554 # 0.7.6
       with:
         type: 'zip'
@@ -340,6 +387,7 @@ jobs:
         filename: ${{ env.ARTIFACT_NAME }}
 
     - name: Create release with npm package
+      if: env.MODE == 'promote'
       # The npm provenance of the release records this promotion run (main's HEAD
       # when it started), not the commit the release candidate was built from.
       # The release notes name both, so the two can be matched.
@@ -364,6 +412,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Upload artifact to blob storage
+      if: env.MODE == 'promote'
       # --overwrite: a re-run after a failed redirect or purge uploads the same
       # version again, which would otherwise stop with BlobAlreadyExists.
       run: |
