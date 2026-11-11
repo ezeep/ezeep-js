@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property      | Attribute        | Description | Type      | Default     |
@@ -12,6 +13,7 @@
 | `redirectURI` | `redirect-u-r-i` |             | `string`  | `undefined` |
 | `trigger`     | `trigger`        |             | `string`  | `undefined` |
 
+
 ## Events
 
 | Event          | Description                                                                                                                                      | Type                      |
@@ -21,11 +23,12 @@
 | `popupBlocked` | Emitted when the browser blocks the sign-in popup (e.g. iOS Safari with "Block Pop-ups" on). Host apps can listen to layer additional UI on top. | `CustomEvent<void>`       |
 | `userCancel`   |                                                                                                                                                  | `CustomEvent<void>`       |
 
+
 ## Dependencies
 
 ### Used by
 
-- [ezp-printing](../ezp-printing)
+ - [ezp-printing](../ezp-printing)
 
 ### Depends on
 
@@ -33,7 +36,6 @@
 - [ezp-dialog](../ezp-dialog)
 
 ### Graph
-
 ```mermaid
 graph TD;
   ezp-auth --> ezp-status
@@ -51,4 +53,6 @@ graph TD;
   style ezp-auth fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
+
+
