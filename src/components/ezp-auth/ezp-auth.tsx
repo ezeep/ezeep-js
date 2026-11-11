@@ -40,7 +40,14 @@ export class EzpAuth {
   }
 
   @Listen('dialogClose')
-  listenDialogClose() {
+  listenDialogClose(event: CustomEvent<string>) {
+    if (event.detail === 'popup-blocked') {
+      // Dismissing the blocked-popup dialog abandons sign-in, same as Cancel on
+      // the sign-in status (clears the selection for the file trigger).
+      this.isPopupBlocked = false
+      this.listenStatusCancel()
+      return
+    }
     this.authCancel.emit()
   }
 
@@ -57,7 +64,7 @@ export class EzpAuth {
   }
 
   oauthPopupWindow: Window | null = null
-  previousUrl: string | URL | null = null
+  previousUrl: string | null = null
   private unsubscribeLanguage?: () => void
 
   connectedCallback() {
@@ -97,8 +104,13 @@ export class EzpAuth {
       then we load it in the already opened secondary window and then
       we bring such window back on top/in front of its parent window. */
 
+      const previousPopup = this.oauthPopupWindow
       this.oauthPopupWindow = window.open(url, name, windowFeatures)
       if (this.isWindowBlocked(this.oauthPopupWindow)) {
+        // The still-open popup carries the outdated auth URL (and PKCE
+        // challenge), so finishing sign-in there could never succeed. Close it
+        // so the user goes through the retry dialog with a fresh window.
+        previousPopup.close()
         this.handlePopupBlocked()
         return
       }
@@ -117,7 +129,8 @@ export class EzpAuth {
     // reference used by removeEventListener above, so it never stacks)
     window.addEventListener('message', this.receiveMessage, false)
 
-    this.previousUrl = this.auth.authURI
+    // Store the string form: it is compared against authURI.toString() above.
+    this.previousUrl = this.auth.authURI.toString()
   }
 
   /** A blocked window.open() returns null, or a window that is closed / has no `closed` flag. */

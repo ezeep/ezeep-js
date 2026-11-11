@@ -148,18 +148,67 @@ describe('ezp-auth popup-block detection', () => {
     expect(messageListenerRegistered()).toBe(false)
   })
 
-  it('also detects a block when re-opening with a different URL', async () => {
+  it('also detects a block when re-opening with a different URL, closing the stale popup', async () => {
     const { el, blockedEvents } = await setup(() => null)
     // An existing, still-open popup that was pointed at a different URL.
-    el.oauthPopupWindow = { closed: false, focus: jest.fn() }
+    const stalePopup = { closed: false, focus: jest.fn(), close: jest.fn() }
+    el.oauthPopupWindow = stalePopup
     el.previousUrl = 'https://account.example.com/old'
 
     el.openSignInWindow(AUTH_URI, 'ezeep Login')
 
+    expect(stalePopup.close).toHaveBeenCalled()
+    expect(el.oauthPopupWindow).toBeNull()
     expect(el.isPopupBlocked).toBe(true)
     expect(blockedEvents).toHaveLength(1)
     expect(messageListenerRegistered()).toBe(false)
   })
+
+  it('only focuses an open popup that already shows the current URL', async () => {
+    const popup = { closed: false, focus: jest.fn() }
+    const { el } = await setup(() => popup)
+
+    el.openSignInWindow(AUTH_URI, 'ezeep Login')
+    expect(el.previousUrl).toBe(AUTH_URI)
+    openSpy!.mockClear()
+
+    el.openSignInWindow(AUTH_URI, 'ezeep Login')
+
+    expect(openSpy).not.toHaveBeenCalled()
+    expect(popup.focus).toHaveBeenCalled()
+    expect(el.isPopupBlocked).toBe(false)
+  })
+
+  it.each([
+    ['file', 'userCancel'],
+    ['button', 'authCancel'],
+  ])(
+    'closing the popup-blocked dialog on the %s trigger cancels sign-in via %s',
+    async (trigger, expectedEvent) => {
+      const { page, el } = await setup(() => null)
+      el.trigger = trigger
+      el.openSignInWindow(AUTH_URI, 'ezeep Login')
+      await page.waitForChanges()
+
+      const emitted: string[] = []
+      page.root.addEventListener('userCancel', () => emitted.push('userCancel'))
+      page.root.addEventListener('authCancel', () => emitted.push('authCancel'))
+
+      page.root.shadowRoot
+        .querySelector('ezp-dialog')
+        .dispatchEvent(
+          new CustomEvent('dialogClose', {
+            detail: 'popup-blocked',
+            bubbles: true,
+            composed: true,
+          }),
+        )
+      await page.waitForChanges()
+
+      expect(emitted).toEqual([expectedEvent])
+      expect(el.isPopupBlocked).toBe(false)
+    },
+  )
 
   it('registers the message listener and stays unblocked when the popup opens', async () => {
     const popup = { closed: false, focus: jest.fn() }
