@@ -42,11 +42,13 @@ export class EzpAuth {
   @Listen('dialogClose')
   listenDialogClose(event: CustomEvent<string>) {
     if (event.detail === 'popup-blocked') {
-      // Dismissing the blocked-popup dialog abandons sign-in, same as Cancel on
-      // the sign-in status (clears the selection for the file trigger).
+      // Dismissing the blocked-popup dialog cancels like the screen it replaced:
+      // the sign-in status (hidelogin) or the login dialog.
       this.isPopupBlocked = false
-      this.listenStatusCancel()
-      return
+      if (this.showsSignInStatus()) {
+        this.listenStatusCancel()
+        return
+      }
     }
     this.authCancel.emit()
   }
@@ -110,12 +112,12 @@ export class EzpAuth {
         // The still-open popup carries the outdated auth URL (and PKCE
         // challenge), so finishing sign-in there could never succeed. Close it
         // so the user goes through the retry dialog with a fresh window.
-        previousPopup.close()
+        previousPopup?.close()
         this.handlePopupBlocked()
         return
       }
 
-      this.oauthPopupWindow.focus()
+      this.oauthPopupWindow?.focus()
     } else {
       /* else the window reference must exist and the window
      is not closed; therefore, we can bring it back on top of any other
@@ -131,6 +133,10 @@ export class EzpAuth {
 
     // Store the string form: it is compared against authURI.toString() above.
     this.previousUrl = this.auth.authURI.toString()
+  }
+
+  private showsSignInStatus(): boolean {
+    return this.hidelogin && (this.trigger === 'button' || this.trigger === 'file')
   }
 
   /** A blocked window.open() returns null, or a window that is closed / has no `closed` flag. */
@@ -232,8 +238,9 @@ export class EzpAuth {
             action={i18next.t('popup_blocked_dialog.action')}
             iconName="exclamation-mark"
             instance="popup-blocked"
+            key="popup-blocked"
           />
-        ) : this.hidelogin && (this.trigger === 'button' || this.trigger === 'file') ? (
+        ) : this.showsSignInStatus() ? (
           <ezp-status description={i18next.t('login_dialog.action')} processing cancel></ezp-status>
         ) : (
           <ezp-dialog
@@ -244,6 +251,7 @@ export class EzpAuth {
             iconSize="huge"
             iconFramed={false}
             instance="login"
+            key="login"
           />
         )}
       </Host>
