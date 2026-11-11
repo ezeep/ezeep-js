@@ -1,6 +1,9 @@
 import { newSpecPage } from '@stencil/core/testing'
 import { EzpAuth } from './ezp-auth'
 import authStore from '../../services/auth'
+import { EzpDialog } from '../ezp-dialog/ezp-dialog'
+import { initi18n } from '../../utils/utils'
+import en from '../../data/locales/en.json'
 
 describe('ezp-auth receiveMessage origin validation', () => {
   beforeEach(() => {
@@ -89,5 +92,136 @@ describe('ezp-auth receiveMessage origin validation', () => {
     buttonEl.listenStatusCancel()
     expect(authCancelled2).toBe(true)
     expect(userCancelled2).toBe(false)
+  })
+})
+
+describe('ezp-auth popup-block detection', () => {
+  const AUTH_URI = 'https://account.example.com/oauth/authorize'
+  let openSpy: jest.SpyInstance | undefined
+  let addListenerSpy: jest.SpyInstance | undefined
+
+  beforeEach(() => {
+    authStore.state.authApiHostUrl = 'account.ezeep.com'
+    authStore.state.isAuthorized = false
+    authStore.state.code = ''
+    global.fetch = jest
+      .fn()
+      .mockResolvedValue({ json: () => Promise.resolve({}) }) as unknown as typeof fetch
+  })
+
+  afterEach(() => {
+    openSpy?.mockRestore()
+    addListenerSpy?.mockRestore()
+  })
+
+  // newSpecPage installs a fresh mock window, so spies go on after it.
+  async function setup(popup: () => unknown = () => ({ closed: false, focus: jest.fn() })) {
+    const page = await newSpecPage({
+      components: [EzpAuth, EzpDialog],
+      html: `<ezp-auth></ezp-auth>`,
+    })
+    const el = page.rootInstance as any
+    el.auth = { authURI: new URL(AUTH_URI), getAccessToken: jest.fn() }
+    const blockedEvents: Event[] = []
+    page.root.addEventListener('popupBlocked', (e) => blockedEvents.push(e))
+    openSpy = jest.spyOn(window, 'open').mockImplementation(popup as any)
+    addListenerSpy = jest.spyOn(window, 'addEventListener')
+    return { page, el, blockedEvents }
+  }
+
+  const messageListenerRegistered = () =>
+    addListenerSpy.mock.calls.some(([type]) => type === 'message')
+
+  it.each([
+    ['returns null', () => null],
+    ['returns a closed window', () => ({ closed: true, focus: jest.fn() })],
+    ['returns a window without a closed flag', () => ({ focus: jest.fn() })],
+  ])('flags the popup as blocked when window.open %s', async (_label, popup) => {
+    const { page, el, blockedEvents } = await setup(popup)
+
+    el.openSignInWindow(AUTH_URI, 'ezeep Login')
+    await page.waitForChanges()
+
+    expect(openSpy).toHaveBeenCalledTimes(1)
+    expect(el.isPopupBlocked).toBe(true)
+    expect(blockedEvents).toHaveLength(1)
+    expect(messageListenerRegistered()).toBe(false)
+  })
+
+  it('also detects a block when re-opening with a different URL', async () => {
+    const { el, blockedEvents } = await setup(() => null)
+    // An existing, still-open popup that was pointed at a different URL.
+    el.oauthPopupWindow = { closed: false, focus: jest.fn() }
+    el.previousUrl = 'https://account.example.com/old'
+
+    el.openSignInWindow(AUTH_URI, 'ezeep Login')
+
+    expect(el.isPopupBlocked).toBe(true)
+    expect(blockedEvents).toHaveLength(1)
+    expect(messageListenerRegistered()).toBe(false)
+  })
+
+  it('registers the message listener and stays unblocked when the popup opens', async () => {
+    const popup = { closed: false, focus: jest.fn() }
+    const { el, blockedEvents } = await setup(() => popup)
+
+    el.openSignInWindow(AUTH_URI, 'ezeep Login')
+
+    expect(el.oauthPopupWindow).toBe(popup)
+    expect(el.isPopupBlocked).toBe(false)
+    expect(blockedEvents).toHaveLength(0)
+    expect(addListenerSpy).toHaveBeenCalledWith('message', el.receiveMessage, false)
+  })
+
+  it('renders the popup-blocked dialog with translated text', async () => {
+    initi18n('en')
+    const { page, el } = await setup()
+
+    el.isPopupBlocked = true
+    await page.waitForChanges()
+
+    const dialog = page.root.shadowRoot.querySelector('ezp-dialog') as any
+    expect(dialog.instance).toBe('popup-blocked')
+    expect(dialog.heading).toBe(en.popup_blocked_dialog.heading)
+    expect(dialog.description).toBe(en.popup_blocked_dialog.description)
+    expect(dialog.action).toBe(en.popup_blocked_dialog.action)
+    expect(dialog.iconName).toBe('exclamation-mark')
+  })
+
+  it('retries sign-in when the popup-blocked dialog action is clicked', async () => {
+    const { page, el } = await setup(() => null)
+    el.openSignInWindow(AUTH_URI, 'ezeep Login')
+    await page.waitForChanges()
+    expect(el.isPopupBlocked).toBe(true)
+
+    // The user allowed popups; the retry now opens the window.
+    openSpy.mockImplementation(() => ({ closed: false, focus: jest.fn() }))
+    const retrySpy = jest.spyOn(el, 'handleRetry')
+    const openSignInSpy = jest.spyOn(el, 'openSignInWindow')
+
+    const dialog = page.root.shadowRoot.querySelector('ezp-dialog')
+    dialog.dispatchEvent(
+      new CustomEvent('dialogAction', { detail: 'popup-blocked', bubbles: true, composed: true }),
+    )
+    await page.waitForChanges()
+
+    expect(retrySpy).toHaveBeenCalledTimes(1)
+    expect(openSignInSpy).toHaveBeenCalledWith(AUTH_URI, 'ezeep Login')
+    expect(el.isPopupBlocked).toBe(false)
+    expect((page.root.shadowRoot.querySelector('ezp-dialog') as any).instance).toBe('login')
+  })
+
+  it('keeps the login dialog action opening the sign-in window', async () => {
+    const { page, el } = await setup()
+    const retrySpy = jest.spyOn(el, 'handleRetry')
+
+    page.root.shadowRoot
+      .querySelector('ezp-dialog')
+      .dispatchEvent(
+        new CustomEvent('dialogAction', { detail: 'login', bubbles: true, composed: true }),
+      )
+
+    expect(retrySpy).not.toHaveBeenCalled()
+    expect(openSpy).toHaveBeenCalledWith(AUTH_URI, 'ezeep Login', expect.any(String))
   })
 })

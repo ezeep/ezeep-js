@@ -16,11 +16,12 @@
 
 ## Events
 
-| Event         | Description | Type                      |
-| ------------- | ----------- | ------------------------- |
-| `authCancel`  |             | `CustomEvent<MouseEvent>` |
-| `authSuccess` |             | `CustomEvent<void>`       |
-| `userCancel`  |             | `CustomEvent<void>`       |
+| Event          | Description                                                                                                                                      | Type                      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
+| `authCancel`   |                                                                                                                                                  | `CustomEvent<MouseEvent>` |
+| `authSuccess`  |                                                                                                                                                  | `CustomEvent<void>`       |
+| `popupBlocked` | Emitted when the browser blocks the sign-in popup (e.g. iOS Safari with "Block Pop-ups" on). Host apps can listen to layer additional UI on top. | `CustomEvent<void>`       |
+| `userCancel`   |                                                                                                                                                  | `CustomEvent<void>`       |
 
 
 ## Dependencies

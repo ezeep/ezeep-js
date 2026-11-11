@@ -22,4 +22,30 @@ describe('ezp-printing (e2e)', () => {
     const auth = await page.find('ezp-printing >>> ezp-auth')
     expect(auth).not.toBeNull()
   })
+  it('shows the popup-blocked dialog when the browser blocks the sign-in popup', async () => {
+    const page = await newE2EPage()
+    // Simulate a browser that blocks popups (e.g. iOS Safari with "Block Pop-ups" on).
+    await page.evaluateOnNewDocument(() => {
+      ;(window as any).open = () => null
+    })
+    await page.setContent(
+      '<ezp-printing trigger="button" hidelogin language="en" clientid="demo" redirecturi="https://example.com/cb"></ezp-printing>',
+    )
+
+    const trigger = await page.find('ezp-printing >>> #print-trigger')
+    await trigger.click()
+    await page.waitForChanges()
+
+    // `instance` is a prop, not a reflected attribute, so match on the property.
+    const handle = await page.waitForFunction(
+      () => {
+        const auth = document.querySelector('ezp-printing')?.shadowRoot?.querySelector('ezp-auth')
+        const dialog = auth?.shadowRoot?.querySelector('ezp-dialog') as any
+        return dialog?.instance === 'popup-blocked' ? dialog : null
+      },
+      { timeout: 10000 },
+    )
+    const heading = await handle.evaluate((el: any) => el.heading)
+    expect(heading).toBe('Sign-in window was blocked')
+  })
 })

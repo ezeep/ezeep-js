@@ -18,13 +18,24 @@ export class EzpAuth {
   @State() auth: EzpAuthorizationService
   @State() authURI: string
   @State() accessToken: string
+  /** True when the browser blocked the sign-in popup; shows the popup-blocked dialog. */
+  @State() isPopupBlocked: boolean = false
 
   @Event() authCancel: EventEmitter<MouseEvent>
   @Event() authSuccess: EventEmitter<void>
   @Event() userCancel: EventEmitter<void>
+  /**
+   * Emitted when the browser blocks the sign-in popup (e.g. iOS Safari with
+   * "Block Pop-ups" on). Host apps can listen to layer additional UI on top.
+   */
+  @Event({ bubbles: true, composed: true }) popupBlocked: EventEmitter<void>
 
   @Listen('dialogAction')
-  listenDialogAction() {
+  listenDialogAction(event: CustomEvent<string>) {
+    if (event.detail === 'popup-blocked') {
+      this.handleRetry()
+      return
+    }
     this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
   }
 
@@ -77,22 +88,22 @@ export class EzpAuth {
       or if such pointer exists but the window was closed */
 
       this.oauthPopupWindow = window.open(url, name, windowFeatures)
+      if (this.isWindowBlocked(this.oauthPopupWindow)) {
+        this.handlePopupBlocked()
+        return
+      }
     } else if (this.previousUrl !== this.auth.authURI.toString()) {
       /* if the resource to load is different,
       then we load it in the already opened secondary window and then
       we bring such window back on top/in front of its parent window. */
 
       this.oauthPopupWindow = window.open(url, name, windowFeatures)
-
-      if (
-        !this.oauthPopupWindow ||
-        this.oauthPopupWindow.closed ||
-        typeof this.oauthPopupWindow.closed == 'undefined'
-      ) {
-        alert('popup blocked')
+      if (this.isWindowBlocked(this.oauthPopupWindow)) {
+        this.handlePopupBlocked()
+        return
       }
 
-      this.oauthPopupWindow?.focus()
+      this.oauthPopupWindow.focus()
     } else {
       /* else the window reference must exist and the window
      is not closed; therefore, we can bring it back on top of any other
@@ -107,6 +118,24 @@ export class EzpAuth {
     window.addEventListener('message', this.receiveMessage, false)
 
     this.previousUrl = this.auth.authURI
+  }
+
+  /** A blocked window.open() returns null, or a window that is closed / has no `closed` flag. */
+  private isWindowBlocked(popup: Window | null): boolean {
+    return !popup || popup.closed || typeof popup.closed === 'undefined'
+  }
+
+  private handlePopupBlocked() {
+    // Drop the dead reference so a retry goes through the fresh-open branch.
+    this.oauthPopupWindow = null
+    this.isPopupBlocked = true
+    this.popupBlocked.emit()
+  }
+
+  /** "Try again" on the popup-blocked dialog: runs from a user gesture, so the popup may now open. */
+  handleRetry() {
+    this.isPopupBlocked = false
+    this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
   }
 
   // Bound once (arrow property) so add/removeEventListener share the same
@@ -183,7 +212,15 @@ export class EzpAuth {
   render() {
     return (
       <Host>
-        {this.hidelogin && (this.trigger === 'button' || this.trigger === 'file') ? (
+        {this.isPopupBlocked ? (
+          <ezp-dialog
+            heading={i18next.t('popup_blocked_dialog.heading')}
+            description={i18next.t('popup_blocked_dialog.description')}
+            action={i18next.t('popup_blocked_dialog.action')}
+            iconName="exclamation-mark"
+            instance="popup-blocked"
+          />
+        ) : this.hidelogin && (this.trigger === 'button' || this.trigger === 'file') ? (
           <ezp-status description={i18next.t('login_dialog.action')} processing cancel></ezp-status>
         ) : (
           <ezp-dialog
