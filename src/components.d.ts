@@ -421,6 +421,7 @@ declare global {
         "authCancel": MouseEvent;
         "authSuccess": void;
         "userCancel": void;
+        "popupBlocked": void;
     }
     interface HTMLEzpAuthElement extends Components.EzpAuth, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEzpAuthElementEventMap>(type: K, listener: (this: HTMLEzpAuthElement, ev: EzpAuthCustomEvent<HTMLEzpAuthElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -675,6 +676,10 @@ declare namespace LocalJSX {
         "hidelogin"?: boolean;
         "onAuthCancel"?: (event: EzpAuthCustomEvent<MouseEvent>) => void;
         "onAuthSuccess"?: (event: EzpAuthCustomEvent<void>) => void;
+        /**
+          * Emitted when the browser blocks the sign-in popup (e.g. iOS Safari with "Block Pop-ups" on). Host apps can listen to layer additional UI on top.
+         */
+        "onPopupBlocked"?: (event: EzpAuthCustomEvent<void>) => void;
         "onUserCancel"?: (event: EzpAuthCustomEvent<void>) => void;
         "redirectURI"?: string;
         "trigger"?: string;

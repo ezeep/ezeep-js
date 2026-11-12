@@ -4,6 +4,11 @@
         "description": "Sign in with your ezeep Blue account to print.",
         "action": "Sign in"
     },
+    "popup_blocked_dialog": {
+        "heading": "Sign-in window was blocked",
+        "description": "Your browser blocked the sign-in pop-up. Allow pop-ups for this site, then tap Try again. On iPhone or iPad, open Settings → Safari and turn off Block Pop-ups.",
+        "action": "Try again"
+    },
     "no_document_dialog": {
         "heading": "No file selected",
         "description": "Select a file first to print.",

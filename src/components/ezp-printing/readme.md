@@ -130,15 +130,15 @@ graph TD;
   ezp-text-button --> ezp-label
   ezp-file-name --> ezp-label
   ezp-icon-button --> ezp-icon
-  ezp-auth --> ezp-status
   ezp-auth --> ezp-dialog
-  ezp-status --> ezp-icon
-  ezp-status --> ezp-label
-  ezp-status --> ezp-text-button
+  ezp-auth --> ezp-status
   ezp-dialog --> ezp-icon-button
   ezp-dialog --> ezp-icon
   ezp-dialog --> ezp-label
   ezp-dialog --> ezp-text-button
+  ezp-status --> ezp-icon
+  ezp-status --> ezp-label
+  ezp-status --> ezp-text-button
   ezp-printer-selection --> ezp-status
   ezp-printer-selection --> ezp-label
   ezp-printer-selection --> ezp-icon-button

@@ -4,6 +4,11 @@
         "description": "Melde dich mit deinem ezeep Blue-Konto an, um zu drucken.",
         "action": "Anmelden"
     },
+    "popup_blocked_dialog": {
+        "heading": "Anmeldefenster wurde blockiert",
+        "description": "Dein Browser hat das Anmelde-Pop-up blockiert. Erlaube Pop-ups für diese Website und tippe dann auf Erneut versuchen. Auf dem iPhone oder iPad öffne Einstellungen → Safari und deaktiviere Pop-ups blockieren.",
+        "action": "Erneut versuchen"
+    },
     "no_document_dialog": {
         "heading": "Keine Datei ausgewählt",
         "description": "Wähle zunächst eine Datei zum Drucken aus.",
