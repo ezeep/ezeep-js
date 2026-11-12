@@ -46,6 +46,6 @@ describe('ezp-printing (e2e)', () => {
       { timeout: 10000 },
     )
     const heading = await handle.evaluate((el: any) => el.heading)
-    expect(heading).toBe('Sign-in window was blocked')
+    expect(heading).toBe("Sign-in window didn't open")
   })
 })
