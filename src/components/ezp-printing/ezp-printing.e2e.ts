@@ -1,4 +1,5 @@
 import { newE2EPage } from '@stencil/core/testing'
+import en from '../../data/locales/en.json'
 
 /**
  * End-to-end (real headless browser): the entry point of the print journey.
@@ -46,6 +47,6 @@ describe('ezp-printing (e2e)', () => {
       { timeout: 10000 },
     )
     const heading = await handle.evaluate((el: any) => el.heading)
-    expect(heading).toBe('Sign-in window was blocked')
+    expect(heading).toBe(en.popup_blocked_dialog.heading)
   })
 })
