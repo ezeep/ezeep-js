@@ -284,3 +284,33 @@ Format source code:
 ```bash
 npm run format
 ```
+
+### Releases
+
+Releases are published by the [GitHub Actions workflow](.github/workflows/node.js.yml) in two stages.
+
+**1. Release candidate (automatic).** Every push to `main` publishes `@ezeep/ezeep-js` and `@ezeep/ngx-ezeep-js` as a pre-release version `1.0.<run>-rc` under the npm dist-tag `next`, and creates a GitHub pre-release with the tag `1.0.<run>-rc`. `latest` and `cdn.ezeep.com` are not changed, and version ranges such as `^1.0.0` never resolve to a release candidate.
+
+Test a release candidate with:
+
+```bash
+npm install @ezeep/ezeep-js@next
+npm install @ezeep/ngx-ezeep-js@next
+```
+
+**2. Production (manual).** To promote a tested release candidate, open _Actions → Node.js Build → Run workflow_, keep _Use workflow from_ on `main` and enter the release candidate (for example `1.0.300-rc`). After the Production environment is approved, the workflow takes that release candidate from the npm registry, publishes it unchanged as `1.0.300` under the dist-tag `latest`, creates the GitHub release and switches `cdn.ezeep.com` to the new version.
+
+A promotion is refused if it is not started from `main`, if the release candidate was not built from `main`, or if the version is older than the current `latest`.
+
+If a promotion fails partway, re-run it. Steps that already succeeded are skipped or repeated with the same files.
+
+The GitHub release is created on the commit the release candidate was built from, and its notes name that commit. The npm provenance of the release records the promotion run on `main` instead; the build itself is in the provenance of the release candidate.
+
+**Rolling back.** Run the same workflow from `main` and enter the earlier release instead of a release candidate (for example `1.0.296`). After the Production environment is approved, it points the npm dist-tag `latest` of both packages and the `cdn.ezeep.com` redirect back to that release and purges the CDN. Nothing is published. A rollback is refused if the release isn't on npm or isn't older than the current `latest`. To move forward again, promote a release candidate as usual; promoting a version that was rolled back moves `latest` back to it.
+
+The rollback uses the same credentials and the same "point `latest`" step as every promotion, so that path is exercised on each release.
+
+**Repository setup.**
+
+- **GitHub environments.** npm trusted publishing checks the workflow file and the GitHub environment, but not the branch. The branch restriction therefore comes from the environments: both `release-candidate` and `Production` must have a deployment branch policy that allows only `main`. Without it, a pushed branch with a changed workflow could publish under a trusted environment. Create `release-candidate` with that policy (repository admins, _Settings → Environments_) **before** adding it to the npm trusted publishers: a job that names a missing environment creates it without any policy.
+- **npm trusted publishers** (both packages, workflow `node.js.yml`): one for the environment `release-candidate`, and one for `Production` with **Allow npm dist-tag** enabled. That option is off by default and is what lets promotions and rollbacks move `latest` with the workflow's short-lived token. It needs npm CLI 11.21.0 or later; the workflow pins the version in `NPM_CLI`.

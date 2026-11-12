@@ -1,18 +1,40 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+#
+# Release channels
+#   pull request          -> verify only, nothing is published
+#   push to main          -> release candidate 1.0.<run>-rc on npm dist-tag `next`
+#                            (environment: release-candidate). `latest` and the CDN are not touched.
+#   manual run on main    -> 1.0.<N>-rc: promotes it to 1.0.<N> on npm dist-tag `latest`,
+#                            then updates the CDN (environment: Production).
+#                            1.0.<N>: rolls back - points `latest` and the CDN back to that
+#                            earlier release. Nothing is published.
+#                            Actions -> Node.js Build -> Run workflow -> "Use workflow from": main,
+#                            "Version": 1.0.<N>-rc or 1.0.<N>
+#
+# The promotion does not rebuild: it takes the RC tarball from the npm registry,
+# changes only the version number and publishes it, so what was tested is what ships.
 
 name: Node.js Build
 
 env:
-  MODULE_VERSION: '1.0.${{ github.run_number }}'   # update MAJOR and MINOR version here
+  # Push to main: a new release candidate. Manual run: the release candidate being promoted.
+  # update MAJOR and MINOR version here
+  RC_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.version || format('1.0.{0}-rc', github.run_number) }}
+
+  # Pinned, as it runs in jobs that can publish. Needs >= 11.5.1 for Trusted Publishing.
+  NPM_CLI: 'npm@11.21.2'
+
+  NPM_PACKAGE: '@ezeep/ezeep-js'                   # npm package name
+  NPM_PACKAGE_NG: '@ezeep/ngx-ezeep-js'            # angular npm package name
+
   DIST_PATH: 'dist/ezeep'                          # deployment path
   ARTIFACT_NAME: 'ezeep-js.zip'                    # artifact name
-  
+
   DIST_PATH_NG: 'dist/directives'                  # angular directives deployment path
   ARTIFACT_NAME_NG: 'ng-directives.zip'            # angular directives artifact name
-  
+
   NPM_REGISTRY: 'https://registry.npmjs.org'       # npm registry url
-  
-  PRERELEASE: false                                # true if marked as pre-release, false if production-ready
+
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true         # suppress node 20 deprecation warnings
 
 on:
@@ -20,11 +42,21 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  # Promotion of a release candidate to production, or rollback to an earlier
+  # release. Must be started from main.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release candidate to promote (e.g. 1.0.300-rc), or an earlier release to roll back to (e.g. 1.0.296)'
+        required: true
+        type: string
 
 jobs:
   # Validation gate: lint + unit tests + build. Runs on every PR and push, and
   # never publishes. Keeps regressions out of main.
   verify:
+    # A promotion re-publishes an already verified RC, so there is nothing to build.
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -51,11 +83,14 @@ jobs:
     - name: Build
       run: npm run build
 
-  build-npm:
+  # ---------------------------------------------------------------------------
+  # Stage 1 - release candidate (npm dist-tag `next`)
+  # ---------------------------------------------------------------------------
+  rc-npm:
     # Only publish on a real push to main, never on pull requests.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
-    environment: Production
+    environment: release-candidate
     runs-on: ubuntu-latest
     # NEU: Erforderlich für Trusted Publishing
     permissions:
@@ -74,17 +109,24 @@ jobs:
         cache: 'npm'
 
     - name: Bump package.json version of npm package
-      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
-    
+      run: npm version --no-git-tag-version --allow-same-version "${RC_VERSION}"
+
     - name: Build
       run: |
         npm ci
         npm run build
 
-    - name: Publish npm package to npm registry
-      # npx -p npm@latest sorgt dafür, dass die aktuellste npm-Version geladen wird (OIDC Auth)
-      run: npx -p npm@latest npm publish --access public --provenance
-        
+    - name: Publish release candidate to npm registry (dist-tag next)
+      # npx -p sorgt dafür, dass eine OIDC-fähige npm-Version geladen wird (Trusted Publishing)
+      # A pre-release version with --tag next never becomes `latest` and is not
+      # matched by semver ranges such as ^1.0.0, so existing consumers do not get it.
+      run: |
+        if [ -n "$(npm view "${NPM_PACKAGE}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+          echo "${NPM_PACKAGE}@${RC_VERSION} is already published - skipping."
+          exit 0
+        fi
+        npx -p "${NPM_CLI}" npm publish --access public --provenance --tag next
+
     - name: Upload npm artifact
       uses: actions/upload-artifact@v5
       with:
@@ -105,24 +147,27 @@ jobs:
         path: '.'
         filename: ${{ env.ARTIFACT_NAME }}
 
-    - name: Create release with npm package
-      uses: ncipollo/release-action@v1
+    - name: Create pre-release with npm package
+      # The tag created here is what a promotion run is started from.
+      uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
       with:
-        tag: "${{ env.MODULE_VERSION }}"
-        prerelease: ${{ env.PRERELEASE }}
+        tag: "${{ env.RC_VERSION }}"
+        commit: ${{ github.sha }}
+        prerelease: true
+        allowUpdates: true
         artifacts: "${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
         token: ${{ secrets.GITHUB_TOKEN }}
 
 
-  build-ng:
-    environment: Production
-    needs: build-npm
+  rc-ng:
+    environment: release-candidate
+    needs: rc-npm
     runs-on: ubuntu-latest
     # NEU: Erforderlich für Trusted Publishing
     permissions:
-      contents: write
+      contents: read
       id-token: write
-  
+
     steps:
     - name: Checkout angular branch
       uses: actions/checkout@v5
@@ -136,18 +181,35 @@ jobs:
         registry-url: "${{ env.NPM_REGISTRY }}"
         cache: 'npm'
         cache-dependency-path: 'ezeep-js-angular/projects/ngx-ezeep-js'
-              
+
     - name: Bump package.json version for angular component
-      run: npm version --no-git-tag-version --allow-same-version "${MODULE_VERSION}"
+      # The RC of the angular module is pinned to the matching RC of the npm
+      # package. The range in package.json (^1.0.x) can never resolve to a
+      # pre-release, so without the pin it would pull in the current `latest`.
+      run: |
+        npm version --no-git-tag-version --allow-same-version "${RC_VERSION}"
+        npm pkg set "dependencies.${NPM_PACKAGE}=${RC_VERSION}"
       working-directory: ezeep-js-angular/projects/ngx-ezeep-js
 
     - name: download angular build artifact
       uses: actions/download-artifact@v5
       with:
-          name: ng-directives.zip
+          name: ${{ env.ARTIFACT_NAME_NG }}
           path: ezeep-js-angular/projects/ngx-ezeep-js/src/lib
 
-    - name: build angular library and publish
+    - name: Wait for the npm release candidate to be installable
+      run: |
+        for attempt in $(seq 1 30); do
+          if [ -n "$(npm view "${NPM_PACKAGE}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+            exit 0
+          fi
+          echo "Waiting for ${NPM_PACKAGE}@${RC_VERSION} (${attempt}/30)"
+          sleep 10
+        done
+        echo "::error::${NPM_PACKAGE}@${RC_VERSION} did not appear on the npm registry."
+        exit 1
+
+    - name: build angular library and publish (dist-tag next)
       run: |
         cd ezeep-js-angular
         npm install -g @angular/cli
@@ -157,29 +219,190 @@ jobs:
         cd ../..
         ng build ngx-ezeep-js
         cd dist/ngx-ezeep-js
+        if [ -n "$(npm view "${NPM_PACKAGE_NG}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+          echo "${NPM_PACKAGE_NG}@${RC_VERSION} is already published - skipping."
+          exit 0
+        fi
         # Hier ebenfalls npx nutzen, um die OIDC-kompatible npm Version zu erzwingen
-        npx -p npm@latest npm publish --access public --provenance
-  
-  cdn-upload-npm:
+        npx -p "${NPM_CLI}" npm publish --access public --provenance --tag next
+
+  # ---------------------------------------------------------------------------
+  # Stage 2 - production (npm dist-tag `latest` + CDN), manual, from an RC tag
+  # ---------------------------------------------------------------------------
+  # One job, so a promotion needs one approval of the Production environment
+  # and never stops halfway between npm and the CDN while waiting for another.
+  # The same job rolls back: it then skips everything that publishes and only
+  # points `latest` and the CDN at the earlier release.
+  promote:
+    if: github.event_name == 'workflow_dispatch'
     environment: Production
-    needs: build-npm
+    # Two runs at once could both pass the "not older than latest" check.
+    concurrency:
+      group: promote
+      cancel-in-progress: false
     runs-on: ubuntu-latest
-    # WICHTIG: Die id-token Permission wird hier für Azure benötigt
+    # Trusted Publishing (npm) and the Azure login both need the OIDC token
     permissions:
-      contents: read
+      contents: write
       id-token: write
-      
+
     steps:
     - name: Setup Node.js 22
       uses: actions/setup-node@v5
       with:
         node-version: '22'
-        
-    - name: Download npm artifact
-      uses: actions/download-artifact@v5
+        registry-url: "${{ env.NPM_REGISTRY }}"
+
+    - name: Resolve release version and commit
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+          echo "::error::A promotion or rollback must be started from main, not from '${GITHUB_REF_NAME}'."
+          exit 1
+        fi
+        latest="$(npm view "${NPM_PACKAGE}" dist-tags.latest)"
+
+        if [[ "${RC_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          # Rollback: point `latest` and the CDN back to an earlier release. Nothing is published.
+          for pkg in "${NPM_PACKAGE}" "${NPM_PACKAGE_NG}"; do
+            if [ -z "$(npm view "${pkg}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+              echo "::error::${pkg}@${RC_VERSION} is not on the npm registry - nothing to roll back to."
+              exit 1
+            fi
+          done
+          newest="$(printf '%s\n' "${latest}" "${RC_VERSION}" | sort -V | tail -n 1)"
+          if [ "${latest}" = "${RC_VERSION}" ] || [ "${newest}" = "${RC_VERSION}" ]; then
+            echo "::error::${RC_VERSION} is not older than the current latest (${latest}) - promote a release candidate instead."
+            exit 1
+          fi
+          echo "MODE=rollback" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION=${RC_VERSION}" >> "$GITHUB_ENV"
+          echo "Rolling back ${latest} -> ${RC_VERSION}" >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+        fi
+
+        if [[ ! "${RC_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc$ ]]; then
+          echo "::error::'${RC_VERSION}' is neither a release candidate (e.g. 1.0.300-rc) nor a release (e.g. 1.0.296)."
+          exit 1
+        fi
+        release_version="${RC_VERSION%-rc}"
+
+        # The GitHub release is created on the commit the release candidate was built from.
+        if ! rc_commit="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${RC_VERSION}" --jq .sha)"; then
+          echo "::error::There is no tag ${RC_VERSION}."
+          exit 1
+        fi
+        status="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${rc_commit}...main" --jq .status)"
+        if [[ "${status}" != "ahead" && "${status}" != "identical" ]]; then
+          echo "::error::${RC_VERSION} (${rc_commit}) was not built from main."
+          exit 1
+        fi
+
+        for pkg in "${NPM_PACKAGE}" "${NPM_PACKAGE_NG}"; do
+          if [ -z "$(npm view "${pkg}@${RC_VERSION}" version 2>/dev/null || true)" ]; then
+            echo "::error::${pkg}@${RC_VERSION} is not on the npm registry - nothing to promote."
+            exit 1
+          fi
+        done
+
+        # Never move `latest` backwards; that is what a rollback is for. (Equal is
+        # allowed so a failed promotion can be re-run.)
+        newest="$(printf '%s\n' "${latest}" "${release_version}" | sort -V | tail -n 1)"
+        if [ "${latest}" != "${release_version}" ] && [ "${newest}" != "${release_version}" ]; then
+          echo "::error::${release_version} is older than the current latest (${latest}) - refusing to promote. To go back to an earlier release, run with that release's version (rollback)."
+          exit 1
+        fi
+
+        echo "MODE=promote" >> "$GITHUB_ENV"
+        echo "RELEASE_VERSION=${release_version}" >> "$GITHUB_ENV"
+        echo "RC_COMMIT=${rc_commit}" >> "$GITHUB_ENV"
+        echo "Promoting ${RC_VERSION} (built from ${rc_commit}) -> ${release_version}" >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Download release candidates from npm registry
+      if: env.MODE == 'promote'
+      run: |
+        mkdir -p promote/core promote/ng
+        npm pack "${NPM_PACKAGE}@${RC_VERSION}" --pack-destination "${RUNNER_TEMP}"
+        npm pack "${NPM_PACKAGE_NG}@${RC_VERSION}" --pack-destination "${RUNNER_TEMP}"
+        tar -xzf "${RUNNER_TEMP}"/ezeep-ezeep-js-*.tgz -C promote/core
+        tar -xzf "${RUNNER_TEMP}"/ezeep-ngx-ezeep-js-*.tgz -C promote/ng
+
+    - name: Publish npm package to npm registry (dist-tag latest)
+      if: env.MODE == 'promote'
+      # --ignore-scripts: the unpacked tarball has no node_modules, so the
+      # `prepare` (patch-package) script must not run. Nothing is built here.
+      run: |
+        if [ -n "$(npm view "${NPM_PACKAGE}@${RELEASE_VERSION}" version 2>/dev/null || true)" ]; then
+          echo "${NPM_PACKAGE}@${RELEASE_VERSION} is already published - skipping."
+          exit 0
+        fi
+        npm version --no-git-tag-version "${RELEASE_VERSION}"
+        npx -p "${NPM_CLI}" npm publish --access public --provenance --ignore-scripts --tag latest
+      working-directory: promote/core/package
+
+    - name: Publish angular library to npm registry (dist-tag latest)
+      if: env.MODE == 'promote'
+      # The RC was pinned to the RC of the npm package; the release depends on
+      # the release it was generated from (or newer).
+      run: |
+        if [ -n "$(npm view "${NPM_PACKAGE_NG}@${RELEASE_VERSION}" version 2>/dev/null || true)" ]; then
+          echo "${NPM_PACKAGE_NG}@${RELEASE_VERSION} is already published - skipping."
+          exit 0
+        fi
+        npm version --no-git-tag-version "${RELEASE_VERSION}"
+        npm pkg set "dependencies.${NPM_PACKAGE}=^${RELEASE_VERSION}"
+        npx -p "${NPM_CLI}" npm publish --access public --provenance --ignore-scripts --tag latest
+      working-directory: promote/ng/package
+
+    - name: Point npm latest at the release
+      # Runs for promotions too: there `latest` normally already points here, but
+      # not when a version that was rolled back is promoted again (its publish is
+      # skipped). It also exercises the rollback's npm path on every promotion.
+      # Needs "Allow npm dist-tag" on the Production trusted publisher of both packages.
+      run: |
+        for pkg in "${NPM_PACKAGE}" "${NPM_PACKAGE_NG}"; do
+          npx -p "${NPM_CLI}" npm dist-tag add "${pkg}@${RELEASE_VERSION}" latest
+          actual="$(npm view "${pkg}" dist-tags.latest)"
+          if [ "${actual}" != "${RELEASE_VERSION}" ]; then
+            echo "::error::${pkg} latest is ${actual}, expected ${RELEASE_VERSION}."
+            exit 1
+          fi
+        done
+
+    - name: Stage CDN files
+      if: env.MODE == 'promote'
+      # Copied before the zip step below, which writes the zip into DIST_PATH.
+      run: |
+        mkdir -p artifacts
+        cp -R "promote/core/package/${DIST_PATH}" "artifacts/v${RELEASE_VERSION}"
+
+    - name: Zip npm artifact for release
+      if: env.MODE == 'promote'
+      uses: thedoctor0/zip-release@b57d897cb5d60cb78b51a507f63fa184cfe35554 # 0.7.6
       with:
-        name: ${{ env.ARTIFACT_NAME }}
-        path: "artifacts/v${{ env.MODULE_VERSION }}"
+        type: 'zip'
+        directory: promote/core/package/${{ env.DIST_PATH }}
+        path: '.'
+        filename: ${{ env.ARTIFACT_NAME }}
+
+    - name: Create release with npm package
+      if: env.MODE == 'promote'
+      # The npm provenance of the release records this promotion run (main's HEAD
+      # when it started), not the commit the release candidate was built from.
+      # The release notes name both, so the two can be matched.
+      uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
+      with:
+        tag: "${{ env.RELEASE_VERSION }}"
+        commit: ${{ env.RC_COMMIT }}
+        body: |
+          Promoted from release candidate `${{ env.RC_VERSION }}`, built from ${{ env.RC_COMMIT }}. The package contents are that release candidate's; only the version number changed.
+
+          The npm provenance of `${{ env.RELEASE_VERSION }}` records the promotion run (${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) on `main` at ${{ github.sha }}, not the build commit. The build is in the provenance of `${{ env.RC_VERSION }}`.
+        prerelease: false
+        allowUpdates: true
+        artifacts: "promote/core/package/${{ env.DIST_PATH }}/${{ env.ARTIFACT_NAME }}"
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Login to Azure CLI via OIDC
       uses: azure/login@v3
@@ -187,8 +410,11 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        
+
     - name: Upload artifact to blob storage
+      if: env.MODE == 'promote'
+      # --overwrite: a re-run after a failed redirect or purge uploads the same
+      # version again, which would otherwise stop with BlobAlreadyExists.
       run: |
           azenv='${{ secrets.AZURE_ENVIRONMENT }}'
           account=$(jq -crM .storage.account <<< $azenv)
@@ -199,6 +425,7 @@ jobs:
             --account-name $account \
             -d $container \
             -s "artifacts" \
+            --overwrite true \
             -o none
 
     - name: Update Url redirect
@@ -227,13 +454,22 @@ jobs:
                       | select(.value.name == "UrlRedirect") | .key' \
                   )
 
-            az cdn endpoint rule action remove \
-              -g $resourceGroup \
-              --profile-name $profile \
-              -n $endpoint \
-              --rule-name $rule \
-              --index $index \
-              -o none
+            # No redirect: a previous run removed it and then failed to add the new
+            # one. Skip the remove so a re-run can add it.
+            if [ -z "$index" ]; then
+              echo "Rule $rule has no UrlRedirect action - adding it."
+            elif [ "$(wc -l <<< "$index")" -gt 1 ]; then
+              echo "::error::Rule $rule has more than one UrlRedirect action ($(tr '\n' ' ' <<< "$index")) - fix it in the Azure portal."
+              exit 1
+            else
+              az cdn endpoint rule action remove \
+                -g $resourceGroup \
+                --profile-name $profile \
+                -n $endpoint \
+                --rule-name $rule \
+                --index $index \
+                -o none
+            fi
 
             az cdn endpoint rule action add  \
               -g $resourceGroup \
@@ -241,7 +477,7 @@ jobs:
               -n $endpoint \
               --rule-name $rule \
               --action-name UrlRedirect \
-              --custom-path "/$container/v${{ env.MODULE_VERSION }}/$fileName" \
+              --custom-path "/$container/v${RELEASE_VERSION}/$fileName" \
               --redirect-type Found \
               -o none
           done
