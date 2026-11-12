@@ -191,10 +191,31 @@ export class EzpAuth {
     }
 
     authStore.state.code = event.data
-    this.auth.getAccessToken().then(() => {
-      this.authCancel.emit()
-      this.authSuccess.emit()
-    })
+    this.exchangeCode()
+  }
+
+  /**
+   * Exchange the code in the auth store for tokens and, only if that worked,
+   * move on to the print step. A rejected code or an unreachable token
+   * endpoint leaves the sign-in screen up so the user can try again — moving
+   * on regardless opened the print options without a token, where every call
+   * failed and the user was told they had no printers.
+   */
+  private async exchangeCode(): Promise<boolean> {
+    let signedIn = false
+    try {
+      signedIn = (await this.auth.getAccessToken()) === true
+    } catch {
+      signedIn = false
+    }
+    if (!signedIn) {
+      // eslint-disable-next-line no-console
+      console.warn('[ezeep] Sign-in failed: the authorization code could not be exchanged.')
+      return false
+    }
+    this.authCancel.emit()
+    this.authSuccess.emit()
+    return true
   }
 
   async componentWillLoad() {
@@ -202,9 +223,7 @@ export class EzpAuth {
 
     if (this.code) {
       authStore.state.code = this.code
-      await this.auth.getAccessToken()
-      this.authCancel.emit()
-      this.authSuccess.emit()
+      await this.exchangeCode()
     }
 
     if (authStore.state.isAuthorized === false) {

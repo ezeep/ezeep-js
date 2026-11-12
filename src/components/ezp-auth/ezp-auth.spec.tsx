@@ -70,6 +70,43 @@ describe('ezp-auth receiveMessage origin validation', () => {
     expect(el.auth.getAccessToken).toHaveBeenCalled()
   })
 
+  describe('code exchange outcome', () => {
+    const origin = 'https://app.example.com'
+    const flush = () => new Promise((resolve) => setTimeout(resolve, 0))
+
+    async function exchange(getAccessToken: jest.Mock) {
+      const el = await setup()
+      el.auth = { getAccessToken }
+      const emitted: string[] = []
+      el.authCancel = { emit: () => emitted.push('authCancel') }
+      el.authSuccess = { emit: () => emitted.push('authSuccess') }
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+      el.receiveMessage({ origin, data: 'auth-code' } as MessageEvent)
+      await flush()
+      const warned = warn.mock.calls.length > 0
+      warn.mockRestore()
+      return { emitted, warned }
+    }
+
+    it('moves on to printing once the code was exchanged', async () => {
+      const { emitted, warned } = await exchange(jest.fn().mockResolvedValue(true))
+      expect(emitted).toEqual(['authCancel', 'authSuccess'])
+      expect(warned).toBe(false)
+    })
+
+    it('stays on sign-in when the token endpoint rejects the code', async () => {
+      const { emitted, warned } = await exchange(jest.fn().mockResolvedValue(false))
+      expect(emitted).toEqual([])
+      expect(warned).toBe(true)
+    })
+
+    it('stays on sign-in when the token request fails', async () => {
+      const { emitted, warned } = await exchange(jest.fn().mockRejectedValue(new Error('offline')))
+      expect(emitted).toEqual([])
+      expect(warned).toBe(true)
+    })
+  })
+
   it('cancelling sign-in clears the selection on the file trigger, only closes on the button trigger', async () => {
     // File trigger: emit userCancel so the parent clears the pending files.
     const fileEl = await setup()

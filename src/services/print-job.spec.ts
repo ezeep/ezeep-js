@@ -78,6 +78,27 @@ describe('waitForJobCompletion', () => {
 })
 
 describe('uploadAndPrintFile', () => {
+  it('ends the uploading stage before the job is submitted and polled', async () => {
+    const events: string[] = []
+    const service = mockService({
+      printByFileID: jest.fn().mockImplementation(async () => {
+        events.push('print')
+        return { jobid: 'j1' }
+      }),
+      getPrintStatus: jest.fn().mockImplementation(async () => {
+        events.push('status')
+        return { jobstatus: 0 }
+      }),
+    })
+
+    await uploadAndPrintFile(context(service), aFile(), {
+      onUploading: (v) => events.push(`uploading:${v}`),
+    })
+
+    // Not held until the end of the job, and reported exactly once.
+    expect(events).toEqual(['uploading:true', 'uploading:false', 'print', 'status'])
+  })
+
   it('prepares, uploads, prints and waits — firing progress hooks in order', async () => {
     const service = mockService()
     const preparing: boolean[] = []

@@ -34,10 +34,80 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 - [src/components/ezp-status/ezp-status.spec.tsx](src/components/ezp-status/ezp-status.spec.tsx)
   — conditional rendering + event payloads (`newSpecPage`).
 
-**E2E tests (2):**
+**E2E tests (145):** real headless Chromium, real components/services/stores,
+faked network (see [E2E harness](#e2e-harness)).
 
-- [src/components/ezp-status/ezp-status.e2e.ts](src/components/ezp-status/ezp-status.e2e.ts)
-  — renders in a real browser and verifies a click → `statusClose` event.
+- [ezp-printing.e2e.ts](src/components/ezp-printing/ezp-printing.e2e.ts) — the
+  component as a host app sees it: triggers (`button`/`file`/`custom`),
+  language (attribute, runtime switch, account language), theme/appearance,
+  API host attributes, session restore + reload, the public methods
+  (`open`, `logOut`, `checkAuth`, `getAuthUri`, `getSasUri`,
+  `setAuthRefreshToken`), `filedata`, the OAuth redirect-page role, and
+  `printFinished`.
+- [ezp-auth.e2e.ts](src/components/ezp-auth/ezp-auth.e2e.ts) — sign-in: the
+  authorize URL and PKCE challenge, code → token exchange (verifier matches the
+  challenge), rejection of codes from a wrong origin or window, token storage
+  (refresh token persisted, access token never), `hidelogin`, blocked popups
+  and retry, the `code` attribute.
+- [ezp-upload.e2e.ts](src/components/ezp-upload/ezp-upload.e2e.ts) — the upload
+  card: native file picker, list/add/remove/clear, drag and drop.
+- [ezp-printer-selection.e2e.ts](src/components/ezp-printer-selection/ezp-printer-selection.e2e.ts)
+  — the print options and the print itself: printer preselection and remembered
+  settings, capability-driven options, the exact `Print` request body, upload →
+  print → status polling, multi-file / partial / failed / retried / cancelled
+  jobs, pull-print queues, print-by-URL (incl. the expired-file reprint), and
+  leaving the card.
+- [ezp-user-menu.e2e.ts](src/components/ezp-user-menu/ezp-user-menu.e2e.ts) —
+  account links, theme and appearance switching, logout (token revoked, session
+  cleared, printer settings kept).
+- [ezp-select](src/components/ezp-select/ezp-select.e2e.ts),
+  [ezp-stepper](src/components/ezp-stepper/ezp-stepper.e2e.ts),
+  [ezp-dialog](src/components/ezp-dialog/ezp-dialog.e2e.ts),
+  [ezp-input](src/components/ezp-input/ezp-input.e2e.ts),
+  [ezp-status](src/components/ezp-status/ezp-status.e2e.ts) — each control on
+  its own with real mouse/keyboard input: keyboard navigation, focus trap,
+  key filtering, debounce, ARIA state.
+
+## E2E harness
+
+[src/testing/mock-backend.ts](src/testing/mock-backend.ts) is shared by the
+journey tests. `openPrinting(options)` opens a page with one `<ezp-printing>`
+and, before any component code runs, replaces `window.fetch` with an in-page
+fake of the three backends (account/OAuth API, print API, blob storage). Nothing
+leaves the machine, and every request is recorded:
+
+```ts
+const page = await openPrinting({ signedIn: true, printers: [PRINTERS[0]] })
+await goToPrintOptions(page, 'report.pdf')
+await click(page, 'ezp-printing >>> ezp-printer-selection >>> #print')
+await waitForInstance(page, 'ezp-status', 'print-success')
+
+const [print] = await getCalls(page, 'Print')
+expect(jsonBody(print).printerid).toBe('printer-1')
+```
+
+- **Shaping the backend** — options set the printers, their capabilities, the
+  supported file types, the user, queued `Print`/`Status` answers
+  (`printResponses`, `statusResponses`), routes that fail at network level
+  (`failing`) and seeded storage. `updateBackend` changes them mid-test.
+- **Sign-in** — `window.open` returns a hidden same-page window (or `null` with
+  `popup: 'blocked'`); `postAuthCode` then delivers the code as the popup would.
+  The fake token endpoint only accepts `VALID_CODE` and refresh tokens it issued.
+- **Selectors** — puppeteer's `>>>` pierces shadow roots
+  (`ezp-printing >>> ezp-upload >>> #continue`). Status cards and dialogs are
+  identified by their `instance` _property_, so use `waitForInstance` /
+  `currentStatus` rather than an attribute selector. Read labels with `textOf`
+  and file lists with `fileNames`.
+
+Things the harness does for you, and why:
+
+- `localStorage` is redirected to `sessionStorage`. Test files run in parallel as
+  tabs of one browser on one origin, so real `localStorage` would be shared
+  between tests running at the same time.
+- `click` centres its target first: the print options have a sticky footer that
+  covers controls at the bottom of the scroll area.
+- `waitFor` polls `page.$$` instead of `page.waitForSelector`, which does not
+  find elements below a shadow root that also contains a `<slot>`.
 
 ## Conventions
 
@@ -46,6 +116,9 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 - **Component rendering / state** → `newSpecPage` spec tests (jsdom, fast).
 - **Real-browser behaviour** (clicks, focus, shadow DOM, layout) → `*.e2e.ts`
   with `newE2EPage`.
+- **User journeys** (anything that signs in, loads printers or prints) →
+  `*.e2e.ts` with `openPrinting` from the [E2E harness](#e2e-harness). Never let
+  an e2e test reach a real backend.
 - A test that needs a private method can use `page.rootInstance as any` — keep
   these to behaviour that isn't reachable through the public DOM/props.
 
@@ -80,7 +153,7 @@ runner swap:
 
 Plan: revisit when **Stencil 5 ships stable**, and do the Vitest/Playwright test
 rewrite as its own dedicated effort. Until then the integrated jest runner works
-and all 111 spec + 3 e2e tests pass on stable Stencil 4.
+and all spec + e2e tests pass on stable Stencil 4.
 
 ### Next coverage to add
 

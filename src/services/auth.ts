@@ -84,7 +84,12 @@ export class EzpAuthorizationService {
     storage.setIsAuthorized(true)
   }
 
-  getAccessToken() {
+  /**
+   * Exchange the authorization code for tokens. Resolves to whether the
+   * exchange succeeded: the token endpoint answers a rejected code (expired,
+   * reused, wrong verifier) with an error body rather than a failed request.
+   */
+  getAccessToken(): Promise<boolean> {
     return fetch(this.accessTokenURL, {
       credentials: 'include',
       headers: this.oauthHeaders(),
@@ -101,7 +106,9 @@ export class EzpAuthorizationService {
       .then((data) => {
         if (data.access_token) {
           this.persistTokens(data.access_token, data.refresh_token)
+          return true
         }
+        return false
       })
   }
 

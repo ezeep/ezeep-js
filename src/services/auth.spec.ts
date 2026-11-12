@@ -97,7 +97,7 @@ describe('EzpAuthorizationService — token exchange', () => {
     authStore.state.codeVerifier = 'verifier-x'
     fetchMock.mockReturnValue(tokenResponse({ access_token: 'AT', refresh_token: 'RT' }))
 
-    await newService().getAccessToken()
+    await expect(newService().getAccessToken()).resolves.toBe(true)
 
     const [url, init] = fetchMock.mock.calls[0]
     expect(url).toBe('https://account.ezeep.com/oauth/access_token/')
@@ -112,6 +112,20 @@ describe('EzpAuthorizationService — token exchange', () => {
     expect(localStorage.getItem('access_token')).toBeNull()
     expect(localStorage.getItem('refreshToken')).toBe('RT')
     expect(localStorage.getItem('isAuthorized')).toBe('true')
+  })
+
+  it('getAccessToken reports a rejected code and persists nothing', async () => {
+    authStore.state.code = 'expired-code'
+    authStore.state.accessToken = ''
+    authStore.state.isAuthorized = false
+    localStorage.clear()
+    fetchMock.mockReturnValue(tokenResponse({ error: 'invalid_grant' }))
+
+    await expect(newService().getAccessToken()).resolves.toBe(false)
+
+    expect(authStore.state.accessToken).toBe('')
+    expect(authStore.state.isAuthorized).toBe(false)
+    expect(localStorage.getItem('refreshToken')).toBeNull()
   })
 
   it('refreshTokens uses the refresh grant and stores the rotated tokens', async () => {
