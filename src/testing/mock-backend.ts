@@ -74,6 +74,8 @@ export interface MockBackendOptions {
   statusResponses?: MockResponse[]
   /** Routes (see `route` in the fake) whose request fails at network level. */
   failing?: string[]
+  /** Routes that answer with a fixed response instead, e.g. a server error. */
+  errors?: Record<string, MockResponse>
   /** Extra `localStorage` entries to seed before the page loads. */
   storage?: Record<string, string>
   /**
@@ -149,6 +151,7 @@ const DEFAULTS: Required<MockBackendOptions> = {
   printResponses: [{ body: { jobid: 'job-1' } }],
   statusResponses: [{ body: { jobstatus: 0, jobstatusstring: 'PRINTED' } }],
   failing: [],
+  errors: {},
   storage: {},
   popup: 'iframe',
   delay: 0,
@@ -401,6 +404,8 @@ function installMockBackend(
         })
       }
       if (mock.options.failing.includes(name)) throw new TypeError('Failed to fetch')
+      const error = mock.options.errors[name]
+      if (error) return json(error.body, error.status ?? 500)
       return respond(name, call, url)
     } finally {
       call.done = true

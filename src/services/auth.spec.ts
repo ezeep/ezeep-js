@@ -128,6 +128,30 @@ describe('EzpAuthorizationService — token exchange', () => {
     expect(localStorage.getItem('refreshToken')).toBeNull()
   })
 
+  it.each([
+    ['another OAuth error', { error: 'server_error' }, 'Token endpoint error: server_error'],
+    ['a body without tokens or error', {}, 'Token endpoint error: unexpected response'],
+  ])(
+    'getAccessToken rejects on %s, so it is not mistaken for a refused code',
+    async (_, body, message) => {
+      authStore.state.code = 'auth-code'
+      authStore.state.accessToken = ''
+      authStore.state.isAuthorized = false
+      fetchMock.mockReturnValue(tokenResponse(body))
+
+      await expect(newService().getAccessToken()).rejects.toThrow(message)
+
+      expect(authStore.state.accessToken).toBe('')
+      expect(authStore.state.isAuthorized).toBe(false)
+    },
+  )
+
+  it('getAccessToken rejects when the request itself fails', async () => {
+    fetchMock.mockReturnValue(Promise.reject(new TypeError('Failed to fetch')))
+
+    await expect(newService().getAccessToken()).rejects.toThrow('Failed to fetch')
+  })
+
   it('refreshTokens uses the refresh grant and stores the rotated tokens', async () => {
     authStore.state.refreshToken = 'old-RT'
     fetchMock.mockReturnValue(tokenResponse({ access_token: 'AT2', refresh_token: 'RT2' }))

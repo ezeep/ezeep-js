@@ -85,9 +85,14 @@ export class EzpAuthorizationService {
   }
 
   /**
-   * Exchange the authorization code for tokens. Resolves to whether the
-   * exchange succeeded: the token endpoint answers a rejected code (expired,
-   * reused, wrong verifier) with an error body rather than a failed request.
+   * Exchange the authorization code for tokens. Three outcomes, which callers
+   * must be able to tell apart:
+   *
+   * - resolves `true`: tokens were issued and stored;
+   * - resolves `false`: the endpoint refused *the code* (`invalid_grant` —
+   *   expired, already used, wrong verifier). Trying again cannot help;
+   * - rejects: nothing is known about the code — the request never completed,
+   *   or the endpoint answered with any other error. Trying again may work.
    */
   getAccessToken(): Promise<boolean> {
     return fetch(this.accessTokenURL, {
@@ -110,7 +115,10 @@ export class EzpAuthorizationService {
           authStore.state.exchangedCode = authStore.state.code
           return true
         }
-        return false
+        if (data.error === 'invalid_grant') return false
+        // Only the endpoint's own error code is quoted — never the code,
+        // verifier or anything else from the request.
+        throw new Error(`Token endpoint error: ${data.error ?? 'unexpected response'}`)
       })
   }
 

@@ -441,6 +441,128 @@ describe('ezp-auth (e2e)', () => {
       expect((await getPopup(page)).opens).toBe(0)
     })
 
+    describe('a fresh code that could not be exchanged, with a session already stored', () => {
+      /** Whether the flow went on past sign-in (here: to the "no file selected" dialog). */
+      const wentOn = (page: E2EPage) =>
+        page.$eval(
+          'ezp-printing',
+          // Direct child only: the sign-in dialog lives one level down, in ezp-auth.
+          (el) =>
+            Array.from(el.shadowRoot!.children).some((child) => child.tagName === 'EZP-DIALOG'),
+        )
+
+      /** Stored session restored, then the token endpoint breaks before the code is used. */
+      async function openWithBrokenExchange(
+        breakage: Parameters<typeof updateBackend>[1],
+        attrs: Record<string, string | boolean> = {},
+      ) {
+        const page = await openPrinting({
+          signedIn: true,
+          attrs: { trigger: 'button', code: 'valid-code', ...attrs },
+        })
+        await updateBackend(page, breakage)
+        await click(page, 'ezp-printing >>> #print-trigger')
+        await waitForCall(page, 'AccessToken', 2)
+        await page.waitForChanges()
+        return page
+      }
+
+      const exchanges = async (page: E2EPage) =>
+        (await getCalls(page, 'AccessToken')).filter(
+          (call) => formBody(call).grant_type === 'authorization_code',
+        ).length
+
+      it('with hidelogin, stops at sign-in instead of carrying on as the stored account', async () => {
+        const page = await openWithBrokenExchange({ failing: ['AccessToken'] }, { hidelogin: true })
+
+        // The code may be someone else's: no pass on the stored session.
+        expect(await dialogInstance(page)).toBe('login')
+        expect(await wentOn(page)).toBe(false)
+        expect((await getPopup(page)).opens).toBe(0)
+      })
+
+      it('pressing "Sign in" retries the code rather than going through on the stored session', async () => {
+        const page = await openWithBrokenExchange({ failing: ['AccessToken'] })
+        expect(await dialogInstance(page)).toBe('login')
+
+        // Still unreachable: another attempt, still on the dialog.
+        await click(page, DIALOG_ACTION)
+        await waitForCall(page, 'AccessToken', 3)
+        await page.waitForChanges()
+        expect(await exchanges(page)).toBe(2)
+        expect(await dialogInstance(page)).toBe('login')
+        expect(await wentOn(page)).toBe(false)
+
+        // Back online: the retry signs in with the code's own tokens.
+        await updateBackend(page, { failing: [] })
+        await click(page, DIALOG_ACTION)
+        await waitForInstance(page, 'ezp-dialog', 'no-document-selected')
+        expect(await getStorage(page, 'refreshToken')).toBe('refresh-token-2')
+      })
+
+      it('treats a server error the same way', async () => {
+        const page = await openWithBrokenExchange({
+          errors: { AccessToken: { status: 500, body: { error: 'server_error' } } },
+        })
+
+        expect(await dialogInstance(page)).toBe('login')
+        expect(await wentOn(page)).toBe(false)
+
+        await click(page, DIALOG_ACTION)
+        await waitForCall(page, 'AccessToken', 3)
+        await page.waitForChanges()
+        expect(await dialogInstance(page)).toBe('login')
+      })
+
+      it('falls back to the stored session once the retry shows the code is dead', async () => {
+        const page = await openWithBrokenExchange({ failing: ['AccessToken'] })
+
+        // Online again, but the code turns out to be spent (`invalid_grant`).
+        await updateBackend(page, { failing: [] })
+        await page.evaluate(() => ((window as any).__ezpMock.codeSpent = true))
+        await click(page, DIALOG_ACTION)
+
+        await waitForInstance(page, 'ezp-dialog', 'no-document-selected')
+        expect(await getStorage(page, 'refreshToken')).toBe('refresh-token-1')
+      })
+
+      it('with hidelogin and the file trigger, closing the dialog cancels the flow', async () => {
+        const page = await openPrinting({
+          signedIn: true,
+          attrs: { hidelogin: true, code: 'valid-code' },
+        })
+        const finished = await page.spyOnEvent('printFinished')
+        await updateBackend(page, { failing: ['AccessToken'] })
+        await chooseFiles(page, 'report.pdf')
+        await click(page, `${UPLOAD} >>> #continue`)
+        await waitForInstance(page, 'ezp-dialog', 'login')
+
+        await click(page, DIALOG_CLOSE)
+
+        expect(await page.find(AUTH)).toBeNull()
+        expect(await page.find(OPTIONS)).toBeNull()
+        expect(finished).toHaveReceivedEventTimes(1)
+      })
+    })
+
+    it('without a stored session, "Sign in" retries a code that could not be exchanged', async () => {
+      const page = await openPrinting({
+        attrs: { trigger: 'button', code: 'valid-code' },
+        failing: ['AccessToken'],
+      })
+      await click(page, 'ezp-printing >>> #print-trigger')
+      await waitForCall(page, 'AccessToken')
+      await page.waitForChanges()
+      expect(await dialogInstance(page)).toBe('login')
+
+      await updateBackend(page, { failing: [] })
+      await click(page, DIALOG_ACTION)
+
+      await waitForInstance(page, 'ezp-dialog', 'no-document-selected')
+      expect((await getPopup(page)).opens).toBe(0)
+      expect(await getStorage(page, 'refreshToken')).toBe('refresh-token-1')
+    })
+
     it('with hidelogin, announces a successful exchange exactly once', async () => {
       const page = await openPrinting({
         attrs: { trigger: 'button', hidelogin: true, code: 'valid-code' },
