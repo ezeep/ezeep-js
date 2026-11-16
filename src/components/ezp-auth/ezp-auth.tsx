@@ -222,8 +222,18 @@ export class EzpAuth {
     this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
 
     if (this.code) {
+      // A host-supplied code is single-use. Once signed in — by this code on an
+      // earlier mount, or by a restored session — it is spent: sending it again
+      // would be rejected, so go straight on instead.
+      if (authStore.state.isAuthorized) {
+        this.authCancel.emit()
+        this.authSuccess.emit()
+        return
+      }
       authStore.state.code = this.code
-      await this.exchangeCode()
+      // On success the events are out; nothing below applies any more (and the
+      // hidelogin branch would emit them a second time).
+      if (await this.exchangeCode()) return
     }
 
     if (authStore.state.isAuthorized === false) {

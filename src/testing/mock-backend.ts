@@ -41,6 +41,11 @@ export interface MockResponse {
 
 /** One request seen by the fake backend. */
 export interface RecordedCall {
+  /**
+   * Which endpoint the fake matched: `AccessToken`, `Revoke`, `UserInfo`,
+   * `BlobUpload`, or the `sfapi` name (`GetPrinter`, `Print`, `Status`, …).
+   */
+  route: string
   url: string
   host: string
   path: string
@@ -359,7 +364,9 @@ function installMockBackend(
       body = isText ? new TextDecoder().decode(buffer) : binary(buffer.byteLength)
     }
 
+    const name = route(url.host, url.pathname)
     const call = {
+      route: name,
       url: url.href,
       host: url.host,
       path: url.pathname,
@@ -371,19 +378,24 @@ function installMockBackend(
     }
     mock.calls.push(call)
 
-    const name = route(url.host, url.pathname)
-
-    if (mock.options.delay > 0) {
-      await new Promise<void>((resolve, reject) => {
-        const timer = setTimeout(resolve, mock.options.delay)
-        signal?.addEventListener('abort', () => {
-          clearTimeout(timer)
-          reject(new DOMException('The user aborted a request.', 'AbortError'))
-        })
-      })
-    }
+    const aborted = () => new DOMException('The user aborted a request.', 'AbortError')
 
     try {
+      // Like the real thing: an aborted request rejects, before or while waiting.
+      if (signal?.aborted) throw aborted()
+      if (mock.options.delay > 0) {
+        await new Promise<void>((resolve, reject) => {
+          const onAbort = () => {
+            clearTimeout(timer)
+            reject(aborted())
+          }
+          const timer = setTimeout(() => {
+            signal?.removeEventListener('abort', onAbort)
+            resolve()
+          }, mock.options.delay)
+          signal?.addEventListener('abort', onAbort, { once: true })
+        })
+      }
       if (mock.options.failing.includes(name)) throw new TypeError('Failed to fetch')
       return respond(name, call, url)
     } finally {
@@ -473,15 +485,7 @@ export async function openPrinting(options: OpenPrintingOptions = {}): Promise<E
 /** Every request the fake backend has seen, optionally narrowed to one route. */
 export async function getCalls(page: E2EPage, route?: string): Promise<RecordedCall[]> {
   const calls: RecordedCall[] = await page.evaluate(() => (window as any).__ezpMock.calls)
-  return route ? calls.filter((call) => matchesRoute(call, route)) : calls
-}
-
-function matchesRoute(call: { path: string; host: string }, route: string): boolean {
-  if (route === 'BlobUpload') return call.host === BLOB_HOST
-  if (route === 'AccessToken') return call.path === '/oauth/access_token/'
-  if (route === 'Revoke') return call.path === '/oauth/revoke/'
-  if (route === 'UserInfo') return call.path === '/v1/users/me'
-  return call.path === `/sfapi/${route}/`
+  return route ? calls.filter((call) => call.route === route) : calls
 }
 
 /** Wait until the fake has answered at least `count` requests to `route`. */
@@ -735,12 +739,14 @@ export async function pickOption(page: E2EPage, select: string, title: string): 
   // A long list slides over its neighbours while open and slides back on
   // close: wait until it has stopped moving.
   let previous = ''
+  const deadline = Date.now() + 5000
   for (;;) {
     const box = await host!.evaluate((el) => {
       const rect = el.shadowRoot!.querySelector('#wrap')!.getBoundingClientRect()
       return [rect.top, rect.height].join()
     })
     if (box === previous) break
+    if (Date.now() > deadline) throw new Error(`"${select}" never stopped moving after a pick`)
     previous = box
     await pause(100)
   }

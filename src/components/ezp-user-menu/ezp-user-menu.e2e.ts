@@ -136,13 +136,17 @@ describe('ezp-user-menu (e2e)', () => {
 
   it('keeps the last printer and its settings through a logout', async () => {
     const printer = { id: 'printer-1', name: 'Office Laser', location: '', is_queue: false }
-    const page = await openMenu({ storage: { printer: JSON.stringify(printer) } })
+    const settings = { 'printer-1': { color: false, paper: 'Letter', paperid: 1 } }
+    const page = await openMenu({
+      storage: { printer: JSON.stringify(printer), printerSettings: JSON.stringify(settings) },
+    })
 
     await click(page, `${MENU} >>> a.link:not([href])`)
     await waitForCall(page, 'Revoke')
 
     // They belong to the browser profile, not to the session.
     expect(JSON.parse((await getStorage(page, 'printer'))!).id).toBe('printer-1')
+    expect(JSON.parse((await getStorage(page, 'printerSettings'))!)).toEqual(settings)
   })
 
   it('requires a fresh sign-in after logging out', async () => {

@@ -497,12 +497,16 @@ describe('ezp-printer-selection (e2e)', () => {
       await click(page, `${OPTIONS} >>> #print`)
 
       const stages: string[] = []
+      const deadline = Date.now() + 15000
       for (;;) {
-        // Card and text in one read, so the two cannot be from different stages.
-        const [instance, text] = await page.$eval(STATUS, (el: any) => [
-          el.instance as string,
-          el.description as string,
-        ])
+        if (Date.now() > deadline) {
+          throw new Error(`Print never finished; stages seen: ${stages.join(' → ')}`)
+        }
+        // Card and text in one read, so the two cannot be from different
+        // stages. No card yet (or between renders) just means: look again.
+        const [instance, text] = await page
+          .$eval(STATUS, (el: any) => [el.instance as string, el.description as string])
+          .catch(() => ['', ''])
         if (instance === 'print-success') break
         // The upload percentage moves; the stage is what matters.
         const stage = text.replace(/ \(\d+%\)$/, '')

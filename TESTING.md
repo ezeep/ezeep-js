@@ -34,7 +34,7 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 - [src/components/ezp-status/ezp-status.spec.tsx](src/components/ezp-status/ezp-status.spec.tsx)
   — conditional rendering + event payloads (`newSpecPage`).
 
-**E2E tests (145):** real headless Chromium, real components/services/stores,
+**E2E tests (148):** real headless Chromium, real components/services/stores,
 faked network (see [E2E harness](#e2e-harness)).
 
 - [ezp-printing.e2e.ts](src/components/ezp-printing/ezp-printing.e2e.ts) — the
@@ -103,7 +103,9 @@ Things the harness does for you, and why:
 
 - `localStorage` is redirected to `sessionStorage`. Test files run in parallel as
   tabs of one browser on one origin, so real `localStorage` would be shared
-  between tests running at the same time.
+  between tests running at the same time. Two consequences: the harness's own
+  bookkeeping keys (`__ezpSeeded`, `__ezpBackend`) sit in the same store, and a
+  test cannot tell the two web storages apart.
 - `click` centres its target first: the print options have a sticky footer that
   covers controls at the bottom of the scroll area.
 - `waitFor` polls `page.$$` instead of `page.waitForSelector`, which does not

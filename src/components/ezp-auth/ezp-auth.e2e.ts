@@ -118,11 +118,11 @@ describe('ezp-auth (e2e)', () => {
       expect(await getStorage(page, 'refreshToken')).toBe('refresh-token-1')
       expect(await getStorage(page, 'isAuthorized')).toBe('true')
 
-      const everything = await page.evaluate(() => JSON.stringify({ ...localStorage }))
+      // One read covers both web storages: the harness backs `localStorage`
+      // with the tab's `sessionStorage`.
+      const everything = await page.evaluate(() => JSON.stringify({ ...sessionStorage }))
+      expect(everything).toContain('refresh-token-1')
       expect(everything).not.toContain('access-token')
-      expect(await page.evaluate(() => JSON.stringify({ ...sessionStorage }))).not.toContain(
-        'access-token',
-      )
     })
 
     it('ignores a code posted from an unexpected origin', async () => {
@@ -385,6 +385,50 @@ describe('ezp-auth (e2e)', () => {
       })
       expect((await getPopup(page)).opens).toBe(0)
       expect(await getStorage(page, 'refreshToken')).toBe('refresh-token-1')
+    })
+
+    it('spends the code once: opening again goes straight on without re-sending it', async () => {
+      const page = await openPrinting({ attrs: { trigger: 'button', code: 'valid-code' } })
+      const noDocument = 'ezp-printing >>> ezp-dialog'
+
+      // First open: exchanged, signed in, nothing to print.
+      await click(page, 'ezp-printing >>> #print-trigger')
+      await waitForInstance(page, 'ezp-dialog', 'no-document-selected')
+      await click(page, `${noDocument} >>> #footer ezp-text-button`)
+
+      // Second open, same (now spent) code on the element.
+      await click(page, 'ezp-printing >>> #print-trigger')
+      await waitForInstance(page, 'ezp-dialog', 'no-document-selected')
+
+      expect((await getCalls(page, 'AccessToken')).length).toBe(1)
+      expect(await page.find(AUTH)).toBeNull()
+    })
+
+    it('does not re-send the code when a session was already restored', async () => {
+      const page = await openPrinting({
+        signedIn: true,
+        attrs: { trigger: 'button', code: 'valid-code' },
+      })
+
+      await click(page, 'ezp-printing >>> #print-trigger')
+      await waitForInstance(page, 'ezp-dialog', 'no-document-selected')
+
+      // Only the start-up refresh reached the token endpoint.
+      const grants = (await getCalls(page, 'AccessToken')).map((call) => formBody(call).grant_type)
+      expect(grants).toEqual(['refresh_token'])
+    })
+
+    it('with hidelogin, announces a successful exchange exactly once', async () => {
+      const page = await openPrinting({
+        attrs: { trigger: 'button', hidelogin: true, code: 'valid-code' },
+      })
+      const success = await page.spyOnEvent('authSuccess')
+
+      await click(page, 'ezp-printing >>> #print-trigger')
+      await waitForInstance(page, 'ezp-dialog', 'no-document-selected')
+
+      expect(success).toHaveReceivedEventTimes(1)
+      expect((await getPopup(page)).opens).toBe(0)
     })
   })
 })
