@@ -19,7 +19,8 @@
   "files": [
     "dist/",
     "loader/",
-    "www/"
+    "www/",
+    "!dist/**/testing/"
   ],
   "scripts": {
     "build": "stencil build --docs",

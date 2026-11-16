@@ -103,12 +103,23 @@ export async function uploadAndPrintFile(
   const sasUri = response.sasUri
   const filetype = fileExtension(file.name)
 
+  // The upload stage ends as soon as the blob is stored — not when the whole
+  // job does — so the UI moves on from "Uploading…" to "Printing…" while the
+  // job is submitted and polled. `finally` covers a failed upload.
+  let uploading = true
+  const uploadDone = () => {
+    if (!uploading) return
+    uploading = false
+    hooks.onUploading?.(false)
+  }
+
   hooks.onUploading?.(true)
   try {
     const res = await ctx.service.uploadBlobFiles(sasUri, file)
     if (res._response.status !== BLOB_UPLOAD_CREATED) {
       throw new Error(`Upload failed for file: ${file.name}`)
     }
+    uploadDone()
 
     const data = await ctx.service.printByFileID(
       ctx.accessToken,
@@ -132,6 +143,6 @@ export async function uploadAndPrintFile(
     hooks.onJobId?.(data.jobid)
     await waitForJobCompletion(() => ctx.service.getPrintStatus(), ctx.isQueue, ctx.pollIntervalMs)
   } finally {
-    hooks.onUploading?.(false)
+    uploadDone()
   }
 }

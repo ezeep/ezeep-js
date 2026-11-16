@@ -18,6 +18,11 @@
   box-shadow: var(--ezp-userMenu-boxShadow, 0 0 0 1px var(--ezp-black-10));
   display: block;
   opacity: var(--ezp-userMenu-opacity, 0);
+  /* `visibility` only flips to hidden once the fade-out has run — including
+     the one that plays when the menu first mounts closed. Until then it lies,
+     invisible, over the header and the printer select; without this it
+     swallowed clicks meant for them. */
+  pointer-events: var(--ezp-userMenu-pointerEvents, none);
   position: absolute;
   right: 0;
   top: 0;
@@ -35,6 +40,7 @@
   @at-root {
     #{&}(.is-open) {
       --ezp-userMenu-opacity: 1;
+      --ezp-userMenu-pointerEvents: auto;
       --ezp-userMenu-scale: 1, 1;
       --ezp-userMenu-transition:
         opacity var(--ezp-duration-3) var(--ezp-easing-out-quart),

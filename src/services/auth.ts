@@ -84,7 +84,17 @@ export class EzpAuthorizationService {
     storage.setIsAuthorized(true)
   }
 
-  getAccessToken() {
+  /**
+   * Exchange the authorization code for tokens. Three outcomes, which callers
+   * must be able to tell apart:
+   *
+   * - resolves `true`: tokens were issued and stored;
+   * - resolves `false`: the endpoint refused *the code* (`invalid_grant` —
+   *   expired, already used, wrong verifier). Trying again cannot help;
+   * - rejects: nothing is known about the code — the request never completed,
+   *   or the endpoint answered with any other error. Trying again may work.
+   */
+  getAccessToken(): Promise<boolean> {
     return fetch(this.accessTokenURL, {
       credentials: 'include',
       headers: this.oauthHeaders(),
@@ -101,7 +111,14 @@ export class EzpAuthorizationService {
       .then((data) => {
         if (data.access_token) {
           this.persistTokens(data.access_token, data.refresh_token)
+          // Remember which code produced this session: it is spent now.
+          authStore.state.exchangedCode = authStore.state.code
+          return true
         }
+        if (data.error === 'invalid_grant') return false
+        // Only the endpoint's own error code is quoted — never the code,
+        // verifier or anything else from the request.
+        throw new Error(`Token endpoint error: ${data.error ?? 'unexpected response'}`)
       })
   }
 
@@ -141,6 +158,8 @@ export class EzpAuthorizationService {
 
 const authStore = createStore({
   code: '',
+  /** The authorization code the current session was obtained with (in memory only). */
+  exchangedCode: '',
   codeVerifier: '',
   accessToken: '',
   refreshToken: '',
