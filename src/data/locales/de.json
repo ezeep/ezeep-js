@@ -5,8 +5,8 @@
         "action": "Anmelden"
     },
     "popup_blocked_dialog": {
-        "heading": "Anmeldefenster wurde blockiert",
-        "description": "Dein Browser hat das Anmelde-Pop-up blockiert. Erlaube Pop-ups für diese Website und tippe dann auf Erneut versuchen. Auf dem iPhone oder iPad öffne Einstellungen → Safari und deaktiviere Pop-ups blockieren.",
+        "heading": "Anmeldefenster wurde nicht geöffnet",
+        "description": "Tippe auf Erneut versuchen, um fortzufahren. Falls es weiterhin nicht funktioniert, erlaube Pop-ups für diese Website in den Browser-Einstellungen.",
         "action": "Erneut versuchen"
     },
     "no_document_dialog": {

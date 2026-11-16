@@ -5,8 +5,8 @@
         "action": "Sign in"
     },
     "popup_blocked_dialog": {
-        "heading": "Sign-in window was blocked",
-        "description": "Your browser blocked the sign-in pop-up. Allow pop-ups for this site, then tap Try again. On iPhone or iPad, open Settings → Safari and turn off Block Pop-ups.",
+        "heading": "Sign-in window didn't open",
+        "description": "Tap Try again to continue. If it still doesn't work, allow pop-ups for this site in your browser settings.",
         "action": "Try again"
     },
     "no_document_dialog": {
