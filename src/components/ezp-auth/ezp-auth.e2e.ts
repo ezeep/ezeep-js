@@ -404,18 +404,41 @@ describe('ezp-auth (e2e)', () => {
       expect(await page.find(AUTH)).toBeNull()
     })
 
-    it('does not re-send the code when a session was already restored', async () => {
+    it('a fresh code replaces a session that was already stored', async () => {
+      // An older session is restored on load; the host then hands in a code,
+      // possibly for a different account than the stored one.
       const page = await openPrinting({
         signedIn: true,
         attrs: { trigger: 'button', code: 'valid-code' },
+      })
+      expect(await getStorage(page, 'refreshToken')).toBe('refresh-token-1')
+
+      await click(page, 'ezp-printing >>> #print-trigger')
+      await waitForInstance(page, 'ezp-dialog', 'no-document-selected')
+
+      // The code was exchanged on top of the start-up refresh…
+      const grants = (await getCalls(page, 'AccessToken')).map((call) => formBody(call).grant_type)
+      expect(grants).toEqual(['refresh_token', 'authorization_code'])
+      // …and its tokens, not the restored ones, are what the session now uses.
+      expect(await getStorage(page, 'refreshToken')).toBe('refresh-token-2')
+      await waitForCall(page, 'GetConfiguration', 2)
+      const config = await getCalls(page, 'GetConfiguration')
+      expect(config[config.length - 1].headers.authorization).toBe('Bearer access-token-2')
+    })
+
+    it('keeps the stored session when the code handed in is rejected', async () => {
+      // E.g. after a reload: the host still passes a code that is long spent.
+      const page = await openPrinting({
+        signedIn: true,
+        attrs: { trigger: 'button', hidelogin: true, code: 'expired-code' },
       })
 
       await click(page, 'ezp-printing >>> #print-trigger')
       await waitForInstance(page, 'ezp-dialog', 'no-document-selected')
 
-      // Only the start-up refresh reached the token endpoint.
-      const grants = (await getCalls(page, 'AccessToken')).map((call) => formBody(call).grant_type)
-      expect(grants).toEqual(['refresh_token'])
+      expect(await getStorage(page, 'refreshToken')).toBe('refresh-token-1')
+      expect(await getStorage(page, 'isAuthorized')).toBe('true')
+      expect((await getPopup(page)).opens).toBe(0)
     })
 
     it('with hidelogin, announces a successful exchange exactly once', async () => {

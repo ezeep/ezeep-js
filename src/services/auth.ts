@@ -106,6 +106,8 @@ export class EzpAuthorizationService {
       .then((data) => {
         if (data.access_token) {
           this.persistTokens(data.access_token, data.refresh_token)
+          // Remember which code produced this session: it is spent now.
+          authStore.state.exchangedCode = authStore.state.code
           return true
         }
         return false
@@ -148,6 +150,8 @@ export class EzpAuthorizationService {
 
 const authStore = createStore({
   code: '',
+  /** The authorization code the current session was obtained with (in memory only). */
+  exchangedCode: '',
   codeVerifier: '',
   accessToken: '',
   refreshToken: '',

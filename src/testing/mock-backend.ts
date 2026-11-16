@@ -21,7 +21,7 @@ export const BLOB_HOST = 'blob.e2e.test'
 export const CLIENT_ID = 'e2e-client'
 export const REDIRECT_URI = 'https://app.e2e.test/callback'
 export const REDIRECT_ORIGIN = 'https://app.e2e.test'
-/** The only authorization code the fake token endpoint accepts. */
+/** The only authorization code the fake token endpoint accepts — and only once. */
 export const VALID_CODE = 'valid-code'
 /** The refresh token seeded into `localStorage` by `signedIn: true`. */
 export const SEEDED_REFRESH_TOKEN = 'refresh-token-0'
@@ -171,6 +171,7 @@ function installMockBackend(
     accessTokens: [] as string[],
     refreshTokens: [] as string[],
     issued: 0,
+    codeSpent: false,
     uploads: 0,
     popup: null as Window | null,
     popupUrl: null as string | null,
@@ -262,9 +263,12 @@ function installMockBackend(
     if (name === 'AccessToken') {
       const form = new URLSearchParams(call.body ?? '')
       if (form.get('grant_type') === 'authorization_code') {
-        return form.get('code') === hosts.validCode
-          ? issueTokens()
-          : json({ error: 'invalid_grant' }, 400)
+        // Like the real endpoint, a code works exactly once.
+        if (form.get('code') !== hosts.validCode || mock.codeSpent) {
+          return json({ error: 'invalid_grant' }, 400)
+        }
+        mock.codeSpent = true
+        return issueTokens()
       }
       return mock.refreshTokens.includes(form.get('refresh_token'))
         ? issueTokens()

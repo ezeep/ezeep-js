@@ -222,10 +222,15 @@ export class EzpAuth {
     this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
 
     if (this.code) {
-      // A host-supplied code is single-use. Once signed in — by this code on an
-      // earlier mount, or by a restored session — it is spent: sending it again
-      // would be rejected, so go straight on instead.
-      if (authStore.state.isAuthorized) {
+      // A host-supplied code is single-use, and this component mounts again on
+      // every open with the same attribute. Skip only the code this page has
+      // already exchanged: sending it again would be rejected.
+      //
+      // Any other code is fresh and is exchanged even when a session is
+      // already stored — it may belong to a different account than the stored
+      // one (someone else signed in through the host on this browser), and
+      // must replace it rather than print as the previous user.
+      if (authStore.state.isAuthorized && this.code === authStore.state.exchangedCode) {
         this.authCancel.emit()
         this.authSuccess.emit()
         return
