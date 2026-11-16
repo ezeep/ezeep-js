@@ -608,6 +608,27 @@ export async function waitFor(page: E2EPage, selector: string, timeout = 10000) 
 /** Click through shadow DOM with a real mouse click. */
 export async function click(page: E2EPage, selector: string): Promise<void> {
   const handle = await waitFor(page, selector)
+
+  // Components load lazily. Until one has hydrated it is in the DOM but
+  // `visibility: hidden`, so a click aimed at it falls through to whatever is
+  // behind and is silently lost — seen on CI, where the chunk for a component
+  // used for the first time arrives later than the click.
+  const deadline = Date.now() + 10000
+  for (;;) {
+    const ready = await handle.evaluate((el) => {
+      let node: Element | null = el
+      while (node) {
+        if (node.tagName.includes('-') && !node.classList.contains('hydrated')) return false
+        const root = node.getRootNode()
+        node = node.parentElement ?? (root instanceof ShadowRoot ? root.host : null)
+      }
+      return getComputedStyle(el).visibility === 'visible'
+    })
+    if (ready) break
+    if (Date.now() > deadline) throw new Error(`"${selector}" never became clickable`)
+    await pause(25)
+  }
+
   // Centre it first: the print options keep a sticky footer over the bottom of
   // their scroll area, where a control counts as "in view" yet cannot be hit.
   await handle.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'center' }))
