@@ -475,6 +475,16 @@ describe('ezp-printing (e2e)', () => {
       await page.waitForChanges()
 
       expect(await hostClasses(page)).toEqual(['red', 'light'])
+
+      // Removing them goes back to the defaults, as on first load.
+      await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }])
+      await page.$eval('ezp-printing', (el) => {
+        el.removeAttribute('theme')
+        el.removeAttribute('appearance')
+      })
+      await page.waitForChanges()
+
+      expect(await hostClasses(page)).toEqual(['cyan', 'dark'])
     })
 
     it('prints the document the attributes name when the dialog is opened', async () => {

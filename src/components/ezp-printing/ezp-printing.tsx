@@ -107,12 +107,13 @@ export class EzpPrinting {
    *  in the menu still applies on top of this. */
   @Watch('theme')
   watchTheme(newValue: ThemeTypes) {
-    if (newValue) userStore.state.theme = newValue
+    // A removed attribute goes back to the default, as on first load.
+    userStore.state.theme = newValue || 'cyan'
   }
 
   @Watch('appearance')
   watchAppearance(newValue: AppearanceTypes) {
-    if (newValue) userStore.state.appearance = newValue
+    userStore.state.appearance = newValue || 'system'
   }
 
   @Watch('language')

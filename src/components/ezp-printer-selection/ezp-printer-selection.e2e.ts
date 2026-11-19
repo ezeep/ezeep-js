@@ -569,6 +569,9 @@ describe('ezp-printer-selection (e2e)', () => {
 
       expect(await currentStatus(page)).toBeNull()
       expect(await printButtonDisabled(page)).toBe(false)
+      // Focus goes back to Print, not to the top of the host page.
+      const focused = await page.$eval(OPTIONS, (el) => el.shadowRoot!.activeElement?.id)
+      expect(focused).toBe('print')
     })
 
     it('retries the whole job once the queue has recovered', async () => {
@@ -659,7 +662,7 @@ describe('ezp-printer-selection (e2e)', () => {
       expect(await tokenRequests(page)).toBe(before + 1)
     })
 
-    it('renews the token once when several requests fail together', async () => {
+    it('does not send a refresh for every request that fails together', async () => {
       const page = await openPrinting({ signedIn: true, printers: [PRINTERS[0]] })
       await goToPrintOptions(page, 'report.pdf')
       await click(page, `${OPTIONS} >>> #cancel`)

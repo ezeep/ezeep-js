@@ -79,6 +79,9 @@ export class EzpPrinterSelection {
     },
   ]
   private printButton?: HTMLButtonElement
+  /** Closing an error card removes the button that had focus; the form under
+   *  it is usable again only after the next render. */
+  private focusPrintAfterRender = false
 
   /**
    *
@@ -240,9 +243,7 @@ export class EzpPrinterSelection {
         break
       case 'print-failed':
         this.printFailed = false
-        // A queue's driver error on an uploaded file sets both flags; left
-        // set, the same message would come back as a second card to close.
-        this.hubDriverError = false
+        this.focusPrintAfterRender = true
         break
       case 'print-timeout':
         // The job may still be completing; closing just dismisses the flow.
@@ -251,6 +252,7 @@ export class EzpPrinterSelection {
         break
       case 'hub-driver-error':
         this.hubDriverError = false
+        this.focusPrintAfterRender = true
         break
       case 'not-supported':
         this.noPrinters = false
@@ -481,11 +483,9 @@ export class EzpPrinterSelection {
           this.printTimedOut = true
         } else {
           this.failedFiles.push(this.files[0].name)
+          // Also for a queue's driver error: both cards read the same, and
+          // setting `hubDriverError` as well left a second one to close.
           this.printFailed = true
-          // Check if this is a hub driver error
-          if (error.message && error.message.includes('Hub printer driver error')) {
-            this.hubDriverError = true
-          }
         }
       }
       if (hubTimeout) clearTimeout(hubTimeout)
@@ -889,6 +889,13 @@ export class EzpPrinterSelection {
     }
   }
 
+  componentDidRender() {
+    if (!this.focusPrintAfterRender) return
+    this.focusPrintAfterRender = false
+    // Back to where the user was, rather than to the top of the host page.
+    this.printButton?.focus()
+  }
+
   disconnectedCallback() {
     this.unsubscribeLanguage?.()
     this.unregisterFetchInterceptor?.()
@@ -1052,7 +1059,7 @@ export class EzpPrinterSelection {
     // A status card lies over the whole box. What is under it must be out of
     // reach of the keyboard and of assistive technology too, not only of the
     // pointer — otherwise Tab walks the covered form.
-    const status = this.printStopped ? null : this.renderStatus()
+    const status = this.loading || this.printStopped ? null : this.renderStatus()
     const covered = Boolean(status)
 
     return this.loading ? (
