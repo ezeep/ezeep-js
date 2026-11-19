@@ -53,6 +53,7 @@ export class EzpPrinterSelection {
   private fileExtension = ''
   private printService: EzpPrintService
   private unsubscribeLanguage?: () => void
+  private unregisterFetchInterceptor?: () => void
   public duplexOptions = [
     {
       id: 1,
@@ -239,6 +240,9 @@ export class EzpPrinterSelection {
         break
       case 'print-failed':
         this.printFailed = false
+        // A queue's driver error on an uploaded file sets both flags; left
+        // set, the same message would come back as a second card to close.
+        this.hubDriverError = false
         break
       case 'print-timeout':
         // The job may still be completing; closing just dismisses the flow.
@@ -772,7 +776,7 @@ export class EzpPrinterSelection {
   async connectedCallback() {
     this.unsubscribeLanguage = subscribeToLanguageChange(this)
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
-    this.printService.registerFetchInterceptor()
+    this.unregisterFetchInterceptor = this.printService.registerFetchInterceptor()
 
     try {
       // A missing display name must not stop the user from printing.
@@ -887,6 +891,8 @@ export class EzpPrinterSelection {
 
   disconnectedCallback() {
     this.unsubscribeLanguage?.()
+    this.unregisterFetchInterceptor?.()
+    this.unregisterFetchInterceptor = undefined
   }
 
   /**

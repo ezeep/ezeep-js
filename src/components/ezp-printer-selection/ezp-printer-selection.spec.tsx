@@ -219,7 +219,7 @@ describe('ezp-printer-selection load failures', () => {
     jest.spyOn(EzpUserService.prototype, 'getUserInfo').mockResolvedValue({} as any)
     jest
       .spyOn(EzpPrintService.prototype, 'registerFetchInterceptor')
-      .mockImplementation(() => undefined)
+      .mockImplementation(() => () => undefined)
     jest
       .spyOn(EzpPrintService.prototype, 'getPrinterList')
       .mockResolvedValue([printer('only')] as any)
@@ -416,7 +416,7 @@ describe('ezp-printer-selection file list', () => {
     jest.spyOn(EzpUserService.prototype, 'getUserInfo').mockResolvedValue({} as any)
     jest
       .spyOn(EzpPrintService.prototype, 'registerFetchInterceptor')
-      .mockImplementation(() => undefined)
+      .mockImplementation(() => () => undefined)
     jest.spyOn(EzpPrintService.prototype, 'getPrinterList').mockResolvedValue([printer] as any)
     jest
       .spyOn(EzpPrintService.prototype, 'getPrinterProperties')

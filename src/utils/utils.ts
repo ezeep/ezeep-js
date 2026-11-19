@@ -110,15 +110,22 @@ export const poll = async <T = any>({
   let attempts = 0
 
   const executePoll = async (resolve: (value: T) => void, reject: (reason?: unknown) => void) => {
-    const result = await fn()
-    attempts++
+    try {
+      const result = await fn()
+      attempts++
 
-    if (validate(result)) {
-      return resolve(result)
-    } else if (maxAttempts && attempts === maxAttempts) {
-      return reject(new Error('Exceeded max attempts.'))
-    } else {
-      setTimeout(executePoll, interval, resolve, reject)
+      if (validate(result)) {
+        return resolve(result)
+      } else if (maxAttempts && attempts === maxAttempts) {
+        return reject(new Error('Exceeded max attempts.'))
+      } else {
+        setTimeout(executePoll, interval, resolve, reject)
+      }
+    } catch (error) {
+      // Without this the promise never settles: `executePoll` is the promise
+      // executor (and later a timer callback), so nothing observes its throw
+      // and the caller waits on a poll that has silently stopped.
+      reject(error)
     }
   }
 

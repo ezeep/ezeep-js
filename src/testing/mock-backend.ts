@@ -517,6 +517,22 @@ export async function updateBackend(page: E2EPage, patch: MockBackendOptions): P
   }, patch as any)
 }
 
+/**
+ * Make the backend forget the access tokens it issued, as when one expires
+ * mid-session: the next API call is answered 401. Refresh tokens stay valid
+ * unless `session: 'ended'`, which drops those too (signed out everywhere).
+ */
+export async function expireAccessToken(
+  page: E2EPage,
+  session: 'renewable' | 'ended' = 'renewable',
+): Promise<void> {
+  await page.evaluate((ended) => {
+    const mock = (window as any).__ezpMock
+    mock.accessTokens = []
+    if (ended) mock.refreshTokens = []
+  }, session === 'ended')
+}
+
 /** What the page did with `window.open`: how often, and the last URL it asked for. */
 export async function getPopup(page: E2EPage): Promise<{ opens: number; url: string | null }> {
   return page.evaluate(() => {

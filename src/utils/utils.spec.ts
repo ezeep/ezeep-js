@@ -27,6 +27,31 @@ describe('poll', () => {
     ).rejects.toThrow('Exceeded max attempts')
     expect(fn).toHaveBeenCalledTimes(3)
   })
+
+  it('rejects when the polled call fails, on the first attempt or a later one', async () => {
+    const first = jest.fn().mockRejectedValue(new TypeError('Failed to fetch'))
+    await expect(
+      poll<number>({ fn: first, validate: () => true, interval: 0, maxAttempts: 3 }),
+    ).rejects.toThrow('Failed to fetch')
+
+    const later = jest
+      .fn()
+      .mockResolvedValueOnce(0)
+      .mockRejectedValue(new TypeError('Failed to fetch'))
+    await expect(
+      poll<number>({ fn: later, validate: () => false, interval: 0, maxAttempts: 5 }),
+    ).rejects.toThrow('Failed to fetch')
+    expect(later).toHaveBeenCalledTimes(2)
+  })
+
+  it('rejects when validate throws', async () => {
+    const validate = () => {
+      throw new Error('bad payload')
+    }
+    await expect(
+      poll<number>({ fn: async () => 0, validate, interval: 0, maxAttempts: 3 }),
+    ).rejects.toThrow('bad payload')
+  })
 })
 
 describe('encodeFormData', () => {
