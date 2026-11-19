@@ -237,6 +237,23 @@ describe('ezp-printer-selection load failures', () => {
     return new EzpPrinterSelection() as any
   }
 
+  it('removes its 401 interceptor when it leaves the page', async () => {
+    // fetch-intercept keeps every registration: one that is never removed
+    // answers each later 401 once more per time the options were opened.
+    const unregister = jest.fn()
+    const el = loadable({ registerFetchInterceptor: () => unregister })
+
+    await el.connectedCallback()
+    expect(unregister).not.toHaveBeenCalled()
+
+    el.disconnectedCallback()
+    expect(unregister).toHaveBeenCalledTimes(1)
+
+    // Not a second time for an element that is already gone.
+    el.disconnectedCallback()
+    expect(unregister).toHaveBeenCalledTimes(1)
+  })
+
   it('leaves the dialog loading-free when the properties call fails', async () => {
     // The loading status has no close button, so a throw here would strand the
     // user — and auto-select makes this reachable on a first-ever print.

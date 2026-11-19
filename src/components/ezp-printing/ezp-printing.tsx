@@ -509,8 +509,11 @@ export class EzpPrinting {
         ) : this.trigger === 'file' ? (
           /* Out of reach while a dialog or the print options cover it: without
              this, Tab walks every control of the card behind the backdrop
-             before it gets to the one on top. */
-          <ezp-upload inert={this.authOpen || this.printOpen || this.noDocumentOpen} />
+             before it gets to the one on top. Seamless print options cover
+             nothing — they sit below the card, which stays in use. */
+          <ezp-upload
+            inert={this.authOpen || this.noDocumentOpen || (this.printOpen && !this.seamless)}
+          />
         ) : (
           this.trigger === 'button' && (
             <ezp-icon-button

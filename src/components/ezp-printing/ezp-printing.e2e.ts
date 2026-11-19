@@ -236,6 +236,26 @@ describe('ezp-printing (e2e)', () => {
       const classes = await page.$eval(OPTIONS, (el) => el.classList.contains('seamless'))
       expect(classes).toBe(true)
     })
+
+    it('seamless: the upload card stays in use next to the open print options', async () => {
+      const page = await openPrinting({ signedIn: true, attrs: { seamless: true } })
+      await goToPrintOptions(page, 'report.pdf', 'invoice.docx')
+      expect(await textOf(page, `${OPTIONS} >>> #files-badge`)).toBe('2 files')
+
+      // Nothing covers the card here: the options render below it.
+      expect(await page.$eval(UPLOAD, (el: any) => el.inert)).toBe(false)
+      await click(page, `${UPLOAD} >>> .file-remove`)
+      await page.waitForChanges()
+
+      expect(await textOf(page, `${OPTIONS} >>> #files-badge`)).toBe('1 file')
+    })
+
+    it('without seamless, the upload card behind the print options is out of reach', async () => {
+      const page = await openPrinting({ signedIn: true })
+      await goToPrintOptions(page, 'report.pdf')
+
+      expect(await page.$eval(UPLOAD, (el: any) => el.inert)).toBe(true)
+    })
   })
 
   describe('API hosts', () => {

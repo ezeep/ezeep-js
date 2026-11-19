@@ -130,10 +130,29 @@ describe('ezp-printing with the keyboard only (e2e)', () => {
     await page.keyboard.press('Enter')
     await waitForInstance(page, 'ezp-status', 'print-failed')
 
-    // Close, then Retry — and from there Tab leaves the card, not into the form.
+    // Close, then Retry: the card's two buttons, and nothing else on the way.
     const stops = await tabTo(page, 'ezp-status > ezp-text-button')
     stops.push(...(await tabTo(page, 'ezp-status > ezp-text-button')))
     expect(stops.filter((stop) => !stop.includes('ezp-status') && stop !== 'body')).toEqual([])
+
+    // Retry is the last stop. The header, form and footer lie under the card
+    // and come after it in the DOM, so this is where Tab would walk into them.
+    const beyond: string[] = []
+    for (let i = 0; i < 3; i++) {
+      await page.keyboard.press('Tab')
+      beyond.push(await focusPath(page))
+    }
+    const underCard = (stop: string) =>
+      stop.includes('ezp-printer-selection') && !stop.includes('ezp-status')
+    expect(beyond.filter(underCard)).toEqual([])
+
+    // Back onto Retry, the way a user would return to it.
+    await page.keyboard.down('Shift')
+    for (let i = 0; i < 6 && !(await focusPath(page)).includes('ezp-status'); i++) {
+      await page.keyboard.press('Tab')
+    }
+    await page.keyboard.up('Shift')
+    expect(await focusPath(page)).toContain('ezp-status > ezp-text-button')
 
     await page.keyboard.press('Enter')
     await waitForInstance(page, 'ezp-status', 'print-success')
