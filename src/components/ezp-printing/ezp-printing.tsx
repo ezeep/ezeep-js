@@ -102,6 +102,19 @@ export class EzpPrinting {
     }
   }
 
+  /** The host restyling a mounted component, e.g. with its own dark mode. The
+   *  store is what renders — and what the user menu changes — so a later choice
+   *  in the menu still applies on top of this. */
+  @Watch('theme')
+  watchTheme(newValue: ThemeTypes) {
+    if (newValue) userStore.state.theme = newValue
+  }
+
+  @Watch('appearance')
+  watchAppearance(newValue: AppearanceTypes) {
+    if (newValue) userStore.state.appearance = newValue
+  }
+
   @Watch('language')
   watchLanguage(newValue: string, oldValue: string) {
     if (newValue !== oldValue && newValue.length > 0) {

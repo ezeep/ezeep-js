@@ -34,7 +34,7 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 - [src/components/ezp-status/ezp-status.spec.tsx](src/components/ezp-status/ezp-status.spec.tsx)
   — conditional rendering + event payloads (`newSpecPage`).
 
-**E2E tests (188):** real headless Chromium, real components/services/stores,
+**E2E tests (198):** real headless Chromium, real components/services/stores,
 faked network (see [E2E harness](#e2e-harness)).
 
 - [ezp-printing.e2e.ts](src/components/ezp-printing/ezp-printing.e2e.ts) — the
@@ -42,8 +42,9 @@ faked network (see [E2E harness](#e2e-harness)).
   language (attribute, runtime switch, account language), theme/appearance,
   API host attributes, session restore + reload, the public methods
   (`open`, `logOut`, `checkAuth`, `getAuthUri`, `getSasUri`,
-  `setAuthRefreshToken`), `filedata`, the OAuth redirect-page role, and
-  `printFinished`.
+  `setAuthRefreshToken`), `filedata`, host pre-authentication through to a
+  print, attributes changed after mount, removal from the page, the OAuth
+  redirect-page role, and `printFinished`.
 - [ezp-auth.e2e.ts](src/components/ezp-auth/ezp-auth.e2e.ts) — sign-in: the
   authorize URL and PKCE challenge, code → token exchange (verifier matches the
   challenge), rejection of codes from a wrong origin or window, token storage
