@@ -18,6 +18,22 @@ const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
  *  from its row is built on them. */
 const TOKENS = '--ezp-spacing-2: 6px; --ezp-spacing-3: 8px'
 
+/**
+ * Say what kind of pointer the device has. The component asks
+ * `(hover: hover)` before opening a tooltip, and the answer is the machine's:
+ * true on a developer laptop, false on a CI runner with no mouse attached.
+ * Neither is what a test should depend on.
+ */
+async function setPointer(page: E2EPage, pointer: 'mouse' | 'touch'): Promise<void> {
+  await page.evaluate((hovers: boolean) => {
+    const original = window.matchMedia.bind(window)
+    window.matchMedia = (query: string) =>
+      query === '(hover: hover)'
+        ? ({ ...original(query), matches: hovers, media: query } as MediaQueryList)
+        : original(query)
+  }, pointer === 'mouse')
+}
+
 /** One name in a positioned row of the given width, clear of the page edges. */
 async function openName(name: string, width = 180, attrs = ''): Promise<E2EPage> {
   const page = await newE2EPage()
@@ -26,6 +42,7 @@ async function openName(name: string, width = 180, attrs = ''): Promise<E2EPage>
        <ezp-file-name name="${name}" ${attrs}></ezp-file-name>
      </div>`,
   )
+  await setPointer(page, 'mouse')
   await page.waitForChanges()
   return page
 }
@@ -260,6 +277,7 @@ describe('ezp-file-name (e2e)', () => {
            <div id="scroller" style="max-height: 60px; overflow-y: auto">${rows}</div>
          </div>`,
       )
+      await setPointer(page, 'mouse')
       await page.waitForChanges()
       return page
     }
@@ -317,8 +335,8 @@ describe('ezp-file-name (e2e)', () => {
            <ezp-file-name name="${LONG}"></ezp-file-name>
          </div>`,
       )
+      await setPointer(page, 'touch')
       await page.waitForChanges()
-      expect(await page.evaluate(() => matchMedia('(hover: hover)').matches)).toBe(false)
 
       await (await page.$(TRIGGER))!.tap()
       await pause(SETTLED)
