@@ -1049,6 +1049,11 @@ export class EzpPrinterSelection {
           ? [this.filename]
           : []
     const fileCount = fileNames.length
+    // A status card lies over the whole box. What is under it must be out of
+    // reach of the keyboard and of assistive technology too, not only of the
+    // pointer — otherwise Tab walks the covered form.
+    const status = this.printStopped ? null : this.renderStatus()
+    const covered = Boolean(status)
 
     return this.loading ? (
       <ezp-status
@@ -1059,9 +1064,9 @@ export class EzpPrinterSelection {
     ) : (
       <Host class={{ seamless: this.seamless }}>
         <div id="box" data-backdrop-surface>
-          {!this.printStopped && this.renderStatus()}
+          {status}
           {!this.hideheader && (
-            <div id="header">
+            <div id="header" inert={covered}>
               <div id="title">
                 <ezp-label weight="heavy" text={i18next.t('printer_selection.print')} />
                 {!this.notSupported && fileCount > 0 && (
@@ -1090,7 +1095,7 @@ export class EzpPrinterSelection {
               </div>
             </div>
           )}
-          <div id="body">
+          <div id="body" inert={covered}>
             {!this.notSupported && fileNames.length > 0 && (
               <div id="files-card">
                 <div id="files">
@@ -1272,7 +1277,7 @@ export class EzpPrinterSelection {
               />
             </div>
           </div>
-          <div id="footer">
+          <div id="footer" inert={covered}>
             <ezp-text-button
               type="button"
               level="secondary"

@@ -34,7 +34,7 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 - [src/components/ezp-status/ezp-status.spec.tsx](src/components/ezp-status/ezp-status.spec.tsx)
   — conditional rendering + event payloads (`newSpecPage`).
 
-**E2E tests (198):** real headless Chromium, real components/services/stores,
+**E2E tests (215):** real headless Chromium, real components/services/stores,
 faked network (see [E2E harness](#e2e-harness)).
 
 - [ezp-printing.e2e.ts](src/components/ezp-printing/ezp-printing.e2e.ts) — the
@@ -45,6 +45,12 @@ faked network (see [E2E harness](#e2e-harness)).
   `setAuthRefreshToken`), `filedata`, host pre-authentication through to a
   print, attributes changed after mount, removal from the page, the OAuth
   redirect-page role, and `printFinished`.
+- [ezp-printing.keyboard.e2e.ts](src/components/ezp-printing/ezp-printing.keyboard.e2e.ts)
+  — the journey with the keyboard alone: files to finished print, Retry on a
+  failed print, and focus staying out of whatever a dialog or card covers.
+- [ezp-printing.layout.e2e.ts](src/components/ezp-printing/ezp-printing.layout.e2e.ts)
+  — the journey on phone and tablet screens: every step fits between the edges,
+  Print stays on screen, and the last option can still be set.
 - [ezp-auth.e2e.ts](src/components/ezp-auth/ezp-auth.e2e.ts) — sign-in: the
   authorize URL and PKCE challenge, code → token exchange (verifier matches the
   challenge), rejection of codes from a wrong origin or window, token storage

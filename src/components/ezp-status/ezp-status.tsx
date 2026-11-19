@@ -98,13 +98,14 @@ export class EzpStatus {
             </div>
           ) : null}
           <ezp-label id="description" weight="heavy" text={this.description} />
-          {this.subtext && (
-            <ezp-label id="subtext" level="secondary" text={this.subtext} />
-          )}
+          {this.subtext && <ezp-label id="subtext" level="secondary" text={this.subtext} />}
           {(this.cancel || this.close || this.retry) && (
             <div id="footer">
               {this.cancel && (
                 <ezp-text-button
+                  /* A real button: without a type it renders as an `<a>` with no
+                     `href`, which the keyboard cannot reach. */
+                  type="button"
                   class="action secondary"
                   level="secondary"
                   onClick={this.handleCancel}
@@ -117,6 +118,7 @@ export class EzpStatus {
               )}
               {this.close && (
                 <ezp-text-button
+                  type="button"
                   class={`action ${this.retry ? 'secondary' : 'primary'}`}
                   level={this.retry ? 'secondary' : 'primary'}
                   onClick={this.handleClose}
@@ -127,6 +129,7 @@ export class EzpStatus {
               )}
               {this.retry && (
                 <ezp-text-button
+                  type="button"
                   class="action primary"
                   level="primary"
                   onClick={this.handleRetry}

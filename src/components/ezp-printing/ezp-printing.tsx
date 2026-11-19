@@ -506,7 +506,10 @@ export class EzpPrinting {
         {this.trigger === 'custom' ? (
           <slot></slot>
         ) : this.trigger === 'file' ? (
-          <ezp-upload />
+          /* Out of reach while a dialog or the print options cover it: without
+             this, Tab walks every control of the card behind the backdrop
+             before it gets to the one on top. */
+          <ezp-upload inert={this.authOpen || this.printOpen || this.noDocumentOpen} />
         ) : (
           this.trigger === 'button' && (
             <ezp-icon-button
