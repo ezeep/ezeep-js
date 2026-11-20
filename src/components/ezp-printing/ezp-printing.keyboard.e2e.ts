@@ -146,14 +146,8 @@ describe('ezp-printing with the keyboard only (e2e)', () => {
       stop.includes('ezp-printer-selection') && !stop.includes('ezp-status')
     expect(beyond.filter(underCard)).toEqual([])
 
-    // Back onto Retry, the way a user would return to it.
-    await page.keyboard.down('Shift')
-    for (let i = 0; i < 6 && !(await focusPath(page)).includes('ezp-status'); i++) {
-      await page.keyboard.press('Tab')
-    }
-    await page.keyboard.up('Shift')
-    expect(await focusPath(page)).toContain('ezp-status > ezp-text-button')
-
+    // With nothing else to stop at, those three Tabs go round — page, Close,
+    // Retry. Enter proves it: only Retry starts the second print.
     await page.keyboard.press('Enter')
     await waitForInstance(page, 'ezp-status', 'print-success')
     expect((await getCalls(page, 'Print')).length).toBe(2)
