@@ -236,6 +236,26 @@ describe('ezp-printing (e2e)', () => {
       const classes = await page.$eval(OPTIONS, (el) => el.classList.contains('seamless'))
       expect(classes).toBe(true)
     })
+
+    it('seamless: the upload card stays in use next to the open print options', async () => {
+      const page = await openPrinting({ signedIn: true, attrs: { seamless: true } })
+      await goToPrintOptions(page, 'report.pdf', 'invoice.docx')
+      expect(await textOf(page, `${OPTIONS} >>> #files-badge`)).toBe('2 files')
+
+      // Nothing covers the card here: the options render below it.
+      expect(await page.$eval(UPLOAD, (el: any) => el.inert)).toBe(false)
+      await click(page, `${UPLOAD} >>> .file-remove`)
+      await page.waitForChanges()
+
+      expect(await textOf(page, `${OPTIONS} >>> #files-badge`)).toBe('1 file')
+    })
+
+    it('without seamless, the upload card behind the print options is out of reach', async () => {
+      const page = await openPrinting({ signedIn: true })
+      await goToPrintOptions(page, 'report.pdf')
+
+      expect(await page.$eval(UPLOAD, (el: any) => el.inert)).toBe(true)
+    })
   })
 
   describe('API hosts', () => {
@@ -371,6 +391,211 @@ describe('ezp-printing (e2e)', () => {
 
       expect(sasUri).toBeUndefined()
       expect(await page.find(AUTH)).not.toBeNull()
+    })
+  })
+
+  describe('pre-authentication by the host (samples/04-pre-authentication.html)', () => {
+    const HOST_TOKEN = 'host-refresh-token'
+    const byUrl = {
+      trigger: 'button',
+      fileurl: 'https://files.e2e.test/doc.pdf',
+      filetype: 'pdf',
+      filename: 'doc.pdf',
+    }
+    /** A page with no session, and a refresh token the host got from its own backend. */
+    const openPreAuth = async (options: Parameters<typeof openPrinting>[0] = {}) => {
+      const page = await openPrinting({ printers: [PRINTERS[0]], ...options })
+      await page.evaluate((token) => {
+        ;(window as any).__ezpMock.refreshTokens.push(token)
+      }, HOST_TOKEN)
+      return page
+    }
+
+    it('prints a document by URL without the user ever signing in', async () => {
+      const page = await openPreAuth({ attrs: byUrl })
+      const finished = await page.spyOnEvent('printFinished')
+
+      await call(page, 'setAuthRefreshToken', HOST_TOKEN)
+      await click(page, 'ezp-printing >>> #print-trigger')
+      // The dialog only asks to continue: there is nothing to sign in to.
+      await click(page, `${AUTH} >>> ezp-dialog >>> #footer ezp-text-button`)
+      await waitForPrintOptions(page)
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-success')
+      await click(page, `${OPTIONS} >>> ezp-status >>> ezp-text-button`)
+
+      expect((await getPopup(page)).opens).toBe(0)
+      const tokens = (await getCalls(page, 'AccessToken')).map(formBody)
+      expect(tokens.every((form) => form.grant_type === 'refresh_token')).toBe(true)
+      const [print] = await getCalls(page, 'Print')
+      expect(print.headers.authorization).toBe('Bearer access-token-1')
+      expect(JSON.parse(print.body!).fileurl).toBe('https://files.e2e.test/doc.pdf')
+      expect(finished).toHaveReceivedEventTimes(1)
+    })
+
+    it('goes straight to the print options under hidelogin', async () => {
+      const page = await openPreAuth({ attrs: { ...byUrl, hidelogin: true } })
+
+      await call(page, 'setAuthRefreshToken', HOST_TOKEN)
+      await click(page, 'ezp-printing >>> #print-trigger')
+      await waitForPrintOptions(page)
+
+      expect((await getPopup(page)).opens).toBe(0)
+    })
+
+    it('keeps the user signed in after a reload, without the host repeating it', async () => {
+      const page = await openPreAuth({ attrs: byUrl })
+      await call(page, 'setAuthRefreshToken', HOST_TOKEN)
+
+      await (page as any).reload()
+      await page.waitForChanges()
+
+      expect(await call<boolean>(page, 'checkAuth')).toBe(true)
+    })
+
+    it('falls back to the normal sign-in when the token is not valid', async () => {
+      const page = await openPreAuth({ attrs: byUrl })
+
+      await call(page, 'setAuthRefreshToken', 'made-up-token')
+      expect(await call<boolean>(page, 'checkAuth')).toBe(false)
+
+      await click(page, 'ezp-printing >>> #print-trigger')
+      await click(page, `${AUTH} >>> ezp-dialog >>> #footer ezp-text-button`)
+
+      const popup = await getPopup(page)
+      expect(popup.opens).toBe(1)
+      expect(new URL(popup.url!).host).toBe(AUTH_HOST)
+    })
+
+    it('rejects, so the host can tell, when the account service cannot be reached', async () => {
+      const page = await openPreAuth({ attrs: byUrl, failing: ['AccessToken'] })
+
+      const outcome = await page.$eval(
+        'ezp-printing',
+        (el: any, token) =>
+          el.setAuthRefreshToken(token).then(
+            () => 'resolved',
+            () => 'rejected',
+          ),
+        HOST_TOKEN,
+      )
+
+      expect(outcome).toBe('rejected')
+    })
+  })
+
+  describe('attributes changed by the host after mount', () => {
+    it('applies a new theme and appearance', async () => {
+      const page = await openPrinting({ attrs: { theme: 'violet', appearance: 'dark' } })
+
+      await page.$eval('ezp-printing', (el) => {
+        el.setAttribute('theme', 'red')
+        el.setAttribute('appearance', 'light')
+      })
+      await page.waitForChanges()
+
+      expect(await hostClasses(page)).toEqual(['red', 'light'])
+
+      // Removing them goes back to the defaults, as on first load.
+      await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }])
+      await page.$eval('ezp-printing', (el) => {
+        el.removeAttribute('theme')
+        el.removeAttribute('appearance')
+      })
+      await page.waitForChanges()
+
+      expect(await hostClasses(page)).toEqual(['cyan', 'dark'])
+    })
+
+    it('prints the document the attributes name when the dialog is opened', async () => {
+      const page = await openPrinting({
+        signedIn: true,
+        printers: [PRINTERS[0]],
+        attrs: {
+          trigger: 'button',
+          hidelogin: true,
+          fileurl: 'https://files.e2e.test/first.pdf',
+          filetype: 'pdf',
+          filename: 'first.pdf',
+        },
+      })
+
+      // E.g. a document list where one print button serves the selected row.
+      await page.$eval('ezp-printing', (el) => {
+        el.setAttribute('fileurl', 'https://files.e2e.test/second.docx')
+        el.setAttribute('filetype', 'docx')
+        el.setAttribute('filename', 'second.docx')
+      })
+      await page.waitForChanges()
+      await click(page, 'ezp-printing >>> #print-trigger')
+      await waitForPrintOptions(page)
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-success')
+
+      const [print] = await getCalls(page, 'Print')
+      expect(JSON.parse(print.body!)).toMatchObject({
+        fileurl: 'https://files.e2e.test/second.docx',
+        type: 'docx',
+        alias: 'second.docx',
+      })
+    })
+
+    it('hides the header of the print options that are already open', async () => {
+      const page = await openPrinting({ signedIn: true })
+      await goToPrintOptions(page)
+      // The card's own header: `>>> #header` would also match the user menu's.
+      const hasHeader = () =>
+        page.$eval(OPTIONS, (el) => el.shadowRoot!.querySelector('#header') !== null)
+      expect(await hasHeader()).toBe(true)
+
+      await page.$eval('ezp-printing', (el) => el.setAttribute('hideheader', ''))
+      await page.waitForChanges()
+
+      expect(await hasHeader()).toBe(false)
+    })
+  })
+
+  describe('taken off the page', () => {
+    it('a new element added afterwards picks the session up and prints', async () => {
+      const page = await openPrinting({ signedIn: true, printers: [PRINTERS[0]] })
+      await goToPrintOptions(page)
+
+      await page.evaluate(() => {
+        const old = document.querySelector('ezp-printing')!
+        const fresh = document.createElement('ezp-printing')
+        Array.from(old.attributes)
+          .filter((attr) => attr.name !== 'class')
+          .forEach((attr) => fresh.setAttribute(attr.name, attr.value))
+        old.replaceWith(fresh)
+      })
+      await page.waitForChanges()
+
+      await goToPrintOptions(page)
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-success')
+
+      expect((await getCalls(page, 'Print')).length).toBe(1)
+    })
+
+    it('stops following the system colour scheme', async () => {
+      const page = await openPrinting({ attrs: { appearance: 'system' } })
+      const errors: string[] = []
+      page.on('pageerror', (error: Error) => errors.push(error.message))
+      await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }])
+      await page.waitForChanges()
+
+      await page.evaluate(() => {
+        const element = document.querySelector('ezp-printing')!
+        ;(window as any).detached = element
+        element.replaceWith(document.createElement('div'))
+      })
+      await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }])
+      await page.waitForChanges()
+
+      const classes = await page.evaluate(() => Array.from((window as any).detached.classList))
+      expect(classes).toContain('dark')
+      expect(classes).not.toContain('light')
+      expect(errors).toEqual([])
     })
   })
 

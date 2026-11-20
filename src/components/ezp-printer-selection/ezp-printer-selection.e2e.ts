@@ -5,6 +5,7 @@ import {
   SELECT,
   click,
   currentStatus,
+  expireAccessToken,
   fileNames,
   getCalls,
   getStorage,
@@ -538,6 +539,172 @@ describe('ezp-printer-selection (e2e)', () => {
     })
   })
 
+  describe('pull-print queues that fail', () => {
+    const openQueue = async (options: Parameters<typeof openPrinting>[0] = {}) => {
+      const page = await openPrinting({ signedIn: true, printers: [PRINTERS[2]], ...options })
+      await goToPrintOptions(page)
+      return page
+    }
+    const DRIVER_ERROR = { body: { jobstatus: 1048579, jobstatusstring: 'DRIVER' } }
+
+    it('reports a driver error found while the job is polled', async () => {
+      const page = await openQueue({
+        statusResponses: [{ body: { jobstatus: 1246, jobstatusstring: 'SPOOLING' } }, DRIVER_ERROR],
+      })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+
+      expect(await textOf(page, `${STATUS} >>> #description`)).toBe('Print failed')
+      expect((await getCalls(page, 'Status')).length).toBe(2)
+    })
+
+    it('closing the error returns to the options in one step', async () => {
+      const page = await openQueue({ statusResponses: [DRIVER_ERROR] })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+      await clickStatusAction(page, 'secondary')
+      await page.waitForChanges()
+
+      expect(await currentStatus(page)).toBeNull()
+      expect(await printButtonDisabled(page)).toBe(false)
+      // Focus goes back to Print, not to the top of the host page.
+      const focused = await page.$eval(OPTIONS, (el) => el.shadowRoot!.activeElement?.id)
+      expect(focused).toBe('print')
+    })
+
+    it('retries the whole job once the queue has recovered', async () => {
+      const page = await openQueue({ statusResponses: [DRIVER_ERROR] })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+
+      await updateBackend(page, {
+        statusResponses: [{ body: { jobstatus: 0, jobstatusstring: 'PRINTED' } }],
+      })
+      await clickStatusAction(page, 'primary')
+      await waitForInstance(page, 'ezp-status', 'print-success')
+
+      expect(await textOf(page, `${STATUS} >>> #description`)).toBe('Ready to be released.')
+      expect((await getCalls(page, 'PrepareUpload')).length).toBe(2)
+      expect((await getCalls(page, 'Print')).length).toBe(2)
+    })
+
+    it('fails when the queue accepts the job without returning a job id', async () => {
+      const page = await openQueue({ printResponses: [{ body: {} }] })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+
+      expect((await getCalls(page, 'Status')).length).toBe(0)
+    })
+
+    it('treats the same error code on a direct printer as a plain failure', async () => {
+      const page = await openPrinting({
+        signedIn: true,
+        printers: [PRINTERS[0]],
+        statusResponses: [DRIVER_ERROR],
+      })
+      await goToPrintOptions(page)
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+      await clickStatusAction(page, 'secondary')
+      await page.waitForChanges()
+
+      expect(await currentStatus(page)).toBeNull()
+    })
+  })
+
+  describe('when the access token has expired', () => {
+    const tokenRequests = async (page: E2EPage) => (await getCalls(page, 'AccessToken')).length
+
+    it('fails the print, renews the token, and the retry goes through', async () => {
+      const page = await openPrinting({ signedIn: true, printers: [PRINTERS[0]] })
+      await goToPrintOptions(page, 'report.pdf')
+      const before = await tokenRequests(page)
+
+      await expireAccessToken(page)
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+
+      // The 401 is answered with a refresh, in the background.
+      await waitForCall(page, 'AccessToken', before + 1)
+      expect(await getStorage(page, 'refreshToken')).toBe('refresh-token-2')
+
+      await clickStatusAction(page, 'primary')
+      await waitForInstance(page, 'ezp-status', 'print-success')
+
+      const [print] = await getCalls(page, 'Print')
+      expect(print.headers.authorization).toBe('Bearer access-token-2')
+      expect(await tokenRequests(page)).toBe(before + 1)
+    })
+
+    it('renews the token once, however often the print options were opened', async () => {
+      const page = await openPrinting({ signedIn: true, printers: [PRINTERS[0]] })
+      await goToPrintOptions(page, 'report.pdf')
+      for (let i = 0; i < 2; i++) {
+        await click(page, `${OPTIONS} >>> #cancel`)
+        await click(page, 'ezp-printing >>> ezp-upload >>> #continue')
+        await click(page, 'ezp-printing >>> ezp-auth >>> ezp-dialog >>> #footer ezp-text-button')
+        await waitForPrintOptions(page)
+      }
+      const before = await tokenRequests(page)
+
+      await expireAccessToken(page)
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+      await waitForCall(page, 'AccessToken', before + 1)
+      await pause(300)
+
+      // Every extra request would spend the same refresh token again.
+      expect(await tokenRequests(page)).toBe(before + 1)
+    })
+
+    it('does not send a refresh for every request that fails together', async () => {
+      const page = await openPrinting({ signedIn: true, printers: [PRINTERS[0]] })
+      await goToPrintOptions(page, 'report.pdf')
+      await click(page, `${OPTIONS} >>> #cancel`)
+      const before = await tokenRequests(page)
+      const seen = (await getCalls(page)).length
+
+      // Slow answers: the options card sends its next requests with the old
+      // token before the refresh started by the first 401 has come back.
+      await expireAccessToken(page)
+      await updateBackend(page, { delay: 80 })
+      await click(page, 'ezp-printing >>> ezp-upload >>> #continue')
+      await click(page, 'ezp-printing >>> ezp-auth >>> ezp-dialog >>> #footer ezp-text-button')
+      await waitForPrintOptions(page)
+      await pause(500)
+
+      const reopened = (await getCalls(page)).slice(seen)
+      const refused = reopened.filter(
+        (call) => call.headers.authorization === 'Bearer access-token-1',
+      ).length
+      expect(refused).toBeGreaterThan(1)
+      expect(await tokenRequests(page)).toBeLessThan(before + refused)
+    })
+
+    it('stops asking when the account service itself answers 401', async () => {
+      const page = await openPrinting({ signedIn: true, printers: [PRINTERS[0]] })
+      await goToPrintOptions(page, 'report.pdf')
+      const before = await tokenRequests(page)
+
+      await expireAccessToken(page)
+      await updateBackend(page, {
+        errors: { AccessToken: { status: 401, body: { error: 'invalid_client' } } },
+      })
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+      await pause(500)
+
+      // The interceptor sees that 401 too; answering it with another refresh
+      // would never end.
+      expect(await tokenRequests(page)).toBe(before + 1)
+    })
+  })
+
   describe('printing a document by URL', () => {
     const byUrl = {
       trigger: 'button',
@@ -601,6 +768,81 @@ describe('ezp-printer-selection (e2e)', () => {
       expect(prints[1].fileurl).toBeUndefined()
       await waitForCall(page, 'Status')
       expect((await getCalls(page, 'Status'))[0].query).toBe('?id=job-9')
+    })
+
+    it('reports a failure when the print request cannot be sent', async () => {
+      const page = await openByUrl({ failing: ['Print'] })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+
+      expect((await getCalls(page, 'Status')).length).toBe(0)
+    })
+
+    it('reports a failure when no job id comes back', async () => {
+      const page = await openByUrl({ printResponses: [{ body: {} }] })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+    })
+
+    it('reports a failure when the job fails on the printer', async () => {
+      const page = await openByUrl({
+        statusResponses: [{ body: { jobstatus: 3011, jobstatusstring: 'FAILED' } }],
+      })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+    })
+
+    it('reports a failure when the job status cannot be read', async () => {
+      const page = await openByUrl({ failing: ['Status'] })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+    })
+
+    it('retries a failed print from the URL again', async () => {
+      const page = await openByUrl({ failing: ['Print'] })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-failed')
+
+      await updateBackend(page, { failing: [] })
+      await clickStatusAction(page, 'primary')
+      await waitForInstance(page, 'ezp-status', 'print-success')
+
+      const prints = (await getCalls(page, 'Print')).map(jsonBody)
+      expect(prints.length).toBe(2)
+      expect(prints[1].fileurl).toBe('https://files.e2e.test/doc.pdf')
+    })
+
+    it('announces a pull-print job as ready, and it stays that way', async () => {
+      const page = await openByUrl({
+        printers: [PRINTERS[2]],
+        statusResponses: [{ body: { jobstatus: 3011, jobstatusstring: 'FAILED' } }],
+      })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'print-success')
+      expect(await textOf(page, `${STATUS} >>> #description`)).toBe('Ready to be released.')
+
+      // A queue only holds the job; what the printer later does with it must
+      // not turn the card the user is reading into a failure.
+      await pause(500)
+      expect(await currentStatus(page)).toBe('print-success')
+    })
+
+    it('shows a driver error for a pull-print queue that rejects the URL job', async () => {
+      const page = await openByUrl({
+        printers: [PRINTERS[2]],
+        printResponses: [{ status: 500, body: { code: 500 } }],
+      })
+
+      await click(page, `${OPTIONS} >>> #print`)
+      await waitForInstance(page, 'ezp-status', 'hub-driver-error')
+
+      expect(await textOf(page, `${STATUS} >>> #description`)).toBe('Print failed')
     })
 
     it('ends the flow when the options are cancelled, as there is no upload step to go back to', async () => {

@@ -34,7 +34,7 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 - [src/components/ezp-status/ezp-status.spec.tsx](src/components/ezp-status/ezp-status.spec.tsx)
   — conditional rendering + event payloads (`newSpecPage`).
 
-**E2E tests (155):** real headless Chromium, real components/services/stores,
+**E2E tests (217):** real headless Chromium, real components/services/stores,
 faked network (see [E2E harness](#e2e-harness)).
 
 - [ezp-printing.e2e.ts](src/components/ezp-printing/ezp-printing.e2e.ts) — the
@@ -42,8 +42,15 @@ faked network (see [E2E harness](#e2e-harness)).
   language (attribute, runtime switch, account language), theme/appearance,
   API host attributes, session restore + reload, the public methods
   (`open`, `logOut`, `checkAuth`, `getAuthUri`, `getSasUri`,
-  `setAuthRefreshToken`), `filedata`, the OAuth redirect-page role, and
-  `printFinished`.
+  `setAuthRefreshToken`), `filedata`, host pre-authentication through to a
+  print, attributes changed after mount, removal from the page, the OAuth
+  redirect-page role, and `printFinished`.
+- [ezp-printing.keyboard.e2e.ts](src/components/ezp-printing/ezp-printing.keyboard.e2e.ts)
+  — the journey with the keyboard alone: files to finished print, Retry on a
+  failed print, and focus staying out of whatever a dialog or card covers.
+- [ezp-printing.layout.e2e.ts](src/components/ezp-printing/ezp-printing.layout.e2e.ts)
+  — the journey on phone and tablet screens: every step fits between the edges,
+  Print stays on screen, and the last option can still be set.
 - [ezp-auth.e2e.ts](src/components/ezp-auth/ezp-auth.e2e.ts) — sign-in: the
   authorize URL and PKCE challenge, code → token exchange (verifier matches the
   challenge), rejection of codes from a wrong origin or window, token storage
@@ -55,11 +62,17 @@ faked network (see [E2E harness](#e2e-harness)).
   — the print options and the print itself: printer preselection and remembered
   settings, capability-driven options, the exact `Print` request body, upload →
   print → status polling, multi-file / partial / failed / retried / cancelled
-  jobs, pull-print queues, print-by-URL (incl. the expired-file reprint), and
+  jobs, an access token that expires mid-session (one refresh, then the retry
+  works), pull-print queues and their driver errors, print-by-URL (incl. its
+  failures and the expired-file reprint), and
   leaving the card.
 - [ezp-user-menu.e2e.ts](src/components/ezp-user-menu/ezp-user-menu.e2e.ts) —
   account links, theme and appearance switching, logout (token revoked, session
   cleared, printer settings kept).
+- [ezp-file-name.e2e.ts](src/components/ezp-file-name/ezp-file-name.e2e.ts) —
+  a file name at a real width: middle clipping, the tooltip (delay, hover,
+  focus, Escape, placement and flipping, closing on scroll), click/tap to
+  expand, touch devices.
 - [ezp-select](src/components/ezp-select/ezp-select.e2e.ts),
   [ezp-stepper](src/components/ezp-stepper/ezp-stepper.e2e.ts),
   [ezp-dialog](src/components/ezp-dialog/ezp-dialog.e2e.ts),
@@ -89,7 +102,8 @@ expect(jsonBody(print).printerid).toBe('printer-1')
 - **Shaping the backend** — options set the printers, their capabilities, the
   supported file types, the user, queued `Print`/`Status` answers
   (`printResponses`, `statusResponses`), routes that fail at network level
-  (`failing`) and seeded storage. `updateBackend` changes them mid-test.
+  (`failing`) and seeded storage. `updateBackend` changes them mid-test, and
+  `expireAccessToken` makes the next API call answer 401.
 - **Sign-in** — `window.open` returns a hidden same-page window (or `null` with
   `popup: 'blocked'`); `postAuthCode` then delivers the code as the popup would.
   The fake token endpoint only accepts `VALID_CODE` and refresh tokens it issued.

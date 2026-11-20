@@ -36,33 +36,41 @@ export class EzpPrintService {
     authStore.state.refreshToken = storage.getRefreshToken() ?? ''
   }
 
-  registerFetchInterceptor() {
-    fetchIntercept.register({
-      request: (url, config) => {
-        // Modify the url or config here
-        return [url, config]
-      },
-      requestError: (error) => {
-        // Called when an error occured during another 'request' interceptor call
-        return Promise.reject(error)
-      },
-      // check for response status here
+  /**
+   * Renew the access token when any request is answered 401. Returns the
+   * function that removes the interceptor again: `fetch-intercept` keeps every
+   * registration, so one that is never removed answers each later 401 once more.
+   */
+  registerFetchInterceptor(): () => void {
+    return fetchIntercept.register({
       response: (response) => {
-        if (response.status === 401) {
-          if (authStore.state.refreshToken === '') {
-            return response
-          }
-          const authService = new EzpAuthorizationService(this.redirectURI, this.clientID)
-          authService.refreshTokens()
+        if (response.status === 401 && authStore.state.refreshToken !== '') {
+          this.refreshOnce()
         }
-        // Modify the reponse object
         return response
       },
-      responseError: (error) => {
-        // Handle a fetch error
-        return Promise.reject(error)
-      },
     })
+  }
+
+  /**
+   * One refresh at a time, shared by every interceptor on the page. Several
+   * requests failing together must not each spend the same refresh token, and
+   * a 401 from the token endpoint itself (also seen by the interceptor) must
+   * not start the next refresh — that never ends.
+   */
+  private static refreshInFlight?: Promise<void>
+
+  private refreshOnce() {
+    if (EzpPrintService.refreshInFlight) return
+    EzpPrintService.refreshInFlight = new EzpAuthorizationService(this.redirectURI, this.clientID)
+      .refreshTokens()
+      .catch(() => {
+        // Best-effort: the request that got the 401 has already failed, and
+        // the next one tries again.
+      })
+      .finally(() => {
+        EzpPrintService.refreshInFlight = undefined
+      })
   }
 
   getPrinterList(accessToken: string) {

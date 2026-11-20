@@ -1,5 +1,6 @@
 import printStore, { EzpPrintService } from './print'
-import authStore from './auth'
+import authStore, { EzpAuthorizationService } from './auth'
+import fetchIntercept from 'fetch-intercept'
 
 /** Minimal fetch Response stub exposing the fields the service reads. */
 function jsonResponse(body: unknown, status = 200) {
@@ -131,5 +132,82 @@ describe('EzpPrintService request shaping', () => {
     expect(init.headers).toEqual({ Authorization: 'Bearer tok' })
     // getConfig deliberately returns the Response itself (callers read .ok).
     expect(response).toBe(rawResponse)
+  })
+})
+
+describe('EzpPrintService 401 interceptor', () => {
+  let register: jest.SpyInstance
+  let refreshTokens: jest.SpyInstance
+  let settleRefresh: () => void
+  const unregister = jest.fn()
+
+  /** The `response` handler the service handed to fetch-intercept. */
+  const onResponse = (status: number) =>
+    register.mock.calls[register.mock.calls.length - 1][0].response({ status })
+
+  beforeEach(() => {
+    printStore.state.printApiHostUrl = 'printapi.test'
+    authStore.state.authApiHostUrl = 'account.test'
+    authStore.state.refreshToken = 'RT'
+    register = jest.spyOn(fetchIntercept, 'register').mockReturnValue(unregister)
+    refreshTokens = jest
+      .spyOn(EzpAuthorizationService.prototype, 'refreshTokens')
+      .mockImplementation(() => new Promise<void>((resolve) => (settleRefresh = resolve)))
+  })
+
+  afterEach(() => jest.restoreAllMocks())
+
+  it('hands back the function that removes the interceptor', () => {
+    expect(new EzpPrintService('https://r', 'client').registerFetchInterceptor()).toBe(unregister)
+  })
+
+  it('refreshes on a 401 and passes the response through', async () => {
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+
+    expect(onResponse(401)).toEqual({ status: 401 })
+    expect(refreshTokens).toHaveBeenCalledTimes(1)
+
+    settleRefresh()
+    await new Promise((resolve) => setTimeout(resolve))
+  })
+
+  it('leaves other statuses, and a 401 without a session, alone', () => {
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+
+    onResponse(200)
+    onResponse(403)
+    authStore.state.refreshToken = ''
+    onResponse(401)
+
+    expect(refreshTokens).not.toHaveBeenCalled()
+  })
+
+  it('runs one refresh at a time, across service instances', async () => {
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+    onResponse(401)
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+    // Also what a 401 from the token endpoint itself looks like.
+    onResponse(401)
+    expect(refreshTokens).toHaveBeenCalledTimes(1)
+
+    // Once it has settled, the next 401 may refresh again.
+    settleRefresh()
+    await new Promise((resolve) => setTimeout(resolve))
+    onResponse(401)
+    expect(refreshTokens).toHaveBeenCalledTimes(2)
+
+    settleRefresh()
+    await new Promise((resolve) => setTimeout(resolve))
+  })
+
+  it('survives a refresh that fails', async () => {
+    refreshTokens.mockImplementation(() => Promise.reject(new TypeError('Failed to fetch')))
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+
+    onResponse(401)
+    await new Promise((resolve) => setTimeout(resolve))
+    onResponse(401)
+
+    expect(refreshTokens).toHaveBeenCalledTimes(2)
   })
 })

@@ -102,6 +102,20 @@ export class EzpPrinting {
     }
   }
 
+  /** The host restyling a mounted component, e.g. with its own dark mode. The
+   *  store is what renders — and what the user menu changes — so a later choice
+   *  in the menu still applies on top of this. */
+  @Watch('theme')
+  watchTheme(newValue: ThemeTypes) {
+    // A removed attribute goes back to the default, as on first load.
+    userStore.state.theme = newValue || 'cyan'
+  }
+
+  @Watch('appearance')
+  watchAppearance(newValue: AppearanceTypes) {
+    userStore.state.appearance = newValue || 'system'
+  }
+
   @Watch('language')
   watchLanguage(newValue: string, oldValue: string) {
     if (newValue !== oldValue && newValue.length > 0) {
@@ -493,7 +507,13 @@ export class EzpPrinting {
         {this.trigger === 'custom' ? (
           <slot></slot>
         ) : this.trigger === 'file' ? (
-          <ezp-upload />
+          /* Out of reach while a dialog or the print options cover it: without
+             this, Tab walks every control of the card behind the backdrop
+             before it gets to the one on top. Seamless print options cover
+             nothing — they sit below the card, which stays in use. */
+          <ezp-upload
+            inert={this.authOpen || this.noDocumentOpen || (this.printOpen && !this.seamless)}
+          />
         ) : (
           this.trigger === 'button' && (
             <ezp-icon-button

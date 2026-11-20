@@ -53,6 +53,7 @@ export class EzpPrinterSelection {
   private fileExtension = ''
   private printService: EzpPrintService
   private unsubscribeLanguage?: () => void
+  private unregisterFetchInterceptor?: () => void
   public duplexOptions = [
     {
       id: 1,
@@ -78,6 +79,9 @@ export class EzpPrinterSelection {
     },
   ]
   private printButton?: HTMLButtonElement
+  /** Closing an error card removes the button that had focus; the form under
+   *  it is usable again only after the next render. */
+  private focusPrintAfterRender = false
 
   /**
    *
@@ -239,6 +243,7 @@ export class EzpPrinterSelection {
         break
       case 'print-failed':
         this.printFailed = false
+        this.focusPrintAfterRender = true
         break
       case 'print-timeout':
         // The job may still be completing; closing just dismisses the flow.
@@ -247,6 +252,7 @@ export class EzpPrinterSelection {
         break
       case 'hub-driver-error':
         this.hubDriverError = false
+        this.focusPrintAfterRender = true
         break
       case 'not-supported':
         this.noPrinters = false
@@ -477,11 +483,9 @@ export class EzpPrinterSelection {
           this.printTimedOut = true
         } else {
           this.failedFiles.push(this.files[0].name)
+          // Also for a queue's driver error: both cards read the same, and
+          // setting `hubDriverError` as well left a second one to close.
           this.printFailed = true
-          // Check if this is a hub driver error
-          if (error.message && error.message.includes('Hub printer driver error')) {
-            this.hubDriverError = true
-          }
         }
       }
       if (hubTimeout) clearTimeout(hubTimeout)
@@ -772,7 +776,7 @@ export class EzpPrinterSelection {
   async connectedCallback() {
     this.unsubscribeLanguage = subscribeToLanguageChange(this)
     this.printService = new EzpPrintService(this.redirectURI, this.clientID)
-    this.printService.registerFetchInterceptor()
+    this.unregisterFetchInterceptor = this.printService.registerFetchInterceptor()
 
     try {
       // A missing display name must not stop the user from printing.
@@ -885,8 +889,17 @@ export class EzpPrinterSelection {
     }
   }
 
+  componentDidRender() {
+    if (!this.focusPrintAfterRender) return
+    this.focusPrintAfterRender = false
+    // Back to where the user was, rather than to the top of the host page.
+    this.printButton?.focus()
+  }
+
   disconnectedCallback() {
     this.unsubscribeLanguage?.()
+    this.unregisterFetchInterceptor?.()
+    this.unregisterFetchInterceptor = undefined
   }
 
   /**
@@ -1043,6 +1056,11 @@ export class EzpPrinterSelection {
           ? [this.filename]
           : []
     const fileCount = fileNames.length
+    // A status card lies over the whole box. What is under it must be out of
+    // reach of the keyboard and of assistive technology too, not only of the
+    // pointer — otherwise Tab walks the covered form.
+    const status = this.loading || this.printStopped ? null : this.renderStatus()
+    const covered = Boolean(status)
 
     return this.loading ? (
       <ezp-status
@@ -1053,9 +1071,9 @@ export class EzpPrinterSelection {
     ) : (
       <Host class={{ seamless: this.seamless }}>
         <div id="box" data-backdrop-surface>
-          {!this.printStopped && this.renderStatus()}
+          {status}
           {!this.hideheader && (
-            <div id="header">
+            <div id="header" inert={covered}>
               <div id="title">
                 <ezp-label weight="heavy" text={i18next.t('printer_selection.print')} />
                 {!this.notSupported && fileCount > 0 && (
@@ -1084,7 +1102,7 @@ export class EzpPrinterSelection {
               </div>
             </div>
           )}
-          <div id="body">
+          <div id="body" inert={covered}>
             {!this.notSupported && fileNames.length > 0 && (
               <div id="files-card">
                 <div id="files">
@@ -1266,7 +1284,7 @@ export class EzpPrinterSelection {
               />
             </div>
           </div>
-          <div id="footer">
+          <div id="footer" inert={covered}>
             <ezp-text-button
               type="button"
               level="secondary"

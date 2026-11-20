@@ -56,6 +56,9 @@
   );
   color: var(--ezp-core-foreground-primary);
   margin: var(--ezp-printerSelection-box-margin, auto);
+  /* On a screen narrower than the card plus the backdrop's padding (most
+     phones), give way rather than run off the right edge. */
+  max-width: 100%;
   padding: var(--ezp-printerSelection-box-padding, 0);
   position: relative;
   width: var(--ezp-printerSelection-width, 384px);
