@@ -154,8 +154,19 @@ export class EzpAuthorizationService {
     } catch {
       // A provider that fails has no token to give: same as `null`.
     }
-    // Replaced or removed while it was being asked: its answer no longer counts.
-    if (provider !== tokenProvider) return
+    if (provider !== tokenProvider) {
+      // Replaced or withdrawn while it was being asked, so its answer no
+      // longer counts. The caller, say a flow's session check, still needs
+      // what applies now. Returning without a token would have that flow ask
+      // a user who is signed in on the host to sign in again.
+      if (tokenProvider) return this.renewAccessToken()
+      // Withdrawn. Carry on as without a provider, which refreshes an empty
+      // token from a stored session of the widget's own, and only then.
+      if (authStore.state.accessToken === '' && authStore.state.refreshToken !== '') {
+        return this.renewAccessToken()
+      }
+      return
+    }
 
     if (typeof token === 'string' && token !== '') {
       providedToken = token

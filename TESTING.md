@@ -34,7 +34,7 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 - [src/components/ezp-status/ezp-status.spec.tsx](src/components/ezp-status/ezp-status.spec.tsx)
   — conditional rendering + event payloads (`newSpecPage`).
 
-**E2E tests (230):** real headless Chromium, real components/services/stores,
+**E2E tests (232):** real headless Chromium, real components/services/stores,
 faked network (see [E2E harness](#e2e-harness)).
 
 - [ezp-printing.e2e.ts](src/components/ezp-printing/ezp-printing.e2e.ts) — the
@@ -54,7 +54,8 @@ faked network (see [E2E harness](#e2e-harness)).
 - [ezp-printing.token-provider.e2e.ts](src/components/ezp-printing/ezp-printing.token-provider.e2e.ts)
   covers a host page lending its access token through `tokenProvider`. Printing
   without a popup or stored session, a provider still answering when the flow
-  starts, falling back to the normal sign-in, a new token on the next flow,
+  starts (only the processing status shows meanwhile) or replaced while it
+  answers, falling back to the normal sign-in, a new token on the next flow,
   which 401s ask for a new one, setting and removing the provider, `logOut`,
   and `hidelogin` with `trigger="custom"`.
 - [ezp-auth.e2e.ts](src/components/ezp-auth/ezp-auth.e2e.ts) — sign-in: the

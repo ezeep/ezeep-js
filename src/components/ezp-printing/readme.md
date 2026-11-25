@@ -42,6 +42,11 @@ What the widget does with it
   print options, whatever the `trigger` (`custom` included).
 - `logOut()` signs the user out of the widget only. The next flow asks the
   provider again, so have it answer `null` to keep the user signed out.
+- Assign the property once. Each new function makes the widget check the
+  session again, which asks the provider and calls the print API, so a
+  framework that passes a fresh arrow function on every render pays for a
+  check on every render. Replacing it during a flow is safe, as the flow waits
+  for the new one.
 - Setting `tokenProvider` to `undefined`, or taking the element off the page,
   makes the widget forget that provider and, unless another element on the
   page still has one, the token it gave.
