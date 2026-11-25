@@ -138,6 +138,69 @@ describe('ezp-printing with a host token provider (e2e)', () => {
     expect(printers.headers.authorization).toBe(`Bearer ${HOST_TOKEN}`)
   })
 
+  it('shows only the processing status until the provider answers, without hidelogin', async () => {
+    const page = await openPrinting({
+      hostTokens: [HOST_TOKEN],
+      tokenProvider: { answer: null },
+      printers: [PRINTERS[0]],
+    })
+    await setProvider(page, { answer: HOST_TOKEN, hold: true })
+    const asked = await providerCalls(page)
+    await watchSignInStep(page)
+
+    await continueWith(page)
+    await waitForProviderCall(page, asked + 1)
+    await waitFor(page, `${AUTH} >>> ezp-status`)
+
+    // Undecided: the sign-in dialog would ask a user who may well be signed in.
+    expect(await page.find(`${AUTH} >>> ezp-dialog`)).toBeNull()
+    expect(await signInScreens(page)).toEqual(['status'])
+
+    await setProvider(page, { hold: false })
+    await releaseProvider(page)
+    // Signed in now. Without hidelogin the dialog asks to continue, as for any
+    // signed-in user, and its button goes straight on.
+    await waitForInstance(page, 'ezp-dialog', 'login')
+    expect(await signInScreens(page)).toEqual(['status', 'dialog:login'])
+    await click(page, DIALOG_ACTION)
+    await waitForPrintOptions(page)
+    expect((await getPopup(page)).opens).toBe(0)
+  })
+
+  it('waits for a provider the host replaced while it was being asked', async () => {
+    const page = await openPrinting({
+      hostTokens: [HOST_TOKEN],
+      tokenProvider: { answer: null },
+      printers: [PRINTERS[0]],
+      attrs: { hidelogin: true },
+    })
+    await setProvider(page, { answer: HOST_TOKEN, hold: true })
+    const asked = await providerCalls(page)
+    await continueWith(page)
+    await waitForProviderCall(page, asked + 1)
+
+    // The host assigns a new function, say after an organization switch or on
+    // a re-render, and it answers after the one it replaced.
+    await page.$eval(
+      'ezp-printing',
+      (el: any, token) =>
+        (el.tokenProvider = () => new Promise((resolve) => setTimeout(() => resolve(token), 1500))),
+      HOST_TOKEN,
+    )
+    await releaseProvider(page)
+
+    // Whichever comes first: the pop-up, or the print options.
+    await page.waitForFunction(
+      () =>
+        (window as any).__ezpMock.popupOpens > 0 ||
+        !!document.querySelector('ezp-printing')!.shadowRoot!.querySelector('ezp-printer-selection'),
+    )
+    expect((await getPopup(page)).opens).toBe(0)
+    await waitForPrintOptions(page)
+    const [printers] = await getCalls(page, 'GetPrinter')
+    expect(printers.headers.authorization).toBe(`Bearer ${HOST_TOKEN}`)
+  })
+
   it.each([
     ['answers null', null],
     ['rejects', 'reject' as const],

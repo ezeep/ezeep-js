@@ -305,6 +305,56 @@ describe('EzpAuthorizationService renewAccessToken', () => {
     await renewed
 
     expect(authStore.state.accessToken).toBe('')
+    // Nothing stored to refresh with: the token endpoint is left alone.
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('refreshes a stored session of its own when the provider is withdrawn while asked', async () => {
+    authStore.state.refreshToken = 'own-RT'
+    let answer: (token: string) => void = () => undefined
+    setTokenProvider(owner, () => new Promise<string>((resolve) => (answer = resolve)))
+
+    const renewed = newService().renewAccessToken()
+    setTokenProvider(owner)
+    answer('HOST')
+    await renewed
+
+    // As without a provider: an empty token is refreshed from the stored session.
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(fetchMock.mock.calls[0][1].body).toContain('refresh_token=own-RT')
+    expect(authStore.state.accessToken).toBe('AT')
+  })
+
+  it('gives the caller the new provider’s token when it was replaced while asked', async () => {
+    let answerOld: (token: string) => void = () => undefined
+    let answerNew: (token: string) => void = () => undefined
+    const replaced = jest.fn(() => new Promise<string>((resolve) => (answerOld = resolve)))
+    const current = jest.fn(() => new Promise<string>((resolve) => (answerNew = resolve)))
+    setTokenProvider(owner, replaced)
+
+    // A flow's check is waiting on this one.
+    let settled = false
+    const renewed = newService()
+      .renewAccessToken()
+      .then(() => {
+        settled = true
+        return authStore.state.accessToken
+      })
+    // The host assigns a new function, which is asked straight away (the
+    // element's watcher re-checks), and answers after the replaced one.
+    setTokenProvider(owner, current)
+    const recheck = newService().renewAccessToken()
+    answerOld('OLD')
+    await new Promise((resolve) => setTimeout(resolve))
+
+    // Not done without a token: the flow waits for the new provider.
+    expect(settled).toBe(false)
+    answerNew('NEW')
+    expect(await renewed).toBe('NEW')
+    await recheck
+    expect(authStore.state.isAuthorized).toBe(true)
+    // Both callers shared the one question to the new provider.
+    expect(current).toHaveBeenCalledTimes(1)
   })
 
   it('withdrawing the provider drops its token, but not one of the widget’s own', async () => {
