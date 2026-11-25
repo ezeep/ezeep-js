@@ -1,5 +1,5 @@
 import printStore, { EzpPrintService } from './print'
-import authStore, { EzpAuthorizationService } from './auth'
+import authStore, { EzpAuthorizationService, setTokenProvider } from './auth'
 import fetchIntercept from 'fetch-intercept'
 
 /** Minimal fetch Response stub exposing the fields the service reads. */
@@ -142,8 +142,8 @@ describe('EzpPrintService 401 interceptor', () => {
   const unregister = jest.fn()
 
   /** The `response` handler the service handed to fetch-intercept. */
-  const onResponse = (status: number) =>
-    register.mock.calls[register.mock.calls.length - 1][0].response({ status })
+  const onResponse = (status: number, url?: string) =>
+    register.mock.calls[register.mock.calls.length - 1][0].response({ status, url })
 
   beforeEach(() => {
     printStore.state.printApiHostUrl = 'printapi.test'
@@ -198,6 +198,47 @@ describe('EzpPrintService 401 interceptor', () => {
 
     settleRefresh()
     await new Promise((resolve) => setTimeout(resolve))
+  })
+
+  it('leaves a 401 from a host other than the print API and account service alone', async () => {
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+
+    onResponse(401, 'https://host-app.test/api/me')
+    expect(refreshTokens).not.toHaveBeenCalled()
+
+    // fetch-intercept attaches the request: its URL counts when the response has none.
+    register.mock.calls[0][0].response({
+      status: 401,
+      url: '',
+      request: { url: 'https://host-app.test/api/me' },
+    })
+    expect(refreshTokens).not.toHaveBeenCalled()
+
+    onResponse(401, 'https://account.test/v1/users/me')
+    expect(refreshTokens).toHaveBeenCalledTimes(1)
+    settleRefresh()
+    await new Promise((resolve) => setTimeout(resolve))
+
+    onResponse(401, 'https://printapi.test/sfapi/GetPrinter/')
+    expect(refreshTokens).toHaveBeenCalledTimes(2)
+    settleRefresh()
+    await new Promise((resolve) => setTimeout(resolve))
+  })
+
+  it('with a host token provider, asks it on a 401, refresh token or not', async () => {
+    const owner = {}
+    const provider = jest.fn(() => Promise.resolve('HOST'))
+    setTokenProvider(owner, provider)
+    authStore.state.refreshToken = ''
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+
+    onResponse(401, 'https://printapi.test/sfapi/GetPrinter/')
+    await new Promise((resolve) => setTimeout(resolve))
+
+    expect(provider).toHaveBeenCalledTimes(1)
+    expect(refreshTokens).not.toHaveBeenCalled()
+    expect(authStore.state.accessToken).toBe('HOST')
+    setTokenProvider(owner)
   })
 
   it('survives a refresh that fails', async () => {
