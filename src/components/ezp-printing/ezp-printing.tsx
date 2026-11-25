@@ -10,7 +10,14 @@ import {
   EventEmitter,
   Event,
 } from '@stencil/core'
-import authStore, { EzpAuthorizationService, sendCodeToParentWindow } from '../../services/auth'
+import authStore, {
+  EzpAuthorizationService,
+  TokenProvider,
+  hasTokenProvider,
+  sendCodeToParentWindow,
+  setPendingAuthCheck,
+  setTokenProvider,
+} from '../../services/auth'
 import printStore, { EzpPrintService } from '../../services/print'
 import userStore, { EzpUserService } from '../../services/user'
 import config from '../../shared/config.json'
@@ -38,8 +45,6 @@ export class EzpPrinting {
   private systemAppearanceQuery?: MediaQueryList
   private systemAppearanceListener?: (event: MediaQueryListEvent) => void
   private unsubscribeLanguage?: () => void
-  // De-dupes an in-flight token refresh so concurrent callers share one request.
-  private refreshInFlight?: Promise<void>
 
   @Prop() clientid: string
   @Prop() redirecturi: string
@@ -60,6 +65,13 @@ export class EzpPrinting {
   @Prop() code: string
   @Prop() filedata: string
   @Prop() seamless: boolean = false
+  /**
+   * Lets a host page that already has an access token for its signed-in user
+   * lend it to the widget, so the user is not asked to sign in again. A
+   * function returning a promise of the token, or of `null` when nobody is
+   * signed in. Set it as a JS property; it has no attribute. See the readme.
+   */
+  @Prop() tokenProvider?: TokenProvider
 
   /**
    *
@@ -76,6 +88,13 @@ export class EzpPrinting {
   @State() files: File[] = []
 
   /** Watchers */
+
+  @Watch('tokenProvider')
+  watchTokenProvider(newValue?: TokenProvider) {
+    setTokenProvider(this, newValue)
+    // Before the first load, componentWillLoad runs the first check.
+    if (this.auth) this.checkAuth()
+  }
 
   @Watch('filedata')
   watchFileData(newValue: string, oldValue: string) {
@@ -269,6 +288,10 @@ export class EzpPrinting {
 
   @Method()
   async open() {
+    // With a host token provider, check the session afresh: the host's user
+    // may have signed in, out or switched since the last check. ezp-auth waits
+    // for this check before it decides whether sign-in is needed.
+    if (hasTokenProvider()) setPendingAuthCheck(this.checkAuth())
     // Always show auth dialog when files are uploaded to give users cancel option
     // Even if already authenticated, show the auth component for consistency
     this.authOpen = true
@@ -276,34 +299,39 @@ export class EzpPrinting {
 
   @Method()
   async logOut() {
+    // Revokes a session of the widget's own. Under a host token provider there
+    // is usually none, and then nothing is sent.
     this.auth.revokeRefreshToken()
     storage.clearSession()
+    // The access token is in memory only: without this, the next check finds
+    // it and the user is signed in again until it expires.
+    authStore.state.accessToken = ''
+    authStore.state.refreshToken = ''
+    authStore.state.isAuthorized = false
     this.printOpen = false
   }
 
   /**
    * Make sure an access token is available before a token-dependent call. The
    * token is in-memory only, so after a reload it must be refreshed from the
-   * persisted refresh token first. Returns a shared in-flight promise so
-   * concurrent callers don't fire duplicate refreshes, and swallows a transient
-   * failure (the caller then falls through to the unauthorized path; the
+   * persisted refresh token first. With a host token provider the provider is
+   * asked every time instead, so each flow picks up the host's current token
+   * (the host's user may have switched organization, say). Concurrent callers
+   * share one request (see `renewAccessToken`), and a transient failure is
+   * swallowed (the caller then falls through to the unauthorized path; the
    * periodic refresh and next checkAuth retry).
    */
   private ensureAccessToken(): Promise<void> {
-    if (authStore.state.accessToken !== '' || authStore.state.refreshToken === '' || !this.auth) {
+    if (!this.auth) return Promise.resolve()
+    if (
+      !hasTokenProvider() &&
+      (authStore.state.accessToken !== '' || authStore.state.refreshToken === '')
+    ) {
       return Promise.resolve()
     }
-    if (!this.refreshInFlight) {
-      this.refreshInFlight = this.auth
-        .refreshTokens()
-        .catch(() => {
-          // Transient token-endpoint failure — leave the token empty.
-        })
-        .finally(() => {
-          this.refreshInFlight = undefined
-        })
-    }
-    return this.refreshInFlight
+    return this.auth.renewAccessToken().catch(() => {
+      // Transient token-endpoint failure: leave the token empty.
+    })
   }
 
   @Method()
@@ -361,7 +389,11 @@ export class EzpPrinting {
     // runs and the periodic refresh retries.
     await this.ensureAccessToken()
 
-    if (storage.hasIsAuthorized()) {
+    // With a host token provider the session is the host's: what an earlier
+    // visit left in localStorage says nothing about it.
+    const persistsSession = !hasTokenProvider()
+
+    if (persistsSession && storage.hasIsAuthorized()) {
       authStore.state.isAuthorized = storage.getIsAuthorized()
     }
 
@@ -380,7 +412,7 @@ export class EzpPrinting {
         authStore.state.isAuthorized = false
       })
 
-    storage.setIsAuthorized(authStore.state.isAuthorized)
+    if (persistsSession) storage.setIsAuthorized(authStore.state.isAuthorized)
 
     return authStore.state.isAuthorized
   }
@@ -411,12 +443,16 @@ export class EzpPrinting {
   refreshTokensPeriodically(seconds: number) {
     const authService = new EzpAuthorizationService(this.redirecturi, this.clientid)
     this.tokenRefreshInterval = setInterval(() => {
-      authService.refreshTokens()
+      authService.renewAccessToken().catch(() => {
+        // Best-effort: the next interval, or the next flow, tries again.
+      })
     }, seconds * 1000)
   }
 
   connectedCallback() {
     this.unsubscribeLanguage = subscribeToLanguageChange(this)
+    // Also on a return to the page after a move: removal withdraws it.
+    if (this.tokenProvider) setTokenProvider(this, this.tokenProvider)
   }
 
   async componentWillLoad() {
@@ -447,6 +483,8 @@ export class EzpPrinting {
     }
 
     this.auth = new EzpAuthorizationService(this.redirecturi, this.clientid)
+    // Before the first check, in case it was set after connecting.
+    if (this.tokenProvider) setTokenProvider(this, this.tokenProvider)
 
     sendCodeToParentWindow()
     initi18n(this.language)
@@ -487,6 +525,9 @@ export class EzpPrinting {
       this.systemAppearanceQuery.removeEventListener('change', this.systemAppearanceListener)
     }
     this.unsubscribeLanguage?.()
+    // A provider must not outlive its element: another widget added later
+    // would otherwise go on using it.
+    setTokenProvider(this)
   }
 
   /**
