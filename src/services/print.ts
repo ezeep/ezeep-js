@@ -224,7 +224,27 @@ function isOwnApi(response: Response): boolean {
   } catch {
     return true
   }
-  return host === printStore.state.printApiHostUrl || host === authStore.state.authApiHostUrl
+  return (
+    host === hostOf(printStore.state.printApiHostUrl) ||
+    host === hostOf(authStore.state.authApiHostUrl)
+  )
+}
+
+/**
+ * The host of a configured API address, as `URL` writes it: lower case and
+ * without a default port. The address may come without a scheme and with a
+ * path or a trailing slash, like `printapi.example.com/`. Requests are made
+ * with it as it is; this is only for comparing.
+ */
+function hostOf(configured: string): string | undefined {
+  if (!configured) return undefined
+  try {
+    return new URL(
+      /^[a-z][a-z\d+.-]*:\/\//i.test(configured) ? configured : `https://${configured}`,
+    ).host
+  } catch {
+    return undefined
+  }
 }
 
 const printStore = createStore({

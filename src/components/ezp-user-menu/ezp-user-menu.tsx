@@ -1,5 +1,5 @@
 import { Component, Host, Prop, Event, Element, EventEmitter, Watch, h } from '@stencil/core'
-import authStore, { EzpAuthorizationService } from '../../services/auth'
+import authStore, { EzpAuthorizationService, usesProvidedToken } from '../../services/auth'
 import userStore from '../../services/user'
 import { IconNameTypes, ThemeTypes, AppearanceTypes } from '../../shared/types'
 import { storage } from '../../shared/storage'
@@ -136,10 +136,14 @@ export class EzpUserMenu {
               <ezp-label text={link.title} />
             </a>
           ))}
-          <a class="link" onClick={this.logOut}>
-            <ezp-icon class="link__icon" name="logout" />
-            <ezp-label text={i18next.t('user_menu.logout')} />
-          </a>
+          {/* Signed in with the host's token, the next flow would ask the
+              provider again and sign the user straight back in. */}
+          {!usesProvidedToken() && (
+            <a class="link" onClick={this.logOut}>
+              <ezp-icon class="link__icon" name="logout" />
+              <ezp-label text={i18next.t('user_menu.logout')} />
+            </a>
+          )}
         </div>
         <div id="theme">
           <ezp-label class="caption" text={`${i18next.t('user_menu.theme')}:`} weight="heavy" />

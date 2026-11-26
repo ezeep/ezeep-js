@@ -56,7 +56,11 @@ What the widget does with it
   opens it. Without a provider nothing waits, and the pop-up opens at once as
   before.
 - `logOut()` signs the user out of the widget only. The next flow asks the
-  provider again, so have it answer `null` to keep the user signed out.
+  provider again, so have it answer `null` to keep the user signed out. For
+  the same reason the user menu in the print options does not show "Log out"
+  while the widget is signed in with the provider's token. It does show it
+  for a session of the widget's own, say after the provider answered `null`
+  and the user signed in through the pop-up.
 - Assign the property once. Each new function makes the widget check the
   session again, which asks the provider and calls the print API, so a
   framework that passes a fresh arrow function on every render pays for a

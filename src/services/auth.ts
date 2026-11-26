@@ -353,6 +353,18 @@ export function hasTokenProvider(): boolean {
 }
 
 /**
+ * Whether the widget is signed in with the token the provider gave, rather
+ * than with a session of its own. Logging out of the widget would then last
+ * only until the next flow asks the provider again.
+ */
+export function usesProvidedToken(): boolean {
+  // Read the store first, so a component that renders this re-renders when
+  // the token changes, provider or not.
+  const accessToken = authStore.state.accessToken
+  return tokenProvider !== undefined && providedToken !== '' && accessToken === providedToken
+}
+
+/**
  * The session check a flow has just started, for `ezp-auth` to wait for
  * before it decides between going straight on and asking the user to sign
  * in. Undefined once it has settled.
