@@ -279,6 +279,83 @@ describe('EzpAuthorizationService renewAccessToken', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
+  it('stops waiting for a provider that does not answer, and asks it again next time', async () => {
+    jest.useFakeTimers()
+    try {
+      let answer: (token: string) => void = () => undefined
+      const provider = jest.fn(() => new Promise<string>((resolve) => (answer = resolve)))
+      setTokenProvider(owner, provider)
+
+      let settled = false
+      const renewed = newService()
+        .renewAccessToken()
+        .then(() => (settled = true))
+      // A host may take some 15 seconds for a silent refresh in a hidden iframe.
+      await jest.advanceTimersByTimeAsync(19_999)
+      expect(settled).toBe(false)
+      await jest.advanceTimersByTimeAsync(40_001)
+      expect(settled).toBe(true)
+      await renewed
+
+      // Same as `null`: no token, and no session of the widget's own to refresh.
+      expect(authStore.state.accessToken).toBe('')
+      expect(authStore.state.isAuthorized).toBe(false)
+      expect(fetchMock).not.toHaveBeenCalled()
+
+      // An answer after the wait is over does not count.
+      answer('LATE')
+      await jest.advanceTimersByTimeAsync(1)
+      expect(authStore.state.accessToken).toBe('')
+      expect(authStore.state.isAuthorized).toBe(false)
+
+      // The next renewal asks the provider again instead of waiting on the old call.
+      const next = newService().renewAccessToken()
+      expect(provider).toHaveBeenCalledTimes(2)
+      answer('HOST')
+      await next
+      expect(authStore.state.accessToken).toBe('HOST')
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
+  it('keeps the host’s token when a refresh started before the provider lands after it', async () => {
+    authStore.state.refreshToken = 'own-RT'
+    let land: () => void = () => undefined
+    fetchMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          land = () =>
+            resolve({ json: () => Promise.resolve({ access_token: 'OWN-AT', refresh_token: 'OWN-RT2' }) })
+        }),
+    )
+    // The load-time check, on a browser that still holds a session of the
+    // widget's own, possibly for another account.
+    const ownRefresh = newService().renewAccessToken()
+
+    // The host sets its provider meanwhile, and the element's watcher checks.
+    let hostAnswer: string | null = 'HOST'
+    setTokenProvider(owner, () => Promise.resolve(hostAnswer))
+    await newService().renewAccessToken()
+    expect(authStore.state.accessToken).toBe('HOST')
+
+    land()
+    await ownRefresh
+
+    expect(authStore.state.accessToken).toBe('HOST')
+    expect(localStorage.getItem('isAuthorized')).toBeNull()
+    // The old refresh token is spent; the rotated one keeps the fallback alive.
+    expect(authStore.state.refreshToken).toBe('OWN-RT2')
+    expect(localStorage.getItem('refreshToken')).toBe('OWN-RT2')
+
+    // The host's user signs out: the widget's own session takes over.
+    hostAnswer = null
+    fetchMock.mockReturnValue(tokenResponse({ access_token: 'AT', refresh_token: 'RT' }))
+    await newService().renewAccessToken()
+    expect(fetchMock.mock.calls[1][1].body).toContain('refresh_token=OWN-RT2')
+    expect(authStore.state.accessToken).toBe('AT')
+  })
+
   it('falls back to a session of the widget’s own when the provider has none', async () => {
     authStore.state.accessToken = 'OWN'
     authStore.state.refreshToken = 'own-RT'

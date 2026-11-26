@@ -167,6 +167,35 @@ describe('ezp-printing with a host token provider (e2e)', () => {
     expect((await getPopup(page)).opens).toBe(0)
   })
 
+  it('asks for a fresh click before the sign-in pop-up when the provider has no token, with hidelogin', async () => {
+    const page = await openPrinting({
+      tokenProvider: { answer: null },
+      printers: [PRINTERS[0]],
+      attrs: { hidelogin: true },
+    })
+    // The provider takes its time, say for a silent refresh, and then has no token.
+    await setProvider(page, { hold: true })
+    const asked = await providerCalls(page)
+    await watchSignInStep(page)
+
+    await continueWith(page)
+    await waitForProviderCall(page, asked + 1)
+    await waitFor(page, `${AUTH} >>> ezp-status`)
+    await setProvider(page, { hold: false })
+    await releaseProvider(page)
+
+    // After that wait, the click that started the flow may no longer count
+    // for a pop-up. The dialog's button is a fresh one.
+    await waitForInstance(page, 'ezp-dialog', 'login')
+    expect((await getPopup(page)).opens).toBe(0)
+    expect(await signInScreens(page)).toEqual(['status', 'dialog:login'])
+
+    await click(page, DIALOG_ACTION)
+    expect((await getPopup(page)).opens).toBe(1)
+    await postAuthCode(page)
+    await waitForPrintOptions(page)
+  })
+
   it('waits for a provider the host replaced while it was being asked', async () => {
     const page = await openPrinting({
       hostTokens: [HOST_TOKEN],
