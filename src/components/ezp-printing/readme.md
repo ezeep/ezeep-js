@@ -28,10 +28,16 @@ What the function has to do
 - Answer quickly. The widget waits for it when a flow starts, so return a
   cached token, and go to the network only when that token is about to expire.
   The widget waits 20 seconds at most. After that it carries on as if the
-  answer were `null`, an answer that comes later is ignored, and the next time
-  it needs a token it asks again.
-- Answer `null` when nobody is signed in. A rejected promise counts as `null`.
-  The widget then falls back to its own sign-in, as without a provider.
+  promise had rejected, an answer that comes later is ignored, and the next
+  time it needs a token it asks again.
+- Answer `null` when nobody is signed in, and only then. The widget then
+  forgets the token it was given and falls back to its own sign-in, as without
+  a provider.
+- Reject when the token can't be had just now, say the host's own token
+  service can't be reached. The widget keeps the token it was given earlier,
+  so a flow that is under way carries on with it, until the next answer
+  replaces it; a 401 from the print API makes it ask again. Without a token
+  from the provider to keep, a rejection is the same as `null`.
 - Return the token that is current at the time. The widget asks when it loads,
   at the start and end of each flow, every 30 minutes, and after the print API
   or the account service answers a request with 401. A user who switched

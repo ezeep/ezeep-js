@@ -127,9 +127,10 @@ export class EzpAuthorizationService {
    *
    * With a host token provider (see `setTokenProvider`) the provider is asked.
    * Its token is kept in memory only; nothing is written to localStorage. When
-   * it has none (`null`, or it rejects) the in-memory token is dropped, and a
-   * session of the widget's own, if one is stored, is refreshed instead.
-   * Without a provider this is `refreshTokens()`.
+   * it answers `null` the token it gave is dropped, and a session of the
+   * widget's own, if one is stored, is refreshed instead. When it rejects or
+   * does not answer in time, a token it gave earlier is kept; without one this
+   * is the same as `null`. Without a provider this is `refreshTokens()`.
    *
    * Callers share one attempt while it runs, so a burst of them never asks
    * the provider, or spends the refresh token, more than once.
@@ -148,12 +149,7 @@ export class EzpAuthorizationService {
   }
 
   private async renewFromProvider(provider: TokenProvider): Promise<void> {
-    let token: string | null = null
-    try {
-      token = await askProvider(provider)
-    } catch {
-      // A provider that fails has no token to give: same as `null`.
-    }
+    const answer = await askProvider(provider)
     if (provider !== tokenProvider) {
       // Replaced or withdrawn while it was being asked, so its answer no
       // longer counts. The caller, say a flow's session check, still needs
@@ -168,12 +164,20 @@ export class EzpAuthorizationService {
       return
     }
 
-    if (typeof token === 'string' && token !== '') {
-      providedToken = token
-      authStore.state.accessToken = token
+    if (answer.answered && typeof answer.token === 'string' && answer.token !== '') {
+      providedToken = answer.token
+      authStore.state.accessToken = answer.token
       authStore.state.isAuthorized = true
       return
     }
+
+    // A rejection or no answer in time does not say that nobody is signed in,
+    // only that the host could not tell just now. A token it gave earlier may
+    // well still be valid, and the open print options depend on it, so it
+    // stays until the next answer replaces it; a 401 asks again. Holding no
+    // such token, this is the same as `null`.
+    if (!answer.answered && providedToken !== '' && authStore.state.accessToken === providedToken)
+      return
 
     // Nobody is signed in on the host: a token it gave earlier must go. One
     // from a session of the widget's own stays until the refresh below
@@ -185,25 +189,38 @@ export class EzpAuthorizationService {
     if (authStore.state.refreshToken !== '') await this.refreshTokens()
   }
 
-  refreshTokens() {
-    // A grant started without a provider can land after the host has set one
-    // and the store holds the host's token. See below.
-    const startedWithoutProvider = tokenProvider === undefined
-    return fetch(this.accessTokenURL, {
+  /**
+   * Spend the stored refresh token for a new access token. Callers with the
+   * same refresh token share one grant in flight, whatever the provider: a
+   * second grant with a token that is about to be rotated would fail, and may
+   * look like reuse to the server. A caller with another refresh token (one
+   * the host page hands in, say) gets its own grant.
+   */
+  refreshTokens(): Promise<void> {
+    const refreshToken = authStore.state.refreshToken
+    if (grantInFlight && grantInFlight.refreshToken === refreshToken) return grantInFlight.promise
+
+    const promise: Promise<void> = fetch(this.accessTokenURL, {
       credentials: 'include',
       headers: this.oauthHeaders(),
       method: 'POST',
       body: encodeFormData({
         grant_type: 'refresh_token',
         scope: 'printing',
-        refresh_token: authStore.state.refreshToken,
+        refresh_token: refreshToken,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (!data.access_token) return
-        if (startedWithoutProvider && tokenProvider) {
-          // The session is the host's now, and this token may be for another
+        // What the result may replace is decided now, not when the grant
+        // started: a provider may have been set, replaced or answered since.
+        if (
+          tokenProvider &&
+          providedToken !== '' &&
+          authStore.state.accessToken === providedToken
+        ) {
+          // The store holds the host's token, and this one may be for another
           // account: it must not replace the host's. The old refresh token is
           // spent, though, so keep the new one; the widget's own session is
           // the fallback when the provider has no token.
@@ -214,6 +231,11 @@ export class EzpAuthorizationService {
         }
         this.persistTokens(data.access_token, data.refresh_token)
       })
+      .finally(() => {
+        if (grantInFlight?.promise === promise) grantInFlight = undefined
+      })
+    grantInFlight = { refreshToken, promise }
+    return promise
   }
 
   revokeRefreshToken() {
@@ -257,10 +279,16 @@ export type TokenProvider = () => Promise<string | null>
 
 /**
  * How long the widget waits for the provider before it carries on as if it
- * had answered `null`. A host may take some 15 seconds for a silent refresh in
- * a hidden iframe, so this leaves room for that.
+ * had rejected. A host may take some 15 seconds for a silent refresh in a
+ * hidden iframe, so this leaves room for that.
  */
 export const TOKEN_PROVIDER_TIMEOUT_MS = 20_000
+
+/**
+ * What the provider said: its answer, or `answered: false` when it rejected
+ * or did not answer in time, which says nothing about who is signed in.
+ */
+type ProviderAnswer = { answered: true; token: string | null } | { answered: false }
 
 /**
  * Ask the provider, for no longer than `TOKEN_PROVIDER_TIMEOUT_MS`. A provider
@@ -268,10 +296,10 @@ export const TOKEN_PROVIDER_TIMEOUT_MS = 20_000
  * the call in flight, for the rest of the page's life. An answer that comes
  * after the wait is over is dropped.
  */
-function askProvider(provider: TokenProvider): Promise<string | null> {
+function askProvider(provider: TokenProvider): Promise<ProviderAnswer> {
   let timer: ReturnType<typeof setTimeout> | undefined
-  const timeout = new Promise<null>((resolve) => {
-    timer = setTimeout(() => resolve(null), TOKEN_PROVIDER_TIMEOUT_MS)
+  const timeout = new Promise<ProviderAnswer>((resolve) => {
+    timer = setTimeout(() => resolve({ answered: false }), TOKEN_PROVIDER_TIMEOUT_MS)
   })
   // Called right away, as before; a provider that throws counts as one that rejects.
   let answer: Promise<string | null>
@@ -280,7 +308,11 @@ function askProvider(provider: TokenProvider): Promise<string | null> {
   } catch (error) {
     answer = Promise.reject(error)
   }
-  return Promise.race([answer, timeout]).finally(() => clearTimeout(timer))
+  const said = answer.then(
+    (token): ProviderAnswer => ({ answered: true, token }),
+    (): ProviderAnswer => ({ answered: false }),
+  )
+  return Promise.race([said, timeout]).finally(() => clearTimeout(timer))
 }
 
 /**
@@ -293,6 +325,8 @@ let tokenProvider: TokenProvider | undefined
 /** The token the provider gave last, to tell it apart from one of our own. */
 let providedToken = ''
 let renewInFlight: { provider?: TokenProvider; promise: Promise<void> } | undefined
+/** The refresh-token grant in flight, shared by callers with the same refresh token. */
+let grantInFlight: { refreshToken: string; promise: Promise<void> } | undefined
 let authCheck: Promise<unknown> | undefined
 
 /**
