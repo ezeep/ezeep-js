@@ -27,6 +27,9 @@ What the function has to do
 
 - Answer quickly. The widget waits for it when a flow starts, so return a
   cached token, and go to the network only when that token is about to expire.
+  The widget waits 20 seconds at most. After that it carries on as if the
+  answer were `null`, an answer that comes later is ignored, and the next time
+  it needs a token it asks again.
 - Answer `null` when nobody is signed in. A rejected promise counts as `null`.
   The widget then falls back to its own sign-in, as without a provider.
 - Return the token that is current at the time. The widget asks when it loads,
@@ -39,7 +42,13 @@ What the widget does with it
 - The token is kept in memory only. Nothing about it is written to
   `localStorage`, and the widget does not refresh or revoke it.
 - With `hidelogin`, a user who is signed in on the host goes straight to the
-  print options, whatever the `trigger` (`custom` included).
+  print options, whatever the `trigger` (`custom` included). When the provider
+  has no token and there is no session of the widget's own, `trigger="button"`
+  and `"file"` show the sign-in dialog instead of opening the sign-in pop-up
+  straight away: the flow waited for the provider, and after that wait a
+  browser may block a pop-up the user's click opened. The dialog's button
+  opens it. Without a provider nothing waits, and the pop-up opens at once as
+  before.
 - `logOut()` signs the user out of the widget only. The next flow asks the
   provider again, so have it answer `null` to keep the user signed out.
 - Assign the property once. Each new function makes the widget check the

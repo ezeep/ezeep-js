@@ -33,6 +33,13 @@ export class EzpAuth {
    * the processing status is shown, neither the login dialog nor a popup.
    */
   @State() checkingSession: boolean = false
+  /**
+   * True when sign-in is needed after this flow waited for its session check.
+   * By then the browser may no longer count the click that started the flow,
+   * and block a pop-up opened without one, so under hidelogin the login dialog
+   * is shown instead and its button opens the pop-up.
+   */
+  @State() signInNeedsClick: boolean = false
 
   @Event() authCancel: EventEmitter<MouseEvent>
   @Event() authSuccess: EventEmitter<void>
@@ -68,7 +75,7 @@ export class EzpAuth {
         return
       }
     }
-    if (this.codeExchangePending && this.showsSignInStatus()) {
+    if ((this.codeExchangePending || this.signInNeedsClick) && this.showsSignInStatus()) {
       // Same rule: this dialog stands in for the sign-in status here.
       this.listenStatusCancel()
       return
@@ -174,7 +181,7 @@ export class EzpAuth {
    */
   private showsStatus(): boolean {
     if (this.checkingSession) return true
-    if (this.codeExchangePending) return false
+    if (this.codeExchangePending || this.signInNeedsClick) return false
     return this.showsSignInStatus() || (this.hidelogin && authStore.state.isAuthorized)
   }
 
@@ -315,12 +322,16 @@ export class EzpAuth {
     if (this.removed) return
     // The status stays up until the decision is made, so the login dialog
     // never flashes on the way straight through.
-    await this.decide()
+    await this.decide({ afterWait: true })
     this.checkingSession = false
   }
 
-  /** Go straight on with a session, or ask the user to sign in. */
-  private async decide() {
+  /**
+   * Go straight on with a session, or ask the user to sign in. `afterWait`
+   * when the flow had to wait for a session check first, so the click that
+   * started it may no longer allow a pop-up.
+   */
+  private async decide({ afterWait = false } = {}) {
     if (this.code) {
       // A host-supplied code is single-use, and this component mounts again on
       // every open with the same attribute. Skip only the code this page has
@@ -362,7 +373,10 @@ export class EzpAuth {
         // Not signed in: trigger sign-in directly so the "Continue to print
         // options" click leads to sign-in, without an extra confirmation button.
         // Only these triggers: the popup needs the user's click to open.
-        this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
+        // After a wait that click may have run out, so the login dialog asks
+        // for a fresh one instead of the pop-up being blocked.
+        if (afterWait) this.signInNeedsClick = true
+        else this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
       }
     }
   }

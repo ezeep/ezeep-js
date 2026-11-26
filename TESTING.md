@@ -55,8 +55,9 @@ faked network (see [E2E harness](#e2e-harness)).
   covers a host page lending its access token through `tokenProvider`. Printing
   without a popup or stored session, a provider still answering when the flow
   starts (only the processing status shows meanwhile) or replaced while it
-  answers, falling back to the normal sign-in, a new token on the next flow,
-  which 401s ask for a new one, setting and removing the provider, `logOut`,
+  answers, falling back to the normal sign-in (under `hidelogin`, through the
+  dialog's button rather than a pop-up straight after the wait), a new token
+  on the next flow, which 401s ask for a new one, setting and removing the provider, `logOut`,
   and `hidelogin` with `trigger="custom"`.
 - [ezp-auth.e2e.ts](src/components/ezp-auth/ezp-auth.e2e.ts) — sign-in: the
   authorize URL and PKCE challenge, code → token exchange (verifier matches the

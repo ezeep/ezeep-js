@@ -150,7 +150,7 @@ export class EzpAuthorizationService {
   private async renewFromProvider(provider: TokenProvider): Promise<void> {
     let token: string | null = null
     try {
-      token = await provider()
+      token = await askProvider(provider)
     } catch {
       // A provider that fails has no token to give: same as `null`.
     }
@@ -186,6 +186,9 @@ export class EzpAuthorizationService {
   }
 
   refreshTokens() {
+    // A grant started without a provider can land after the host has set one
+    // and the store holds the host's token. See below.
+    const startedWithoutProvider = tokenProvider === undefined
     return fetch(this.accessTokenURL, {
       credentials: 'include',
       headers: this.oauthHeaders(),
@@ -198,9 +201,18 @@ export class EzpAuthorizationService {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.access_token) {
-          this.persistTokens(data.access_token, data.refresh_token)
+        if (!data.access_token) return
+        if (startedWithoutProvider && tokenProvider) {
+          // The session is the host's now, and this token may be for another
+          // account: it must not replace the host's. The old refresh token is
+          // spent, though, so keep the new one; the widget's own session is
+          // the fallback when the provider has no token.
+          this.refreshToken = data.refresh_token
+          authStore.state.refreshToken = data.refresh_token
+          storage.setRefreshToken(data.refresh_token)
+          return
         }
+        this.persistTokens(data.access_token, data.refresh_token)
       })
   }
 
@@ -242,6 +254,34 @@ export default authStore
  * nobody is signed in.
  */
 export type TokenProvider = () => Promise<string | null>
+
+/**
+ * How long the widget waits for the provider before it carries on as if it
+ * had answered `null`. A host may take some 15 seconds for a silent refresh in
+ * a hidden iframe, so this leaves room for that.
+ */
+export const TOKEN_PROVIDER_TIMEOUT_MS = 20_000
+
+/**
+ * Ask the provider, for no longer than `TOKEN_PROVIDER_TIMEOUT_MS`. A provider
+ * that never answers would otherwise hold every later renewal, which shares
+ * the call in flight, for the rest of the page's life. An answer that comes
+ * after the wait is over is dropped.
+ */
+function askProvider(provider: TokenProvider): Promise<string | null> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const timeout = new Promise<null>((resolve) => {
+    timer = setTimeout(() => resolve(null), TOKEN_PROVIDER_TIMEOUT_MS)
+  })
+  // Called right away, as before; a provider that throws counts as one that rejects.
+  let answer: Promise<string | null>
+  try {
+    answer = Promise.resolve(provider())
+  } catch (error) {
+    answer = Promise.reject(error)
+  }
+  return Promise.race([answer, timeout]).finally(() => clearTimeout(timer))
+}
 
 /**
  * The providers of the `ezp-printing` elements on the page, by element. The
