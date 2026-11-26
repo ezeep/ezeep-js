@@ -1,6 +1,7 @@
 import authStore, {
   EzpAuthorizationService,
   hasTokenProvider,
+  usesProvidedToken,
   sendCodeToParentWindow,
   setTokenProvider,
 } from './auth'
@@ -578,6 +579,29 @@ describe('EzpAuthorizationService renewAccessToken', () => {
     setTokenProvider(owner, () => Promise.resolve('HOST'))
     setTokenProvider(owner)
     expect(authStore.state.accessToken).toBe('OWN')
+  })
+
+  it('tells when the token in use is the one the provider gave', async () => {
+    // Without a provider, the widget's own session.
+    authStore.state.accessToken = 'OWN'
+    expect(usesProvidedToken()).toBe(false)
+
+    setTokenProvider(owner, () => Promise.resolve('HOST'))
+    await newService().renewAccessToken()
+    expect(usesProvidedToken()).toBe(true)
+
+    // The provider has no token now, and the widget's own session takes over.
+    authStore.state.refreshToken = 'own-RT'
+    setTokenProvider(owner, () => Promise.resolve(null))
+    await newService().renewAccessToken()
+    expect(authStore.state.accessToken).toBe('AT')
+    expect(usesProvidedToken()).toBe(false)
+
+    // Withdrawn after it gave a token.
+    setTokenProvider(owner, () => Promise.resolve('HOST'))
+    await newService().renewAccessToken()
+    setTokenProvider(owner)
+    expect(usesProvidedToken()).toBe(false)
   })
 
   it('keeps asking the provider of an element that is still there', async () => {

@@ -225,6 +225,51 @@ describe('EzpPrintService 401 interceptor', () => {
     await new Promise((resolve) => setTimeout(resolve))
   })
 
+  it('matches the configured hosts however they were written', async () => {
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+    const configured: [string, string][] = [
+      ['printapi.test/', 'account.test'],
+      ['PrintAPI.Test', 'account.test'],
+      ['printapi.test:443', 'account.test'],
+      ['https://printapi.test/', 'account.test'],
+      ['other.test', 'account.test/'],
+      ['other.test', 'ACCOUNT.test'],
+      ['other.test', 'account.test:443'],
+    ]
+
+    for (const [printHost, authHost] of configured) {
+      printStore.state.printApiHostUrl = printHost
+      authStore.state.authApiHostUrl = authHost
+      refreshTokens.mockClear()
+
+      onResponse(
+        401,
+        printHost === 'other.test'
+          ? 'https://account.test/v1/users/me'
+          : 'https://printapi.test/sfapi/GetPrinter/',
+      )
+
+      expect([printHost, authHost, refreshTokens.mock.calls.length]).toEqual([
+        printHost,
+        authHost,
+        1,
+      ])
+      settleRefresh()
+      await new Promise((resolve) => setTimeout(resolve))
+    }
+  })
+
+  it('still tells a different port, or a different host, apart', () => {
+    printStore.state.printApiHostUrl = 'printapi.test:8443'
+    authStore.state.authApiHostUrl = 'account.test/'
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+
+    onResponse(401, 'https://printapi.test/sfapi/GetPrinter/')
+    onResponse(401, 'https://account.test.host-app.test/v1/users/me')
+
+    expect(refreshTokens).not.toHaveBeenCalled()
+  })
+
   it('with a host token provider, asks it on a 401, refresh token or not', async () => {
     const owner = {}
     const provider = jest.fn(() => Promise.resolve('HOST'))

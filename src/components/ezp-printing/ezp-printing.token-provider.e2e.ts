@@ -29,6 +29,7 @@ import {
 const AUTH = 'ezp-printing >>> ezp-auth'
 const UPLOAD = 'ezp-printing >>> ezp-upload'
 const OPTIONS = 'ezp-printing >>> ezp-printer-selection'
+const MENU = `${OPTIONS} >>> ezp-user-menu`
 const DIALOG_ACTION = `${AUTH} >>> ezp-dialog >>> #footer ezp-text-button`
 
 const HOST_TOKEN = 'host-token-1'
@@ -365,6 +366,34 @@ describe('ezp-printing with a host token provider (e2e)', () => {
     await continueWith(page)
     await waitForInstance(page, 'ezp-dialog', 'login')
     expect(await providerCalls(page)).toBe(asked)
+  })
+
+  it('hides "Log out" in the user menu while it uses the host’s token', async () => {
+    const page = await openPrinting({
+      hostTokens: [HOST_TOKEN],
+      tokenProvider: { answer: HOST_TOKEN },
+      attrs: { hidelogin: true },
+    })
+    await continueWith(page)
+    await waitForPrintOptions(page)
+
+    // Logging out of the widget would last only until the next flow asks the
+    // provider again.
+    expect(await page.find(`${MENU} >>> #links`)).not.toBeNull()
+    expect(await page.find(`${MENU} >>> a.link:not([href])`)).toBeNull()
+    expect(await page.$$eval(`${MENU} >>> a.link[href]`, (links) => links.length)).toBe(2)
+  })
+
+  it('keeps "Log out" for a session of its own when the provider has no token', async () => {
+    const page = await openPrinting({
+      signedIn: true,
+      tokenProvider: { answer: null },
+      attrs: { hidelogin: true },
+    })
+    await continueWith(page)
+    await waitForPrintOptions(page)
+
+    expect(await page.find(`${MENU} >>> a.link:not([href])`)).not.toBeNull()
   })
 
   it('logOut() revokes nothing, and the next flow asks the provider again', async () => {
