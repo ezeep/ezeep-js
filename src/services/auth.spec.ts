@@ -262,21 +262,68 @@ describe('EzpAuthorizationService renewAccessToken', () => {
     expect(authStore.state.accessToken).toBe('HOST-2')
   })
 
-  it.each([
-    ['resolves null', () => Promise.resolve(null)],
-    ['rejects', () => Promise.reject(new Error('signed out'))],
-  ])('drops the provider’s earlier token when it %s', async (_, answer) => {
+  it('drops the provider’s earlier token when it answers null', async () => {
     let next: () => Promise<string | null> = () => Promise.resolve('HOST')
     setTokenProvider(owner, () => next())
     await newService().renewAccessToken()
 
-    next = answer
+    next = () => Promise.resolve(null)
     await newService().renewAccessToken()
 
     expect(authStore.state.accessToken).toBe('')
     expect(authStore.state.isAuthorized).toBe(false)
     // No session of the widget's own to fall back to.
     expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('keeps the provider’s earlier token when it rejects, until the next answer', async () => {
+    let next: () => Promise<string | null> = () => Promise.resolve('HOST')
+    setTokenProvider(owner, () => next())
+    await newService().renewAccessToken()
+
+    // Say the host's token source fails for a moment while the print options are open.
+    next = () => Promise.reject(new Error('offline'))
+    await newService().renewAccessToken()
+
+    expect(authStore.state.accessToken).toBe('HOST')
+    expect(authStore.state.isAuthorized).toBe(true)
+    expect(fetchMock).not.toHaveBeenCalled()
+
+    next = () => Promise.resolve('HOST-2')
+    await newService().renewAccessToken()
+    expect(authStore.state.accessToken).toBe('HOST-2')
+  })
+
+  it('keeps the provider’s earlier token when it does not answer in time', async () => {
+    jest.useFakeTimers()
+    try {
+      let hang = false
+      setTokenProvider(owner, () => (hang ? new Promise<string>(() => undefined) : Promise.resolve('HOST')))
+      await newService().renewAccessToken()
+
+      hang = true
+      const renewed = newService().renewAccessToken()
+      await jest.advanceTimersByTimeAsync(20_001)
+      await renewed
+
+      expect(authStore.state.accessToken).toBe('HOST')
+      expect(authStore.state.isAuthorized).toBe(true)
+      expect(fetchMock).not.toHaveBeenCalled()
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
+  it('falls back to a stored session of its own when the provider rejects and no token is held', async () => {
+    authStore.state.refreshToken = 'own-RT'
+    setTokenProvider(owner, () => Promise.reject(new Error('offline')))
+
+    await newService().renewAccessToken()
+
+    // As for `null`: there was no token to keep.
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(fetchMock.mock.calls[0][1].body).toContain('refresh_token=own-RT')
+    expect(authStore.state.accessToken).toBe('AT')
   })
 
   it('stops waiting for a provider that does not answer, and asks it again next time', async () => {
@@ -297,7 +344,8 @@ describe('EzpAuthorizationService renewAccessToken', () => {
       expect(settled).toBe(true)
       await renewed
 
-      // Same as `null`: no token, and no session of the widget's own to refresh.
+      // No token was held, so this is the same as `null`: no token, and no
+      // session of the widget's own to refresh.
       expect(authStore.state.accessToken).toBe('')
       expect(authStore.state.isAuthorized).toBe(false)
       expect(fetchMock).not.toHaveBeenCalled()
@@ -354,6 +402,87 @@ describe('EzpAuthorizationService renewAccessToken', () => {
     await newService().renewAccessToken()
     expect(fetchMock.mock.calls[1][1].body).toContain('refresh_token=OWN-RT2')
     expect(authStore.state.accessToken).toBe('AT')
+  })
+
+  /** Hold every token grant back; the test answers each with `pending[i](body)`. */
+  const holdGrants = () => {
+    const pending: Array<(body: unknown) => void> = []
+    fetchMock.mockImplementation(
+      () => new Promise((resolve) => pending.push((body) => resolve({ json: () => Promise.resolve(body) }))),
+    )
+    return pending
+  }
+  /** How many grants were sent with this refresh token. */
+  const grantsWith = (refreshToken: string) =>
+    fetchMock.mock.calls.filter(
+      ([, init]) => new URLSearchParams(String(init.body)).get('refresh_token') === refreshToken,
+    ).length
+
+  it('keeps the token of a provider that replaced the one a fallback refresh started under', async () => {
+    authStore.state.refreshToken = 'own-RT'
+    const pending = holdGrants()
+    // Nobody is signed in on the host: the widget falls back to its own session.
+    setTokenProvider(owner, () => Promise.resolve(null))
+    const fallback = newService().renewAccessToken()
+    await new Promise((resolve) => setTimeout(resolve))
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+
+    // The host's user signs in, and the host assigns a new function.
+    setTokenProvider(owner, () => Promise.resolve('HOST'))
+    await newService().renewAccessToken()
+    expect(authStore.state.accessToken).toBe('HOST')
+
+    pending[0]({ access_token: 'OWN-AT', refresh_token: 'OWN-RT2' })
+    await fallback
+
+    expect(authStore.state.accessToken).toBe('HOST')
+    expect(localStorage.getItem('isAuthorized')).toBeNull()
+    // The old refresh token is spent; the rotated one keeps the fallback alive.
+    expect(authStore.state.refreshToken).toBe('OWN-RT2')
+    expect(localStorage.getItem('refreshToken')).toBe('OWN-RT2')
+  })
+
+  it('joins the load-time refresh when a provider set meanwhile answers null', async () => {
+    authStore.state.refreshToken = 'own-RT'
+    const pending = holdGrants()
+    // The load-time check, before the host has set its provider.
+    const loadTime = newService().renewAccessToken()
+    // The host sets a provider, nobody is signed in there, and the element's
+    // watcher checks again.
+    setTokenProvider(owner, () => Promise.resolve(null))
+    const recheck = newService().renewAccessToken()
+    await new Promise((resolve) => setTimeout(resolve))
+
+    // One grant with the refresh token, not one for each caller.
+    expect(grantsWith('own-RT')).toBe(1)
+    pending.forEach((answer, i) =>
+      answer(i === 0 ? { access_token: 'OWN-AT', refresh_token: 'OWN-RT2' } : { error: 'invalid_grant' }),
+    )
+    await Promise.all([loadTime, recheck])
+
+    // The provider has no token, so the widget's own session is the fallback.
+    expect(authStore.state.accessToken).toBe('OWN-AT')
+    expect(authStore.state.isAuthorized).toBe(true)
+    expect(authStore.state.refreshToken).toBe('OWN-RT2')
+  })
+
+  it('shares a grant only between callers with the same refresh token', async () => {
+    authStore.state.refreshToken = 'own-RT'
+    const pending = holdGrants()
+    const service = newService()
+
+    const first = service.refreshTokens()
+    const again = service.refreshTokens()
+    // Say the host page hands in another refresh token (`setAuthRefreshToken`).
+    authStore.state.refreshToken = 'other-RT'
+    const other = service.refreshTokens()
+    await new Promise((resolve) => setTimeout(resolve))
+
+    expect(grantsWith('own-RT')).toBe(1)
+    expect(grantsWith('other-RT')).toBe(1)
+    pending[0]({ access_token: 'OWN-AT', refresh_token: 'OWN-RT2' })
+    pending[1]({ access_token: 'OTHER-AT', refresh_token: 'OTHER-RT2' })
+    await Promise.all([first, again, other])
   })
 
   it('falls back to a session of the widget’s own when the provider has none', async () => {

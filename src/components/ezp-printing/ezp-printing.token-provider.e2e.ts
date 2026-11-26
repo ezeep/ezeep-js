@@ -275,6 +275,33 @@ describe('ezp-printing with a host token provider (e2e)', () => {
     ])
   })
 
+  it('keeps the token it was given when the provider fails for a moment', async () => {
+    const page = await openPrinting({
+      hostTokens: [HOST_TOKEN],
+      tokenProvider: { answer: HOST_TOKEN },
+      attrs: { hidelogin: true },
+    })
+    await continueWith(page)
+    await waitForPrintOptions(page)
+    await click(page, `${OPTIONS} >>> #cancel`)
+
+    // The host's token source fails when the next flow asks. Only `null`
+    // says nobody is signed in, so the token the widget holds carries on.
+    await setProvider(page, { answer: 'reject' })
+    const asked = await providerCalls(page)
+    await click(page, `${UPLOAD} >>> #continue`)
+    await waitForProviderCall(page, asked + 1)
+    await waitForCall(page, 'GetPrinter', 2)
+    await waitForPrintOptions(page)
+
+    expect((await getPopup(page)).opens).toBe(0)
+    const printers = await getCalls(page, 'GetPrinter')
+    expect(printers.map((made) => made.headers.authorization)).toEqual([
+      `Bearer ${HOST_TOKEN}`,
+      `Bearer ${HOST_TOKEN}`,
+    ])
+  })
+
   it('asks the provider again after a 401 from the print API, not from other hosts', async () => {
     const page = await openPrinting({
       hostTokens: [HOST_TOKEN],
