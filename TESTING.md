@@ -18,7 +18,7 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 
 ## What's covered today
 
-**Spec tests (40):**
+**Spec tests (295):**
 
 - [src/utils/printer.spec.ts](src/utils/printer.spec.ts) — `applyPrinterDefaults`,
   `classifyJobStatus`, tray detection. The core of the print-config → properties
@@ -34,7 +34,7 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 - [src/components/ezp-status/ezp-status.spec.tsx](src/components/ezp-status/ezp-status.spec.tsx)
   — conditional rendering + event payloads (`newSpecPage`).
 
-**E2E tests (217):** real headless Chromium, real components/services/stores,
+**E2E tests (243):** real headless Chromium, real components/services/stores,
 faked network (see [E2E harness](#e2e-harness)).
 
 - [ezp-printing.e2e.ts](src/components/ezp-printing/ezp-printing.e2e.ts) — the
@@ -51,6 +51,17 @@ faked network (see [E2E harness](#e2e-harness)).
 - [ezp-printing.layout.e2e.ts](src/components/ezp-printing/ezp-printing.layout.e2e.ts)
   — the journey on phone and tablet screens: every step fits between the edges,
   Print stays on screen, and the last option can still be set.
+- [ezp-printing.token-provider.e2e.ts](src/components/ezp-printing/ezp-printing.token-provider.e2e.ts)
+  covers a host page lending its access token through `tokenProvider`. Printing
+  without a popup or stored session, a provider still answering when the flow
+  starts (only the processing status shows meanwhile) or replaced while it
+  answers, falling back to the normal sign-in (under `hidelogin`, through the
+  dialog's button rather than a pop-up straight after the wait), a new token
+  on the next flow, which 401s ask for a new one, setting and removing the provider, `logOut`,
+  and `hidelogin` with `trigger="custom"`. Also a token the API rejects (the
+  provider is told, the widget's own session or a fresh token takes over, a
+  sign-in through the pop-up sticks, the session check retries once) and a
+  provider withdrawn or replaced while the flow's session check is out.
 - [ezp-auth.e2e.ts](src/components/ezp-auth/ezp-auth.e2e.ts) — sign-in: the
   authorize URL and PKCE challenge, code → token exchange (verifier matches the
   challenge), rejection of codes from a wrong origin or window, token storage
@@ -107,6 +118,11 @@ expect(jsonBody(print).printerid).toBe('printer-1')
 - **Sign-in** — `window.open` returns a hidden same-page window (or `null` with
   `popup: 'blocked'`); `postAuthCode` then delivers the code as the popup would.
   The fake token endpoint only accepts `VALID_CODE` and refresh tokens it issued.
+- **Host token provider.** `tokenProvider: { answer }` sets a `tokenProvider`
+  from script before the component loads; list its tokens in `hostTokens` so
+  the fake API accepts them. `setProvider` changes the answer or holds answers
+  back (`hold`), `releaseProvider` lets them go, and `providerCalls` /
+  `waitForProviderCall` count how often the widget asked.
 - **Selectors** — puppeteer's `>>>` pierces shadow roots
   (`ezp-printing >>> ezp-upload >>> #continue`). Status cards and dialogs are
   identified by their `instance` _property_, so use `waitForInstance` /

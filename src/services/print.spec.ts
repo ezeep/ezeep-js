@@ -1,5 +1,5 @@
 import printStore, { EzpPrintService } from './print'
-import authStore, { EzpAuthorizationService } from './auth'
+import authStore, { EzpAuthorizationService, setTokenProvider } from './auth'
 import fetchIntercept from 'fetch-intercept'
 
 /** Minimal fetch Response stub exposing the fields the service reads. */
@@ -142,8 +142,8 @@ describe('EzpPrintService 401 interceptor', () => {
   const unregister = jest.fn()
 
   /** The `response` handler the service handed to fetch-intercept. */
-  const onResponse = (status: number) =>
-    register.mock.calls[register.mock.calls.length - 1][0].response({ status })
+  const onResponse = (status: number, url?: string) =>
+    register.mock.calls[register.mock.calls.length - 1][0].response({ status, url })
 
   beforeEach(() => {
     printStore.state.printApiHostUrl = 'printapi.test'
@@ -200,6 +200,92 @@ describe('EzpPrintService 401 interceptor', () => {
     await new Promise((resolve) => setTimeout(resolve))
   })
 
+  it('leaves a 401 from a host other than the print API and account service alone', async () => {
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+
+    onResponse(401, 'https://host-app.test/api/me')
+    expect(refreshTokens).not.toHaveBeenCalled()
+
+    // fetch-intercept attaches the request: its URL counts when the response has none.
+    register.mock.calls[0][0].response({
+      status: 401,
+      url: '',
+      request: { url: 'https://host-app.test/api/me' },
+    })
+    expect(refreshTokens).not.toHaveBeenCalled()
+
+    onResponse(401, 'https://account.test/v1/users/me')
+    expect(refreshTokens).toHaveBeenCalledTimes(1)
+    settleRefresh()
+    await new Promise((resolve) => setTimeout(resolve))
+
+    onResponse(401, 'https://printapi.test/sfapi/GetPrinter/')
+    expect(refreshTokens).toHaveBeenCalledTimes(2)
+    settleRefresh()
+    await new Promise((resolve) => setTimeout(resolve))
+  })
+
+  it('matches the configured hosts however they were written', async () => {
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+    const configured: [string, string][] = [
+      ['printapi.test/', 'account.test'],
+      ['PrintAPI.Test', 'account.test'],
+      ['printapi.test:443', 'account.test'],
+      ['https://printapi.test/', 'account.test'],
+      ['other.test', 'account.test/'],
+      ['other.test', 'ACCOUNT.test'],
+      ['other.test', 'account.test:443'],
+    ]
+
+    for (const [printHost, authHost] of configured) {
+      printStore.state.printApiHostUrl = printHost
+      authStore.state.authApiHostUrl = authHost
+      refreshTokens.mockClear()
+
+      onResponse(
+        401,
+        printHost === 'other.test'
+          ? 'https://account.test/v1/users/me'
+          : 'https://printapi.test/sfapi/GetPrinter/',
+      )
+
+      expect([printHost, authHost, refreshTokens.mock.calls.length]).toEqual([
+        printHost,
+        authHost,
+        1,
+      ])
+      settleRefresh()
+      await new Promise((resolve) => setTimeout(resolve))
+    }
+  })
+
+  it('still tells a different port, or a different host, apart', () => {
+    printStore.state.printApiHostUrl = 'printapi.test:8443'
+    authStore.state.authApiHostUrl = 'account.test/'
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+
+    onResponse(401, 'https://printapi.test/sfapi/GetPrinter/')
+    onResponse(401, 'https://account.test.host-app.test/v1/users/me')
+
+    expect(refreshTokens).not.toHaveBeenCalled()
+  })
+
+  it('with a host token provider, asks it on a 401, refresh token or not', async () => {
+    const owner = {}
+    const provider = jest.fn(() => Promise.resolve('HOST'))
+    setTokenProvider(owner, provider)
+    authStore.state.refreshToken = ''
+    new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+
+    onResponse(401, 'https://printapi.test/sfapi/GetPrinter/')
+    await new Promise((resolve) => setTimeout(resolve))
+
+    expect(provider).toHaveBeenCalledTimes(1)
+    expect(refreshTokens).not.toHaveBeenCalled()
+    expect(authStore.state.accessToken).toBe('HOST')
+    setTokenProvider(owner)
+  })
+
   it('survives a refresh that fails', async () => {
     refreshTokens.mockImplementation(() => Promise.reject(new TypeError('Failed to fetch')))
     new EzpPrintService('https://r', 'client').registerFetchInterceptor()
@@ -209,5 +295,112 @@ describe('EzpPrintService 401 interceptor', () => {
     onResponse(401)
 
     expect(refreshTokens).toHaveBeenCalledTimes(2)
+  })
+
+  describe('with a provider token the API rejected', () => {
+    const owner = {}
+    const settle = () => new Promise((resolve) => setTimeout(resolve))
+    const renew = () => new EzpAuthorizationService('https://r', 'client').renewAccessToken()
+    /** What the provider answers; an error makes it reject. */
+    let next: string | null | Error
+    /** A new provider per test, so no test joins a renewal another one left. */
+    let provider: jest.Mock<Promise<string | null>, unknown[]>
+    /** What the widget passed the provider, call by call. */
+    const requests = () => provider.mock.calls.map((args) => args[0])
+
+    /** A 401 as fetch-intercept hands it over: with the request, which carries the bearer. */
+    const unauthorizedFor = (token: string) =>
+      register.mock.calls[register.mock.calls.length - 1][0].response({
+        status: 401,
+        url: '',
+        request: {
+          url: 'https://printapi.test/sfapi/GetPrinter/',
+          headers: {
+            get: (name: string) =>
+              name.toLowerCase() === 'authorization' ? `Bearer ${token}` : null,
+          },
+        },
+      })
+
+    beforeEach(() => {
+      authStore.state.accessToken = ''
+      authStore.state.isAuthorized = false
+      next = 'HOST'
+      provider = jest.fn((..._args: unknown[]) =>
+        next instanceof Error ? Promise.reject(next) : Promise.resolve(next),
+      )
+      // The fallback refresh of the widget's own session, done at once.
+      refreshTokens.mockImplementation(() => Promise.resolve())
+      // A refresh a failed test left behind must not hold back this one.
+      ;(EzpPrintService as unknown as { refreshInFlight?: Promise<void> }).refreshInFlight =
+        undefined
+      new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+      setTokenProvider(owner, provider)
+    })
+
+    afterEach(() => setTokenProvider(owner))
+
+    it('asks the provider without `rejected` while nothing was rejected', async () => {
+      await renew()
+      await renew()
+
+      expect(requests()).toEqual([{}, {}])
+    })
+
+    it('tells the provider which of its tokens a 401 was for', async () => {
+      await renew()
+
+      unauthorizedFor('HOST')
+      await settle()
+
+      expect(requests()).toEqual([{}, { rejected: 'HOST' }])
+    })
+
+    it('does not take the rejected token back, and refreshes its own session instead', async () => {
+      await renew()
+
+      // A caching provider that hands back the same token.
+      unauthorizedFor('HOST')
+      await settle()
+
+      expect(authStore.state.accessToken).toBe('')
+      expect(authStore.state.isAuthorized).toBe(false)
+      expect(refreshTokens).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not keep the rejected token when the provider then fails', async () => {
+      await renew()
+
+      next = new Error('offline')
+      unauthorizedFor('HOST')
+      await settle()
+
+      // As for `null`: the token it gave last is no use.
+      expect(authStore.state.accessToken).toBe('')
+      expect(refreshTokens).toHaveBeenCalledTimes(1)
+    })
+
+    it('leaves `rejected` out after a 401 for a token of its own session', async () => {
+      authStore.state.accessToken = 'OWN'
+      authStore.state.isAuthorized = true
+      next = null
+
+      unauthorizedFor('OWN')
+      await settle()
+
+      expect(requests()).toEqual([{}])
+    })
+
+    it('forgets the rejected token once the provider answers another one', async () => {
+      await renew()
+
+      next = 'HOST-2'
+      unauthorizedFor('HOST')
+      await settle()
+      expect(authStore.state.accessToken).toBe('HOST-2')
+
+      await renew()
+      expect(requests()).toEqual([{}, { rejected: 'HOST' }, {}])
+    })
   })
 })

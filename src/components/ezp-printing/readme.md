@@ -1,31 +1,118 @@
 # ezp-root
 
+## Signing in through the host page (`tokenProvider`)
+
+A host page that already has an access token for its signed-in user can lend
+it to the widget. The widget then uses that token for the print API and does
+not ask the user to sign in, so its sign-in pop-up never opens.
+
+`tokenProvider` is a JS property, not an attribute. Set it to a function that
+returns a promise of the access token, or of `null` when nobody is signed in.
+The widget calls it with one argument, an object, which a function that
+needs nothing from it can leave out (see `rejected` below).
+
+```html
+<ezp-printing id="printing" clientid="..." redirecturi="..." trigger="button" hidelogin>
+</ezp-printing>
+
+<script>
+  const printing = document.getElementById('printing')
+  printing.tokenProvider = async ({ rejected }) => {
+    // Whatever the host page signs its users in with. The widget says which
+    // token the API turned down, so a cached one isn't handed back.
+    const session = await hostAuth.getSession({ forceRefresh: rejected !== undefined })
+    return session ? session.accessToken : null
+  }
+</script>
+```
+
+What the function has to do
+
+- Answer quickly. The widget waits for it when a flow starts, so return a
+  cached token, and go to the network only when that token is about to expire.
+  The widget waits 20 seconds at most. After that it carries on as if the
+  promise had rejected, an answer that comes later is ignored, and the next
+  time it needs a token it asks again.
+- Answer `null` when nobody is signed in, and only then. The widget then
+  forgets the token it was given and falls back to its own sign-in, as without
+  a provider.
+- Reject when the token can't be had just now, say the host's own token
+  service can't be reached. The widget keeps the token it was given earlier,
+  so a flow that is under way carries on with it, until the next answer
+  replaces it; a 401 from the print API makes it ask again. Without a token
+  from the provider to keep, a rejection is the same as `null`.
+- Return the token that is current at the time. The widget asks when it loads,
+  at the start and end of each flow, every 30 minutes, and after the print API
+  or the account service answers a request with 401. A user who switched
+  account or organization in between is picked up by the next flow.
+- Don't hand back a token the API has rejected. When the print API or the
+  account service answers 401 to a request made with the token the function
+  gave, the widget remembers that token, and from then on calls the function
+  with `{ rejected: '<that token>' }` instead of `{}`, until it answers with
+  another one. A function that caches its token should then get a new one
+  rather than return the cached one. The widget won't use the rejected token
+  again: answering with it counts as `null`, and so does a rejection or a wait
+  that runs out while it is the only token the function gave. When the
+  widget's own check of the session is the request that was answered 401, it
+  asks once more straight away, so a new token, or a session of the widget's
+  own, gets the user through without signing in.
+
+What the widget does with it
+
+- The token is kept in memory only. Nothing about it is written to
+  `localStorage`, and the widget does not refresh or revoke it.
+- With `hidelogin`, a user who is signed in on the host goes straight to the
+  print options, whatever the `trigger` (`custom` included). When the provider
+  has no token and there is no session of the widget's own, `trigger="button"`
+  and `"file"` show the sign-in dialog instead of opening the sign-in pop-up
+  straight away: the flow waited for the provider, and after that wait a
+  browser may block a pop-up the user's click opened. The dialog's button
+  opens it. Without a provider nothing waits, and the pop-up opens at once as
+  before.
+- `logOut()` signs the user out of the widget only. The next flow asks the
+  provider again, so have it answer `null` to keep the user signed out. For
+  the same reason the user menu in the print options does not show "Log out"
+  while the widget is signed in with the provider's token. It does show it
+  for a session of the widget's own, say after the provider answered `null`
+  and the user signed in through the pop-up.
+- Assign the property once. Each new function makes the widget check the
+  session again, which asks the provider and calls the print API, so a
+  framework that passes a fresh arrow function on every render pays for a
+  check on every render. Replacing it during a flow is safe, as the flow waits
+  for the new one.
+- Setting `tokenProvider` to `undefined`, or taking the element off the page,
+  makes the widget forget that provider and, unless another element on the
+  page still has one, the token it gave. A check of the session that was
+  under way with that token is done again with what applies then, so a flow
+  goes on to the sign-in step rather than to the print options.
+
 <!-- Auto Generated Below -->
 
 
 ## Properties
 
-| Property          | Attribute         | Description | Type                                                                               | Default     |
-| ----------------- | ----------------- | ----------- | ---------------------------------------------------------------------------------- | ----------- |
-| `appearance`      | `appearance`      |             | `"dark" \| "light" \| "system"`                                                    | `'system'`  |
-| `authapihosturl`  | `authapihosturl`  |             | `string`                                                                           | `undefined` |
-| `clientid`        | `clientid`        |             | `string`                                                                           | `undefined` |
-| `code`            | `code`            |             | `string`                                                                           | `undefined` |
-| `custom`          | `custom`          |             | `boolean`                                                                          | `undefined` |
-| `filedata`        | `filedata`        |             | `string`                                                                           | `undefined` |
-| `fileid`          | `fileid`          |             | `string`                                                                           | `undefined` |
-| `filename`        | `filename`        |             | `string`                                                                           | `''`        |
-| `filetype`        | `filetype`        |             | `string`                                                                           | `undefined` |
-| `fileurl`         | `fileurl`         |             | `string`                                                                           | `undefined` |
-| `hideheader`      | `hideheader`      |             | `boolean`                                                                          | `false`     |
-| `hidelogin`       | `hidelogin`       |             | `boolean`                                                                          | `undefined` |
-| `hidemenu`        | `hidemenu`        |             | `boolean`                                                                          | `false`     |
-| `language`        | `language`        |             | `string`                                                                           | `''`        |
-| `printapihosturl` | `printapihosturl` |             | `string`                                                                           | `undefined` |
-| `redirecturi`     | `redirecturi`     |             | `string`                                                                           | `undefined` |
-| `seamless`        | `seamless`        |             | `boolean`                                                                          | `false`     |
-| `theme`           | `theme`           |             | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "teal" \| "violet"` | `'cyan'`    |
-| `trigger`         | `trigger`         |             | `"button" \| "custom" \| "file"`                                                   | `undefined` |
+| Property          | Attribute         | Description                                                                                                                                                                                                                                                                                  | Type                                                                                       | Default     |
+| ----------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------- |
+| `appearance`      | `appearance`      |                                                                                                                                                                                                                                                                                              | `"dark" \| "light" \| "system"`                                                            | `'system'`  |
+| `authapihosturl`  | `authapihosturl`  |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `undefined` |
+| `clientid`        | `clientid`        |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `undefined` |
+| `code`            | `code`            |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `undefined` |
+| `custom`          | `custom`          |                                                                                                                                                                                                                                                                                              | `boolean`                                                                                  | `undefined` |
+| `filedata`        | `filedata`        |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `undefined` |
+| `fileid`          | `fileid`          |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `undefined` |
+| `filename`        | `filename`        |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `''`        |
+| `filetype`        | `filetype`        |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `undefined` |
+| `fileurl`         | `fileurl`         |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `undefined` |
+| `hideheader`      | `hideheader`      |                                                                                                                                                                                                                                                                                              | `boolean`                                                                                  | `false`     |
+| `hidelogin`       | `hidelogin`       |                                                                                                                                                                                                                                                                                              | `boolean`                                                                                  | `undefined` |
+| `hidemenu`        | `hidemenu`        |                                                                                                                                                                                                                                                                                              | `boolean`                                                                                  | `false`     |
+| `language`        | `language`        |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `''`        |
+| `printapihosturl` | `printapihosturl` |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `undefined` |
+| `redirecturi`     | `redirecturi`     |                                                                                                                                                                                                                                                                                              | `string`                                                                                   | `undefined` |
+| `seamless`        | `seamless`        |                                                                                                                                                                                                                                                                                              | `boolean`                                                                                  | `false`     |
+| `theme`           | `theme`           |                                                                                                                                                                                                                                                                                              | `"blue" \| "cyan" \| "green" \| "orange" \| "pink" \| "red" \| "teal" \| "violet"`         | `'cyan'`    |
+| `tokenProvider`   | --                | Lets a host page that already has an access token for its signed-in user lend it to the widget, so the user is not asked to sign in again. A function returning a promise of the token, or of `null` when nobody is signed in. Set it as a JS property; it has no attribute. See the readme. | `((request: { rejected?: string \| undefined; }) => Promise<string \| null>) \| undefined` | `undefined` |
+| `trigger`         | `trigger`         |                                                                                                                                                                                                                                                                                              | `"button" \| "custom" \| "file"`                                                           | `undefined` |
 
 
 ## Events

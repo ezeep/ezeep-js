@@ -1,5 +1,5 @@
 import { Component, Host, h, Prop, State, Event, EventEmitter, Listen } from '@stencil/core'
-import { EzpAuthorizationService } from '../../services/auth'
+import { EzpAuthorizationService, pendingAuthCheck } from '../../services/auth'
 import authStore from '../../services/auth'
 import { subscribeToLanguageChange } from '../../utils/utils'
 import i18next from 'i18next'
@@ -27,6 +27,19 @@ export class EzpAuth {
    * for a different account than the one stored.
    */
   @State() codeExchangePending: boolean = false
+  /**
+   * True while a session check started by this flow (see `open()` of
+   * `ezp-printing`) is still running. Until it is in, nothing is decided:
+   * the processing status is shown, neither the login dialog nor a popup.
+   */
+  @State() checkingSession: boolean = false
+  /**
+   * True when sign-in is needed after this flow waited for its session check.
+   * By then the browser may no longer count the click that started the flow,
+   * and block a pop-up opened without one, so under hidelogin the login dialog
+   * is shown instead and its button opens the pop-up.
+   */
+  @State() signInNeedsClick: boolean = false
 
   @Event() authCancel: EventEmitter<MouseEvent>
   @Event() authSuccess: EventEmitter<void>
@@ -62,7 +75,7 @@ export class EzpAuth {
         return
       }
     }
-    if (this.codeExchangePending && this.showsSignInStatus()) {
+    if ((this.codeExchangePending || this.signInNeedsClick) && this.showsSignInStatus()) {
       // Same rule: this dialog stands in for the sign-in status here.
       this.listenStatusCancel()
       return
@@ -85,12 +98,16 @@ export class EzpAuth {
   oauthPopupWindow: Window | null = null
   previousUrl: string | null = null
   private unsubscribeLanguage?: () => void
+  /** Taken off the page, e.g. cancelled while the session check was running. */
+  private removed = false
 
   connectedCallback() {
+    this.removed = false
     this.unsubscribeLanguage = subscribeToLanguageChange(this)
   }
 
   disconnectedCallback() {
+    this.removed = true
     this.unsubscribeLanguage?.()
     // Don't leave the message listener behind when the component is removed.
     window.removeEventListener('message', this.receiveMessage)
@@ -154,6 +171,18 @@ export class EzpAuth {
 
   private showsSignInStatus(): boolean {
     return this.hidelogin && (this.trigger === 'button' || this.trigger === 'file')
+  }
+
+  /**
+   * The processing status instead of the login dialog: while the session
+   * check runs, and whenever nothing is asked of the user. That includes
+   * passing straight through under hidelogin with any trigger, so the dialog
+   * does not flash up on the way.
+   */
+  private showsStatus(): boolean {
+    if (this.checkingSession) return true
+    if (this.codeExchangePending || this.signInNeedsClick) return false
+    return this.showsSignInStatus() || (this.hidelogin && authStore.state.isAuthorized)
   }
 
   /** A blocked window.open() returns null, or a window that is closed / has no `closed` flag. */
@@ -275,6 +304,34 @@ export class EzpAuth {
   async componentWillLoad() {
     this.auth = new EzpAuthorizationService(this.redirectURI, this.clientID)
 
+    const check = pendingAuthCheck()
+    if (check) {
+      // Not awaited here: the first render waits for componentWillLoad, and
+      // the processing status should be on screen while the check runs.
+      this.checkingSession = true
+      this.decideAfter(check)
+      return
+    }
+
+    await this.decide()
+  }
+
+  private async decideAfter(check: Promise<unknown>) {
+    await check.catch((): void => undefined)
+    // Cancelled meanwhile: nothing is left to decide, and no popup may open.
+    if (this.removed) return
+    // The status stays up until the decision is made, so the login dialog
+    // never flashes on the way straight through.
+    await this.decide({ afterWait: true })
+    this.checkingSession = false
+  }
+
+  /**
+   * Go straight on with a session, or ask the user to sign in. `afterWait`
+   * when the flow had to wait for a session check first, so the click that
+   * started it may no longer allow a pop-up.
+   */
+  private async decide({ afterWait = false } = {}) {
     if (this.code) {
       // A host-supplied code is single-use, and this component mounts again on
       // every open with the same attribute. Skip only the code this page has
@@ -304,17 +361,22 @@ export class EzpAuth {
     // stored session, no popup. The dialog is shown; "Sign in" retries.
     if (this.codeExchangePending) return
 
-    if (this.hidelogin && (this.trigger === 'button' || this.trigger === 'file')) {
+    if (this.hidelogin) {
       if (authStore.state.isAuthorized) {
         // Already signed in: no sign-in popup is needed, so skip straight to the
-        // print options. Mirrors the authorized branch of openSignInWindow
-        // (authURI isn't built when already authorized, so we can't call it here).
+        // print options, whatever the trigger. Mirrors the authorized branch of
+        // openSignInWindow (authURI isn't built when already authorized, so we
+        // can't call it here).
         this.authCancel.emit()
         this.authSuccess.emit()
-      } else {
+      } else if (this.trigger === 'button' || this.trigger === 'file') {
         // Not signed in: trigger sign-in directly so the "Continue to print
         // options" click leads to sign-in, without an extra confirmation button.
-        this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
+        // Only these triggers: the popup needs the user's click to open.
+        // After a wait that click may have run out, so the login dialog asks
+        // for a fresh one instead of the pop-up being blocked.
+        if (afterWait) this.signInNeedsClick = true
+        else this.openSignInWindow(this.auth.authURI.toString(), 'ezeep Login')
       }
     }
   }
@@ -331,7 +393,7 @@ export class EzpAuth {
             instance="popup-blocked"
             key="popup-blocked"
           />
-        ) : this.showsSignInStatus() && !this.codeExchangePending ? (
+        ) : this.showsStatus() ? (
           <ezp-status description={i18next.t('login_dialog.action')} processing cancel></ezp-status>
         ) : (
           <ezp-dialog

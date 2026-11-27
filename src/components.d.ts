@@ -6,7 +6,9 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipAnchorTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
+import { TokenProvider } from "./services/auth";
 export { AppearanceTypes, IconButtonLevelTypes, IconButtonTypeTypes, IconNameTypes, IconSizeTypes, LabelLevelTypes, SelectFlowTypes, SelectOptionType, TextButtonLevelTypes, TextButtonTypeTypes, ThemeTypes, TooltipAnchorTypes, TooltipPlacementTypes, TriggerTypes, WeightTypes } from "./shared/types";
+export { TokenProvider } from "./services/auth";
 export namespace Components {
     interface EzpAuth {
         "clientID": string;
@@ -248,6 +250,10 @@ export namespace Components {
           * @default 'cyan'
          */
         "theme": ThemeTypes;
+        /**
+          * Lets a host page that already has an access token for its signed-in user lend it to the widget, so the user is not asked to sign in again. A function returning a promise of the token, or of `null` when nobody is signed in. Set it as a JS property; it has no attribute. See the readme.
+         */
+        "tokenProvider"?: TokenProvider;
         "trigger": TriggerTypes;
     }
     interface EzpSelect {
@@ -932,6 +938,10 @@ declare namespace LocalJSX {
           * @default 'cyan'
          */
         "theme"?: ThemeTypes;
+        /**
+          * Lets a host page that already has an access token for its signed-in user lend it to the widget, so the user is not asked to sign in again. A function returning a promise of the token, or of `null` when nobody is signed in. Set it as a JS property; it has no attribute. See the readme.
+         */
+        "tokenProvider"?: TokenProvider;
         "trigger"?: TriggerTypes;
     }
     interface EzpSelect {

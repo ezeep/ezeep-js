@@ -86,6 +86,11 @@ export interface MockBackendOptions {
   popup?: 'iframe' | 'blocked'
   /** Milliseconds every faked response is held back, to observe busy states. */
   delay?: number
+  /**
+   * Access tokens the backend accepts although it did not issue them, as one
+   * from the host page's own sign-in (see `tokenProvider` of `openPrinting`).
+   */
+  hostTokens?: string[]
 }
 
 export const PRINTERS: MockPrinter[] = [
@@ -155,6 +160,7 @@ const DEFAULTS: Required<MockBackendOptions> = {
   storage: {},
   popup: 'iframe',
   delay: 0,
+  hostTokens: [],
 }
 
 /**
@@ -193,6 +199,7 @@ function installMockBackend(
   })
 
   if (options.signedIn) mock.refreshTokens.push(hosts.seededRefresh)
+  mock.accessTokens.push(...options.hostTokens)
 
   // This script runs again on a reload, but a real backend would still know
   // the refresh tokens it handed out: carry them over (tab-scoped, like above).
@@ -413,6 +420,90 @@ function installMockBackend(
   }
 }
 
+/**
+ * A host page's `tokenProvider`, run in the page and steered from the test:
+ * what it answers can be changed, and answers can be held back.
+ */
+export interface HostTokenProvider {
+  /** What it resolves to: a token, or `null` (nobody signed in); `'reject'` rejects. */
+  answer: string | null | 'reject'
+  /** Hold every answer back until `releaseProvider` (set it once the page is open). */
+  hold?: boolean
+  /**
+   * Like a caching provider that bypasses its cache when told its token was
+   * rejected: asked with `rejected` equal to `answer`, it answers this from
+   * then on. Without it, the provider takes no notice of `rejected`.
+   */
+  afterRejection?: string | null
+}
+
+/** Runs inside the browser, before any page script (see `installMockBackend`). */
+function installHostProvider(initial: HostTokenProvider) {
+  if (window.top !== window) return
+  const host: any = Object.assign({}, initial, {
+    calls: 0,
+    requests: [] as unknown[],
+    released: [] as Array<() => void>,
+  })
+  const answer = () =>
+    host.answer === 'reject'
+      ? Promise.reject(new Error('signed out'))
+      : Promise.resolve(host.answer)
+  // Each call is answered with what `answer` is once it is let go.
+  host.provider = (request?: { rejected?: string }) => {
+    host.calls++
+    // What the widget passed, as it was at the time of the call.
+    host.requests.push(request === undefined ? undefined : JSON.parse(JSON.stringify(request)))
+    if (
+      request?.rejected !== undefined &&
+      request.rejected === host.answer &&
+      host.afterRejection !== undefined
+    ) {
+      host.answer = host.afterRejection
+    }
+    if (!host.hold) return answer()
+    return new Promise<void>((resolve) => host.released.push(resolve)).then(answer)
+  }
+  ;(window as any).__ezpHost = host
+}
+
+/** Change what the host's provider answers, or whether it holds answers back. */
+export async function setProvider(page: E2EPage, patch: Partial<HostTokenProvider>): Promise<void> {
+  await page.evaluate((changes) => {
+    Object.assign((window as any).__ezpHost, changes)
+  }, patch as any)
+}
+
+/** Let the provider's held-back answers go. */
+export async function releaseProvider(page: E2EPage): Promise<void> {
+  await page.evaluate(() => {
+    const host = (window as any).__ezpHost
+    host.released.splice(0).forEach((resolve: () => void) => resolve())
+  })
+  await page.waitForChanges()
+}
+
+/** How often the widget has asked the host's provider for a token. */
+export async function providerCalls(page: E2EPage): Promise<number> {
+  return page.evaluate(() => (window as any).__ezpHost.calls as number)
+}
+
+/** What the widget passed the provider, call by call (`undefined` for no argument). */
+export async function providerRequests(page: E2EPage): Promise<unknown[]> {
+  return page
+    .evaluate(() =>
+      ((window as any).__ezpHost.requests as unknown[]).map((request) =>
+        request === undefined ? 'none' : request,
+      ),
+    )
+    .then((requests) => requests.map((request) => (request === 'none' ? undefined : request)))
+}
+
+/** Wait until the widget has asked the provider at least `count` times. */
+export async function waitForProviderCall(page: E2EPage, count = 1): Promise<void> {
+  await page.waitForFunction((n: number) => (window as any).__ezpHost.calls >= n, {}, count)
+}
+
 type AttributeValue = string | boolean | undefined
 
 export interface OpenPrintingOptions extends MockBackendOptions {
@@ -424,6 +515,12 @@ export interface OpenPrintingOptions extends MockBackendOptions {
   search?: string
   /** Makes the page look like it was opened as a popup by another window. */
   opener?: boolean
+  /**
+   * Gives `<ezp-printing>` a `tokenProvider`, set from script the way a host
+   * page would, before the component loads. Its tokens are not known to the
+   * backend unless listed in `hostTokens`.
+   */
+  tokenProvider?: HostTokenProvider
 }
 
 function renderAttributes(attrs: Record<string, AttributeValue>): string {
@@ -438,7 +535,7 @@ function renderAttributes(attrs: Record<string, AttributeValue>): string {
  * for its start-up auth check to settle so a test begins from a known state.
  */
 export async function openPrinting(options: OpenPrintingOptions = {}): Promise<E2EPage> {
-  const { attrs = {}, slot = '', search, opener, ...backend } = options
+  const { attrs = {}, slot = '', search, opener, tokenProvider, ...backend } = options
   const page = await newE2EPage()
 
   await page.evaluateOnNewDocument(
@@ -474,6 +571,8 @@ export async function openPrinting(options: OpenPrintingOptions = {}): Promise<E
     )
   }
 
+  if (tokenProvider) await page.evaluateOnNewDocument(installHostProvider, tokenProvider as any)
+
   const attributes = renderAttributes({
     clientid: CLIENT_ID,
     redirecturi: REDIRECT_URI,
@@ -483,7 +582,12 @@ export async function openPrinting(options: OpenPrintingOptions = {}): Promise<E
     trigger: 'file',
     ...attrs,
   })
-  await page.setContent(`<ezp-printing ${attributes}>${slot}</ezp-printing>`)
+  // A classic script runs as soon as it is parsed: before the (module) loader
+  // has defined the element, like a host that sets the property right away.
+  const providerScript = tokenProvider
+    ? `<script>document.querySelector('ezp-printing').tokenProvider = window.__ezpHost.provider</script>`
+    : ''
+  await page.setContent(`<ezp-printing ${attributes}>${slot}</ezp-printing>${providerScript}`)
 
   // `checkAuth` runs un-awaited from componentWillLoad; let it finish.
   await waitForCall(page, 'GetConfiguration')
