@@ -13,11 +13,12 @@
  */
 
 :host {
-  --ezp-status-gradient: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--ezp-theme-solid), white 14%) 0%,
-    color-mix(in srgb, var(--ezp-theme-solid), black 22%) 100%
-  );
+  /* Solid fallback first: Safari < 16.2 has no `color-mix()`. A gradient built
+     from it is accepted into the custom property but then computes to an invalid
+     `background`, leaving the white Close button label on a transparent button
+     and the icon badge flat. */
+  --ezp-status-gradient: var(--ezp-theme-solid);
+  --ezp-status-glow: 0 12px 24px -8px var(--ezp-theme-translucent);
 
   align-items: center;
   background: var(--ezp-core-backdrop);
@@ -35,6 +36,15 @@
 
   @include global.media-appearance('dark') {
     --box-separator-position: inset 0 0 0 var(--hairline-width-positive);
+  }
+
+  @supports (background: color-mix(in srgb, red, blue)) {
+    --ezp-status-gradient: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--ezp-theme-solid), white 14%) 0%,
+      color-mix(in srgb, var(--ezp-theme-solid), black 22%) 100%
+    );
+    --ezp-status-glow: 0 12px 24px -8px color-mix(in srgb, var(--ezp-theme-solid), transparent 45%);
   }
 }
 
@@ -83,7 +93,7 @@
   align-items: center;
   background: var(--ezp-status-gradient);
   border-radius: 50%;
-  box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--ezp-theme-solid), transparent 45%);
+  box-shadow: var(--ezp-status-glow);
   color: var(--ezp-white-100);
   display: flex;
   height: 84px;
