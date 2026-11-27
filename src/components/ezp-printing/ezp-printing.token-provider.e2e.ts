@@ -8,11 +8,15 @@ import {
   getPopup,
   getStorage,
   openPrinting,
+  formBody,
+  pause,
   postAuthCode,
   providerCalls,
+  providerRequests,
   releaseProvider,
   removeFiles,
   setProvider,
+  updateBackend,
   waitFor,
   waitForCall,
   waitForInstance,
@@ -81,6 +85,36 @@ const signInScreens = (page: E2EPage): Promise<string[]> =>
 /** Status of a `fetch` the host page makes itself. */
 const hostFetch = (page: E2EPage, url: string): Promise<number> =>
   page.evaluate((target: string) => fetch(target).then((response) => response.status), url)
+
+/**
+ * Wait until the flow has settled on a step, and say which: the print
+ * options, the login dialog, or the sign-in pop-up.
+ */
+async function settledOn(page: E2EPage): Promise<'print-options' | 'login-dialog' | 'pop-up'> {
+  const handle = await page.waitForFunction(
+    () => {
+      const root = document.querySelector('ezp-printing')!.shadowRoot!
+      if (root.querySelector('ezp-printer-selection')) return 'print-options'
+      if ((window as any).__ezpMock.popupOpens > 0) return 'pop-up'
+      const auth = root.querySelector('ezp-auth')?.shadowRoot
+      const dialogs = auth ? Array.from(auth.querySelectorAll('ezp-dialog')) : []
+      return dialogs.some((el: any) => el.instance === 'login') ? 'login-dialog' : false
+    },
+    { timeout: 30000 },
+  )
+  await page.waitForChanges()
+  return (await handle.jsonValue()) as 'print-options' | 'login-dialog' | 'pop-up'
+}
+
+/** Wait until every request the page has made so far has been answered. */
+const allAnswered = (page: E2EPage): Promise<unknown> =>
+  page.waitForFunction(
+    () => ((window as any).__ezpMock.calls as Array<{ done: boolean }>).every((c) => c.done),
+    { timeout: 30000 },
+  )
+
+const REJECTED = 'rejected-host-token'
+const FRESH = 'fresh-host-token'
 
 describe('ezp-printing with a host token provider (e2e)', () => {
   afterAll(removeFiles)
@@ -408,6 +442,192 @@ describe('ezp-printing with a host token provider (e2e)', () => {
 
     await continueWith(page)
     await waitForPrintOptions(page)
+  })
+})
+
+describe('ezp-printing with a provider token the API rejects (e2e)', () => {
+  afterAll(removeFiles)
+
+  it('lets the user sign in through the pop-up, and keeps that session afterwards', async () => {
+    // Say the host's cached token was revoked by a sign-out elsewhere.
+    const page = await openPrinting({
+      tokenProvider: { answer: REJECTED },
+      printers: [PRINTERS[0]],
+      attrs: { hidelogin: true },
+    })
+
+    await continueWith(page)
+    // The pop-up opens straight away, or from the login dialog's button when
+    // the flow had to wait for its session check.
+    const step = await settledOn(page)
+    expect(['pop-up', 'login-dialog']).toContain(step)
+    if (step === 'login-dialog') await click(page, DIALOG_ACTION)
+    expect((await getPopup(page)).opens).toBe(1)
+    await postAuthCode(page)
+    await waitForPrintOptions(page)
+    await waitForCall(page, 'GetPrinter')
+    await allAnswered(page)
+
+    // The re-check after signing in does not put the rejected token back.
+    const printers = await getCalls(page, 'GetPrinter')
+    printers.forEach((made) =>
+      expect(made.headers.authorization).toMatch(/^Bearer access-token-\d+$/),
+    )
+    const before = (await getCalls(page, 'GetConfiguration')).length
+    expect(await call<boolean>(page, 'checkAuth')).toBe(true)
+    const configs = (await getCalls(page, 'GetConfiguration')).slice(before)
+    configs.forEach((made) =>
+      expect(made.headers.authorization).toMatch(/^Bearer access-token-\d+$/),
+    )
+    expect(await providerRequests(page)).toContainEqual({ rejected: REJECTED })
+  })
+
+  it('uses a stored session of its own instead, without the sign-in pop-up', async () => {
+    const page = await openPrinting({
+      signedIn: true,
+      tokenProvider: { answer: REJECTED },
+      printers: [PRINTERS[0]],
+      attrs: { hidelogin: true },
+    })
+    await watchSignInStep(page)
+
+    await continueWith(page)
+    expect(await settledOn(page)).toBe('print-options')
+    await waitForPrintOptions(page)
+    await waitForCall(page, 'GetPrinter')
+
+    expect((await getPopup(page)).opens).toBe(0)
+    expect(await signInScreens(page)).toEqual(['status'])
+    const grants = (await getCalls(page, 'AccessToken')).map(formBody)
+    expect(grants.length).toBeGreaterThan(0)
+    grants.forEach((grant) => expect(grant.grant_type).toBe('refresh_token'))
+    const printers = await getCalls(page, 'GetPrinter')
+    printers.forEach((made) =>
+      expect(made.headers.authorization).toMatch(/^Bearer access-token-\d+$/),
+    )
+  })
+
+  it('takes a fresh token from a provider that was told its token was rejected', async () => {
+    const page = await openPrinting({
+      hostTokens: [FRESH],
+      tokenProvider: { answer: REJECTED, afterRejection: FRESH },
+      printers: [PRINTERS[0]],
+      attrs: { hidelogin: true },
+    })
+
+    await continueWith(page)
+    expect(await settledOn(page)).toBe('print-options')
+    await waitForPrintOptions(page)
+    await waitForCall(page, 'GetPrinter')
+
+    expect((await getPopup(page)).opens).toBe(0)
+    expect(await getCalls(page, 'AccessToken')).toEqual([])
+    const printers = await getCalls(page, 'GetPrinter')
+    printers.forEach((made) => expect(made.headers.authorization).toBe(`Bearer ${FRESH}`))
+    const requests = await providerRequests(page)
+    // Asked plainly first; then told which token the API rejected.
+    expect(requests[0]).toEqual({})
+    expect(requests).toContainEqual({ rejected: REJECTED })
+  })
+
+  it('checkAuth() asks the provider once more after a 401, and sends the new token', async () => {
+    const page = await openPrinting({ hostTokens: [FRESH], attrs: { trigger: 'custom' } })
+    await page.$eval(
+      'ezp-printing',
+      (el: any, rejected, fresh) =>
+        (el.tokenProvider = (request?: { rejected?: string }) =>
+          Promise.resolve(request?.rejected === rejected ? fresh : rejected)),
+      REJECTED,
+      FRESH,
+    )
+    // The property's watcher runs a check of its own; start from a quiet page.
+    await allAnswered(page)
+    await pause(200)
+    const before = (await getCalls(page, 'GetConfiguration')).length
+
+    expect(await call<boolean>(page, 'checkAuth')).toBe(true)
+
+    const configs = (await getCalls(page, 'GetConfiguration')).slice(before)
+    expect(configs.map((made) => made.headers.authorization)).toEqual([
+      `Bearer ${REJECTED}`,
+      `Bearer ${FRESH}`,
+    ])
+  })
+
+  it('checkAuth() asks once more at most, so a provider of rejected tokens cannot loop it', async () => {
+    const page = await openPrinting({ attrs: { trigger: 'custom' } })
+    await page.$eval('ezp-printing', (el: any) => {
+      let n = 0
+      el.tokenProvider = () => Promise.resolve(`never-valid-${++n}`)
+    })
+    await allAnswered(page)
+    await pause(200)
+    const before = (await getCalls(page, 'GetConfiguration')).length
+
+    expect(await call<boolean>(page, 'checkAuth')).toBe(false)
+
+    expect((await getCalls(page, 'GetConfiguration')).length - before).toBe(2)
+  })
+})
+
+describe('ezp-printing with a provider withdrawn during the session check (e2e)', () => {
+  afterAll(removeFiles)
+
+  /** Start a flow whose session check is slow, and wait until it has called the print API. */
+  async function continueSlowly(page: E2EPage): Promise<void> {
+    await chooseFiles(page, 'report.pdf')
+    const sent = (await getCalls(page, 'GetConfiguration')).length
+    await updateBackend(page, { delay: 1500 })
+    await click(page, `${UPLOAD} >>> #continue`)
+    await page.waitForFunction(
+      (n: number) =>
+        (window as any).__ezpMock.calls.filter((c: any) => c.route === 'GetConfiguration').length >
+        n,
+      {},
+      sent,
+    )
+  }
+
+  it('shows the sign-in step, not the print options without a token', async () => {
+    const page = await openPrinting({
+      hostTokens: [HOST_TOKEN],
+      tokenProvider: { answer: HOST_TOKEN },
+      printers: [PRINTERS[0]],
+      attrs: { hidelogin: true },
+    })
+    await continueSlowly(page)
+
+    // Say the host signs its user out just then.
+    await page.$eval('ezp-printing', (el: any) => (el.tokenProvider = undefined))
+
+    expect(await settledOn(page)).toBe('login-dialog')
+    await allAnswered(page)
+    await pause(500)
+    expect(await page.find(OPTIONS)).toBeNull()
+    expect(await getCalls(page, 'GetPrinter')).toEqual([])
+    expect((await getPopup(page)).opens).toBe(0)
+  })
+
+  it('ends with the new provider’s token when the host replaces the provider then', async () => {
+    const page = await openPrinting({
+      hostTokens: [HOST_TOKEN, 'host-token-2'],
+      tokenProvider: { answer: HOST_TOKEN },
+      printers: [PRINTERS[0]],
+      attrs: { hidelogin: true },
+    })
+    await continueSlowly(page)
+
+    await page.$eval(
+      'ezp-printing',
+      (el: any) => (el.tokenProvider = () => Promise.resolve('host-token-2')),
+    )
+
+    expect(await settledOn(page)).toBe('print-options')
+    await waitForCall(page, 'GetPrinter')
+    await allAnswered(page)
+    expect((await getPopup(page)).opens).toBe(0)
+    const printers = await getCalls(page, 'GetPrinter')
+    printers.forEach((made) => expect(made.headers.authorization).toBe('Bearer host-token-2'))
   })
 })
 

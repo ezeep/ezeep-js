@@ -296,4 +296,111 @@ describe('EzpPrintService 401 interceptor', () => {
 
     expect(refreshTokens).toHaveBeenCalledTimes(2)
   })
+
+  describe('with a provider token the API rejected', () => {
+    const owner = {}
+    const settle = () => new Promise((resolve) => setTimeout(resolve))
+    const renew = () => new EzpAuthorizationService('https://r', 'client').renewAccessToken()
+    /** What the provider answers; an error makes it reject. */
+    let next: string | null | Error
+    /** A new provider per test, so no test joins a renewal another one left. */
+    let provider: jest.Mock<Promise<string | null>, unknown[]>
+    /** What the widget passed the provider, call by call. */
+    const requests = () => provider.mock.calls.map((args) => args[0])
+
+    /** A 401 as fetch-intercept hands it over: with the request, which carries the bearer. */
+    const unauthorizedFor = (token: string) =>
+      register.mock.calls[register.mock.calls.length - 1][0].response({
+        status: 401,
+        url: '',
+        request: {
+          url: 'https://printapi.test/sfapi/GetPrinter/',
+          headers: {
+            get: (name: string) =>
+              name.toLowerCase() === 'authorization' ? `Bearer ${token}` : null,
+          },
+        },
+      })
+
+    beforeEach(() => {
+      authStore.state.accessToken = ''
+      authStore.state.isAuthorized = false
+      next = 'HOST'
+      provider = jest.fn((..._args: unknown[]) =>
+        next instanceof Error ? Promise.reject(next) : Promise.resolve(next),
+      )
+      // The fallback refresh of the widget's own session, done at once.
+      refreshTokens.mockImplementation(() => Promise.resolve())
+      // A refresh a failed test left behind must not hold back this one.
+      ;(EzpPrintService as unknown as { refreshInFlight?: Promise<void> }).refreshInFlight =
+        undefined
+      new EzpPrintService('https://r', 'client').registerFetchInterceptor()
+      setTokenProvider(owner, provider)
+    })
+
+    afterEach(() => setTokenProvider(owner))
+
+    it('asks the provider without `rejected` while nothing was rejected', async () => {
+      await renew()
+      await renew()
+
+      expect(requests()).toEqual([{}, {}])
+    })
+
+    it('tells the provider which of its tokens a 401 was for', async () => {
+      await renew()
+
+      unauthorizedFor('HOST')
+      await settle()
+
+      expect(requests()).toEqual([{}, { rejected: 'HOST' }])
+    })
+
+    it('does not take the rejected token back, and refreshes its own session instead', async () => {
+      await renew()
+
+      // A caching provider that hands back the same token.
+      unauthorizedFor('HOST')
+      await settle()
+
+      expect(authStore.state.accessToken).toBe('')
+      expect(authStore.state.isAuthorized).toBe(false)
+      expect(refreshTokens).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not keep the rejected token when the provider then fails', async () => {
+      await renew()
+
+      next = new Error('offline')
+      unauthorizedFor('HOST')
+      await settle()
+
+      // As for `null`: the token it gave last is no use.
+      expect(authStore.state.accessToken).toBe('')
+      expect(refreshTokens).toHaveBeenCalledTimes(1)
+    })
+
+    it('leaves `rejected` out after a 401 for a token of its own session', async () => {
+      authStore.state.accessToken = 'OWN'
+      authStore.state.isAuthorized = true
+      next = null
+
+      unauthorizedFor('OWN')
+      await settle()
+
+      expect(requests()).toEqual([{}])
+    })
+
+    it('forgets the rejected token once the provider answers another one', async () => {
+      await renew()
+
+      next = 'HOST-2'
+      unauthorizedFor('HOST')
+      await settle()
+      expect(authStore.state.accessToken).toBe('HOST-2')
+
+      await renew()
+      expect(requests()).toEqual([{}, { rejected: 'HOST' }, {}])
+    })
+  })
 })

@@ -230,6 +230,15 @@ describe('EzpAuthorizationService renewAccessToken', () => {
     expect(authStore.state.accessToken).toBe('AT')
   })
 
+  it('still takes a provider declared without parameters', async () => {
+    const provider: () => Promise<string | null> = async () => 'HOST'
+    setTokenProvider(owner, provider)
+
+    await newService().renewAccessToken()
+
+    expect(authStore.state.accessToken).toBe('HOST')
+  })
+
   it('puts the provider’s token in memory only, without the token endpoint', async () => {
     setTokenProvider(owner, () => Promise.resolve('HOST'))
 

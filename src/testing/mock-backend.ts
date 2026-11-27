@@ -429,17 +429,38 @@ export interface HostTokenProvider {
   answer: string | null | 'reject'
   /** Hold every answer back until `releaseProvider` (set it once the page is open). */
   hold?: boolean
+  /**
+   * Like a caching provider that bypasses its cache when told its token was
+   * rejected: asked with `rejected` equal to `answer`, it answers this from
+   * then on. Without it, the provider takes no notice of `rejected`.
+   */
+  afterRejection?: string | null
 }
 
 /** Runs inside the browser, before any page script (see `installMockBackend`). */
 function installHostProvider(initial: HostTokenProvider) {
   if (window.top !== window) return
-  const host: any = Object.assign({}, initial, { calls: 0, released: [] as Array<() => void> })
+  const host: any = Object.assign({}, initial, {
+    calls: 0,
+    requests: [] as unknown[],
+    released: [] as Array<() => void>,
+  })
   const answer = () =>
-    host.answer === 'reject' ? Promise.reject(new Error('signed out')) : Promise.resolve(host.answer)
+    host.answer === 'reject'
+      ? Promise.reject(new Error('signed out'))
+      : Promise.resolve(host.answer)
   // Each call is answered with what `answer` is once it is let go.
-  host.provider = () => {
+  host.provider = (request?: { rejected?: string }) => {
     host.calls++
+    // What the widget passed, as it was at the time of the call.
+    host.requests.push(request === undefined ? undefined : JSON.parse(JSON.stringify(request)))
+    if (
+      request?.rejected !== undefined &&
+      request.rejected === host.answer &&
+      host.afterRejection !== undefined
+    ) {
+      host.answer = host.afterRejection
+    }
     if (!host.hold) return answer()
     return new Promise<void>((resolve) => host.released.push(resolve)).then(answer)
   }
@@ -465,6 +486,17 @@ export async function releaseProvider(page: E2EPage): Promise<void> {
 /** How often the widget has asked the host's provider for a token. */
 export async function providerCalls(page: E2EPage): Promise<number> {
   return page.evaluate(() => (window as any).__ezpHost.calls as number)
+}
+
+/** What the widget passed the provider, call by call (`undefined` for no argument). */
+export async function providerRequests(page: E2EPage): Promise<unknown[]> {
+  return page
+    .evaluate(() =>
+      ((window as any).__ezpHost.requests as unknown[]).map((request) =>
+        request === undefined ? 'none' : request,
+      ),
+    )
+    .then((requests) => requests.map((request) => (request === 'none' ? undefined : request)))
 }
 
 /** Wait until the widget has asked the provider at least `count` times. */
