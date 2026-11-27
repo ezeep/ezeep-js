@@ -1,5 +1,5 @@
 import { createStore } from '@stencil/store'
-import authStore, { EzpAuthorizationService, hasTokenProvider } from './auth'
+import authStore, { EzpAuthorizationService, hasTokenProvider, rememberRejectedToken } from './auth'
 import fetchIntercept from 'fetch-intercept'
 import {
   PrinterConfig,
@@ -50,6 +50,8 @@ export class EzpPrintService {
           (hasTokenProvider() || authStore.state.refreshToken !== '') &&
           isOwnApi(response)
         ) {
+          // Before the renewal starts, so that it already tells the provider.
+          rememberRejectedToken(bearerOf(response))
           this.refreshOnce()
         }
         return response
@@ -228,6 +230,16 @@ function isOwnApi(response: Response): boolean {
     host === hostOf(printStore.state.printApiHostUrl) ||
     host === hostOf(authStore.state.authApiHostUrl)
   )
+}
+
+/**
+ * The access token a request was made with, read from the request that
+ * `fetch-intercept` attaches to the response. Empty when there is none.
+ */
+function bearerOf(response: Response): string {
+  const request = (response as Response & { request?: Request }).request
+  const header = request?.headers?.get?.('Authorization') ?? ''
+  return header.replace(/^Bearer /i, '')
 }
 
 /**

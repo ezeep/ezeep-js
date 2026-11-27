@@ -18,7 +18,7 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 
 ## What's covered today
 
-**Spec tests (288):**
+**Spec tests (295):**
 
 - [src/utils/printer.spec.ts](src/utils/printer.spec.ts) — `applyPrinterDefaults`,
   `classifyJobStatus`, tray detection. The core of the print-config → properties
@@ -34,7 +34,7 @@ every PR (see [.github/workflows/node.js.yml](.github/workflows/node.js.yml)).
 - [src/components/ezp-status/ezp-status.spec.tsx](src/components/ezp-status/ezp-status.spec.tsx)
   — conditional rendering + event payloads (`newSpecPage`).
 
-**E2E tests (236):** real headless Chromium, real components/services/stores,
+**E2E tests (243):** real headless Chromium, real components/services/stores,
 faked network (see [E2E harness](#e2e-harness)).
 
 - [ezp-printing.e2e.ts](src/components/ezp-printing/ezp-printing.e2e.ts) — the
@@ -58,7 +58,10 @@ faked network (see [E2E harness](#e2e-harness)).
   answers, falling back to the normal sign-in (under `hidelogin`, through the
   dialog's button rather than a pop-up straight after the wait), a new token
   on the next flow, which 401s ask for a new one, setting and removing the provider, `logOut`,
-  and `hidelogin` with `trigger="custom"`.
+  and `hidelogin` with `trigger="custom"`. Also a token the API rejects (the
+  provider is told, the widget's own session or a fresh token takes over, a
+  sign-in through the pop-up sticks, the session check retries once) and a
+  provider withdrawn or replaced while the flow's session check is out.
 - [ezp-auth.e2e.ts](src/components/ezp-auth/ezp-auth.e2e.ts) — sign-in: the
   authorize URL and PKCE challenge, code → token exchange (verifier matches the
   challenge), rejection of codes from a wrong origin or window, token storage

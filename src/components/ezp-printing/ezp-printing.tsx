@@ -14,6 +14,7 @@ import authStore, {
   EzpAuthorizationService,
   TokenProvider,
   hasTokenProvider,
+  rememberRejectedToken,
   sendCodeToParentWindow,
   setPendingAuthCheck,
   setTokenProvider,
@@ -378,6 +379,21 @@ export class EzpPrinting {
 
   @Method()
   async checkAuth(): Promise<boolean> {
+    return this.runAuthCheck({ renew: true, mayRetry: true })
+  }
+
+  /**
+   * One round of `checkAuth`. `renew` first makes sure a token is there (see
+   * `ensureAccessToken`); `mayRetry` allows the one extra round after a 401
+   * for the provider's token.
+   */
+  private async runAuthCheck({
+    renew,
+    mayRetry,
+  }: {
+    renew: boolean
+    mayRetry: boolean
+  }): Promise<boolean> {
     // Constructing the print service also loads any persisted refresh token.
     const printService = new EzpPrintService(this.redirecturi, this.clientid)
 
@@ -387,7 +403,7 @@ export class EzpPrinting {
     // A transient refresh failure is swallowed here so checkAuth still completes
     // and reports unauthorized (rather than rejecting); getConfig below then
     // runs and the periodic refresh retries.
-    await this.ensureAccessToken()
+    if (renew) await this.ensureAccessToken()
 
     // With a host token provider the session is the host's: what an earlier
     // visit left in localStorage says nothing about it.
@@ -397,21 +413,29 @@ export class EzpPrinting {
       authStore.state.isAuthorized = storage.getIsAuthorized()
     }
 
-    await printService
-      .getConfig(authStore.state.accessToken)
-      .then((response) => {
-        if (response.ok) {
-          authStore.state.isAuthorized = true
-        }
-        if (!response.ok) {
-          authStore.state.isAuthorized = false
-          throw new Error('http status ' + response.status)
-        }
-      })
-      .catch(() => {
-        authStore.state.isAuthorized = false
-      })
+    const token = authStore.state.accessToken
+    const status = await printService.getConfig(token).then(
+      (response) => (response.ok ? 'ok' : response.status),
+      (): 'failed' => 'failed',
+    )
+    const rejected = status === 401 && rememberRejectedToken(token)
 
+    // The token changed while the call was out, say the host withdrew or
+    // replaced its provider: this answer is about a token that has gone, and
+    // must not count. Check again with the one held now. Only a token that
+    // is gone asks for a new one; asking the provider on every round could
+    // go on for as long as two checks keep replacing each other's token.
+    if (authStore.state.accessToken !== token) {
+      return this.runAuthCheck({ renew: authStore.state.accessToken === '', mayRetry })
+    }
+
+    // The API turned down the provider's token. Ask once more, now telling
+    // the provider, so a fresh token from it, or a session of the widget's
+    // own, gets the user through without signing in. Once only, so a
+    // provider that only has rejected tokens can't keep this going.
+    if (rejected && mayRetry) return this.runAuthCheck({ renew: true, mayRetry: false })
+
+    authStore.state.isAuthorized = status === 'ok'
     if (persistsSession) storage.setIsAuthorized(authStore.state.isAuthorized)
 
     return authStore.state.isAuthorized

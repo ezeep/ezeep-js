@@ -130,7 +130,9 @@ export class EzpAuthorizationService {
    * it answers `null` the token it gave is dropped, and a session of the
    * widget's own, if one is stored, is refreshed instead. When it rejects or
    * does not answer in time, a token it gave earlier is kept; without one this
-   * is the same as `null`. Without a provider this is `refreshTokens()`.
+   * is the same as `null`. So is an answer with a token the API rejected
+   * (see `rememberRejectedToken`), which the provider is told about. Without
+   * a provider this is `refreshTokens()`.
    *
    * Callers share one attempt while it runs, so a burst of them never asks
    * the provider, or spends the refresh token, more than once.
@@ -149,7 +151,7 @@ export class EzpAuthorizationService {
   }
 
   private async renewFromProvider(provider: TokenProvider): Promise<void> {
-    const answer = await askProvider(provider)
+    const answer = await askProvider(provider, rejectedToken ? { rejected: rejectedToken } : {})
     if (provider !== tokenProvider) {
       // Replaced or withdrawn while it was being asked, so its answer no
       // longer counts. The caller, say a flow's session check, still needs
@@ -164,8 +166,17 @@ export class EzpAuthorizationService {
       return
     }
 
-    if (answer.answered && typeof answer.token === 'string' && answer.token !== '') {
+    // The token the API turned down is no answer at all: taking it back would
+    // shut out a session of the widget's own, even one the user has just
+    // signed in to. Any other token is used, and the rejection is forgotten.
+    if (
+      answer.answered &&
+      typeof answer.token === 'string' &&
+      answer.token !== '' &&
+      answer.token !== rejectedToken
+    ) {
       providedToken = answer.token
+      rejectedToken = ''
       authStore.state.accessToken = answer.token
       authStore.state.isAuthorized = true
       return
@@ -175,11 +186,17 @@ export class EzpAuthorizationService {
     // only that the host could not tell just now. A token it gave earlier may
     // well still be valid, and the open print options depend on it, so it
     // stays until the next answer replaces it; a 401 asks again. Holding no
-    // such token, this is the same as `null`.
-    if (!answer.answered && providedToken !== '' && authStore.state.accessToken === providedToken)
+    // such token, or only the one the API rejected, this is the same as `null`.
+    if (
+      !answer.answered &&
+      providedToken !== '' &&
+      providedToken !== rejectedToken &&
+      authStore.state.accessToken === providedToken
+    )
       return
 
-    // Nobody is signed in on the host: a token it gave earlier must go. One
+    // Nobody is signed in on the host, or its token is the one the API
+    // rejected: a token it gave earlier must go. One
     // from a session of the widget's own stays until the refresh below
     // replaces it, as without a provider; dropping it first would send the
     // requests made meanwhile without any token.
@@ -273,9 +290,11 @@ export default authStore
 /**
  * A host page's way to hand over the access token of its signed-in user (see
  * the `tokenProvider` property of `ezp-printing`). Resolves to `null` when
- * nobody is signed in.
+ * nobody is signed in. `rejected` is set, to that token, while the API has
+ * turned down the token it gave last; the widget won't use that one again.
+ * A function that takes no parameters fits too.
  */
-export type TokenProvider = () => Promise<string | null>
+export type TokenProvider = (request: { rejected?: string }) => Promise<string | null>
 
 /**
  * How long the widget waits for the provider before it carries on as if it
@@ -296,7 +315,10 @@ type ProviderAnswer = { answered: true; token: string | null } | { answered: fal
  * the call in flight, for the rest of the page's life. An answer that comes
  * after the wait is over is dropped.
  */
-function askProvider(provider: TokenProvider): Promise<ProviderAnswer> {
+function askProvider(
+  provider: TokenProvider,
+  request: { rejected?: string },
+): Promise<ProviderAnswer> {
   let timer: ReturnType<typeof setTimeout> | undefined
   const timeout = new Promise<ProviderAnswer>((resolve) => {
     timer = setTimeout(() => resolve({ answered: false }), TOKEN_PROVIDER_TIMEOUT_MS)
@@ -304,7 +326,7 @@ function askProvider(provider: TokenProvider): Promise<ProviderAnswer> {
   // Called right away, as before; a provider that throws counts as one that rejects.
   let answer: Promise<string | null>
   try {
-    answer = Promise.resolve(provider())
+    answer = Promise.resolve(provider(request))
   } catch (error) {
     answer = Promise.reject(error)
   }
@@ -324,6 +346,12 @@ const tokenProviders = new Map<object, TokenProvider>()
 let tokenProvider: TokenProvider | undefined
 /** The token the provider gave last, to tell it apart from one of our own. */
 let providedToken = ''
+/**
+ * A token the provider gave that the print API or the account service
+ * answered 401 for. Passed back to it as `rejected`, and not used again,
+ * until it answers with another token.
+ */
+let rejectedToken = ''
 let renewInFlight: { provider?: TokenProvider; promise: Promise<void> } | undefined
 /** The refresh-token grant in flight, shared by callers with the same refresh token. */
 let grantInFlight: { refreshToken: string; promise: Promise<void> } | undefined
@@ -339,7 +367,9 @@ export function setTokenProvider(owner: object, provider?: TokenProvider): void 
   if (typeof provider === 'function') tokenProviders.set(owner, provider)
 
   tokenProvider = Array.from(tokenProviders.values()).pop()
-  if (tokenProvider || providedToken === '') return
+  if (tokenProvider) return
+  rejectedToken = ''
+  if (providedToken === '') return
 
   if (authStore.state.accessToken === providedToken) {
     authStore.state.accessToken = ''
@@ -350,6 +380,18 @@ export function setTokenProvider(owner: object, provider?: TokenProvider): void 
 
 export function hasTokenProvider(): boolean {
   return tokenProvider !== undefined
+}
+
+/**
+ * Note that the print API or the account service answered 401 to a request
+ * made with `token`. When that is the token the provider gave, the next
+ * renewal tells the provider so, and won't take it back. Returns whether it
+ * was. A 401 for a token of the widget's own session changes nothing here.
+ */
+export function rememberRejectedToken(token: string): boolean {
+  if (!tokenProvider || token === '' || token !== providedToken) return false
+  rejectedToken = token
+  return true
 }
 
 /**
